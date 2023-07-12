@@ -21,13 +21,12 @@ public class OrderedProduct {
     private double subtotal;
 
     @ManyToOne
-    @JoinColumn(name = "productid", nullable = true)
-    //@JsonManagedReference // you inform Jackson to handle the serialization appropriately and break the infinite recursion.
+    @JoinColumn(name = "productid", nullable = false)
     private Product product;
 
     @ManyToOne
     @JoinColumn(name = "orderid", nullable = true)
-    @JsonIgnore
+    @JsonBackReference
     private Order order;
 
     public OrderedProduct() {

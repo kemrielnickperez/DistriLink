@@ -2,6 +2,7 @@ package com.group5.distributorsystem.controllers;
 
 import com.group5.distributorsystem.models.Employee;
 import com.group5.distributorsystem.models.Order;
+import com.group5.distributorsystem.models.PaymentTransaction;
 import com.group5.distributorsystem.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,4 +45,5 @@ public class OrderController {
     public ResponseEntity<Object> removeCollector(@PathVariable int orderid){
         return new ResponseEntity<>(orderService.removeCollector(orderid), HttpStatus.OK);
     }
+
 }

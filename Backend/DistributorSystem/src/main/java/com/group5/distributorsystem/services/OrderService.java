@@ -33,7 +33,7 @@ public class OrderService {
     public Order createOrder(Order order) {
         Order newOrder =  orderRepository.save(order);
 
-        double orderamount=0;
+        double orderamount = 0;
 
         Set<OrderedProduct> newOrderedProducts = order.getOrderedProducts();
 
@@ -43,20 +43,19 @@ public class OrderService {
 
 
             Product product = productRepository.findById(productid).get();
-            Order newOrder1 = orderRepository.findById(newOrder.getOrderid()).get();
 
-            if(product != null){
+            if(product != null) {
                 float price = product.getPrice();
-                double subtotal = price *quantity;
+                double subtotal = price * quantity;
 
                 OrderedProduct newOrderedProduct = new OrderedProduct(-1, quantity, subtotal, product, newOrder);
                 newOrderedProduct = orderedProductRepository.save(newOrderedProduct);
                 orderamount += subtotal;
 
             }
-            newOrder.setOrderamount(orderamount);
         }
-
+        //gigawas nako suway kay wako kibaw ngano nasulod siya sa for loop
+        newOrder.setOrderamount(orderamount);
         return orderRepository.save(newOrder);
 
        /* Order newOrder = orderRepository.save(order);
@@ -123,4 +122,7 @@ public class OrderService {
         return new ResponseEntity("Collector removed successfully", HttpStatus.OK);
 
     }
+
 }
+
+

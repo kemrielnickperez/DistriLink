@@ -30,19 +30,19 @@ public class EmployeeController {
             return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
         }
 
-    @GetMapping("/getAllCollectors")
-    public ResponseEntity<Object> getAllCollectors(){
-        return new ResponseEntity<>(employeeService.getAllCollectors(), HttpStatus.OK);
-    }
+        @GetMapping("/getAllCollectors")
+        public ResponseEntity<Object> getAllCollectors(){
+            return new ResponseEntity<>(employeeService.getAllCollectors(), HttpStatus.OK);
+        }
 
         @GetMapping("/getEmployeeByID")
         public ResponseEntity<Object> getEmployeeByID(@RequestParam int employeeid){
             return new ResponseEntity<>(employeeService.getEmployeeByID(employeeid), HttpStatus.OK);
         }
 
-    @GetMapping("/getCollectorByID")
-    public ResponseEntity<Object> getCollectorByID(@RequestParam int employeeid){
-        return new ResponseEntity<>(employeeService.getCollectorByID(employeeid), HttpStatus.OK);
-    }
+        @GetMapping("/getCollectorByID")
+        public ResponseEntity<Object> getCollectorByID(@RequestParam int employeeid){
+            return new ResponseEntity<>(employeeService.getCollectorByID(employeeid), HttpStatus.OK);
+        }
 
     }
