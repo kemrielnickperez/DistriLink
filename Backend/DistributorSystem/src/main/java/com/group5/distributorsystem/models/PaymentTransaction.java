@@ -1,6 +1,7 @@
 package com.group5.distributorsystem.models;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -28,7 +29,7 @@ public class PaymentTransaction {
 
     @ManyToOne
     @JoinColumn(name = "orderid", nullable = true)
-    @JsonIgnore
+    @JsonBackReference
     private Order order;
 
     public PaymentTransaction() {
@@ -42,6 +43,7 @@ public class PaymentTransaction {
         this.installmentnumber = installmentnumber;
         this.order = order;
     }
+
 
     public int getPaymenttransactionid() {
         return paymenttransactionid;
@@ -90,6 +92,4 @@ public class PaymentTransaction {
     public void setOrder(Order order) {
         this.order = order;
     }
-
-
 }

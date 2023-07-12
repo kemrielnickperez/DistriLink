@@ -13,6 +13,7 @@ import java.util.Set;
 @Table(name = "orders")
 public class Order {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderid;
@@ -33,19 +34,23 @@ public class Order {
     private double orderamount;
 
     @OneToMany(mappedBy = "order")
+    @JsonManagedReference
     private Set<OrderedProduct> orderedProducts;
 
+
     @OneToMany(mappedBy = "order")
+    @JsonManagedReference
     private Set<PaymentTransaction> paymentTransactions;
 
 
     @ManyToOne
-    @JoinColumn(name = "dealerid", nullable = true)
+    @JoinColumn(name = "dealerid", nullable = false)
     private Dealer dealer;
 
     @ManyToOne
     @JoinColumn(name = "collectorid", nullable = true)
     private Employee collector;
+
 
     public Order() {
     }
