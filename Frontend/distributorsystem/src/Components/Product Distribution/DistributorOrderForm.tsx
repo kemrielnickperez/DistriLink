@@ -13,26 +13,6 @@ import moment from 'moment';
 
 
 
-function createData(
-  quantity: number,
-  unit: string,
-  productName: string,
-  unitPrice: number,
-  commissionRate: number,
-  amount: number
-) {
-  return { quantity, unit, productName, unitPrice, commissionRate, amount };
-}
-
-const rows = [
-  createData(5, 'piece', 'Lotion (90 mL)', 500, 9, 2750),
-  createData(5, 'box', 'Perfume (120 mL)', 500, 9, 2750),
-  createData(5, 'piece', 'toothpaste (150 g tube)', 500, 9, 2750),
-  createData(5, 'piece', 'Shampoo (20 mL)', 500, 9, 2750),
-  createData(5, 'piece', 'Conditioner (20 mL)', 500, 9, 2750),
-];
-
-
 const StyledProductTextField = styled(TextField)({
   backgroundColor: "#AFD3E2", borderRadius: "22px", input: {
     padding: "10px", color: "black"
@@ -77,8 +57,6 @@ export default function DistributorOrderForm() {
 
 
 
-
-
   const quantityRef = useRef<TextFieldProps>(null)
   const distributionDateRef = useRef<TextFieldProps>(null)
   const penaltyRateRef = useRef<TextFieldProps>(null)
@@ -86,6 +64,10 @@ export default function DistributorOrderForm() {
 
 
   const paymentchoices = [
+    {
+      value: '0',
+      label: '----------',
+    },
     {
       value: '1',
       label: 'Cash',
@@ -113,6 +95,10 @@ export default function DistributorOrderForm() {
   ];
 
 
+  useEffect(() => {
+    getAllProducts();
+
+  }, [isDealerFound, products]);
 
   function createOrderedProduct(product: IProduct, quantity: number): IOrderedProducts {
 
@@ -122,10 +108,7 @@ export default function DistributorOrderForm() {
     };
   }
 
-  useEffect(() => {
-    getAllProducts();
 
-  }, [isDealerFound, products]);
 
   function getAllProducts() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
@@ -185,6 +168,7 @@ export default function DistributorOrderForm() {
         collector: null,
         dealer: dealer!,
         orderedProducts: orderedProducts,
+        paymentTransactions: null,
       });
     }
   };
@@ -193,7 +177,7 @@ export default function DistributorOrderForm() {
     getDealerByID(Number(dealerIDRef.current?.value))
   };
 
-  /* const handleDistributionDateChange  */
+
 
   return (
     <>

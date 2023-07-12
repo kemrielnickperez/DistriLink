@@ -32,14 +32,6 @@ export default function CollectorAssignment() {
   const [assignCollector, removeCollector, assignedStatus, removeStatus] = useRest();
 
 
-
-  useEffect(() => {
-    getAllCollectors();
-    getAllOrders();
-    getAllDealers();
-   
-  }, [orders]);
-
   function getAllCollectors() {
     axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
       .then((response) => {
@@ -75,6 +67,16 @@ export default function CollectorAssignment() {
         alert("Error retrieving dealers. Please try again.");
       });
   }
+
+
+  useEffect(() => {
+    getAllCollectors();
+    getAllOrders();
+    getAllDealers();
+   
+  }, [orders]);
+
+ 
 
   const columns: GridColDef[] = [
     //headerAlign to set alignment

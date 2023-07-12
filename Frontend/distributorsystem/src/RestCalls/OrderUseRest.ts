@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { IDealer } from "./DealerUseRest";
 import { IEmployee } from "./EmployeeUseRest";
 import dayjs, { Dayjs } from "dayjs";
+import { IPaymentTransaction } from "./ScheduleUseRest";
 
 
 
@@ -22,6 +23,7 @@ export interface IOrder {
     collector: IEmployee | null,
     dealer: IDealer,
     orderedProducts: IOrderedProducts[],
+    paymentTransactions: IPaymentTransaction[] | null,
 }
 
 
@@ -68,7 +70,9 @@ export const useRest = (): [(order: IOrder) => void,  IOrder | undefined] => {
                 submissiondate: order.dealer.submissiondate,
                 attachments: order.dealer.attachments,
             },
-            collector: null
+            collector: null, 
+            paymentTransactions: null,
+            
              
  
         })
