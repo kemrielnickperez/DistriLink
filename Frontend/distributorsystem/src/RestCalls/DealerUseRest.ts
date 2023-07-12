@@ -41,7 +41,7 @@ export const useRestDealer = (): [(dealerID:number) => void, IDealer | undefined
                 console.log(response.data);
                 if(response.data !== null){
                     setIsDealerFound(true);
-                    console.log(true)
+
                 }
                 else{
                     setIsDealerFound(false);
