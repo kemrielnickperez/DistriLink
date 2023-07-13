@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useState } from "react";
-import { IEmployee } from "./EmployeeUseRest";
+import { IEmployee } from "./Interfaces";
 
 
 

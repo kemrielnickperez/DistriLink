@@ -1,22 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
+import { IEmployee } from "./Interfaces";
 
 
 
-export interface IEmployee {
-    employeeid:number,
-    firstname: string,
-    middlename: string,
-    lastname: string,
-    birthdate: string,
-    gender: string,
-    currentaddress: string,
-    permanentaddress: string,
-    contactnumber: string,
-    iscashier: boolean,
-    issalesassociate: boolean,
-    iscollector: boolean
-}
+
 
 
 

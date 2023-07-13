@@ -1,19 +1,11 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
-import { IDealer } from "./DealerUseRest";
-import { IEmployee } from "./EmployeeUseRest";
 import dayjs, { Dayjs } from "dayjs";
-import { IOrder } from "./OrderUseRest";
+import { IOrder, IPaymentTransaction } from "./Interfaces";
 
 
-export interface IPaymentTransaction {
-    paymenttransactionid: number;
-    amountdue: number;
-    startingdate: string;
-    enddate: string;
-    installmentnumber: number;
-    order: IOrder;
-}
+
+
 
 export const useRestSchedule = (): [(orderid: number) => void, (paymentransaction: IPaymentTransaction) => void, IOrder | undefined, boolean | undefined] => {
 
