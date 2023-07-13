@@ -1,27 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
+import { IDealer } from "./Interfaces";
 
 
 
-export interface IDealer {
-    dealerid:number,
-    firstname: string,
-    middlename: string,
-    lastname: string,
-    birthdate: string,
-    gender: string,
-    currentaddress: string,
-    permanentaddress: string,
-    contactnumber: string,
-    hasbusiness: boolean,
-    businessname: string,
-    businessphone: string,
-    businessaddress: string,
-    businesstin: string,
-    creditlimit: number,
-    submissiondate: string,
-    attachments: string,
-}
 
 
 export const useRestDealer = (): [(dealerID:number) => void, IDealer | undefined, boolean | undefined] => {
