@@ -1,39 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
-import { IDealer } from "./DealerUseRest";
-import { IEmployee } from "./EmployeeUseRest";
 import dayjs, { Dayjs } from "dayjs";
-import { IPaymentTransaction } from "./ScheduleUseRest";
+import { IOrder } from "./Interfaces";
 
 
-
-export interface IOrderedProducts {
-    product: IProduct;
-    quantity: number;
-
-}
-
-export interface IOrder {
-    orderid: number,
-    distributiondate: string,
-    orderdate: string,
-    penaltyrate: number,
-    paymentterms: number,
-    orderamount:number,
-    collector: IEmployee | null,
-    dealer: IDealer,
-    orderedProducts: IOrderedProducts[],
-    paymentTransactions: IPaymentTransaction[] | null,
-}
-
-
-export interface IProduct {
-    productid: number;
-    commissionrate: number;
-    name: string;
-    price: number;
-    unit: string;
-}
 
 
 
