@@ -3,11 +3,10 @@ import { DataGrid, GridColDef, GridRowId, GridValueGetterParams, GridRowParams, 
 import CardActions from '@mui/material/CardActions';
 import { Autocomplete, Button, Card, TextField, Typography, Box } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { IEmployee, useRestEmployee } from '../../RestCalls/EmployeeUseRest';
 import { useRest } from '../../RestCalls/CollectorAssignmentUseRest';
-import { IOrder } from '../../RestCalls/OrderUseRest';
 import axios from 'axios';
-import { IDealer } from '../../RestCalls/DealerUseRest';
+import { IDealer, IEmployee, IOrder } from '../../RestCalls/Interfaces';
+
 
 
 //DataGrid Function 
@@ -17,16 +16,12 @@ export default function CollectorAssignment() {
 
   const [collectors, setCollectors] = useState<IEmployee[]>([]);
   const [orders, setOrders] = useState<IOrder[]>([]);
-  const [dealers, setDealers] = useState<IDealer[]>([]);
-
-  const [getCollectorByID, collector] = useRest();
+ 
   const [selectedCollector, setSelectedCollector] = useState<any>(null); // State for the selected collector
   const [selectedCollectorId, setSelectedCollectorId] = useState<number | null>(null); // State for the selected collector ID
   const [selectedRows, setSelectedRows] = useState<number[]>([]); // State for selection of rows 
   //const [rows, setRows] = React.useState(initialRows); // State for grouping order transaction
   const [groupByValue, setGroupByValue] = useState(''); // // State for the groupBy input value
-
-
 
 
   const [assignCollector, removeCollector, assignedStatus, removeStatus] = useRest();
@@ -56,23 +51,10 @@ export default function CollectorAssignment() {
       });
   }
 
-  function getAllDealers() {
-    axios.get<IDealer[]>('http://localhost:8080/dealer/getAllDealers')
-      .then((response) => {
-        setDealers(response.data);
-        //console.log(response.data);
-      })
-      .catch((error) => {
-        console.error('Error retrieving dealers:', error);
-        alert("Error retrieving dealers. Please try again.");
-      });
-  }
-
 
   useEffect(() => {
     getAllCollectors();
     getAllOrders();
-    getAllDealers();
    
   }, [orders]);
 
@@ -153,9 +135,6 @@ export default function CollectorAssignment() {
     const count = parseInt(groupByValue.trim());
     const selectedRowIds = rows.slice(0, count).map((row) => row.orderID);
     setSelectedRows(selectedRowIds);
-    
-    
-
   };
 
 
@@ -275,10 +254,6 @@ export default function CollectorAssignment() {
             </Button>
           </CardActions>
         </div>
-
-
-
-
 
         {/* Box for DataGrid Table */}
         <Box sx={{ height: '100%', marginTop: '20px' }}>
