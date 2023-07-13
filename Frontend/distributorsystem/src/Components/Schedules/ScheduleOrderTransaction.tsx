@@ -4,12 +4,13 @@ import CardContent from '@mui/material/CardContent';
 import SearchIcon from '@mui/icons-material/Search';
 import { Button, Card, TextField, InputAdornment, TableContainer, Table, TableHead, Paper, TableRow, TableCell, TableBody, Box, IconButton, Grid, Stack, TextFieldProps } from '@mui/material';
 import styled from "@emotion/styled";
-import { IPaymentTransaction, useRestSchedule } from "../../RestCalls/ScheduleUseRest";
+import { useRestSchedule } from "../../RestCalls/ScheduleUseRest";
 import { useEffect, useRef, useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { format } from 'date-fns';
+import { IPaymentTransaction } from "../../RestCalls/Interfaces";
 
 const StyledButton = styled(Button)({
     position: "relative",
@@ -107,45 +108,26 @@ const TableHeaderCell = styled(TableCell)({
 });
 
 
-interface TableRowData {
-    id: number;
-    paymentTransactionID: string;
-    paymentTerms: string;
-    startingDate: Date | null;
-    endingDate: string;
-    amountDue: number;
-}
-
-
-
 
 
 
 export default function Schedules() {
 
-
-    const [tableData, setTableData] = useState<TableRowData[]>([]);
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
-
-    //const [orderIDRef, setOrderIDRef] = useState('');
     const orderIDRef = useRef<TextFieldProps>(null)
-    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
 
     const [getOrderByID, createSchedule, order, isOrderFound] = useRestSchedule();
 
-     //sorting the payment transactions
-     const sortedPaymemtTransactions = order?.paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
-    
+    //sorting the payment transactions
+    const sortedPaymemtTransactions = order?.paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+
     const handleFindOrder = () => {
         //pagbutang sa isFound ot not found uy
         getOrderByID(Number(orderIDRef.current?.value))
         console.log(order)
 
-
     };
-
-   
 
 
     const handleCreateSchedules = () => {
@@ -192,16 +174,15 @@ export default function Schedules() {
     */
     };
 
-    useEffect(() => { 
+    useEffect(() => {
         handleFindOrder();
-    }, 
-    [isOrderFound, order]);
+    },
+        [isOrderFound, order]);
 
 
-    //put a snackbox on latur nalang sa pag notify nga wlaa ga na order/order not found
+    //put a snackbar on latur nalang sa pag notify nga wlaa ga na order/order not found
     return (
         <div>
-
 
             <Grid container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
                 <Grid item container sx={{ backgroundColor: 'white', width: '1000px', borderRadius: '22px', }} justifyContent={"center"}  >
@@ -286,29 +267,6 @@ export default function Schedules() {
                                                     {transaction.installmentnumber}
                                                 </TableCell>
 
-                                                {/*    <TableCell align="center"> 
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DatePicker
-                                                        slotProps={{
-                                                            textField: {
-                                                                InputProps: {
-                                                                    disableUnderline: true
-                                                                },
-                                                                // Set the variant to "standard"
-                                                                variant: "standard",
-                                                                style: { width: '50%', padding: '0 10px 0 10px' }
-
-                                                            }
-                                                        }}
-                                                        value={transaction.startingdate ? new Date(transaction.startingdate!) : null}
-                                                    //defaultValue={new Date(transaction.startingdate)}
-                                                   // format="yyyy-MM-dd"
-                                                    //onChange={(date) => setSelectedDate(date as Dayjs | null)}
-                                                    />
-
-                                                </LocalizationProvider>
-                            
-                                                </TableCell> */}
                                                 <TableCell align="center">
                                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                         <DatePicker

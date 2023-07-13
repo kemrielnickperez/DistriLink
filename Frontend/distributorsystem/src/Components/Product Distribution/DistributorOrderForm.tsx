@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Typography, Grid, Card, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Select, MenuItem, Autocomplete, styled, TextField, SelectChangeEvent, TextFieldProps, IconButton, InputProps } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
-import { useRest, IOrderedProducts, IProduct } from '../../RestCalls/OrderUseRest';
+import { useRest } from '../../RestCalls/OrderUseRest';
 import { useRestDealer } from '../../RestCalls/DealerUseRest';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import { Dayjs } from 'dayjs';
 import moment from 'moment';
+import { IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
 ;
 
 
@@ -38,10 +39,11 @@ const StyledDatePicker = styled(DatePicker)({
 
 export default function DistributorOrderForm() {
 
-  const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
+  const [newOrder ] = useRest();
 
-  const [newOrder, order,] = useRest();
   const [getDealerByID, dealer, isDealerFound] = useRestDealer();
+
+  const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
   const [products, setProducts] = useState<IProduct[]>([]);
 
@@ -58,7 +60,6 @@ export default function DistributorOrderForm() {
 
 
   const quantityRef = useRef<TextFieldProps>(null)
-  const distributionDateRef = useRef<TextFieldProps>(null)
   const penaltyRateRef = useRef<TextFieldProps>(null)
   const dealerIDRef = useRef<TextFieldProps>(null)
 
@@ -155,7 +156,6 @@ export default function DistributorOrderForm() {
   };
 
   const handleNewOrder = () => {
-
     if (isDealerFound) {
       newOrder({
         orderid: -1,
@@ -172,6 +172,7 @@ export default function DistributorOrderForm() {
       });
     }
   };
+
 
   const handleFindDealer = () => {
     getDealerByID(Number(dealerIDRef.current?.value))
