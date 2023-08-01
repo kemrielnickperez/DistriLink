@@ -28,4 +28,10 @@ public class PaymentTransactionController {
     public ResponseEntity<Object> getAllPaymentTransactions(){
         return new ResponseEntity<>(paymentTransactionService.getAllPaymentTransactions(), HttpStatus.OK);
     }
+
+    @PutMapping("/updatePaymentTransaction/{paymenttransactionid}")
+    public ResponseEntity<Object> updatePaymentTransaction(@PathVariable int paymenttransactionid, @RequestBody PaymentTransaction paymentTransaction){
+        return new ResponseEntity<>(paymentTransactionService.updatePaymentTransaction(paymenttransactionid, paymentTransaction), HttpStatus.OK);
+
+    }
 }
