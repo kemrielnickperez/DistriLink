@@ -7,7 +7,7 @@ import { IOrder, IPaymentTransaction } from "./Interfaces";
 
 
 
-export const useRestSchedule = (): [(orderid: number) => void, (paymentransaction: IPaymentTransaction) => void, IOrder | undefined, boolean | undefined] => {
+export const useRestSchedule = (): [(orderid: number) => void, (paymentransaction: IPaymentTransaction) => void, (paymentransactionid: number, paymentransaction: IPaymentTransaction) => void, IOrder | undefined, boolean | undefined] => {
 
     const [order, setOrder] = useState<IOrder>();
     const [isOrderFound, setIsOrderFound] = useState<boolean>();
@@ -35,7 +35,7 @@ export const useRestSchedule = (): [(orderid: number) => void, (paymentransactio
 
     function createSchedule(paymenttransaction: IPaymentTransaction) {
         axios.post('http://localhost:8080/paymenttransaction/createPaymentTransaction', {
-            amountdue: paymenttransaction.amountdue,
+            amountdue: paymenttransaction.amountdue.toFixed(2),
             startingdate: paymenttransaction.startingdate,
             enddate: paymenttransaction.enddate,
             installmentnumber: paymenttransaction.installmentnumber,
@@ -101,7 +101,19 @@ export const useRestSchedule = (): [(orderid: number) => void, (paymentransactio
             });
     }
 
+    function updatePaymentTransaction(paymentransactionid: number, paymentransaction: IPaymentTransaction) {
+        axios.put(`http://localhost:8080/paymenttransaction/updatePaymentTransaction/${paymentransactionid}`, paymentransaction)
+            .then((response) => {
+                
+                alert("successfully updated!")
+                
+            })
+            .catch((error) => {
+                console.error('Error updating payment transaction:', error);
+            });
+    }
 
-    return [getOrderByID, createSchedule, order, isOrderFound]
+
+    return [getOrderByID, createSchedule, updatePaymentTransaction, order, isOrderFound]
 }
 
