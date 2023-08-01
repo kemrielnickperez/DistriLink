@@ -71,7 +71,6 @@ export default function CollectorAssignment() {
 
   const rows = orders.map((order) => {
     
-    console.log(typeof(order.distributiondate))
     return {
       id: order.orderid,
       orderID: order.orderid,
