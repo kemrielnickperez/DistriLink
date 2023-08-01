@@ -11,6 +11,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { format } from 'date-fns';
 import { IPaymentTransaction } from "../../RestCalls/Interfaces";
+import moment from "moment";
+
+
 
 const StyledButton = styled(Button)({
     position: "relative",
@@ -113,11 +116,23 @@ const TableHeaderCell = styled(TableCell)({
 
 export default function Schedules() {
 
+
+    const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>();
+    const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>();
+    const [startDateModified, setStartDateModified] = useState(false);
+    const [endDateModified, setEndDateModified] = useState(false);
+
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+
 
     const orderIDRef = useRef<TextFieldProps>(null)
 
-    const [getOrderByID, createSchedule, order, isOrderFound] = useRestSchedule();
+    const [getOrderByID, createSchedule, updatePaymentTransaction, order, isOrderFound] = useRestSchedule();
+
+    //sorting the payment transactions
+    const sortedPaymemtTransactions = order?.paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+
+
 
     //sorting the payment transactions
     const sortedPaymemtTransactions = order?.paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
@@ -125,7 +140,7 @@ export default function Schedules() {
     const handleFindOrder = () => {
         //pagbutang sa isFound ot not found uy
         getOrderByID(Number(orderIDRef.current?.value))
-        console.log(order)
+        // console.log(order)
 
     };
 
@@ -146,20 +161,96 @@ export default function Schedules() {
     };
 
 
-    const handleSaveClick = (index: number) => {
-        console.log(order)
+    /* const handleStartDateUpdate = (startingDate: Dayjs, newValue: Dayjs | null): void => {
+       
+        
+         if (!selectedStartDate?.isSame(startingDate)) {
+            setSelectedStartDate(newValue);
 
-        /*   const paymentTerms = order?.paymentterms as number;
+        }
+        else{
+            setSelectedStartDate(startingDate);
+        } 
+    };
+
+
+    const handleEndDateUpdate = (endDate: Dayjs, newValue: Dayjs | null): void => {
+         if (!selectedEndDate?.isSame(endDate)) {
+            setSelectedEndDate(newValue);
+        }
+        else{
+            setSelectedStartDate(endDate);
+        } 
+    }; */
+
+
+    const handleStartDateUpdate = (newValue: Dayjs | null): void => {
+
+        setSelectedStartDate(newValue);
+        setStartDateModified(true);
+    };
+
+    const handleEndDateUpdate = (newValue: Dayjs | null): void => {
+
+        setSelectedEndDate(newValue);
+        setEndDateModified(true);
+    };
+
+
+    const handleSaveClick = (transaction: IPaymentTransaction) => {
+
+        const startingDateFromDB = dayjs(transaction.startingdate);
+        const endDateFromDB = dayjs(transaction.enddate);
+
+        const updatedStartingDate = startDateModified ? selectedStartDate : startingDateFromDB;
+        const updatedEndDate = endDateModified ? selectedEndDate : endDateFromDB;
+
+
+        if (updatedStartingDate?.toString() === 'Invalid Date') {
+            alert('Please select a start date.');
+            return;
+        }
+
+        if (updatedEndDate?.toString() === 'Invalid Date') {
+            alert('Please select an end date.');
+            return;
+        }
+
+        updatePaymentTransaction(
+            transaction.paymenttransactionid,
+            {
+                paymenttransactionid: transaction.paymenttransactionid,
+                amountdue: transaction.amountdue,
+                startingdate: updatedStartingDate?.format('YYYY-MM-DD') || '',
+                enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
+                installmentnumber: transaction.installmentnumber,
+                order: transaction.order
+            }
+        )
+
+        setStartDateModified(false);
+        setEndDateModified(false);
+
+
+        /* 
+
+        // const selectedRow = Array[index];
+        // console.log(selectedDate?.format("YYYY-MM-DD"))
+
+
+         tableData.map((transaction, index) => (
+             // Access values from each row
+             const paymentTransactionId = transaction.paymenttransactionid;
+             const installmentNumber = transaction.installmentnumber;
+             const startingDate = transaction.startingdate;
+             const endDate = transaction.enddate;
+             const amountDue = transaction.amountdue; 
+        // updatePaymentTransaction(paymentTransactionId.)
+        // You can access the starting date and ending date values using the appropriate state or variable that holds the date values for each row.
+
+          const paymentTerms = order?.paymentterms as number;
      
           const selectedRow = Array.from({ length: paymentTerms })[index];
-     
-     
-     
-     
-          // Access the values from the selected row
-          const paymentTransactionId = `Row ${index + 1}`;
-          const installmentNumber = paymentTerms - (paymentTerms - (index + 1));
-          // You can access the starting date and ending date values using the appropriate state or variable that holds the date values for each row.
      
           const amountDue = order?.orderamount! / paymentTerms;
      
@@ -173,6 +264,7 @@ export default function Schedules() {
           });  
     */
     };
+
 
     useEffect(() => {
         handleFindOrder();
@@ -280,7 +372,8 @@ export default function Schedules() {
                                                                 }
                                                             }}
                                                             value={dayjs(transaction.startingdate)}
-                                                        // onChange={(date) => handleDateChange(date, index)}
+                                                            onChange={(e) => handleStartDateUpdate(e!)}
+
 
                                                         />
                                                     </LocalizationProvider>
@@ -302,17 +395,30 @@ export default function Schedules() {
                                                                 }
                                                             }}
                                                             value={dayjs(transaction.enddate)}
-                                                        // onChange={(date) => setSelectedDate(date as Dayjs | null)}
+                                                            onChange={(e) => handleEndDateUpdate(e!)}
+
                                                         />
 
                                                     </LocalizationProvider>
                                                 </TableCell>
 
                                                 <TableCell>
-                                                    {order?.orderamount! / order?.paymentterms!}
+                                                    {/* 
+                                                    not putting this in a textfield since di man ko mo follow atong editable na amount
+                                                    <TextField 
+                                                        placeholder={String(order?.orderamount! / order?.paymentterms!)}
+                                                        InputProps={{ disableUnderline: true }} 
+                                                        variant="standard"
+                                                    >
+                                
+                                                    </TextField> */}
+                                                    {transaction.amountdue.toFixed(2)}
+
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Button onClick={() => handleSaveClick(index)}> Save </Button>
+                                                    <Button
+                                                        onClick={() => handleSaveClick(transaction)}
+                                                    > Update </Button>
                                                 </TableCell>
                                             </TableRow>
 
