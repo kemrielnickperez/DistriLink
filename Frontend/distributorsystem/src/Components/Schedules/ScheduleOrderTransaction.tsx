@@ -133,10 +133,6 @@ export default function Schedules() {
     const sortedPaymemtTransactions = order?.paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
 
-
-    //sorting the payment transactions
-    const sortedPaymemtTransactions = order?.paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
-
     const handleFindOrder = () => {
         //pagbutang sa isFound ot not found uy
         getOrderByID(Number(orderIDRef.current?.value))
