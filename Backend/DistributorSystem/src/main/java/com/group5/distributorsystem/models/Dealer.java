@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
-
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.Set;
 @Entity
 @Table(name = "dealers")
 public class Dealer {
@@ -24,7 +26,7 @@ public class Dealer {
     private String lastname;
 
     @Column
-    private String birthdate;
+    private LocalDate birthdate;
 
     @Column
     private String gender;
@@ -57,7 +59,7 @@ public class Dealer {
     private double creditlimit;
 
     @Column
-    private String submissiondate;
+    private LocalDate submissiondate;
 
     @Column
     private String attachments;
@@ -71,7 +73,7 @@ public class Dealer {
     }
 
 
-    public Dealer(int dealerid, String firstname, String middlename, String lastname, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, String submissiondate, String attachments, Set<Order> orders) {
+    public Dealer(int dealerid, String firstname, String middlename, String lastname, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, String attachments, Set<Order> orders) {
         this.dealerid = dealerid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -124,11 +126,11 @@ public class Dealer {
         this.lastname = lastname;
     }
 
-    public String getBirthdate() {
+    public LocalDate getBirthdate() {
         return birthdate;
     }
 
-    public void setBirthdate(String birthdate) {
+    public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
     }
 
@@ -212,11 +214,11 @@ public class Dealer {
         this.creditlimit = creditlimit;
     }
 
-    public String getSubmissiondate() {
+    public LocalDate getSubmissiondate() {
         return submissiondate;
     }
 
-    public void setSubmissiondate(String submissiondate) {
+    public void setSubmissiondate(LocalDate submissiondate) {
         this.submissiondate = submissiondate;
     }
 
