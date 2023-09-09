@@ -112,7 +112,6 @@ export default function DealerRegistration(){
            businessaddress: String(businessaddressRef.current?.value),
            businesstin: String(tinnumberRef.current?.value),
            creditlimit:0,
-          // submissiondate:moment().format('YYYY-MM-DD'),
           submissiondate:moment().format('YYYY-MM-DD'), 
           attachments:'dealer.png'
         });
