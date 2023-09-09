@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="09407ee5-de1b-4af2-bf6b-1bb6cfac1aa2" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/DistributorSystem/src/main/java/com/group5/distributorsystem/models/Dealer.java" beforeDir="false" afterPath="$PROJECT_DIR$/DistributorSystem/src/main/java/com/group5/distributorsystem/models/Dealer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DistributorSystem/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/DistributorSystem/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Collector Assignment/AssignmentList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Collector Assignment/AssignmentList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Product Distribution/DistributorOrderForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Product Distribution/DistributorOrderForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Profiles/DealerProfile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Profiles/DealerProfile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Registrations/DealerRegistration.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Registrations/DealerRegistration.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Registrations/EmployeeRegistration.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Registrations/EmployeeRegistration.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/Contents.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/Contents.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/NavBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/NavBar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/Routes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/Routes.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/RestCalls/DealerUseRest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/RestCalls/DealerUseRest.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/RestCalls/EmployeeUseRest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/RestCalls/EmployeeUseRest.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/RestCalls/Interfaces.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/RestCalls/Interfaces.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/RestCalls/OrderUseRest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/RestCalls/OrderUseRest.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="2SmyFSQrepLjnBaSSsaJGJiKV4X" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="terminal" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="09407ee5-de1b-4af2-bf6b-1bb6cfac1aa2" name="Changes" comment="" />
+      <created>1689765947142</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1689765947142</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
