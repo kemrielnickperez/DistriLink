@@ -1,7 +1,7 @@
 export default function DealerRegistration(){
     return( <div>
         <header>
-            <h1> Sign  </h1>
+            <h1> Sign  up</h1>
         </header>
     </div>
 )
