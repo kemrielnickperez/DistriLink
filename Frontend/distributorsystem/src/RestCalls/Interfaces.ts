@@ -33,7 +33,8 @@ export interface IEmployee {
     contactnumber: string,
     iscashier: boolean,
     issalesassociate: boolean,
-    iscollector: boolean
+    iscollector: boolean,
+    order: IOrder
 }
 
 
