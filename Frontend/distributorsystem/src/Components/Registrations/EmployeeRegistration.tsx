@@ -65,7 +65,7 @@ export default function EmployeeRegistration(){
         marginTop: "10px", 
         marginLeft: "100px",
       });
-      const[newEmployee, getCollectorByID, employee, collector ]=useRestEmployee();
+      const[ getCollectorByID, employee ]=useRestEmployee();
       const [selectedBDate, setSelectedBDate] = useState<Dayjs | null>(null);
       const [setGender1, setSelectedGender1]=useState('');
       const [isCashierSelected, setIsCashierSelected] = useState<boolean>(true);
@@ -90,7 +90,7 @@ export default function EmployeeRegistration(){
       };
 
       const handleNewEmployee=()=>{
-        newEmployee({
+       /* newEmployee({
             employeeid:-1,
             firstname: String(firstnameRef.current?.value),
             middlename: String(middlenameRef.current?.value),
@@ -103,7 +103,7 @@ export default function EmployeeRegistration(){
             iscashier: isCashierSelected,
             issalesassociate:isSalesAssociateSelected,
             iscollector:isCollectorSelected,
-        });
+        });*/
       };
     
     return( 
