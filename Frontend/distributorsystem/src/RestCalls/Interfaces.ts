@@ -33,7 +33,8 @@ export interface IEmployee {
     contactnumber: string,
     iscashier: boolean,
     issalesassociate: boolean,
-    iscollector: boolean
+    iscollector: boolean,
+    collectionPaymentReceipts: IDirectPaymentReceipt[] | null
 }
 
 
@@ -71,5 +72,17 @@ export interface IPaymentTransaction {
     startingdate: string;
     enddate: string;
     installmentnumber: number;
+    paid: boolean;
     order: IOrder;
+}
+
+export interface IDirectPaymentReceipt {
+    receiptid: number,
+    remarks: string,
+    datepaid: string,
+    amountpaid: number,
+    paymenttype: string,
+   /*   cashier: IEmployee,  */
+    paymenttransaction: IPaymentTransaction, 
+       
 }
