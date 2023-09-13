@@ -1,74 +1,83 @@
-import { Button, FormControlLabel, Grid, Radio, RadioGroup, TextField, TextFieldProps, Typography, styled } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, Grid, Radio, RadioGroup, TextField, TextFieldProps, Typography, styled } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dayjs } from "dayjs";
+
 import { ChangeEvent, useRef, useState } from "react";
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
+import { Dayjs } from "dayjs";
+const TypographyHeader= styled(Typography)({
+    textAlign: 'left', 
+    fontWeight: 'bold',
+    fontSize: 40, 
+    color: 'white', 
+    marginTop: "20px", 
+    marginLeft: "40px",
+});
+const TypographyLabel= styled(Typography)({
+    textAlign: 'left',  
+    fontSize: 20, 
+    color: 'white',
+    marginTop: "30px", 
+    marginLeft: "100px",
+    display: 'flex',
+});
+const TypographyLabelB= styled(Typography)({
+    textAlign: 'center',  
+    fontSize: 20, 
+    color: 'white',
+    marginTop: "30px", 
+    marginLeft: "390px",
+    display: 'flex',
+});
+const TypographyUpload=styled(Typography)({
+    textAlign: 'center',  
+    fontSize: 20, 
+    color: 'white',
+    marginTop: "0px", 
+    marginLeft: "100px",
+    display: 'flex',
+});
+const TypographyRadio= styled(Typography)({
+    textAlign: 'left',  
+    fontSize: 20, 
+    color: 'white', 
+    display: 'flex',
+    marginRight:'30px'
+});
+const StyledTextField = styled(TextField)({
+    backgroundColor: "#ffffff", 
+    borderRadius: "22px", 
+    input: {
+      padding: "12px",
+        color: "black"
 
+    },
+    width: '270px',
+    marginTop: "10px", 
+    marginLeft: "100px",
+  });
+  const StyledTextField1 = styled(TextField)({
+    backgroundColor: "#ffffff", 
+    borderRadius: "22px", 
+    width: '270px',
+    marginTop: "10px", 
+    marginLeft: "100px",
+  });
+const StyledDatePicker = styled(DatePicker)({
+    backgroundColor: "#ffffff", borderRadius: "22px", input: {
+      padding: "12px"
+    },
+    width: '250px',
+    marginTop: "10px", 
+    marginLeft: "100px",
+  });
 export default function EmployeeRegistration(){
-    const TypographyHeader= styled(Typography)({
-        textAlign: 'left', 
-        fontWeight: 'bold',
-        fontSize: 40, 
-        color: 'white', 
-        marginTop: "20px", 
-        marginLeft: "40px",
-    });
-    const TypographyLabel= styled(Typography)({
-        textAlign: 'left',  
-        fontSize: 20, 
-        color: 'white',
-        marginTop: "30px", 
-        marginLeft: "100px",
-        display: 'flex',
-    });
-    const TypographyLabelB= styled(Typography)({
-        textAlign: 'center',  
-        fontSize: 20, 
-        color: 'white',
-        marginTop: "30px", 
-        marginLeft: "390px",
-        display: 'flex',
-    });
-    const TypographyUpload=styled(Typography)({
-        textAlign: 'center',  
-        fontSize: 20, 
-        color: 'white',
-        marginTop: "0px", 
-        marginLeft: "100px",
-        display: 'flex',
-    });
-    const TypographyRadio= styled(Typography)({
-        textAlign: 'left',  
-        fontSize: 20, 
-        color: 'white', 
-        display: 'flex',
-        marginRight:'30px'
-    });
-    const StyledTextField = styled(TextField)({
-        backgroundColor: "#ffffff", 
-        borderRadius: "22px", 
-        input: {
-          padding: "12px",
-            color: "black"
-    
-        },
-        width: '270px',
-        marginTop: "10px", 
-        marginLeft: "100px",
-      });
-    const StyledDatePicker = styled(DatePicker)({
-        backgroundColor: "#ffffff", borderRadius: "22px", input: {
-          padding: "12px"
-        },
-        width: '250px',
-        marginTop: "10px", 
-        marginLeft: "100px",
-      });
-      const[ getCollectorByID, employee ]=useRestEmployee();
+
+      const[ newEmployee ,getCollectorByID, collector ]=useRestEmployee();
       const [selectedBDate, setSelectedBDate] = useState<Dayjs | null>(null);
       const [setGender1, setSelectedGender1]=useState('');
-      const [isCashierSelected, setIsCashierSelected] = useState<boolean>(true);
+      const [gender, setGender] = useState<string>('');
+      const [isCashierSelected, setIsCashierSelected] = useState<boolean>(false);
       const [isSalesAssociateSelected, setIsSalesAssociateSelected] = useState<boolean>(false);
       const [isCollectorSelected, setIsCollectorSelected] = useState<boolean>(false)    
       const firstnameRef= useRef<TextFieldProps>(null)
@@ -82,28 +91,53 @@ export default function EmployeeRegistration(){
         setSelectedGender1(event.target.value);
       };
       
-      const handleApplyAs=(event:ChangeEvent<HTMLInputElement>)=>{
+      const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setGender(event.target.value);
+        console.log(lastnameRef.current?.value);
+      };
+
+    /*   const handleApplyAs=(event:ChangeEvent<HTMLInputElement>)=>{
         const targetValue = event.target.value;
         setIsCashierSelected(targetValue === 'cashier');
         setIsSalesAssociateSelected(targetValue === 'sales-associate');
         setIsCollectorSelected(targetValue === 'collector');
+      }; */
+
+      const handleCashierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        setIsCashierSelected(event.target.checked);
+        console.log(event.target.checked);
+        console.log(isCashierSelected);
+      };
+    
+      const handleSalesAssociateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsSalesAssociateSelected(event.target.checked);
+        console.log(event.target.checked);
+      };
+    
+      const handleCollectorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsCollectorSelected(event.target.checked);
+        console.log(event.target.checked);
       };
 
+      
+
       const handleNewEmployee=()=>{
-       /* newEmployee({
-            employeeid:-1,
-            firstname: String(firstnameRef.current?.value),
-            middlename: String(middlenameRef.current?.value),
-            lastname: String(lastnameRef.current?.value),
-            birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
-            gender:setGender1,
-            currentaddress:String(currentaddressRef.current?.value),
-            permanentaddress:String(permanentaddressRef.current?.value),
-            contactnumber: String(contactnumberRef.current?.value),
-            iscashier: isCashierSelected,
-            issalesassociate:isSalesAssociateSelected,
-            iscollector:isCollectorSelected,
-        });*/
+       newEmployee({
+           employeeid: -1,
+           firstname: String(firstnameRef.current?.value),
+           middlename: String(middlenameRef.current?.value),
+           lastname: String(lastnameRef.current?.value),
+           birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
+           gender: gender,
+           currentaddress: String(currentaddressRef.current?.value),
+           permanentaddress: String(permanentaddressRef.current?.value),
+           contactnumber: String(contactnumberRef.current?.value),
+           is_cashier: isCashierSelected,
+           is_salesassociate: isSalesAssociateSelected,
+           is_collector: isCollectorSelected,
+           order: null
+       });
       };
     
     return( 
@@ -115,35 +149,37 @@ export default function EmployeeRegistration(){
                     <Grid container spacing={20} sx={{ display: "flex", }}>
                            <Grid item>
                                     <TypographyLabel>First Name</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={firstnameRef}/>
+                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={firstnameRef} />
                             </Grid>
 
                             <Grid item> 
                                     <TypographyLabel> Permanent Address</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={currentaddressRef}/>
+                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={currentaddressRef} />
                             </Grid>
                     </Grid>
                     <Grid container spacing={20} sx={{ display: "flex", }}>
                             <Grid item>
                                     <TypographyLabel>Middle Name</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={middlenameRef}/>
+                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={middlenameRef} />
+
+                                    
                             </Grid>
 
                             <Grid item> 
                                     <TypographyLabel>Contact No.</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={contactnumberRef}/>
+                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={contactnumberRef} />
                             </Grid>
                     </Grid>
                     <Grid container spacing={20} sx={{ display: "flex", }}>
                             <Grid item>
                                     <TypographyLabel>Last Name</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={lastnameRef}/>
+                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={lastnameRef} />
                             </Grid>
 
                             <Grid item>
                             <TypographyLabel>Gender</TypographyLabel>
                             <div style={{ margin:"5px 20px 0px 120px"}}>
-                                    <RadioGroup
+                                    {/* <RadioGroup
                                         row
                                         aria-labelledby="demo-row-radio-buttons-group-label"
                                         value={setGender1}
@@ -160,6 +196,24 @@ export default function EmployeeRegistration(){
                                         }}
                                     >
                                         <FormControlLabel value="male" control={<Radio />} label={<TypographyRadio>Male</TypographyRadio>}/>
+                                        <FormControlLabel value="female" control={<Radio />} label={<TypographyRadio>Female</TypographyRadio>} />
+                                    </RadioGroup> */}
+                                     <RadioGroup
+                                        aria-label="gender"
+                                        name="gender"
+                                        value={gender}
+                                        onChange={handleGenderChange}
+                                        sx={{
+                                            color:"white", 
+                                            '& .MuiSvgIcon-root': {
+                                            fontSize: 30,
+                                            color:"white",
+                                            
+                                            
+                                            },
+                                        }}
+                                    >
+                                        <FormControlLabel value="male" control={<Radio />} label={<TypographyRadio>Male</TypographyRadio>} />
                                         <FormControlLabel value="female" control={<Radio />} label={<TypographyRadio>Female</TypographyRadio>} />
                                     </RadioGroup>
                             </div>
@@ -190,7 +244,7 @@ export default function EmployeeRegistration(){
                             <TypographyLabel>Apply as:</TypographyLabel>
                             <div style={{ margin:"5px 20px 0px 120px"}}>
                                     
-                                    <RadioGroup
+                                   {/*  <RadioGroup
                                         row
                                         aria-labelledby="demo-row-radio-buttons-group-label"
                                         value={
@@ -214,14 +268,49 @@ export default function EmployeeRegistration(){
                                         <FormControlLabel value="cashier" control={<Radio />} label={<TypographyRadio>Cashier</TypographyRadio>}/>
                                         <FormControlLabel value="sales-associate" control={<Radio />} label={<TypographyRadio>Sales Associate</TypographyRadio>} />
                                         <FormControlLabel value="collector" control={<Radio />} label={<TypographyRadio>Collector</TypographyRadio>} />
-                                    </RadioGroup>
+                                    </RadioGroup> */}
+                                        <FormControlLabel
+                                                control={
+                                                <Checkbox
+                                                    checked={isCashierSelected}
+                                                    onChange={handleCashierChange}
+                                                    name="isCashier"
+                                                    color="primary"
+                                                />
+                                                }
+                                                label="Cashier"
+                                            />
+                                            <FormControlLabel
+                                                control={
+                                                <Checkbox
+                                                    checked={isSalesAssociateSelected}
+                                                    onChange={handleSalesAssociateChange}
+                                                    name="isSalesAssociate"
+                                                    color="primary"
+                                                />
+                                                }
+                                                label="Sales Associate"
+                                            />
+                                            <FormControlLabel
+                                                control={
+                                                <Checkbox
+                                                    checked={isCollectorSelected}
+                                                    onChange={handleCollectorChange}
+                                                    name="isCollector"
+                                                    color="primary"
+                                                />
+                                                }
+                                                label="Collector"
+                                            />
                             </div>
                             </Grid>
                              </Grid>
                              <Grid container spacing={20} sx={{ display: "flex", }}>
                             <Grid item> 
                                     <TypographyLabel>Current Address</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={permanentaddressRef}/>
+                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={permanentaddressRef} />
+
+                                    
                             </Grid>
                     </Grid>
                     

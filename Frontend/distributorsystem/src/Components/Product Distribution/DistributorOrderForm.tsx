@@ -41,7 +41,7 @@ export default function DistributorOrderForm() {
 
   const [newOrder ] = useRest();
 
-  const [getDealerByID, dealer, isDealerFound] = useRestDealer();
+  const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
 
   const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 

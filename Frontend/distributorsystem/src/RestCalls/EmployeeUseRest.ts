@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { IEmployee } from "./Interfaces";
+import { multiSectionDigitalClockClasses } from "@mui/x-date-pickers";
 
 
 
@@ -14,6 +15,7 @@ export const useRestEmployee = (): [(employees: IEmployee) => void,(collectorID:
     const [employees, setEmployees] = useState<IEmployee>();
 
     function newEmployee(employees: IEmployee) {
+    
         axios.post('http://localhost:8080/employee/registerEmployee', {
             firstname : employees.firstname,
             middlename : employees.middlename,
@@ -23,10 +25,10 @@ export const useRestEmployee = (): [(employees: IEmployee) => void,(collectorID:
             currentaddress : employees.currentaddress,
             permanentaddress : employees.permanentaddress,
             contactnumber : employees.contactnumber,
-            iscashier : employees.iscashier,
-            issalesassociate : employees.issalesassociate,
-            iscollector : employees.iscollector,
-            orders :{
+            is_cashier : employees.is_cashier,
+            is_salesassociate : employees.is_salesassociate,
+            is_collector : employees.is_collector,
+            orders : null,/* {
                 distributordate :employees.order.distributiondate,
                 penaltyrate: employees.order.penaltyrate,
             paymentterms: employees.order.paymentterms,
@@ -50,10 +52,10 @@ export const useRestEmployee = (): [(employees: IEmployee) => void,(collectorID:
                 creditlimit: employees.order.dealer.creditlimit,
                 submissiondate: employees.order.dealer.submissiondate,
                 attachments: employees.order.dealer.attachments,
-            },
+            }
             collector: null, 
             paymentTransactions: null,
-            }
+            } */
         })
             .then((response) => {
                 console.log(response.data);
@@ -78,8 +80,8 @@ export const useRestEmployee = (): [(employees: IEmployee) => void,(collectorID:
             }); 
     }
 
-/* kkk */
+   
 
 
-    return [newEmployee, getCollectorByID, collector]
+    return [newEmployee, getCollectorByID, collector ]
 }
