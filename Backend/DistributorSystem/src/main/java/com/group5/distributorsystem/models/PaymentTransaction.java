@@ -2,7 +2,7 @@ package com.group5.distributorsystem.models;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -27,23 +27,31 @@ public class PaymentTransaction {
     @Column
     private int installmentnumber;
 
+    @Column
+    private boolean isPaid;
+
     @ManyToOne
     @JoinColumn(name = "orderid", nullable = true)
-    @JsonBackReference
+    @JsonBackReference("order-paymenttransactions-reference")
     private Order order;
+
+    @OneToOne(mappedBy = "paymenttransaction")
+    @JsonBackReference("paymentreceipt-paymenttransactions-reference")
+    private PaymentReceipt paymentreceipt;
 
     public PaymentTransaction() {
     }
 
-    public PaymentTransaction(int paymenttransactionid, double amountdue, LocalDate startingdate, LocalDate enddate, int installmentnumber, Order order) {
+    public PaymentTransaction(int paymenttransactionid, double amountdue, LocalDate startingdate, LocalDate enddate, int installmentnumber, boolean isPaid, Order order, PaymentReceipt paymentreceipt) {
         this.paymenttransactionid = paymenttransactionid;
         this.amountdue = amountdue;
         this.startingdate = startingdate;
         this.enddate = enddate;
         this.installmentnumber = installmentnumber;
+        this.isPaid = isPaid;
         this.order = order;
+        this.paymentreceipt = paymentreceipt;
     }
-
 
     public int getPaymenttransactionid() {
         return paymenttransactionid;
@@ -85,6 +93,22 @@ public class PaymentTransaction {
         this.installmentnumber = installmentnumber;
     }
 
+    public boolean isPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(boolean paid) {
+        isPaid = paid;
+    }
+
+    public PaymentReceipt getPaymentreceipt() {
+        return paymentreceipt;
+    }
+
+    public void setPaymentreceipt(PaymentReceipt paymentreceipt) {
+        this.paymentreceipt = paymentreceipt;
+    }
+
     public Order getOrder() {
         return order;
     }
@@ -92,4 +116,5 @@ public class PaymentTransaction {
     public void setOrder(Order order) {
         this.order = order;
     }
+
 }
