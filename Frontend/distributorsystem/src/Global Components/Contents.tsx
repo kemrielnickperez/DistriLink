@@ -11,6 +11,7 @@ export default function Content() {
         '/dashboard':'Dashboard',
         '/assignmentCollector': 'Collector Assignment',
         '/dealerRegistration':'Dealer Registration',
+        '/dealerApproval':'Dealer Approval',
 
         '/schedules':'Payment Transaction Schedule',
         '/orderTransactionDetails': 'Order Transaction Details',
@@ -20,6 +21,9 @@ export default function Content() {
         '/distributorOrderForm':'Distribution Order Form',
         '/orderConfirmation': 'Order Confrimation',
         '/paymentSummary':'Payment Summary',
+
+        '/dealerProfile':'Dealer Profile',
+      // '/dealerApproval':'Dealer Approval'
         
     };
     const navpage=navPageMapping[path] || 'Unknown';

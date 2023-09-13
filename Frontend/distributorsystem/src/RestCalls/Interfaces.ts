@@ -31,10 +31,12 @@ export interface IEmployee {
     currentaddress: string,
     permanentaddress: string,
     contactnumber: string,
-    iscashier: boolean,
-    issalesassociate: boolean,
-    iscollector: boolean,
+    is_cashier: boolean,
+    is_salesassociate: boolean,
+    is_collector: boolean,
+    order: IOrder| null
     collectionPaymentReceipts: IDirectPaymentReceipt[] | null
+
 }
 
 

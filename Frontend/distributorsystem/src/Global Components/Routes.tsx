@@ -13,7 +13,6 @@ import ScheduleOrderTransaction from "../Components/Schedules/ScheduleOrderTrans
 import Schedules from "../Components/Schedules/ScheduleOrderTransaction";
 import DistributorOrderForm from "../Components/Product Distribution/DistributorOrderForm";
 import DealerOrderForm from "../Components/Product Distribution/DealerOrderForm";
-import DealaerProfile from "../Components/Profiles/DealerProfile";
 import SignIn from "../Components/Sign-in/SignIn";
 import PaymentTransactionDetails from "../Components/Payments/PaymentTransactionDetails";
 import OrderConfirmation from "../Components/Product Distribution/OrderConfirmation";
@@ -21,6 +20,8 @@ import RecordDirectPayment from "../Components/Payments/RecordDirectPayment";
 import Content from "./Contents";
 import DataGridOrder from "../Components/Collector Assignment/CollectorAssignment";
 
+import DealerProfile from '../Components/Profiles/DealerProfile';
+import DealerApproval from "../Components/Approvals/DealerApproval";
 export default function MainRoutes(){
     return(
         <Routes>
@@ -34,16 +35,19 @@ export default function MainRoutes(){
                 {/* <Route path="/orderConfirmation" element={<orderConfirmation/>}/> */}
                 {/* <Route path="/dealerTransactionDetails" element={<DealerTransactionDetails/>}/> */}
                 {/* <Route path="/productDistributionList" element={<ProductDistributionList/>}/> */}
-                <Route path="/dealerProfileDetails" element={<DealaerProfile/>}/>
+                       
                 {/* <Route path="/dealerProfileList" element={<DealerProfileList/>}/> */}
                 {/* <Route path="/employeeProfileDetails" element={<EmployeeProfileDetails/>}/>
                 <Route path="/employeeProfileList" element={<EmployeeProfileList/>}/> */}
+                <Route path="/dealerProfile" element={<DealerProfile/>}/>        
                 <Route path="/dealerRegistration" element={<DealerRegistration/>}/>
                 <Route path="/employeeRegistrationn" element={<EmployeeRegistration/>}/>
                 <Route path="/schedules" element={<Schedules/>}/>
                 <Route path="/orderTransactionDetails" element={<PaymentTransactionDetails/>}></Route>
                 <Route path="/signin" element={<SignIn/>}/>
                 <Route path="/recordDirectPayment" element={<RecordDirectPayment/>}/>
+                <Route path="/dealerApproval" element={<DealerApproval/>}/>
+                <Route path="/employeeRegistration" element={<EmployeeRegistration/>}/>
             </Route>
          </Routes>  
    );

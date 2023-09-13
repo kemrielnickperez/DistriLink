@@ -76,9 +76,9 @@ export const useRestSchedule = (): [(orderid: number) => void, (paymentransactio
                     currentaddress: paymenttransaction.order.collector?.currentaddress,
                     permanentaddress: paymenttransaction.order.collector?.permanentaddress,
                     contactnumber: paymenttransaction.order.collector?.contactnumber,
-                    iscashier: paymenttransaction.order.collector?.iscashier,
-                    issalesassociate: paymenttransaction.order.collector?.issalesassociate,
-                    iscollector: paymenttransaction.order.collector?.iscollector
+                    iscashier: paymenttransaction.order.collector?.is_cashier,
+                    issalesassociate: paymenttransaction.order.collector?.is_salesassociate,
+                    iscollector: paymenttransaction.order.collector?.is_collector
                 }
             }
         })
