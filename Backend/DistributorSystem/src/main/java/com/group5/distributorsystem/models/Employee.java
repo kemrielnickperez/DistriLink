@@ -1,7 +1,9 @@
 package com.group5.distributorsystem.models;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -48,13 +50,22 @@ public class Employee {
     private boolean is_collector;
 
     @OneToMany(mappedBy = "collector")
-    @JsonIgnore
+    //@JsonBackReference("order-employee-reference")
     private Set<Order> orders;
+
+    //comment sani kay murag nagdala og panganib
+    /*@OneToMany(mappedBy = "cashier")
+    @JsonManagedReference("employee-paymentreceipts-reference")
+    private Set<PaymentReceipt> paymentReceipts;*/
+
+    @OneToMany(mappedBy = "collector")
+    @JsonManagedReference("employee-collectionpaymenttransactions-reference")
+    private Set<CollectionPaymentReceipt> collectionPaymentReceipts;
 
     public Employee() {
     }
 
-    public Employee(int employeeID, String firstname, String middlename, String lastname, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, Set<Order> orders) {
+    public Employee(int employeeID, String firstname, String middlename, String lastname, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, Set<Order> orders, /*Set<PaymentReceipt> paymentReceipts,*/ Set<CollectionPaymentReceipt> collectionPaymentReceipts) {
         this.employeeID = employeeID;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -68,6 +79,8 @@ public class Employee {
         this.is_salesassociate = is_salesassociate;
         this.is_collector = is_collector;
         this.orders = orders;
+        //this.paymentReceipts = paymentReceipts;
+        this.collectionPaymentReceipts = collectionPaymentReceipts;
     }
 
     public int getEmployeeID() {
@@ -172,5 +185,21 @@ public class Employee {
 
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
+    }
+
+    /*public Set<PaymentReceipt> getPaymentReceipts() {
+        return paymentReceipts;
+    }
+
+    public void setPaymentReceipts(Set<PaymentReceipt> paymentReceipts) {
+        this.paymentReceipts = paymentReceipts;
+    }*/
+
+    public Set<CollectionPaymentReceipt> getCollectionPaymentReceipts() {
+        return collectionPaymentReceipts;
+    }
+
+    public void setCollectionPaymentReceipts(Set<CollectionPaymentReceipt> collectionPaymentReceipts) {
+        this.collectionPaymentReceipts = collectionPaymentReceipts;
     }
 }
