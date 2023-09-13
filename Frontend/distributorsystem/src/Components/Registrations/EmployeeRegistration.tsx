@@ -302,7 +302,7 @@ export default function EmployeeRegistration(){
                                                 }
                                                 label="Collector"
                                             />
-                            </div>
+                            </div>       
                             </Grid>
                              </Grid>
                              <Grid container spacing={20} sx={{ display: "flex", }}>
