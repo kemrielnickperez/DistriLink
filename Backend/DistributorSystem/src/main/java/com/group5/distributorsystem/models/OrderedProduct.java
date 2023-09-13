@@ -26,7 +26,7 @@ public class OrderedProduct {
 
     @ManyToOne
     @JoinColumn(name = "orderid", nullable = true)
-    @JsonBackReference
+    @JsonBackReference("order-orderedproducts-reference")
     private Order order;
 
     public OrderedProduct() {

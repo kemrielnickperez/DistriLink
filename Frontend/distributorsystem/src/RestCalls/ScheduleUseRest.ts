@@ -39,8 +39,9 @@ export const useRestSchedule = (): [(orderid: number) => void, (paymentransactio
             startingdate: paymenttransaction.startingdate,
             enddate: paymenttransaction.enddate,
             installmentnumber: paymenttransaction.installmentnumber,
+            paid: paymenttransaction.paid,
             order: {
-                orderid: paymenttransaction.order.orderid,
+                orderid: paymenttransaction?.order?.orderid!,
                 distributiondate: paymenttransaction.order.distributiondate,
                 penaltyrate: paymenttransaction.order.penaltyrate,
                 paymentterms: paymenttransaction.order.paymentterms,

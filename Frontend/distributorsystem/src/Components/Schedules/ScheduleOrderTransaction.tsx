@@ -150,6 +150,7 @@ export default function Schedules() {
                 startingdate: '',
                 enddate: '',
                 installmentnumber: i,
+                paid: false,
                 order: order!,
             });
         }
@@ -220,6 +221,7 @@ export default function Schedules() {
                 startingdate: updatedStartingDate?.format('YYYY-MM-DD') || '',
                 enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
                 installmentnumber: transaction.installmentnumber,
+                paid: transaction.paid,
                 order: transaction.order
             }
         )

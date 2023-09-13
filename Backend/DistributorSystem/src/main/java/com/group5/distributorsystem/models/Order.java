@@ -34,12 +34,12 @@ public class Order {
     private double orderamount;
 
     @OneToMany(mappedBy = "order")
-    @JsonManagedReference
+    @JsonManagedReference("order-orderedproducts-reference")
     private Set<OrderedProduct> orderedProducts;
 
 
     @OneToMany(mappedBy = "order")
-    @JsonManagedReference
+    @JsonManagedReference("order-paymenttransactions-reference")
     private Set<PaymentTransaction> paymentTransactions;
 
 
@@ -49,6 +49,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "collectorid", nullable = true)
+    //@JsonManagedReference("order-employee-reference")
     private Employee collector;
 
 

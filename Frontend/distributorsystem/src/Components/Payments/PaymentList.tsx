@@ -191,11 +191,11 @@ export default function PaymentList() {
         borderBottom: "4px #AFD3E2 solid",
     });
 
-
+/* 
     const StyledTableCell = styled(TableCell)({
         backgroundColor: "#AFD3E2",
         fontSize: '12px'
-    });
+    }); */
 
     const StyledButton = styled(Button)({
         padding: 2.5,
