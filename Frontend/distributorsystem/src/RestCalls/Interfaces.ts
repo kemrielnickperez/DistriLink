@@ -34,9 +34,8 @@ export interface IEmployee {
     is_cashier: boolean,
     is_salesassociate: boolean,
     is_collector: boolean,
-    order: IOrder| null
+    order: IOrder | null,
     collectionPaymentReceipts: IDirectPaymentReceipt[] | null
-
 }
 
 

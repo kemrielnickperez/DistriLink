@@ -136,7 +136,8 @@ export default function EmployeeRegistration(){
            is_cashier: isCashierSelected,
            is_salesassociate: isSalesAssociateSelected,
            is_collector: isCollectorSelected,
-           order: null
+           order: null,
+           collectionPaymentReceipts: null
        });
       };
     

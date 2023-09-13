@@ -85,9 +85,9 @@ export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directp
                         currentaddress: directpaymentreceipt.paymenttransaction.order?.collector?.currentaddress,
                         permanentaddress: directpaymentreceipt.paymenttransaction.order?.collector?.permanentaddress,
                         contactnumber: directpaymentreceipt.paymenttransaction.order?.collector?.contactnumber,
-                        iscashier: directpaymentreceipt.paymenttransaction.order?.collector?.iscashier,
-                        issalesassociate: directpaymentreceipt.paymenttransaction.order?.collector?.issalesassociate,
-                        iscollector: directpaymentreceipt.paymenttransaction.order?.collector?.iscollector
+                        is_cashier: directpaymentreceipt.paymenttransaction.order?.collector?.is_cashier,
+                        is_salesassociate: directpaymentreceipt.paymenttransaction.order?.collector?.is_salesassociate,
+                        is_collector: directpaymentreceipt.paymenttransaction.order?.collector?.is_collector
                     }
                 }
             }

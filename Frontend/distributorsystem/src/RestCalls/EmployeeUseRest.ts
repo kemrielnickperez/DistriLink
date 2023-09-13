@@ -9,7 +9,11 @@ import { multiSectionDigitalClockClasses } from "@mui/x-date-pickers";
 
 
 
+<<<<<<< Updated upstream
 export const useRestEmployee = (): [(employees: IEmployee) => void,(collectorID: number) => void, IEmployee | undefined] => {
+=======
+export const useRestEmployee = (): [(employees: IEmployee)=> void, (collectorID:number) => void, IEmployee | undefined] => {
+>>>>>>> Stashed changes
 
     const [collector, setCollector] = useState<IEmployee>();
     const [employees, setEmployees] = useState<IEmployee>();
@@ -80,8 +84,35 @@ export const useRestEmployee = (): [(employees: IEmployee) => void,(collectorID:
             }); 
     }
 
+<<<<<<< Updated upstream
    
 
 
     return [newEmployee, getCollectorByID, collector ]
+=======
+    function newEmployee(employees: IEmployee) {
+
+        axios.post('http://localhost:8080/employee/registerEmployee', {
+            firstname : employees.firstname,
+            middlename : employees.middlename,
+            lastname : employees.lastname,
+            currentaddress : employees.currentaddress,
+            permanentaddress : employees.permanentaddress,
+            contactnumber : employees.contactnumber,
+            is_cashier : employees.is_cashier,
+            is_salesassociate : employees.is_salesassociate,
+            is_collector : employees.is_collector,
+            orders : null,
+            collectionPaymentReceipts: null
+        })
+            .then((response) => {
+                console.log(response.data);
+            }); 
+    }
+
+
+
+
+    return [newEmployee, getCollectorByID, collector]
+>>>>>>> Stashed changes
 }

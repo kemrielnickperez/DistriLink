@@ -246,7 +246,7 @@ export default function RecordDirectPayment() {
 
     const [getPaymentTransactionByID, paymentTransaction ] = useRestPaymentTransaction();
 
-    const [getCollectorByID, collector] = useRestEmployee();
+    const [newEmployee, getCollectorByID, collector] = useRestEmployee();
 
 
     const orderIDRef = useRef<TextFieldProps>(null);
@@ -300,6 +300,8 @@ export default function RecordDirectPayment() {
 
 
 
+    
+    
     return (
         <div>
             <StyledHeaderTypography>Record Direct Payment</StyledHeaderTypography>
