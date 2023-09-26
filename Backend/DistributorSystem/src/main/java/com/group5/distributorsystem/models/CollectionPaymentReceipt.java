@@ -1,41 +1,57 @@
 package com.group5.distributorsystem.models;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 
-@Entity
-@DiscriminatorValue("collection")
+
+
+
 public class CollectionPaymentReceipt extends PaymentReceipt {
 
-    @Column
     private LocalDate collectiondate;
 
-    @Column
     private String collectionamount;
-    @Column
+
     private LocalDate remitteddate;
-    @Column
+
     private String remittedamount;
-    @Column
+
     private LocalDate confirmationdate;
 
-    @Column
+
     private boolean isConfirmed;
 
-    @ManyToOne
+    //DBRef
+    private Employee collector;
+
+
+
+   /* @ManyToOne
     @JoinColumn(name = "collectorid")
     @JsonBackReference("employee-collectionpaymenttransactions-reference")
-    private Employee collector;
+    */
 
 
     public CollectionPaymentReceipt() {
     }
 
-    public CollectionPaymentReceipt(int receiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier, LocalDate collectiondate, String collectionamount, LocalDate remitteddate, String remittedamount, LocalDate confirmationdate, boolean isConfirmed, Employee collector) {
-        super(receiptid, remarks, paymenttype, paymenttransaction/*, cashier*/);
+
+    public CollectionPaymentReceipt(LocalDate collectiondate, String collectionamount, LocalDate remitteddate, String remittedamount, LocalDate confirmationdate, boolean isConfirmed, Employee collector) {
+        this.collectiondate = collectiondate;
+        this.collectionamount = collectionamount;
+        this.remitteddate = remitteddate;
+        this.remittedamount = remittedamount;
+        this.confirmationdate = confirmationdate;
+        this.isConfirmed = isConfirmed;
+        this.collector = collector;
+    }
+
+    public CollectionPaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, LocalDate collectiondate, String collectionamount, LocalDate remitteddate, String remittedamount, LocalDate confirmationdate, boolean isConfirmed, Employee collector) {
+        super(paymentreceiptid, remarks, paymenttype, paymenttransaction);
         this.collectiondate = collectiondate;
         this.collectionamount = collectionamount;
         this.remitteddate = remitteddate;

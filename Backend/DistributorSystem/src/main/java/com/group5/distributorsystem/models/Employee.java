@@ -1,72 +1,71 @@
 package com.group5.distributorsystem.models;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
-@Entity
-@Table(name = "employees")
+
+@Document("Employees")
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int employeeID;
+    private String employeeid;
 
-    @Column
     private String firstname;
 
-    @Column
     private String middlename;
 
-    @Column
     private String lastname;
 
-    @Column
     private String birthdate;
 
-    @Column
     private String gender;
 
-    @Column
     private String currentaddress;
 
-    @Column
     private String permanentaddress;
 
-    @Column
     private String contactnumber;
 
-    @Column
     private boolean is_cashier;
 
-    @Column
     private boolean is_salesassociate;
 
-    @Column
     private boolean is_collector;
 
-    @OneToMany(mappedBy = "collector")
+    private Set<String> orderids;
+
+    private Set<String> collectionpaymentids;
+    //private Set<Order> orders;
+
+    //private Set<PaymentReceipt> paymentReceipts;
+
+    //private Set<CollectionPaymentReceipt> collectionPaymentReceipts;
+
+    /*@OneToMany(mappedBy = "collector")
     //@JsonBackReference("order-employee-reference")
-    private Set<Order> orders;
+    private Set<Order> orders;*/
 
     //comment sani kay murag nagdala og panganib
     /*@OneToMany(mappedBy = "cashier")
     @JsonManagedReference("employee-paymentreceipts-reference")
     private Set<PaymentReceipt> paymentReceipts;*/
 
-    @OneToMany(mappedBy = "collector")
+    /*@OneToMany(mappedBy = "collector")
     @JsonManagedReference("employee-collectionpaymenttransactions-reference")
-    private Set<CollectionPaymentReceipt> collectionPaymentReceipts;
+    private Set<CollectionPaymentReceipt> collectionPaymentReceipts;*/
 
+    //construxtors and setters/getters
     public Employee() {
     }
 
-    public Employee(int employeeID, String firstname, String middlename, String lastname, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, Set<Order> orders, /*Set<PaymentReceipt> paymentReceipts,*/ Set<CollectionPaymentReceipt> collectionPaymentReceipts) {
-        this.employeeID = employeeID;
+    public Employee(String employeeid, String firstname, String middlename, String lastname, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, Set<String> orderids, Set<String> collectionpaymentids) {
+        this.employeeid = employeeid;
         this.firstname = firstname;
         this.middlename = middlename;
         this.lastname = lastname;
@@ -78,17 +77,16 @@ public class Employee {
         this.is_cashier = is_cashier;
         this.is_salesassociate = is_salesassociate;
         this.is_collector = is_collector;
-        this.orders = orders;
-        //this.paymentReceipts = paymentReceipts;
-        this.collectionPaymentReceipts = collectionPaymentReceipts;
+        this.orderids = orderids;
+        this.collectionpaymentids = collectionpaymentids;
     }
 
-    public int getEmployeeID() {
-        return employeeID;
+    public String getEmployeeid() {
+        return employeeid;
     }
 
-    public void setEmployeeID(int employeeID) {
-        this.employeeID = employeeID;
+    public void setEmployeeid(String employeeid) {
+        this.employeeid = employeeid;
     }
 
     public String getFirstname() {
@@ -179,27 +177,19 @@ public class Employee {
         this.is_collector = is_collector;
     }
 
-    public Set<Order> getOrders() {
-        return orders;
+    public Set<String> getOrderids() {
+        return orderids;
     }
 
-    public void setOrders(Set<Order> orders) {
-        this.orders = orders;
+    public void setOrderids(Set<String> orderids) {
+        this.orderids = orderids;
     }
 
-    /*public Set<PaymentReceipt> getPaymentReceipts() {
-        return paymentReceipts;
+    public Set<String> getCollectionpaymentids() {
+        return collectionpaymentids;
     }
 
-    public void setPaymentReceipts(Set<PaymentReceipt> paymentReceipts) {
-        this.paymentReceipts = paymentReceipts;
-    }*/
-
-    public Set<CollectionPaymentReceipt> getCollectionPaymentReceipts() {
-        return collectionPaymentReceipts;
-    }
-
-    public void setCollectionPaymentReceipts(Set<CollectionPaymentReceipt> collectionPaymentReceipts) {
-        this.collectionPaymentReceipts = collectionPaymentReceipts;
+    public void setCollectionpaymentids(Set<String> collectionpaymentids) {
+        this.collectionpaymentids = collectionpaymentids;
     }
 }

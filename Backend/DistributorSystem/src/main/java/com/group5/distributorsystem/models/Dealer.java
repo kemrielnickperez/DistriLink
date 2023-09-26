@@ -1,78 +1,58 @@
 package com.group5.distributorsystem.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import java.util.Set;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.List;
 import java.util.Set;
-@Entity
-@Table(name = "dealers")
+
+
+@Document("Dealers")
 public class Dealer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int dealerid;
+    private String dealerid;
 
-    @Column
     private String firstname;
 
-    @Column
     private String middlename;
 
-    @Column
     private String lastname;
 
-    @Column
     private LocalDate birthdate;
 
-    @Column
     private String gender;
 
-    @Column
     private String currentaddress;
 
-    @Column
     private String permanentaddress;
 
-    @Column
     private String contactnumber;
 
-    @Column
     private boolean hasbusiness;
 
-    @Column
     private String businessname;
 
-    @Column
     private String businessaddress;
 
-    @Column
     private String businessphone;
 
-    @Column
     private String businesstin;
 
-    @Column
     private double creditlimit;
 
-    @Column
     private LocalDate submissiondate;
 
-    @Column
     private String attachments;
 
-    @OneToMany(mappedBy = "dealer")
-    @JsonIgnore
-    private Set<Order> orders;
-
+    private Set<String> orderids;
 
     public Dealer() {
     }
 
-
-    public Dealer(int dealerid, String firstname, String middlename, String lastname, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, String attachments, Set<Order> orders) {
+    public Dealer(String dealerid, String firstname, String middlename, String lastname, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, String attachments, Set<String> orderids) {
         this.dealerid = dealerid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -90,14 +70,14 @@ public class Dealer {
         this.creditlimit = creditlimit;
         this.submissiondate = submissiondate;
         this.attachments = attachments;
-        this.orders = orders;
+        this.orderids = orderids;
     }
 
-    public int getDealerid() {
+    public String getDealerid() {
         return dealerid;
     }
 
-    public void setDealerid(int dealerid) {
+    public void setDealerid(String dealerid) {
         this.dealerid = dealerid;
     }
 
@@ -229,11 +209,11 @@ public class Dealer {
         this.attachments = attachments;
     }
 
-    public Set<Order> getOrders() {
-        return orders;
+    public Set<String> getOrderids() {
+        return orderids;
     }
 
-    public void setOrders(Set<Order> orders) {
-        this.orders = orders;
+    public void setOrderids(Set<String> orderids) {
+        this.orderids = orderids;
     }
 }
