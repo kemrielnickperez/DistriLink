@@ -6,6 +6,7 @@ import com.group5.distributorsystem.repositories.DealerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,14 +19,14 @@ public class DealerService {
         return dealerRepository.save(dealer);
     }
 
-    public Iterable<Dealer> getAllDealers(){
+    public List<Dealer> getAllDealers(){
         return dealerRepository.findAll();
     }
 
     /*public Optional<Dealer> getDealerByID(int dealerid){
         return dealerRepository.findById(dealerid);
     }*/
-    public Optional<Dealer> getDealerByID(int dealerid){
+    public Optional<Dealer> getDealerByID(String dealerid){
         return dealerRepository.findById(dealerid);
     }
 }

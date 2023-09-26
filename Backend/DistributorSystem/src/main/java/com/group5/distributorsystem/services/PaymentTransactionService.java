@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PaymentTransactionService {
@@ -22,21 +22,37 @@ public class PaymentTransactionService {
     @Autowired
     OrderRepository orderRepository;
 
-    @Transactional
-    public PaymentTransaction createPaymentTransaction(PaymentTransaction paymentTransaction) {
+    public void createPaymentTransaction(PaymentTransaction[] paymentTransactions, String orderid) {
 
-        PaymentTransaction pt = paymentTransactionRepository.save(paymentTransaction);
-                /*new PaymentTransaction(paymentTransaction.getPaymenttransactionid(), paymentTransaction.getAmountdue(), paymentTransaction.getStartingdate(), paymentTransaction.getEnddate(), paymentTransaction.getInstallmentnumber(), paymentTransaction.isPaid(), paymentTransaction.getOrder(), paymentTransaction.getPaymentreceiptid());*/
+        Order order = orderRepository.findById(orderid).get();
+    //if(order != null){
+        //for(int i=0; i<= paymentTransaction.length; i++){
+        for(PaymentTransaction pt :paymentTransactions) {
 
-        //Order order = orderRepository.findById(pt.getOrder().getOrderid()).get();
-        //order.getPaymenttransactions().add(pt);
-        //orderRepository.save(order);
-        //pt.setOrder((pt.getOrder()));
+                PaymentTransaction newpt = new PaymentTransaction(pt.getPaymenttransactionid(), pt.getAmountdue(), pt.getStartingdate(), pt.getEnddate(), pt.getInstallmentnumber(), pt.isPaid(),  orderid, pt.getPaymentreceiptid());
+                newpt = paymentTransactionRepository.save(newpt);
 
-        Order order = orderRepository.findById(pt.getOrder().getOrderid()).get();
-        order.getPaymenttransactions().add(pt);
+                order.getPaymenttransactions().add(newpt);
+        }
+
         orderRepository.save(order);
-        return pt;
+
+        //OrderedProduct newOrderedProduct = new OrderedProduct(op.getOrderedproductid(), quantity, subtotal, productid, newOrder.getOrderid());
+       // newOrderedProduct = orderedProductRepository.save(newOrderedProduct);
+
+        //PaymentTransaction pt = paymentTransactionRepository.save(paymentTransaction);
+        //PaymentTransaction pt = new PaymentTransaction(paymentTransaction.getPaymenttransactionid(), paymentTransaction.getAmountdue(), paymentTransaction.getStartingdate(), paymentTransaction.getEnddate(), paymentTransaction.getInstallmentnumber(), paymentTransaction.isPaid(),  orderid, paymentTransaction.getPaymentreceiptid());
+        //pt = paymentTransactionRepository.save(pt);
+
+        //PaymentTransaction pt =paymentTransactionRepository.save(paymentTransaction);
+        //Order order = orderRepository.findById(pt.getOrderid()).get();
+        //order.getPaymenttransactions().add(pt.getPaymenttransactionid());
+
+        //orderRepository.save(order);
+/*        pt.setOrderid(orderid);
+        ;*/
+        //return order;
+
     }
 
     public List<PaymentTransaction> getAllPaymentTransactions() {
