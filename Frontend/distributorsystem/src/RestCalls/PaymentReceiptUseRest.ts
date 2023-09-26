@@ -7,8 +7,8 @@ export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directp
 
 
     function createDirectPaymentReceipt(paymenttransactionid: number, directpaymentreceipt: IDirectPaymentReceipt) {
-        axios.post(`http://localhost:8080/paymentreceipt/createDirectPaymentReceipt?paymenttransactionid=${paymenttransactionid}`, {
-
+       /*  axios.post(`http://localhost:8080/paymentreceipt/createDirectPaymentReceipt?paymenttransactionid=${paymenttransactionid}`, {
+            //paymentreceiptid. directpaymentreceipt.paymentreceiptid,
             remarks: directpaymentreceipt.remarks,
             datepaid: directpaymentreceipt.datepaid,
             amountpaid: directpaymentreceipt.amountpaid,
@@ -41,7 +41,7 @@ export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directp
               issalesassociate: true,
               iscollector: true,
              
-          }, */
+          }, 
             paymenttransaction: {
                 paymenttransactionid: directpaymentreceipt.paymenttransaction?.paymenttransactionid,
                 amountdue: directpaymentreceipt.paymenttransaction?.amountdue,
@@ -55,7 +55,7 @@ export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directp
                     penaltyrate: directpaymentreceipt.paymenttransaction?.order?.penaltyrate,
                     paymentterms: directpaymentreceipt.paymenttransaction?.order?.paymentterms,
                     orderdate: directpaymentreceipt.paymenttransaction?.order?.orderdate,
-                    orderedProducts: directpaymentreceipt.paymenttransaction?.order?.orderedProducts,
+                    orderedProducts: directpaymentreceipt.paymenttransaction?.order?.orderedproducts,
                     dealer: {
                         dealerid: directpaymentreceipt.paymenttransaction?.order?.dealer?.dealerid,
                         firstname: directpaymentreceipt.paymenttransaction?.order?.dealer?.firstname,
@@ -98,7 +98,7 @@ export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directp
             })
             .catch((error) => {
                 alert("Please try again.");
-            });
+            }); */
     }
 
     return [createDirectPaymentReceipt]
