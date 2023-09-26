@@ -1,10 +1,8 @@
 package com.group5.distributorsystem.controllers;
 
 
-import com.group5.distributorsystem.DistributorSystemApplication;
 import com.group5.distributorsystem.models.CollectionPaymentReceipt;
 import com.group5.distributorsystem.models.DirectPaymentReceipt;
-import com.group5.distributorsystem.models.PaymentReceipt;
 import com.group5.distributorsystem.services.CollectionPaymentReceiptService;
 import com.group5.distributorsystem.services.DirectPaymentReceiptService;
 import com.group5.distributorsystem.services.PaymentReceiptService;
@@ -41,7 +39,7 @@ public class PaymentReceiptController {
 
 
     @PostMapping("/createDirectPaymentReceipt")
-    public ResponseEntity<Object> createDirectPaymentReceipt(@RequestBody DirectPaymentReceipt directPaymentReceipt, @RequestParam int paymenttransactionid){
+    public ResponseEntity<Object> createDirectPaymentReceipt(@RequestBody DirectPaymentReceipt directPaymentReceipt, @RequestParam String paymenttransactionid){
         directPaymentReceiptService.createDirectPaymentReceipt(directPaymentReceipt, paymenttransactionid);
         return new ResponseEntity<>("Direct Payment Receipt created successfully!", HttpStatus.CREATED);
 
@@ -53,7 +51,7 @@ public class PaymentReceiptController {
     }
 
     @PostMapping("/createCollectionPaymentReceipt")
-    public ResponseEntity<Object> createCollectionPaymentReceipt(@RequestBody CollectionPaymentReceipt collectionPaymentReceipt, @RequestParam int paymenttransactionid){
+    public ResponseEntity<Object> createCollectionPaymentReceipt(@RequestBody CollectionPaymentReceipt collectionPaymentReceipt, @RequestParam String paymenttransactionid){
         collectionPaymentReceiptService.createCollectionPaymentReceipt(collectionPaymentReceipt, paymenttransactionid);
         return new ResponseEntity<>("Collection Payment Receipt created successfully!", HttpStatus.CREATED);
 
