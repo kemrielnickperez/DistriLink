@@ -53,8 +53,10 @@ public class OrderService {
                 float price = product.getPrice();
                 double subtotal = price * quantity;
 
-                OrderedProduct newOrderedProduct = new OrderedProduct(op.getOrderedproductid(), quantity, subtotal, product, newOrder.getOrderid());
+                OrderedProduct newOrderedProduct = new OrderedProduct(op.getOrderedproductid(), quantity, op.getSubtotal(), product, newOrder.getOrderid());
+
                 newOrderedProduct = orderedProductRepository.save(newOrderedProduct);
+                //orderRepository.save(newOrder);
 
                 orderamount += subtotal;
 
@@ -68,7 +70,6 @@ public class OrderService {
         newOrder.setOrderamount(orderamount);
 
         //connection to dealer
-
         dealer.getOrderids().add(newOrder.getOrderid());
         dealerRepository.save(dealer);
 
@@ -89,12 +90,12 @@ public class OrderService {
 
         Order order = orderRepository.findById(orderid).get();
         Employee employee = employeeRepository.findById(collector.getEmployeeid()).get();
-        System.out.println(order.getOrderid());
+
 
         order.setCollector(employee);
 
         employee.getOrderids().add(order.getOrderid());
-        System.out.println(employee.getEmployeeid());
+
 
         orderRepository.save(order);
         employeeRepository.save(employee);
