@@ -1,7 +1,7 @@
 import { Button, Divider, Input, Paper, Stack, Table, TableRow, TableBody, TableCell, TableContainer, TextField, styled, TableHead, Typography, Card, makeStyles, IconButton, Grid, TextFieldProps, Box } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import NavBar from "../../Global Components/NavBar";
-import { useRestSchedule } from "../../RestCalls/ScheduleUseRest";
+//import { useRestSchedule } from "../../RestCalls/ScheduleUseRest";
 import { useEffect, useRef, useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -240,7 +240,7 @@ export default function RecordDirectPayment() {
         iscollector: true,
     } */
 
-    const [getOrderByID, createSchedule, updatePaymentTransaction, order, isOrderFound] = useRestSchedule();
+    //const [getOrderByID, createSchedule, updatePaymentTransaction, order, isOrderFound] = useRestSchedule();
 
     const [createDirectPaymentReceipt ] = useRestPaymentReceipt();
 
@@ -261,7 +261,7 @@ export default function RecordDirectPayment() {
 
 
     //sorting the payment transactions
-    const sortedPaymemtTransactions = order?.paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+   /*  const sortedPaymemtTransactions = order?.paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
 
     const handleFindOrder = () => {
@@ -281,8 +281,7 @@ export default function RecordDirectPayment() {
             datepaid: selectedDate?.format('YYYY-MM-DD') || '',
             amountpaid: Number(amountPaidRef.current?.value),
             paymenttype: 'direct',
-            //tangtang sa kay dala panganib
-           /*  cashier: collector!,  */
+          
             paymenttransaction: paymentTransaction!
         })
     }
@@ -297,13 +296,19 @@ export default function RecordDirectPayment() {
         handleFindPaymentTransaction();
     },
         [isOrderFound, order]);
-
+ */
 
 
     
     
     return (
         <div>
+            <h1> hey </h1>
+        </div>
+           )
+
+        }
+        {/* <div>
             <StyledHeaderTypography>Record Direct Payment</StyledHeaderTypography>
 
             <Grid container spacing={4} sx={{
@@ -329,7 +334,7 @@ export default function RecordDirectPayment() {
                 <Grid item container spacing={4}  >
                     <Grid item >
                         <StyledPaymentTransactionCard>
-                            {/* please change sad ning border radius later sa tables sa scheduling. thanks self */}
+                           
                             <TableContainer sx={{ borderRadius: '22px' }}>
                                 <Table  >
                                     <TableHead >
@@ -436,7 +441,5 @@ export default function RecordDirectPayment() {
 
 
         </div>
-
-    )
-
-}
+ */}
+ 

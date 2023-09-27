@@ -1,9 +1,11 @@
 package com.group5.distributorsystem.repositories;
 
 import com.group5.distributorsystem.models.CollectionPaymentReceipt;
+import com.group5.distributorsystem.models.Dealer;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CollectionPaymentReceiptRepository extends CrudRepository<CollectionPaymentReceipt, Integer> {
-}
+public interface CollectionPaymentReceiptRepository extends MongoRepository<CollectionPaymentReceipt, String> {}

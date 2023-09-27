@@ -7,6 +7,7 @@ import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import { IDealer } from "../../RestCalls/Interfaces";
 import { ChangeEvent, useRef, useState } from "react";
 import moment from "moment";
+import { v4 as uuidv4 } from 'uuid';
 
 
 const TypographyHeader= styled(Typography)({
@@ -95,9 +96,12 @@ export default function DealerRegistration(){
         setSelectedBusinessOpt(event.target.value==='true');
     };
     const handleNewDealer=()=>{
-        
-        newDealer({
-           dealerid:-1,
+
+        const uuid = uuidv4();
+        const dealeruuid = uuid.slice(0, 8);
+
+         newDealer({
+           dealerid: dealeruuid,
            firstname: String (firstnameRef.current?.value),
            middlename:String (middlenameRef.current?.value),
            lastname: String (lastnameRef.current?.value),
@@ -113,8 +117,10 @@ export default function DealerRegistration(){
            businesstin: String(tinnumberRef.current?.value),
            creditlimit:0,
           submissiondate:moment().format('YYYY-MM-DD'), 
-          attachments:'dealer.png'
-        });
+          attachments:'dealer.png',
+          orderids: []
+          
+        }); 
     };
     
     return( 

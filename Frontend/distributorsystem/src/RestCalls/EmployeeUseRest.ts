@@ -9,53 +9,27 @@ import { multiSectionDigitalClockClasses } from "@mui/x-date-pickers";
 
 
 
-export const useRestEmployee = (): [(employees: IEmployee) => void,(collectorID: number) => void, IEmployee | undefined] => {
+export const useRestEmployee = (): [(employee: IEmployee) => void,(collectorID: number) => void, IEmployee | undefined] => {
 
     const [collector, setCollector] = useState<IEmployee>();
-    const [employees, setEmployees] = useState<IEmployee>();
+    //const [employee, setEmployee] = useState<IEmployee>();
 
-    function newEmployee(employees: IEmployee) {
+    function newEmployee(employee: IEmployee) {
     
         axios.post('http://localhost:8080/employee/registerEmployee', {
-            firstname : employees.firstname,
-            middlename : employees.middlename,
-            lastname : employees.lastname,
-            birthdate : employees.birthdate,
-            gender : employees.gender,
-            currentaddress : employees.currentaddress,
-            permanentaddress : employees.permanentaddress,
-            contactnumber : employees.contactnumber,
-            is_cashier : employees.is_cashier,
-            is_salesassociate : employees.is_salesassociate,
-            is_collector : employees.is_collector,
-            orders : null,/* {
-                distributordate :employees.order.distributiondate,
-                penaltyrate: employees.order.penaltyrate,
-            paymentterms: employees.order.paymentterms,
-            orderdate: employees.order.orderdate,
-            orderedProducts: employees.order.orderedProducts,
-            dealer: {
-                dealerid:employees.order.dealer.dealerid,
-                firstname: employees.order.dealer.firstname,
-                middlename:employees. order.dealer.middlename,
-                lastname: employees.order.dealer.lastname,
-                birthdate: employees.order.dealer.birthdate,
-                gender: employees.order.dealer.gender,
-                currentaddress: employees.order.dealer.currentaddress,
-                permanentaddress: employees.order.dealer.permanentaddress,
-                contactnumber: employees.order.dealer.contactnumber,
-                hasbusiness: employees.order.dealer.hasbusiness,
-                businessname: employees.order.dealer.businessname,
-                businessphone: employees.order.dealer. businessphone,
-                businessaddress: employees.order.dealer.businessaddress,
-                businesstin: employees.order.dealer.businesstin,
-                creditlimit: employees.order.dealer.creditlimit,
-                submissiondate: employees.order.dealer.submissiondate,
-                attachments: employees.order.dealer.attachments,
-            }
-            collector: null, 
-            paymentTransactions: null,
-            } */
+            employeeid: employee.employeeid,
+            firstname : employee.firstname,
+            middlename : employee.middlename,
+            lastname : employee.lastname,
+            birthdate : employee.birthdate,
+            gender : employee.gender,
+            currentaddress : employee.currentaddress,
+            permanentaddress : employee.permanentaddress,
+            contactnumber : employee.contactnumber,
+            is_cashier : employee.is_cashier,
+            is_salesassociate : employee.is_salesassociate,
+            is_collector : employee.is_collector,
+            orderids : [],
         })
             .then((response) => {
                 console.log(response.data);
