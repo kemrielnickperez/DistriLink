@@ -130,8 +130,7 @@ export default function Schedules() {
     const orderIDRef = useRef<TextFieldProps>(null)
 
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, isOrderFoundError, assignedStatus, removeStatus] = useRestOrder();
-
+    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
 
 
     //sorting the payment transactions
@@ -141,48 +140,48 @@ export default function Schedules() {
     const handleFindOrder = () => {
         getOrderByID(orderIDRef.current?.value + "")
         //console.log(isOrderFoundError + "error")
-        if (isOrderFound === false )
+        if (isOrderFound === false)
             alert("Order not found. Please try again.");
-        
-        
+
+
     };
 
     const handleCreatePaymentTransaction = () => {
         const newPaymentTransactions: IPaymentTransaction[] = [];
-      
+
         for (let i = 1; i <= order!.paymentterms; i++) {
-          const uuid = uuidv4();
-          const paymenttransactionuuid = uuid.slice(0, 8);
-      
-          const newPaymentTransaction = {
-            paymenttransactionid: paymenttransactionuuid,
-            amountdue: order!.orderamount / order!.paymentterms,
-            startingdate: "",
-            enddate: "",
-            installmentnumber: i,
-            paid: false,
-            orderid: order!.orderid,
-            paymentreceiptid: null,
-          };
-      
-          newPaymentTransactions.push(newPaymentTransaction);
+            const uuid = uuidv4();
+            const paymenttransactionuuid = uuid.slice(0, 8);
+
+            const newPaymentTransaction = {
+                paymenttransactionid: paymenttransactionuuid,
+                amountdue: order!.orderamount / order!.paymentterms,
+                startingdate: "",
+                enddate: "",
+                installmentnumber: i,
+                paid: false,
+                orderid: order!.orderid,
+                paymentreceiptid: null,
+            };
+
+            newPaymentTransactions.push(newPaymentTransaction);
         }
-      
+
         // After the loop is complete, update the state once with a callback.
         setPaymentTransactionsObjects((paymentTransactionsObjects) => {
-          const updatedPaymentTransactions = [
-            ...paymentTransactionsObjects,
-            ...newPaymentTransactions,
-          ];
-      
-          // Call createPaymentTransaction with the updated array.
-          createPaymentTransaction(updatedPaymentTransactions, order!.orderid);
-      
-          return updatedPaymentTransactions;
+            const updatedPaymentTransactions = [
+                ...paymentTransactionsObjects,
+                ...newPaymentTransactions,
+            ];
+
+            // Call createPaymentTransaction with the updated array.
+            createPaymentTransaction(updatedPaymentTransactions, order!.orderid);
+
+            return updatedPaymentTransactions;
         });
-      };
-      
-      
+    };
+
+
 
     const handleStartDateUpdate = (newValue: Dayjs | null): void => {
 
@@ -223,20 +222,20 @@ export default function Schedules() {
 
     };
 
-    const [isMounted, setIsMounted] = useState(false); 
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
         setIsMounted(true); // Set the component as mounted when it renders
 
-    // Only make the GET request if the component is mounted
-    if (isMounted) {
+        // Only make the GET request if the component is mounted
+        if (isMounted) {
 
-        handleFindOrder();
-    }
-    return () => {
-        setIsMounted(false);
-      };
-        
+            handleFindOrder();
+        }
+        return () => {
+            setIsMounted(false);
+        };
+
     },
         [isOrderFound, order, paymentTransactionsObjects]);
 
@@ -399,7 +398,7 @@ export default function Schedules() {
                     <h2 style={{ color: 'white', marginTop: '50px' }}> no schedules yet</h2>
                     <StyledButton onClick={
                         handleCreatePaymentTransaction
-                        }> Create Schedules </StyledButton>
+                    }> Create Schedules </StyledButton>
 
 
                 </div>
