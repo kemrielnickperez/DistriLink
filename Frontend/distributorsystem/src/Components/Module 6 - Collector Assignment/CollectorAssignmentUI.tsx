@@ -108,9 +108,10 @@ export default function CollectorAssignment() {
 
   // Handler for Assigning Collector Button 
   const handleAssignCollector = () => {
-    console.log(selectedCollector)
     let count = 0;
+    console.log(assignedStatus)
     for (const selectedOrderID of selectedRows) {
+      //ngano mogana mani og true diri pero if false kay maguba
       if (assignedStatus === false) {
         break;
       }
@@ -126,15 +127,16 @@ export default function CollectorAssignment() {
     else {
       alert(`Only ${count}! number of orders was assigned.`)
     }
+
   };
 
 
   // Handler for Group Transaction Button 
-  const handleGroupTransaction = () => {
+  /* const handleGroupTransaction = () => {
     const count = parseInt(groupByValue.trim());
     const selectedRowIds = rows.slice(0, count).map((row) => row.orderID);
     setSelectedRows(selectedRowIds);
-  };
+  }; */
 
 
   // Handler for data grid in row selection
@@ -152,7 +154,7 @@ export default function CollectorAssignment() {
       <Box sx={{ height: 400, width: '100%', color: '#146C94' }}>
         <Card sx={{ height: 550, margin: "10px 0px 20px 0px", borderRadius: "25px" }}>
           <div style={{ display: "flex", flexDirection: "row" }}>
-            <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+            {/* <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
               <Typography gutterBottom variant="h6" style={{ textAlign: 'left', fontWeight: 'bold', margin: '0px 0px 0px 30px', color: '#146C94', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ textAlign: 'left', fontSize: '18px' }}>Group Transactions by</span>
 
@@ -171,7 +173,7 @@ export default function CollectorAssignment() {
                   }} />
               </Typography>
 
-              <CardActions sx={{ alignItems: 'center', marginLeft: '10px' }}>
+               <CardActions sx={{ alignItems: 'center', marginLeft: '10px' }}>
                 <Button onClick={handleGroupTransaction} variant="contained"
                   sx={{
                     height: '50px',
@@ -183,8 +185,8 @@ export default function CollectorAssignment() {
                   }}>
                   Group Transaction
                 </Button>
-              </CardActions>
-            </div>
+              </CardActions> 
+            </div>*/}
 
             <div style={{ display: "flex", alignItems: "center", marginTop: '20px' }}>
 

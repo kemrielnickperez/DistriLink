@@ -7,7 +7,7 @@ import { IEmployee, IOrder } from "./Interfaces";
 
 
 
-export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => void, (orderID: string, collector: IEmployee) => void, (orderID: string) => void, IOrder | undefined, boolean | undefined, boolean | undefined, boolean | undefined, boolean | undefined] => {
+export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => void, (orderID: string, collector: IEmployee) => void, (orderID: string) => void, IOrder | undefined, boolean | undefined, boolean | undefined, boolean | undefined] => {
 
     const [order, setOrder] = useState<IOrder>();
     const [isOrderFound, setIsOrderFound] = useState<boolean>(true);
@@ -110,15 +110,15 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
 
 
     function assignCollector(orderID: string, collector: IEmployee) {
-        axios.put(`http://localhost:8080/order/assignCollector/${orderID}`, collector)
+        console.log(assignedStatus)
+          axios.put(`http://localhost:8080/order/assignCollector/${orderID}`, collector)
             .then((response) => {
-                console.log(response.data)
                 setAssignedStatus(true);
             })
             .catch((error) => {
                 setAssignedStatus(false);
                 console.error('Error assigning collector:', error);
-            });
+            });  
     }
 
     function removeCollector(orderID: string) {
@@ -134,5 +134,5 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
     }
 
 
-    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, isOrderFoundError, assignedStatus, removeStatus]
+    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus]
 }
