@@ -22,6 +22,7 @@ import DataGridOrder from "../Components/Collector Assignment/CollectorAssignmen
 
 import DealerProfile from '../Components/Profiles/DealerProfile';
 import DealerApproval from "../Components/Approvals/DealerApproval";
+import ProductDistributionList from "../Components/Product Distribution/ProductDistributionList";
 export default function MainRoutes(){
     return(
         <Routes>
@@ -48,6 +49,7 @@ export default function MainRoutes(){
                 <Route path="/recordDirectPayment" element={<RecordDirectPayment/>}/>
                 <Route path="/dealerApproval" element={<DealerApproval/>}/>
                 <Route path="/employeeRegistration" element={<EmployeeRegistration/>}/>
+                <Route path="/productDistributionList" element={<ProductDistributionList/>}/>
             </Route>
          </Routes>  
    );

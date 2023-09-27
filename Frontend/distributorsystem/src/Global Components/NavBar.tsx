@@ -33,9 +33,8 @@ export default function NavBar(props: navProps) {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
-            onClick={() => setOpen(true)}
-          >
-            <MenuIcon />
+            onClick={() => setOpen(true)}>
+            <MenuIcon/>
           </IconButton>
           {/* Typography for Nav Title Module name/ Page name */}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'left', fontWeight: "bold" }}>

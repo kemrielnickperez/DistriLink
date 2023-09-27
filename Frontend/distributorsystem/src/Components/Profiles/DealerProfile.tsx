@@ -11,14 +11,14 @@ export default function DealerProfile(){
 
     function getAllDealers(){
         axios.get<IDealer[]>('http://localhost:8080/dealer/getAllDealers')
-      .then((response) => {
-        setDealers(response.data);
-        //console.log(response.data);
-      })
-      .catch((error) => {
-        console.error('Error retrieving dealers:', error);
-        alert("Error retrieving dealers. Please try again.");
-      });
+          .then((response) => {
+            setDealers(response.data);
+            //console.log(response.data);
+          })
+          .catch((error) => {
+            console.error('Error retrieving dealers:', error);
+            alert("Error retrieving dealers. Please try again.");
+          });
     }
 
     useEffect(()=>{
@@ -51,6 +51,7 @@ export default function DealerProfile(){
             </div>
         )
     };
+
     const columns: GridColDef[] = [
         //headerAlign to set alignment
         { field: 'id', headerName: 'Dealer ID', width: 300},
@@ -63,7 +64,8 @@ export default function DealerProfile(){
           </Button>
         )
         },
-        { field:'approvals',headerName:'Approvals', width: 600, renderCell:(params)=> <ApproveButtons row={params.row}/>,
+        { field:'approvals',headerName:'Approvals', width: 600, renderCell:(params)=> 
+          <ApproveButtons row={params.row}/>
         }, 
       ];
     const rows= dealers.map((dealer)=>{
