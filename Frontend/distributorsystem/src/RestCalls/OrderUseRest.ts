@@ -11,7 +11,6 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
 
     const [order, setOrder] = useState<IOrder>();
     const [isOrderFound, setIsOrderFound] = useState<boolean>(true);
-    const [isOrderFoundError, setIsOrderFoundError] = useState<boolean>(false);
     const [assignedStatus, setAssignedStatus] = useState<boolean>(true);
     const [removeStatus, setRemoveStatus] = useState<boolean>(true);
 

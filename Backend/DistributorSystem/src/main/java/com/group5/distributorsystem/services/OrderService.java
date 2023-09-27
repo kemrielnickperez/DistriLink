@@ -88,11 +88,15 @@ public class OrderService {
     public ResponseEntity assignCollector(String orderid, Employee collector){
 
         Order order = orderRepository.findById(orderid).get();
-        System.out.println(order);
-        orderRepository.save(order);
+        Employee employee = employeeRepository.findById(collector.getEmployeeid()).get();
+        System.out.println(order.getOrderid());
 
-        Employee employee = employeeRepository.findById(order.getCollector().getEmployeeid()).get();
+        order.setCollector(employee);
+
         employee.getOrderids().add(order.getOrderid());
+        System.out.println(employee.getEmployeeid());
+
+        orderRepository.save(order);
         employeeRepository.save(employee);
 
 
