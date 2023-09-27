@@ -363,8 +363,8 @@ export default function DistributorOrderForm() {
 
 
                   <Box sx={{ m: 3 }} />
-                  <Button variant='contained' style={{ maxWidth: '200px', maxHeight: '50px', minWidth: '200px', minHeight: '50px', borderRadius: 20, background: "#E77D7D" }}
-                    onClick={() => { handleRemoveLastProduct(); }}>Remove Item</Button>
+                  {/* <Button variant='contained' style={{ maxWidth: '200px', maxHeight: '50px', minWidth: '200px', minHeight: '50px', borderRadius: 20, background: "#E77D7D" }}
+                    onClick={() => { handleRemoveLastProduct(); }}>Remove Item</Button> */}
                 </Grid>
               </Grid>
             </Card>
