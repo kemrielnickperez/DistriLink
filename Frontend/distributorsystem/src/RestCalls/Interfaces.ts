@@ -42,6 +42,7 @@ export interface IEmployee {
 export interface IOrderedProducts {
     product: IProduct;
     quantity: number;
+    subtotal: number;
 
 }
 
