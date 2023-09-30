@@ -34,6 +34,7 @@ public class OrderService {
     DealerRepository dealerRepository;
 
     public Order createOrder(Order order) {
+
         Order newOrder =  orderRepository.save(order);
 
         double orderamount = 0;
@@ -86,6 +87,15 @@ public class OrderService {
         return orderRepository.findById(orderid);
     }
 
+<<<<<<< HEAD
+    public ResponseEntity assignCollector(int orderid, Employee collector){
+        Order order = orderRepository.findById(orderid).get();
+        Employee employee = employeeRepository.findById(collector.getEmployeeID()).get();
+
+        order.setCollector(employee);
+
+        employee.het().add(order.getOrderid());
+=======
     public ResponseEntity assignCollector(String orderid, Employee collector){
 
         Order order = orderRepository.findById(orderid).get();
@@ -95,6 +105,7 @@ public class OrderService {
         order.setCollector(employee);
 
         employee.getOrderids().add(order.getOrderid());
+>>>>>>> main
 
 
         orderRepository.save(order);
