@@ -23,35 +23,12 @@ public class CollectionPaymentReceiptService {
     @Autowired
     PaymentTransactionService paymentTransactionService;
 
-<<<<<<< HEAD
-=======
-
     @Autowired
     PaymentTransactionRepository paymentTransactionRepository;
 
     @Autowired
     EmployeeRepository employeeRepository;
 
-    public CollectionPaymentReceipt createCollectionPaymentReceipt(CollectionPaymentReceipt collectionPaymentReceipt, String paymenttransactionid){
-
-        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
-
-        Employee employee = employeeRepository.findById(collectionPaymentReceipt.getCollector().getEmployeeid()).get();
-
-
-        employee.getCollectionpaymentids().add(collectionPaymentReceipt.getPaymentreceiptid());
-
-        employeeRepository.save(employee);
-
-        paymentTransaction.setPaymentreceiptid(collectionPaymentReceipt.getPaymentreceiptid());
-
->>>>>>> main
-
-    @Autowired
-    PaymentTransactionRepository paymentTransactionRepository;
-
-    @Autowired
-    EmployeeRepository employeeRepository;
 
     public CollectionPaymentReceipt createCollectionPaymentReceipt(CollectionPaymentReceipt collectionPaymentReceipt){
 
