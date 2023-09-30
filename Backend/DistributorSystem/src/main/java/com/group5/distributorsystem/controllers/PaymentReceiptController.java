@@ -52,13 +52,9 @@ public class PaymentReceiptController {
     }
 
     @PostMapping("/createCollectionPaymentReceipt")
-<<<<<<< HEAD
     public ResponseEntity<Object> createCollectionPaymentReceipt(@RequestBody CollectionPaymentReceipt collectionPaymentReceipt){
         collectionPaymentReceiptService.createCollectionPaymentReceipt(collectionPaymentReceipt);
-=======
-    public ResponseEntity<Object> createCollectionPaymentReceipt(@RequestBody CollectionPaymentReceipt collectionPaymentReceipt, @RequestParam String paymenttransactionid){
-        collectionPaymentReceiptService.createCollectionPaymentReceipt(collectionPaymentReceipt, paymenttransactionid);
->>>>>>> main
+
         return new ResponseEntity<>("Collection Payment Receipt created successfully!", HttpStatus.CREATED);
 
     }

@@ -57,14 +57,11 @@ public class OrderService {
                 OrderedProduct newOrderedProduct = new OrderedProduct(op.getOrderedproductid(), quantity, op.getSubtotal(), product, newOrder.getOrderid());
 
                 newOrderedProduct = orderedProductRepository.save(newOrderedProduct);
-                //orderRepository.save(newOrder);
 
                 orderamount += subtotal;
 
                 product.getOrderedproductids().add(newOrderedProduct.getOrderedproductid());
                 productRepository.save(product);
-
-
 
             }
         }
@@ -87,26 +84,15 @@ public class OrderService {
         return orderRepository.findById(orderid);
     }
 
-<<<<<<< HEAD
-    public ResponseEntity assignCollector(int orderid, Employee collector){
-        Order order = orderRepository.findById(orderid).get();
-        Employee employee = employeeRepository.findById(collector.getEmployeeID()).get();
 
-        order.setCollector(employee);
-
-        employee.het().add(order.getOrderid());
-=======
     public ResponseEntity assignCollector(String orderid, Employee collector){
 
         Order order = orderRepository.findById(orderid).get();
         Employee employee = employeeRepository.findById(collector.getEmployeeid()).get();
 
-
         order.setCollector(employee);
 
         employee.getOrderids().add(order.getOrderid());
->>>>>>> main
-
 
         orderRepository.save(order);
         employeeRepository.save(employee);
@@ -114,6 +100,7 @@ public class OrderService {
 
         return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
     }
+
 
     public ResponseEntity removeCollector(String orderid){
 
@@ -123,14 +110,10 @@ public class OrderService {
         employee.getOrderids().remove(order.getOrderid());
         employeeRepository.save(employee);
 
-
         order.setCollector(null);
         orderRepository.save(order);
 
-
-
         return new ResponseEntity("Collector removed successfully", HttpStatus.OK);
-
     }
 
 }
