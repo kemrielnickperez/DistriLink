@@ -47,15 +47,22 @@ public class PaymentReceiptController {
 
     }
 
+
     @GetMapping("/getAllDirectPaymentReceipts")
     public ResponseEntity<Object> getAllDirectPaymentReceipts(){
         return new ResponseEntity<>(directPaymentReceiptService.getAllDirectPaymentReceipts(), HttpStatus.OK);
     }
 
     @PostMapping("/createCollectionPaymentReceipt")
-    public ResponseEntity<Object> createCollectionPaymentReceipt(@RequestBody CollectionPaymentReceipt collectionPaymentReceipt, @RequestParam int paymenttransactionid){
-        collectionPaymentReceiptService.createCollectionPaymentReceipt(collectionPaymentReceipt, paymenttransactionid);
+    public ResponseEntity<Object> createCollectionPaymentReceipt(@RequestBody CollectionPaymentReceipt collectionPaymentReceipt){
+        collectionPaymentReceiptService.createCollectionPaymentReceipt(collectionPaymentReceipt);
         return new ResponseEntity<>("Collection Payment Receipt created successfully!", HttpStatus.CREATED);
+
+    }
+
+    @PutMapping("/updateCollectionPaymentReceipt/{collectionpaymentreciptid}")
+    public ResponseEntity<Object> updateCollectionPaymentReceipt(@PathVariable String collectionpaymentreciptid){
+        return new ResponseEntity<>(collectionPaymentReceiptService.updateCollectionPaymentReceipt(collectionpaymentreciptid), HttpStatus.OK);
 
     }
 

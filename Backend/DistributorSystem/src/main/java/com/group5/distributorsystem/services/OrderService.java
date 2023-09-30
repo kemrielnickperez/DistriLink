@@ -31,6 +31,7 @@ public class OrderService {
     EmployeeRepository employeeRepository;
 
     public Order createOrder(Order order) {
+
         Order newOrder =  orderRepository.save(order);
 
         double orderamount = 0;
@@ -104,6 +105,11 @@ public class OrderService {
 
     public ResponseEntity assignCollector(int orderid, Employee collector){
         Order order = orderRepository.findById(orderid).get();
+        Employee employee = employeeRepository.findById(collector.getEmployeeID()).get();
+
+        order.setCollector(employee);
+
+        employee.het().add(order.getOrderid());
 
         //Employee collector = employeeRepository.findById(collectorid).get();
         order.setCollector(collector);
