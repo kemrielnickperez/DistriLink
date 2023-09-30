@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/paymenttransaction")
@@ -17,9 +19,16 @@ public class PaymentTransactionController {
     @Autowired
     PaymentTransactionService paymentTransactionService;
 
-    @PostMapping("/createPaymentTransaction")
-    public ResponseEntity<Object> createPaymentTransaction(@RequestBody PaymentTransaction paymentTransaction){
-        paymentTransactionService.createPaymentTransaction(paymentTransaction);
+    /*@PostMapping("/createPaymentTransaction/{orderid}")
+    public ResponseEntity<Object> createPaymentTransaction(@RequestBody PaymentTransaction paymentTransaction, @PathVariable String orderid){
+        paymentTransactionService.createPaymentTransaction(paymentTransaction, orderid);
+
+        return new ResponseEntity<>("Payment Transaction created successfully!", HttpStatus.CREATED);
+    }*/
+
+    @PostMapping("/createPaymentTransaction/{orderid}")
+    public ResponseEntity<Object> createPaymentTransaction(@RequestBody PaymentTransaction[] paymentTransactions, @PathVariable String orderid){
+        paymentTransactionService.createPaymentTransaction(paymentTransactions, orderid);
 
         return new ResponseEntity<>("Payment Transaction created successfully!", HttpStatus.CREATED);
     }
@@ -30,18 +39,18 @@ public class PaymentTransactionController {
     }
 
     @GetMapping("/getPaymentTransactionByID/{paymenttransactionid}")
-    public ResponseEntity<Object> getPaymentTransactionByID(@PathVariable int paymenttransactionid){
+    public ResponseEntity<Object> getPaymentTransactionByID(@PathVariable String paymenttransactionid){
         return new ResponseEntity<>(paymentTransactionService.getPaymentTransactionByID(paymenttransactionid), HttpStatus.OK);
     }
 
     @PutMapping("/updatePaymentTransaction/{paymenttransactionid}")
-    public ResponseEntity<Object> updatePaymentTransaction(@PathVariable int paymenttransactionid, @RequestBody PaymentTransaction paymentTransaction){
+    public ResponseEntity<Object> updatePaymentTransaction(@PathVariable String paymenttransactionid, @RequestBody PaymentTransaction paymentTransaction){
         return new ResponseEntity<>(paymentTransactionService.updatePaymentTransaction(paymenttransactionid, paymentTransaction), HttpStatus.OK);
 
     }
 
     @PutMapping("/updatePaidPaymentTransaction/{paymenttransactionid}")
-    public ResponseEntity<Object> updatePaidPaymentTransaction(@PathVariable int paymenttransactionid ){
+    public ResponseEntity<Object> updatePaidPaymentTransaction(@PathVariable String paymenttransactionid ){
         return new ResponseEntity<>(paymentTransactionService.updatePaidPaymentTransaction(paymenttransactionid), HttpStatus.OK);
 
     }

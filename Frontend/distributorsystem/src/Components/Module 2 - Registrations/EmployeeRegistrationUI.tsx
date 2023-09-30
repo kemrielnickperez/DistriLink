@@ -5,6 +5,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ChangeEvent, useRef, useState } from "react";
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 import { Dayjs } from "dayjs";
+import { v4 as uuidv4 } from 'uuid';
+
+
+
 const TypographyHeader= styled(Typography)({
     textAlign: 'left', 
     fontWeight: 'bold',
@@ -123,8 +127,11 @@ export default function EmployeeRegistration(){
       
 
       const handleNewEmployee=()=>{
+        const uuid = uuidv4();
+        const employeeuuid = uuid.slice(0, 8);
+
        newEmployee({
-           employeeid: -1,
+           employeeid: employeeuuid,
            firstname: String(firstnameRef.current?.value),
            middlename: String(middlenameRef.current?.value),
            lastname: String(lastnameRef.current?.value),
@@ -136,8 +143,8 @@ export default function EmployeeRegistration(){
            is_cashier: isCashierSelected,
            is_salesassociate: isSalesAssociateSelected,
            is_collector: isCollectorSelected,
-           order: null,
-           collectionPaymentReceipts: null
+           orderids: [],
+           collectionpaymentids: []
        });
       };
     

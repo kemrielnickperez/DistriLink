@@ -6,6 +6,9 @@ import com.group5.distributorsystem.repositories.OrderedProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class OrderedProductService {
 
@@ -16,9 +19,16 @@ public class OrderedProductService {
         return orderedProductRepository.save(orderedProduct);
     }
 
-    public Iterable<OrderedProduct> getAllOrderedProducts(){
+    public List<OrderedProduct> getAllOrderedProducts(){
         return orderedProductRepository.findAll();
     }
+
+
+    /*public Set<OrderedProduct> findByOrderid(String orderid){
+       return orderedProductRepository.findByOrderid(orderid);
+    }*/
+
+
 
 }
 

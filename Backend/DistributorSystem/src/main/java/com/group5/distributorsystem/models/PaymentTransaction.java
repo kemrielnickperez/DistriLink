@@ -1,63 +1,54 @@
 package com.group5.distributorsystem.models;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "payment_transactions")
+
+
+@Document("PaymentTransactions")
 public class PaymentTransaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int paymenttransactionid;
+    private String paymenttransactionid;
 
-    @Column
     private double amountdue;
 
-    @Column
     private LocalDate startingdate;
 
-    @Column
     private LocalDate enddate;
 
-    @Column
     private int installmentnumber;
 
-    @Column
     private boolean isPaid;
 
-    @ManyToOne
-    @JoinColumn(name = "orderid", nullable = true)
-    @JsonBackReference("order-paymenttransactions-reference")
-    private Order order;
+    private String orderid;
 
-    @OneToOne(mappedBy = "paymenttransaction")
-    @JsonBackReference("paymentreceipt-paymenttransactions-reference")
-    private PaymentReceipt paymentreceipt;
+    private String paymentreceiptid ;
+
 
     public PaymentTransaction() {
     }
 
-    public PaymentTransaction(int paymenttransactionid, double amountdue, LocalDate startingdate, LocalDate enddate, int installmentnumber, boolean isPaid, Order order, PaymentReceipt paymentreceipt) {
+    public PaymentTransaction(String paymenttransactionid, double amountdue, LocalDate startingdate, LocalDate enddate, int installmentnumber, boolean isPaid, String orderid, String paymentreceiptid) {
         this.paymenttransactionid = paymenttransactionid;
         this.amountdue = amountdue;
         this.startingdate = startingdate;
         this.enddate = enddate;
         this.installmentnumber = installmentnumber;
         this.isPaid = isPaid;
-        this.order = order;
-        this.paymentreceipt = paymentreceipt;
+        this.orderid = orderid;
+        this.paymentreceiptid = paymentreceiptid;
     }
 
-    public int getPaymenttransactionid() {
+    public String getPaymenttransactionid() {
         return paymenttransactionid;
     }
 
-    public void setPaymenttransactionid(int paymenttransactionid) {
+    public void setPaymenttransactionid(String paymenttransactionid) {
         this.paymenttransactionid = paymenttransactionid;
     }
 
@@ -101,20 +92,19 @@ public class PaymentTransaction {
         isPaid = paid;
     }
 
-    public PaymentReceipt getPaymentreceipt() {
-        return paymentreceipt;
+    public String getOrderid() {
+        return orderid;
     }
 
-    public void setPaymentreceipt(PaymentReceipt paymentreceipt) {
-        this.paymentreceipt = paymentreceipt;
+    public void setOrderid(String orderid) {
+        this.orderid = orderid;
     }
 
-    public Order getOrder() {
-        return order;
+    public String getPaymentreceiptid() {
+        return paymentreceiptid;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setPaymentreceiptid(String paymentreceiptid) {
+        this.paymentreceiptid = paymentreceiptid;
     }
-
 }

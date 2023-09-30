@@ -3,6 +3,8 @@ package com.group5.distributorsystem.services;
 
 import com.group5.distributorsystem.models.CollectionPaymentReceipt;
 import com.group5.distributorsystem.models.DirectPaymentReceipt;
+import com.group5.distributorsystem.models.Employee;
+import com.group5.distributorsystem.models.PaymentTransaction;
 import com.group5.distributorsystem.repositories.CollectionPaymentReceiptRepository;
 import com.group5.distributorsystem.repositories.DirectPaymentReceiptRepository;
 import com.group5.distributorsystem.repositories.EmployeeRepository;
@@ -21,6 +23,29 @@ public class CollectionPaymentReceiptService {
     @Autowired
     PaymentTransactionService paymentTransactionService;
 
+<<<<<<< HEAD
+=======
+
+    @Autowired
+    PaymentTransactionRepository paymentTransactionRepository;
+
+    @Autowired
+    EmployeeRepository employeeRepository;
+
+    public CollectionPaymentReceipt createCollectionPaymentReceipt(CollectionPaymentReceipt collectionPaymentReceipt, String paymenttransactionid){
+
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
+
+        Employee employee = employeeRepository.findById(collectionPaymentReceipt.getCollector().getEmployeeid()).get();
+
+
+        employee.getCollectionpaymentids().add(collectionPaymentReceipt.getPaymentreceiptid());
+
+        employeeRepository.save(employee);
+
+        paymentTransaction.setPaymentreceiptid(collectionPaymentReceipt.getPaymentreceiptid());
+
+>>>>>>> main
 
     @Autowired
     PaymentTransactionRepository paymentTransactionRepository;
@@ -43,6 +68,10 @@ public class CollectionPaymentReceiptService {
         paymentTransactionRepository.save(paymentTransaction);
 
         employeeRepository.save(employee);
+
+        paymentTransactionRepository.save(paymentTransaction);
+
+
 
         return collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
     }
