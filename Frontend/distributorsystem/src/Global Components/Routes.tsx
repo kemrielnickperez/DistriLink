@@ -11,13 +11,14 @@ import Schedules from "../Components/Module 7 - Schedules/ScheduleOrderTransacti
 import DistributorOrderForm from "../Components/Module 5 - Product Distribution and Confirmation/DistributorOrderFormUI";
 import DealerOrderForm from "../Components/Module 5 - Product Distribution and Confirmation/DealerOrderFormUI";
 import SignIn from "../Components/Module 1 - Distributor System Sign-in/SignInUI";
-import PaymentTransactionDetails from "../Components/Module 8 - Payments/PaymentReceiptDetailsUI";
+
 import RecordDirectPayment from "../Components/Module 8 - Payments/RecordDirectPaymentUI";
 import Content from "./Contents";
 import DataGridOrder from "../Components/Module 6 - Collector Assignment/CollectorAssignmentUI";
 
 import DealerProfile from '../Components/Module 4 - Profiles & Approval/DealerProfilesListUI';
 import DealerApproval from '../Components/Module 4 - Profiles & Approval/DealerApproval';
+import PaymentTransactionDetails from '../Components/Module 6 - Collector Assignment/PaymentTransactionDetailsUI';
 export default function MainRoutes(){
     return(
         <Routes>
@@ -39,11 +40,12 @@ export default function MainRoutes(){
                 <Route path="/dealerRegistration" element={<DealerRegistration/>}/>
                 <Route path="/employeeRegistrationn" element={<EmployeeRegistration/>}/>
                 <Route path="/schedules" element={<Schedules/>}/>
-                <Route path="/orderTransactionDetails" element={<PaymentTransactionDetails/>}></Route>
+                {/* <Route path="/orderTransactionDetails" element={<PaymentTransactionDetails/>}></Route> */}
                 <Route path="/signin" element={<SignIn/>}/>
                 <Route path="/recordDirectPayment" element={<RecordDirectPayment/>}/>
                 <Route path="/dealerApproval" element={<DealerApproval/>}/>
                 <Route path="/employeeRegistration" element={<EmployeeRegistration/>}/>
+                <Route path="/paymenttransactiondetailsss/:objectId" element={<PaymentTransactionDetails/>}/>
             </Route>
          </Routes>  
    );

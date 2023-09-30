@@ -2,15 +2,19 @@ import * as React from 'react';
 import { DataGrid, GridColDef, GridRowId, GridValueGetterParams, GridRowParams, GridApi, GridFilterModel } from '@mui/x-data-grid';
 import CardActions from '@mui/material/CardActions';
 import { Autocomplete, Button, Card, TextField, Typography, Box } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useRestOrder } from '../../RestCalls/OrderUseRest';
 import axios from 'axios';
 import { IDealer, IEmployee, IOrder } from '../../RestCalls/Interfaces';
-
+import { AppContext } from '../../Global Components/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 
 //DataGrid Function 
 export default function CollectorAssignment() {
+
+  const objectidContext = useContext(AppContext);
+  const navigate = useNavigate();
 
   const headerClassName = "custom-header"; // For Header Columns and styling
 
@@ -23,6 +27,11 @@ export default function CollectorAssignment() {
   //const [rows, setRows] = React.useState(initialRows); // State for grouping order transaction
   const [groupByValue, setGroupByValue] = useState(''); // // State for the groupBy input value
 
+  const [selectRowOrder, setSelectRowOrder] =useState<number | undefined>(undefined);
+
+  const [objectId, setObjectId] = useState<string | null>(null);
+  //const SelectedOrderContext= createContext<number |undefined>(undefined);
+  
 
   const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
 
@@ -52,9 +61,20 @@ export default function CollectorAssignment() {
   }
 
 
+  const handleButtonClick = (objectId: string) => {
+    // Update the context if needed
+     if (objectidContext) {
+      objectidContext.setObjectId(objectId);
+    } 
+
+   
+    navigate(`/paymenttransactiondetailsss/${objectId}`);
+  };
+
   useEffect(() => {
     getAllCollectors();
     getAllOrders();
+    
 
   }, [orders]);
 
@@ -67,6 +87,36 @@ export default function CollectorAssignment() {
     { field: 'orderAmount', headerName: 'Order Amount', width: 300 },
     { field: 'collectorStatus', headerName: 'Collector Status', width: 300 },
     { field: 'collectorName', headerName: 'Collector Name', width: 400 },
+    {field: '', 
+    headerName:'',
+    width: 150 , 
+    renderCell: (params: { row: any; }) => {
+      return (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            // Handle button click for this row here
+            console.log('Button clicked for row:', params.row.orderID);
+            handleButtonClick(params.row.orderID)
+            //objectid?.setObjectId(params.row.orderID); 
+            //navigate(`/paymenttransactiondetailsss/${objectid?.objectid}`);
+          }}
+        >
+          View
+        </Button>
+      );
+    },
+      /* return( 
+         <SelectedOrderContext.Provider value={selectedRow}>
+           <Link to="/orderTransactionDetails" >   
+            <Button variant="contained" style={{height:'35px', width:'100px',color:'#146C94',backgroundColor:'#AFD3E2',fontWeight:'bold', borderRadius:'20px'}}onClick={handleButtonOrder}>
+              View
+            </Button>
+          </Link> 
+        </SelectedOrderContext.Provider> 
+      );  */
+    },
   ];
 
   const rows = orders.map((order) => {
