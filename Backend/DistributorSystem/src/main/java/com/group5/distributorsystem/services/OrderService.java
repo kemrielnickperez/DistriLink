@@ -107,6 +107,7 @@ public class OrderService {
 
         Order order = orderRepository.findById(orderid).get();
 
+
         Employee employee = employeeRepository.findById(order.getCollector().getEmployeeid()).get();
         employee.getOrderids().remove(order.getOrderid());
         employeeRepository.save(employee);
