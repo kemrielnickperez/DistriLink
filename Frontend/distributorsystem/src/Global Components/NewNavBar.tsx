@@ -14,10 +14,15 @@ type navProps = {
 {/** Styled box for background color of drawer */}
 const ColorBox = styled(Box)({
     backgroundColor: "#2D85E7", 
-    width: '380px', 
-    display: 'flex', 
+    width: '80px', 
     flexDirection: 'column', 
-    height: '100%'
+    height: '1000%',
+    transition: "ease-in-out 0.3s",
+    overflow: 'hidden',
+    ':hover': {
+        width: '360px',
+        height: '1000%',
+    }
 })
 
 {/** Styled typo for app name */}
@@ -25,7 +30,7 @@ const AppNameTypography = styled(Typography)({
     marginTop: 80,
     marginBottom: 60,
     marginLeft: -100,
-    fontFamily: 'Gill Sans, Sans-serif',
+    fontFamily: 'Inter, sans-serif',
     fontSize: '40px'
 })
 
@@ -35,7 +40,10 @@ const StyledText = styled(ListItemText)({
     marginLeft: 20,
     color: '#FFFFFF',
     fontSize: '20px',
-    fontFamily: 'Inclusive Sans, sans-serif',
+    fontFamily: 'Inter, sans-serif',
+    ':hover': {
+        opacity: 1,
+    }
 })
 
 {/** Styled list items in the drawer */}
@@ -44,7 +52,7 @@ const StyledListItem = styled(ListItem)({
 })
 
 const StyledButton = styled(Button)({
-    marginLeft: -10,
+    marginLeft: -30,
     width: 390,
     ':hover':{
         backgroundColor: '#87BAF3',
