@@ -3,6 +3,7 @@ package com.group5.distributorsystem.controllers;
 
 import com.group5.distributorsystem.models.CollectionPaymentReceipt;
 import com.group5.distributorsystem.models.DirectPaymentReceipt;
+import com.group5.distributorsystem.models.PaymentReceipt;
 import com.group5.distributorsystem.services.CollectionPaymentReceiptService;
 import com.group5.distributorsystem.services.DirectPaymentReceiptService;
 import com.group5.distributorsystem.services.PaymentReceiptService;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -36,11 +39,16 @@ public class PaymentReceiptController {
         return new ResponseEntity<>(paymentReceiptService.getPaymentReceiptsByDiscriminatorValue(discriminatorvalue), HttpStatus.OK);
     }*/
 
+    @GetMapping("/getPaymentReceiptByID/{paymentreceiptid}")
+    public ResponseEntity<Object> getPaymentReceiptByID(@PathVariable String paymentreceiptid){
+        return new ResponseEntity<>(paymentReceiptService.getPaymentReceiptByID(paymentreceiptid), HttpStatus.OK);
+    }
+
 
 
     @PostMapping("/createDirectPaymentReceipt")
-    public ResponseEntity<Object> createDirectPaymentReceipt(@RequestBody DirectPaymentReceipt directPaymentReceipt, @RequestParam String paymenttransactionid){
-        directPaymentReceiptService.createDirectPaymentReceipt(directPaymentReceipt, paymenttransactionid);
+    public ResponseEntity<Object> createDirectPaymentReceipt(@RequestBody DirectPaymentReceipt directPaymentReceipt){
+        directPaymentReceiptService.createDirectPaymentReceipt(directPaymentReceipt);
         return new ResponseEntity<>("Direct Payment Receipt created successfully!", HttpStatus.CREATED);
 
     }
@@ -59,9 +67,9 @@ public class PaymentReceiptController {
 
     }
 
-    @PutMapping("/updateCollectionPaymentReceipt/{collectionpaymentreciptid}")
-    public ResponseEntity<Object> updateCollectionPaymentReceipt(@PathVariable String collectionpaymentreciptid){
-        return new ResponseEntity<>(collectionPaymentReceiptService.updateCollectionPaymentReceipt(collectionpaymentreciptid), HttpStatus.OK);
+    @PutMapping("/updateCollectionPaymentReceipt/{collectionpaymentreciptid}/{cashierid}")
+    public ResponseEntity<Object> confirmCollectionPaymentReceipt(@PathVariable String collectionpaymentreciptid, @PathVariable String cashierid){
+        return new ResponseEntity<>(collectionPaymentReceiptService.confirmCollectionPaymentReceipt(collectionpaymentreciptid, cashierid), HttpStatus.OK);
 
     }
 

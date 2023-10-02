@@ -40,6 +40,8 @@ public class Employee {
 
     private Set<String> orderids;
 
+    private Set<String> paymentreceiptids;
+
     private Set<String> collectionpaymentids;
     //private Set<Order> orders;
 
@@ -60,11 +62,11 @@ public class Employee {
     @JsonManagedReference("employee-collectionpaymenttransactions-reference")
     private Set<CollectionPaymentReceipt> collectionPaymentReceipts;*/
 
-    //construxtors and setters/getters
+
     public Employee() {
     }
 
-    public Employee(String employeeid, String firstname, String middlename, String lastname, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, Set<String> orderids, Set<String> collectionpaymentids) {
+    public Employee(String employeeid, String firstname, String middlename, String lastname, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, Set<String> orderids, Set<String> paymentreceiptids, Set<String> collectionpaymentids) {
         this.employeeid = employeeid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -78,6 +80,7 @@ public class Employee {
         this.is_salesassociate = is_salesassociate;
         this.is_collector = is_collector;
         this.orderids = orderids;
+        this.paymentreceiptids = paymentreceiptids;
         this.collectionpaymentids = collectionpaymentids;
     }
 
@@ -183,6 +186,14 @@ public class Employee {
 
     public void setOrderids(Set<String> orderids) {
         this.orderids = orderids;
+    }
+
+    public Set<String> getPaymentreceiptids() {
+        return paymentreceiptids;
+    }
+
+    public void setPaymentreceiptids(Set<String> paymentreceiptids) {
+        this.paymentreceiptids = paymentreceiptids;
     }
 
     public Set<String> getCollectionpaymentids() {
