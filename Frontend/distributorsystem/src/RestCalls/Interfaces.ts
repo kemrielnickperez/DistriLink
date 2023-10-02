@@ -81,13 +81,25 @@ export interface IPaymentTransaction {
     paymentreceiptid: string | null;
 }
 
-export interface IDirectPaymentReceipt {
-    receiptid: number,
+export interface IPaymentReceipt {
+    paymentreceiptid: number,
     remarks: string,
-    datepaid: string,
-    amountpaid: number,
     paymenttype: string,
-   /*   cashier: IEmployee,  */
     paymenttransaction: IPaymentTransaction, 
-       
+    cashier: IEmployee | null
+}
+
+export interface IDirectPaymentReceipt extends IPaymentReceipt{
+    remarks: string,
+    datepaid: string,     
+}
+
+export interface ICollectionPaymentReceipt extends IPaymentReceipt{
+    collectiondate: string,
+    collectionamount: number,     
+    remitteddate: string,
+    remittedamount: number,  
+    confirmationdate: string,
+    confirmed: boolean,  
+    collector: IEmployee
 }
