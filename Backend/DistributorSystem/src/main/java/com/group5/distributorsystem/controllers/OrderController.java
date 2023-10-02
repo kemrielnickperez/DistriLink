@@ -31,18 +31,18 @@ public class OrderController {
     }
 
     @GetMapping("/getOrderByID/{orderid}")
-    public ResponseEntity<Object> getOrderByID(@PathVariable int orderid){
+    public ResponseEntity<Object> getOrderByID(@PathVariable String orderid){
         return new ResponseEntity<>(orderService.getOrderByID(orderid), HttpStatus.OK);
     }
 
 
     @PutMapping("/assignCollector/{orderid}")
-    public ResponseEntity<Object> assignCollector(@PathVariable int orderid, @RequestBody Employee collector){
+    public ResponseEntity<Object> assignCollector(@PathVariable String orderid, @RequestBody Employee collector){
         return new ResponseEntity<>(orderService.assignCollector(orderid, collector), HttpStatus.OK);
     }
 
     @PutMapping("/removeCollector/{orderid}")
-    public ResponseEntity<Object> removeCollector(@PathVariable int orderid){
+    public ResponseEntity<Object> removeCollector(@PathVariable String orderid){
         return new ResponseEntity<>(orderService.removeCollector(orderid), HttpStatus.OK);
     }
 

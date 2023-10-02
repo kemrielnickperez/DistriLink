@@ -20,12 +20,12 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public Iterable<Employee> getAllEmployees(){
+    public List<Employee> getAllEmployees(){
         return  employeeRepository.findAll();
     }
 
     public List<Employee> getAllCollectors(){
-        Iterable<Employee> allEmployees = employeeRepository.findAll();
+        List<Employee> allEmployees = employeeRepository.findAll();
         List<Employee> collectors = new ArrayList<>();
 
         for(Employee e : allEmployees){
@@ -37,19 +37,19 @@ public class EmployeeService {
         return collectors;
     }
 
-    public Optional<Employee> getEmployeeByID(int employeeid){
+    public Optional<Employee> getEmployeeByID(String employeeid){
         return employeeRepository.findById(employeeid);
     }
 
 
-    public Employee getCollectorByID(int employeeid){
+    public Employee getCollectorByID(String employeeid){
 
-        Iterable<Employee> allCollectors = getAllCollectors();
+        List<Employee> allCollectors = getAllCollectors();
 
         Employee collector = new Employee();
 
         for(Employee e : allCollectors){
-            if(e.getEmployeeID() == employeeid){
+            if(e.getEmployeeid().equals(employeeid)){
                 collector = e;
             }
         }

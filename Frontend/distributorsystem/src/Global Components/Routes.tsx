@@ -1,28 +1,32 @@
-import React from "react";
-import {Routes, Route, BrowserRouter, Navigate} from 'react-router-dom'
-import Dashboard from "../Components/Dashboard/Dashboard";
-import AssignmentList from "../Components/Collector Assignment/AssignmentList";
-import PaymentSummary from "../Components/Payments/PaymentSummary";
-import PaymentList from "../Components/Payments/PaymentList";
+import {Routes, Route, Navigate} from 'react-router-dom'
+import Dashboard from "../Components/Module 3 - Distributor Dashboard/DashboardUI";
+
+import PaymentList from "../Components/Module 8 - Payments/PaymentsListUI";
 // import DealerProfileList from "./Components/Profiles/DealerProfiles/DealerProfileList";
 // import EmployeeProfileDetails from "./Components/Profiles/EmployeeProfiles/EmployeeProfileDetails";
 // import EmployeeProfileList from "./Components/Profiles/EmployeeProfiles/EmployeeProfileList";
-import DealerRegistration from "../Components/Registrations/DealerRegistration";
-import EmployeeRegistration from "../Components/Registrations/EmployeeRegistration";
-import ScheduleOrderTransaction from "../Components/Schedules/ScheduleOrderTransaction";
-import Schedules from "../Components/Schedules/ScheduleOrderTransaction";
-import DistributorOrderForm from "../Components/Product Distribution/DistributorOrderForm";
-import DealerOrderForm from "../Components/Product Distribution/DealerOrderForm";
-import SignIn from "../Components/Sign-in/SignIn";
-import PaymentTransactionDetails from "../Components/Payments/PaymentTransactionDetails";
-import OrderConfirmation from "../Components/Product Distribution/OrderConfirmation";
-import RecordDirectPayment from "../Components/Payments/RecordDirectPayment";
-import Content from "./Contents";
-import DataGridOrder from "../Components/Collector Assignment/CollectorAssignment";
+import DealerRegistration from "../Components/Module 2 - Registrations/DealerRegistrationUI";
+import EmployeeRegistration from "../Components/Module 2 - Registrations/EmployeeRegistrationUI";
+import Schedules from "../Components/Module 7 - Schedules/ScheduleOrderTransactionUI";
+import DistributorOrderForm from "../Components/Module 5 - Product Distribution and Confirmation/DistributorOrderFormUI";
+import DealerOrderForm from "../Components/Module 5 - Product Distribution and Confirmation/DealerOrderFormUI";
+import SignIn from "../Components/Module 1 - Distributor System Sign-in/SignInUI";
 
+import RecordDirectPayment from "../Components/Module 8 - Payments/RecordDirectPaymentUI";
+import Content from "./Contents";
+import DataGridOrder from "../Components/Module 6 - Collector Assignment/CollectorAssignmentUI";
+
+import DealerProfile from '../Components/Module 4 - Profiles & Approval/DealerProfilesListUI';
+import DealerApproval from '../Components/Module 4 - Profiles & Approval/DealerApproval';
+import PaymentTransactionDetails from '../Components/Module 6 - Collector Assignment/PaymentTransactionDetailsUI';
+import { PaymentReceiptDetails } from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
+
+<<<<<<< HEAD
 import DealerProfile from '../Components/Profiles/DealerProfile';
 import DealerApproval from "../Components/Approvals/DealerApproval";
 import ProductDistributionList from "../Components/Product Distribution/ProductDistributionList";
+=======
+>>>>>>> main
 export default function MainRoutes(){
     return(
         <Routes>
@@ -49,8 +53,14 @@ export default function MainRoutes(){
                 <Route path="/recordDirectPayment" element={<RecordDirectPayment/>}/>
                 <Route path="/dealerApproval" element={<DealerApproval/>}/>
                 <Route path="/employeeRegistration" element={<EmployeeRegistration/>}/>
+<<<<<<< HEAD
                 <Route path="/productDistributionList" element={<ProductDistributionList/>}/>
             </Route>
+=======
+                <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails/>}></Route>
+                
+           </Route>
+>>>>>>> main
          </Routes>  
    );
 }

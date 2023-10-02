@@ -4,14 +4,16 @@ import CardContent from '@mui/material/CardContent';
 import SearchIcon from '@mui/icons-material/Search';
 import { Button, Card, TextField, InputAdornment, TableContainer, Table, TableHead, Paper, TableRow, TableCell, TableBody, Box, IconButton, Grid, Stack, TextFieldProps } from '@mui/material';
 import styled from "@emotion/styled";
-import { useRestSchedule } from "../../RestCalls/ScheduleUseRest";
+import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
 import { useEffect, useRef, useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { format } from 'date-fns';
-import { IPaymentTransaction } from "../../RestCalls/Interfaces";
+import { IOrder, IPaymentTransaction } from "../../RestCalls/Interfaces";
 import moment from "moment";
+import { useRestOrder } from "../../RestCalls/OrderUseRest";
+import { v4 as uuidv4 } from 'uuid';
 
 
 
@@ -124,61 +126,61 @@ export default function Schedules() {
 
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
-
+    const [paymentTransactionsObjects, setPaymentTransactionsObjects] = useState<IPaymentTransaction[]>([]);
     const orderIDRef = useRef<TextFieldProps>(null)
 
-    const [getOrderByID, createSchedule, updatePaymentTransaction, order, isOrderFound] = useRestSchedule();
+    const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
+    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+
 
     //sorting the payment transactions
-    const sortedPaymemtTransactions = order?.paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+    const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
 
     const handleFindOrder = () => {
-        //pagbutang sa isFound ot not found uy
-        getOrderByID(Number(orderIDRef.current?.value))
-        // console.log(order)
+        getOrderByID(orderIDRef.current?.value + "")
+        //console.log(isOrderFoundError + "error")
+        if (isOrderFound === false)
+            alert("Order not found. Please try again.");
+
 
     };
 
-
-    const handleCreateSchedules = () => {
+    const handleCreatePaymentTransaction = () => {
+        const newPaymentTransactions: IPaymentTransaction[] = [];
 
         for (let i = 1; i <= order!.paymentterms; i++) {
-            createSchedule({
-                paymenttransactionid: -1,
+            const uuid = uuidv4();
+            const paymenttransactionuuid = uuid.slice(0, 8);
+
+            const newPaymentTransaction = {
+                paymenttransactionid: paymenttransactionuuid,
                 amountdue: order!.orderamount / order!.paymentterms,
-                startingdate: '',
-                enddate: '',
+                startingdate: "",
+                enddate: "",
                 installmentnumber: i,
                 paid: false,
-                order: order!,
-            });
+                orderid: order!.orderid,
+                paymentreceiptid: null,
+            };
+
+            newPaymentTransactions.push(newPaymentTransaction);
         }
 
+        // After the loop is complete, update the state once with a callback.
+        setPaymentTransactionsObjects((paymentTransactionsObjects) => {
+            const updatedPaymentTransactions = [
+                ...paymentTransactionsObjects,
+                ...newPaymentTransactions,
+            ];
+
+            // Call createPaymentTransaction with the updated array.
+            createPaymentTransaction(updatedPaymentTransactions, order!.orderid);
+
+            return updatedPaymentTransactions;
+        });
     };
 
-
-    /* const handleStartDateUpdate = (startingDate: Dayjs, newValue: Dayjs | null): void => {
-       
-        
-         if (!selectedStartDate?.isSame(startingDate)) {
-            setSelectedStartDate(newValue);
-
-        }
-        else{
-            setSelectedStartDate(startingDate);
-        } 
-    };
-
-
-    const handleEndDateUpdate = (endDate: Dayjs, newValue: Dayjs | null): void => {
-         if (!selectedEndDate?.isSame(endDate)) {
-            setSelectedEndDate(newValue);
-        }
-        else{
-            setSelectedStartDate(endDate);
-        } 
-    }; */
 
 
     const handleStartDateUpdate = (newValue: Dayjs | null): void => {
@@ -213,61 +215,29 @@ export default function Schedules() {
             return;
         }
 
-        updatePaymentTransaction(
-            transaction.paymenttransactionid,
-            {
-                paymenttransactionid: transaction.paymenttransactionid,
-                amountdue: transaction.amountdue,
-                startingdate: updatedStartingDate?.format('YYYY-MM-DD') || '',
-                enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
-                installmentnumber: transaction.installmentnumber,
-                paid: transaction.paid,
-                order: transaction.order
-            }
-        )
-
         setStartDateModified(false);
         setEndDateModified(false);
 
 
-        /* 
 
-        // const selectedRow = Array[index];
-        // console.log(selectedDate?.format("YYYY-MM-DD"))
-
-
-         tableData.map((transaction, index) => (
-             // Access values from each row
-             const paymentTransactionId = transaction.paymenttransactionid;
-             const installmentNumber = transaction.installmentnumber;
-             const startingDate = transaction.startingdate;
-             const endDate = transaction.enddate;
-             const amountDue = transaction.amountdue; 
-        // updatePaymentTransaction(paymentTransactionId.)
-        // You can access the starting date and ending date values using the appropriate state or variable that holds the date values for each row.
-
-          const paymentTerms = order?.paymentterms as number;
-     
-          const selectedRow = Array.from({ length: paymentTerms })[index];
-     
-          const amountDue = order?.orderamount! / paymentTerms;
-     
-            createSchedule({
-              paymenttransactionid: -1,
-              amountdue: amountDue,
-              startingdate: selectedDate?.format('YYYY-MM-DD') || '',
-              enddate: selectedDate?.format('YYYY-MM-DD') || '',
-              installmentnumber: installmentNumber,
-              order: order!,
-          });  
-    */
     };
 
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        handleFindOrder();
+        setIsMounted(true); // Set the component as mounted when it renders
+
+        // Only make the GET request if the component is mounted
+        if (isMounted) {
+
+            handleFindOrder();
+        }
+        return () => {
+            setIsMounted(false);
+        };
+
     },
-        [isOrderFound, order]);
+        [isOrderFound, order, paymentTransactionsObjects]);
 
 
     //put a snackbar on latur nalang sa pag notify nga wlaa ga na order/order not found
@@ -329,7 +299,7 @@ export default function Schedules() {
                 </Grid>
             </Grid>
 
-            {order?.paymentTransactions?.length !== 0 ? (
+            {order?.paymenttransactions?.length !== 0 ? (
                 <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
                     <Grid item >
                         <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -401,15 +371,7 @@ export default function Schedules() {
                                                 </TableCell>
 
                                                 <TableCell>
-                                                    {/* 
-                                                    not putting this in a textfield since di man ko mo follow atong editable na amount
-                                                    <TextField 
-                                                        placeholder={String(order?.orderamount! / order?.paymentterms!)}
-                                                        InputProps={{ disableUnderline: true }} 
-                                                        variant="standard"
-                                                    >
-                                
-                                                    </TextField> */}
+
                                                     {transaction.amountdue.toFixed(2)}
 
                                                 </TableCell>
@@ -434,7 +396,11 @@ export default function Schedules() {
             ) : (
                 <div>
                     <h2 style={{ color: 'white', marginTop: '50px' }}> no schedules yet</h2>
-                    <StyledButton onClick={handleCreateSchedules}> Create Schedules </StyledButton>
+                    <StyledButton onClick={
+                        handleCreatePaymentTransaction
+                    }> Create Schedules </StyledButton>
+
+
                 </div>
 
             )

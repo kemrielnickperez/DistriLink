@@ -1,35 +1,28 @@
 package com.group5.distributorsystem.models;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDate;
 
 
 
-@Entity
-@Table(name = "payment_receipts")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//so far wala koy choice sa discriminator. naa gyud siya sa table niya I cant find a way to extract the value of the discriminator column, so yeah design'2 lang sa ni siya. though gibutang lang kuni arun mas clear siya sa db :>
-@DiscriminatorColumn(name = "discriminator_paymenttype", discriminatorType = DiscriminatorType.STRING)
+@Document("PaymentReceipts")
 public class PaymentReceipt {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int receiptid;
+    private String paymentreceiptid;
 
-    @Column
     private String remarks;
 
-    @Column
     private String paymenttype;
 
-    //It's important to note that @JsonBackReference is typically used for one-to-many or many-to-one relationships where one side of the relationship should be omitted during serialization to avoid circular references. For one-to-one relationships, you might not need @JsonBackReference if you are only serializing one direction of the relationship.
-    @OneToOne
-    @JoinColumn(name = "paymenttransactionid")
-    @JsonManagedReference("paymentreceipt-paymenttransactions-reference")
+    //@DBRef
     private PaymentTransaction paymenttransaction;
+
+    private Employee cashier;
 
     //comment sani kay murag nagdala og panganib
    /* @ManyToOne
@@ -37,25 +30,23 @@ public class PaymentReceipt {
     @JsonBackReference("employee-paymentreceipts-reference")
     private Employee cashier;*/
 
-
-
     public PaymentReceipt() {
     }
 
-    public PaymentReceipt(int receiptid, String remarks, String paymenttype, PaymentTransaction paymentTransaction /*Employee cashier*/) {
-        this.receiptid = receiptid;
+    public PaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier) {
+        this.paymentreceiptid = paymentreceiptid;
         this.remarks = remarks;
         this.paymenttype = paymenttype;
-        this.paymenttransaction = paymentTransaction;
-        //this.cashier = cashier;
+        this.paymenttransaction = paymenttransaction;
+        this.cashier = cashier;
     }
 
-    public int getReceiptid() {
-        return receiptid;
+    public String getPaymentreceiptid() {
+        return paymentreceiptid;
     }
 
-    public void setReceiptid(int receiptid) {
-        this.receiptid = receiptid;
+    public void setPaymentreceiptid(String paymentreceiptid) {
+        this.paymentreceiptid = paymentreceiptid;
     }
 
     public String getRemarks() {
@@ -74,21 +65,19 @@ public class PaymentReceipt {
         this.paymenttype = paymenttype;
     }
 
-    public PaymentTransaction getPaymentTransaction() {
+    public PaymentTransaction getPaymenttransaction() {
         return paymenttransaction;
     }
 
-    public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
-        this.paymenttransaction = paymentTransaction;
+    public void setPaymenttransaction(PaymentTransaction paymenttransaction) {
+        this.paymenttransaction = paymenttransaction;
     }
 
-   /* public Employee getCashier() {
+    public Employee getCashier() {
         return cashier;
     }
 
     public void setCashier(Employee cashier) {
         this.cashier = cashier;
     }
-*/
-
 }
