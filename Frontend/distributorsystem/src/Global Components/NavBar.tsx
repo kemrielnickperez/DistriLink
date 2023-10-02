@@ -85,7 +85,9 @@ export default function NavBar(props: navProps) {
             <Link to="/recordDirectPayment"><Button sx={{ backgroundColor: 'rgba(19, 71, 95, 0.1)', fontWeight: 'bold', color: '#FFFFFF', height: '80px', width: '100%', '&:hover': { backgroundColor: '#13475F' } }}>Record Direct Payment</Button></Link>
            
             <Link to="/distributorOrderForm"><Button sx={{ backgroundColor: 'rgba(19, 71, 95, 0.1)', fontWeight: 'bold', color: '#FFFFFF', height: '80px', width: '100%', '&:hover': { backgroundColor: '#13475F' } }}>Product Distribution Form - Distributor </Button></Link>
-
+            <Link to="/dealerApproval"><Button sx={{ backgroundColor: 'rgba(19, 71, 95, 0.1)', fontWeight: 'bold', color: '#FFFFFF', height: '80px', width: '100%', '&:hover': { backgroundColor: '#13475F' } }}>Dealer Approval </Button></Link>
+            <Link to="/dealerProfile"><Button sx={{ backgroundColor: 'rgba(19, 71, 95, 0.1)', fontWeight: 'bold', color: '#FFFFFF', height: '80px', width: '100%', '&:hover': { backgroundColor: '#13475F' } }}>Dealer Profile </Button></Link>
+           <Link to="/employeeRegistration"><Button sx={{ backgroundColor: 'rgba(19, 71, 95, 0.1)', fontWeight: 'bold', color: '#FFFFFF', height: '80px', width: '100%', '&:hover': { backgroundColor: '#13475F' } }}>Employee Registration</Button></Link>
           </Box>
         </Box>
       </Drawer>

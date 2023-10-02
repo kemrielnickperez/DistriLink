@@ -1,45 +1,54 @@
 package com.group5.distributorsystem.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
-@Entity
-@Table(name = "orders")
+
+@Document("Orders")
 public class Order {
 
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int orderid;
+    private String orderid;
 
-    @Column
     private LocalDate orderdate;
 
-    @Column
     private LocalDate distributiondate;
 
-    @Column
     private float penaltyrate;
 
-    @Column
     private int paymentterms;
 
-    @Column
     private double orderamount;
 
-    @OneToMany(mappedBy = "order")
-    @JsonManagedReference
+
+    private Dealer dealer;
+
+
+    private Employee collector;
+
+    private Set<OrderedProduct> orderedproducts;
+
+    private Set<PaymentTransaction> paymenttransactions;
+
+
+
+    //private Set<PaymentTransaction> paymentTransactions;
+
+
+   /* @OneToMany(mappedBy = "order")
+    @JsonManagedReference("order-orderedproducts-reference")
     private Set<OrderedProduct> orderedProducts;
 
 
     @OneToMany(mappedBy = "order")
-    @JsonManagedReference
+    @JsonManagedReference("order-paymenttransactions-reference")
     private Set<PaymentTransaction> paymentTransactions;
 
 
@@ -49,33 +58,30 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "collectorid", nullable = true)
-    private Employee collector;
-
+    //@JsonManagedReference("order-employee-reference")
+    private Employee collector;*/
 
     public Order() {
     }
 
-    public Order(int orderid, LocalDate orderdate, LocalDate distributiondate, float penaltyrate, int paymentterms, double orderamount, Set<OrderedProduct> orderedProducts, Set<PaymentTransaction> paymentTransactions, Dealer dealer, Employee collector) {
+    public Order(String orderid, LocalDate orderdate, LocalDate distributiondate, float penaltyrate, int paymentterms, double orderamount, Dealer dealer, Employee collector, Set<OrderedProduct> orderedproducts, Set<PaymentTransaction> paymenttransactions) {
         this.orderid = orderid;
         this.orderdate = orderdate;
         this.distributiondate = distributiondate;
         this.penaltyrate = penaltyrate;
         this.paymentterms = paymentterms;
         this.orderamount = orderamount;
-        this.orderedProducts = orderedProducts;
-        this.paymentTransactions = paymentTransactions;
         this.dealer = dealer;
         this.collector = collector;
+        this.orderedproducts = orderedproducts;
+        this.paymenttransactions = paymenttransactions;
     }
 
-    public Order(LocalDate orderdate, LocalDate distributiondate, float penaltyrate, String paymentterms, Dealer dealer, Employee collector) {
-    }
-
-    public int getOrderid() {
+    public String getOrderid() {
         return orderid;
     }
 
-    public void setOrderid(int orderid) {
+    public void setOrderid(String orderid) {
         this.orderid = orderid;
     }
 
@@ -127,14 +133,6 @@ public class Order {
         this.dealer = dealer;
     }
 
-    public Set<OrderedProduct> getOrderedProducts() {
-        return orderedProducts;
-    }
-
-    public void setOrderedProducts(Set<OrderedProduct> orderedProducts) {
-        this.orderedProducts = orderedProducts;
-    }
-
     public Employee getCollector() {
         return collector;
     }
@@ -143,11 +141,19 @@ public class Order {
         this.collector = collector;
     }
 
-    public Set<PaymentTransaction> getPaymentTransactions() {
-        return paymentTransactions;
+    public Set<OrderedProduct> getOrderedproducts() {
+        return orderedproducts;
     }
 
-    public void setPaymentTransactions(Set<PaymentTransaction> paymentTransactions) {
-        this.paymentTransactions = paymentTransactions;
+    public void setOrderedproducts(Set<OrderedProduct> orderedproducts) {
+        this.orderedproducts = orderedproducts;
+    }
+
+    public Set<PaymentTransaction> getPaymenttransactions() {
+        return paymenttransactions;
+    }
+
+    public void setPaymenttransactions(Set<PaymentTransaction> paymenttransactions) {
+        this.paymenttransactions = paymenttransactions;
     }
 }

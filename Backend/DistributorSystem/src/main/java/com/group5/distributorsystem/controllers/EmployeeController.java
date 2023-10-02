@@ -18,31 +18,30 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
-        @PostMapping("/registerEmployee")
-        public ResponseEntity<Object> registerEmployee(@RequestBody Employee employee){
-            employeeService.registerEmployee(employee);
+    @PostMapping("/registerEmployee")
+    public ResponseEntity<Object> registerEmployee(@RequestBody Employee employee){
+        employeeService.registerEmployee(employee);
 
-            return new ResponseEntity<>("Employee registered successfully!", HttpStatus.CREATED);
-        }
-
-        @GetMapping("/getAllEmployees")
-        public ResponseEntity<Object> getAllEmployees(){
-            return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
-        }
-
-        @GetMapping("/getAllCollectors")
-        public ResponseEntity<Object> getAllCollectors(){
-            return new ResponseEntity<>(employeeService.getAllCollectors(), HttpStatus.OK);
-        }
-
-        @GetMapping("/getEmployeeByID")
-        public ResponseEntity<Object> getEmployeeByID(@RequestParam int employeeid){
-            return new ResponseEntity<>(employeeService.getEmployeeByID(employeeid), HttpStatus.OK);
-        }
-
-        @GetMapping("/getCollectorByID")
-        public ResponseEntity<Object> getCollectorByID(@RequestParam int employeeid){
-            return new ResponseEntity<>(employeeService.getCollectorByID(employeeid), HttpStatus.OK);
-        }
-
+        return new ResponseEntity<>("Employee registered successfully!", HttpStatus.CREATED);
     }
+
+    @GetMapping("/getAllEmployees")
+    public ResponseEntity<Object> getAllEmployees(){
+        return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllCollectors")
+    public ResponseEntity<Object> getAllCollectors(){
+        return new ResponseEntity<>(employeeService.getAllCollectors(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getEmployeeByID")
+    public ResponseEntity<Object> getEmployeeByID(@RequestParam String employeeid){
+        return new ResponseEntity<>(employeeService.getEmployeeByID(employeeid), HttpStatus.OK);
+    }
+    @GetMapping("/getCollectorByID")
+    public ResponseEntity<Object> getCollectorByID(@RequestParam String employeeid){
+        return new ResponseEntity<>(employeeService.getCollectorByID(employeeid), HttpStatus.OK);
+    }
+
+}

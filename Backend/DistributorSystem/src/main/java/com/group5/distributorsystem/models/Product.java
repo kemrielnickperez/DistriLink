@@ -1,55 +1,59 @@
 package com.group5.distributorsystem.models;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
-@Entity
-@Table(name = "products")
+
+@Document("Products")
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int productid;
+    private String productid;
 
-    @Column
+
     private String name;
 
-    @Column
+
     private String unit;
 
-    @Column
+
     private float price;
 
-    @Column
+
     private float commissionrate;
 
-    @OneToMany(mappedBy = "product")
+    private Set<String> orderedproductids;
+
+    //private Set<OrderedProduct> orderedProducts;
+
+    /*@OneToMany(mappedBy = "product")
     @JsonIgnore
     //@JsonBackReference // you inform Jackson to handle the serialization appropriately and break the infinite recursion.
-    private Set<OrderedProduct> orderedProducts;
+    private Set<OrderedProduct> orderedProducts;*/
 
 
     public Product() {
     }
 
-    public Product(int productid, String name, String unit, float price, float commissionrate, Set<OrderedProduct> orderedProducts) {
+    public Product(String productid, String name, String unit, float price, float commissionrate, Set<String> orderedproductids) {
         this.productid = productid;
         this.name = name;
         this.unit = unit;
         this.price = price;
         this.commissionrate = commissionrate;
-        this.orderedProducts = orderedProducts;
+        this.orderedproductids = orderedproductids;
     }
 
-    public int getProductid() {
+    public String getProductid() {
         return productid;
     }
 
-    public void setProductid(int productid) {
+    public void setProductid(String productid) {
         this.productid = productid;
     }
 
@@ -85,12 +89,11 @@ public class Product {
         this.commissionrate = commissionrate;
     }
 
-
-    public Set<OrderedProduct> getOrderedProducts() {
-        return orderedProducts;
+    public Set<String> getOrderedproductids() {
+        return orderedproductids;
     }
 
-    public void setOrderedProducts(Set<OrderedProduct> orderedProducts) {
-        this.orderedProducts = orderedProducts;
+    public void setOrderedproductids(Set<String> orderedproductids) {
+        this.orderedproductids = orderedproductids;
     }
 }

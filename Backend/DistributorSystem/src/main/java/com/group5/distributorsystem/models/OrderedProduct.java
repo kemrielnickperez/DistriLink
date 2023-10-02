@@ -1,53 +1,59 @@
 package com.group5.distributorsystem.models;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.time.LocalDate;
 
-@Entity
-@Table(name = "ordered_products")
+
+
+@Document("OrderedProducts")
 public class OrderedProduct {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int orderedproductid;
+    private String orderedproductid;
 
-    @Column
+
     private int quantity;
 
-    @Column
+
     private double subtotal;
 
-    @ManyToOne
+/*    @ManyToOne
     @JoinColumn(name = "productid", nullable = false)
     private Product product;
 
     @ManyToOne
     @JoinColumn(name = "orderid", nullable = true)
-    @JsonBackReference
-    private Order order;
+    @JsonBackReference("order-orderedproducts-reference")
+    private Order order;*/
+
+
+    //@DBRef
+    private Product product;
+
+
+    //@DBRef
+    private String orderid;
 
     public OrderedProduct() {
     }
 
-    public OrderedProduct(int orderedproductid, int quantity, double subtotal, Product product, Order order) {
+    public OrderedProduct(String orderedproductid, int quantity, double subtotal, Product product, String orderid) {
         this.orderedproductid = orderedproductid;
         this.quantity = quantity;
         this.subtotal = subtotal;
         this.product = product;
-        this.order = order;
+        this.orderid = orderid;
     }
 
-    public OrderedProduct(int productid, int quantity, double subTotal, int newOrderId) {
-    }
-
-    public int getOrderedproductid() {
+    public String getOrderedproductid() {
         return orderedproductid;
     }
 
-    public void setOrderedproductid(int orderedproductid) {
+    public void setOrderedproductid(String orderedproductid) {
         this.orderedproductid = orderedproductid;
     }
 
@@ -75,11 +81,11 @@ public class OrderedProduct {
         this.product = product;
     }
 
-    public Order getOrder() {
-        return order;
+    public String getOrderid() {
+        return orderid;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOrderid(String orderid) {
+        this.orderid = orderid;
     }
 }

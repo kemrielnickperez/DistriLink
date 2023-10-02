@@ -1,7 +1,7 @@
 //Interfaces for models
 
 export interface IDealer {
-    dealerid:number,
+    dealerid:string,
     firstname: string,
     middlename: string,
     lastname: string,
@@ -18,11 +18,11 @@ export interface IDealer {
     creditlimit: number,
     submissiondate: string,
     attachments: string,
+    orderids: string[],
 }
 
-
 export interface IEmployee {
-    employeeid:number,
+    employeeid:string,
     firstname: string,
     middlename: string,
     lastname: string,
@@ -31,20 +31,23 @@ export interface IEmployee {
     currentaddress: string,
     permanentaddress: string,
     contactnumber: string,
-    iscashier: boolean,
-    issalesassociate: boolean,
-    iscollector: boolean
+    is_cashier: boolean,
+    is_salesassociate: boolean,
+    is_collector: boolean,
+    orderids: string[],
+    collectionpaymentids: string[] 
 }
 
 
 export interface IOrderedProducts {
     product: IProduct;
     quantity: number;
+    subtotal: number;
 
 }
 
 export interface IOrder {
-    orderid: number,
+    orderid: string,
     distributiondate: string,
     orderdate: string,
     penaltyrate: number,
@@ -52,24 +55,39 @@ export interface IOrder {
     orderamount:number,
     collector: IEmployee | null,
     dealer: IDealer,
-    orderedProducts: IOrderedProducts[],
-    paymentTransactions: IPaymentTransaction[] | null,
+    orderedproducts: IOrderedProducts[],
+    paymenttransactions: IPaymentTransaction[] | null,
 }
 
 
+
 export interface IProduct {
-    productid: number;
+    productid: string;
     commissionrate: number;
     name: string;
     price: number;
     unit: string;
+    orderedproductids: string[]
 }
 
 export interface IPaymentTransaction {
-    paymenttransactionid: number;
+    paymenttransactionid: string;
     amountdue: number;
     startingdate: string;
     enddate: string;
     installmentnumber: number;
-    order: IOrder;
+    paid: boolean;
+    orderid: string;
+    paymentreceiptid: string | null;
+}
+
+export interface IDirectPaymentReceipt {
+    receiptid: number,
+    remarks: string,
+    datepaid: string,
+    amountpaid: number,
+    paymenttype: string,
+   /*   cashier: IEmployee,  */
+    paymenttransaction: IPaymentTransaction, 
+       
 }
