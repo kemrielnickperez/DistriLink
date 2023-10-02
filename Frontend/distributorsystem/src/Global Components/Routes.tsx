@@ -11,14 +11,16 @@ import Schedules from "../Components/Module 7 - Schedules/ScheduleOrderTransacti
 import DistributorOrderForm from "../Components/Module 5 - Product Distribution and Confirmation/DistributorOrderFormUI";
 import DealerOrderForm from "../Components/Module 5 - Product Distribution and Confirmation/DealerOrderFormUI";
 import SignIn from "../Components/Module 1 - Distributor System Sign-in/SignInUI";
-import PaymentTransactionDetails from "../Components/Module 8 - Payments/PaymentReceiptDetailsUI";
+
 import RecordDirectPayment from "../Components/Module 8 - Payments/RecordDirectPaymentUI";
 import Content from "./Contents";
 import DataGridOrder from "../Components/Module 6 - Collector Assignment/CollectorAssignmentUI";
 
 import DealerProfile from '../Components/Module 4 - Profiles & Approval/DealerProfilesListUI';
 import DealerApproval from '../Components/Module 4 - Profiles & Approval/DealerApproval';
-import PaymentReceiptDetails from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
+import PaymentTransactionDetails from '../Components/Module 6 - Collector Assignment/PaymentTransactionDetailsUI';
+import { PaymentReceiptDetails } from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
+
 export default function MainRoutes(){
     return(
         <Routes>
