@@ -96,6 +96,7 @@ public class OrderService {
 
         orderRepository.save(order);
         employeeRepository.save(employee);
+        
 
 
         return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
@@ -105,6 +106,7 @@ public class OrderService {
     public ResponseEntity removeCollector(String orderid){
 
         Order order = orderRepository.findById(orderid).get();
+
 
         Employee employee = employeeRepository.findById(order.getCollector().getEmployeeid()).get();
         employee.getOrderids().remove(order.getOrderid());
