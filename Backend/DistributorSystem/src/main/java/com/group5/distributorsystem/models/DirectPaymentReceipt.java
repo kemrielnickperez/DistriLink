@@ -22,8 +22,8 @@ public class DirectPaymentReceipt extends PaymentReceipt {
         this.amountpaid = amountpaid;
     }
 
-    public DirectPaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, LocalDate datepaid, double amountpaid) {
-        super(paymentreceiptid, remarks, paymenttype, paymenttransaction);
+    public DirectPaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier, LocalDate datepaid, double amountpaid) {
+        super(paymentreceiptid, remarks, paymenttype, paymenttransaction, cashier);
         this.datepaid = datepaid;
         this.amountpaid = amountpaid;
     }

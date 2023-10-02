@@ -34,31 +34,37 @@ public class CollectionPaymentReceiptService {
 
         PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
 
-        Employee employee = employeeRepository.findById(collectionPaymentReceipt.getCollector().getEmployeeid()).get();
+        Employee collector = employeeRepository.findById(collectionPaymentReceipt.getCollector().getEmployeeid()).get();
 
         paymentTransaction.setPaymentreceiptid(collectionPaymentReceipt.getPaymentreceiptid());
 
-        employee.getCollectionpaymentids().add(collectionPaymentReceipt.getPaymentreceiptid());
+        collector.getCollectionpaymentids().add(collectionPaymentReceipt.getPaymentreceiptid());
 
         paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
 
         paymentTransactionRepository.save(paymentTransaction);
 
-        employeeRepository.save(employee);
+        employeeRepository.save(collector);
 
         paymentTransactionRepository.save(paymentTransaction);
-
-
 
         return collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
     }
 
-    public ResponseEntity updateCollectionPaymentReceipt(String collectionpaymentreciptid) {
+    public ResponseEntity confirmCollectionPaymentReceipt(String collectionpaymentreciptid, String cashierid) {
+
         CollectionPaymentReceipt collectionPaymentReceipt = collectionPaymentReceiptRepository.findById(collectionpaymentreciptid).get();
 
+        Employee cashier = employeeRepository.findById(cashierid).get();
+
         collectionPaymentReceipt.setConfirmed(true);
+        collectionPaymentReceipt.setCashier(cashier);
+        cashier.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
+
 
         collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
+        employeeRepository.save(cashier);
+
         return new ResponseEntity("Collection Payment Receipt Confirmed Successfully!", HttpStatus.OK);
     }
 
