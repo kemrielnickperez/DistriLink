@@ -10,7 +10,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import { Dayjs } from 'dayjs';
 import moment from 'moment';
 import { IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
-;
+
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -273,7 +273,7 @@ export default function DistributorOrderForm() {
               <Paper sx={{ backgroundColor: "#ffffff", borderRadius: "22px", height: "fit-content" }}>
                 <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={dealerIDRef}
                 />
-                <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={handleFindDealer}>
+                <IconButton type="button" sx={{ p: '10px'}} aria-label="search" onClick={handleFindDealer}>
                   <SearchIcon />
                 </IconButton>
 
