@@ -87,6 +87,7 @@ export default function CollectorAssignment() {
   // Handler for removing collector Button 
   const handleRemoveCollector = () => {
 
+
     let count = 0;
     for (const selectedOrderID of selectedRows) {
       console.log(selectedOrderID)
@@ -104,10 +105,17 @@ export default function CollectorAssignment() {
     else {
       alert(`Only ${count}! number of orders was removed successfully.`)
     }
+
+
   };
 
   // Handler for Assigning Collector Button 
   const handleAssignCollector = () => {
+
+    
+    if (selectedCollector === null){
+      alert ("Please choose a collector")
+    }else{
     let count = 0;
     console.log(assignedStatus)
     for (const selectedOrderID of selectedRows) {
@@ -120,6 +128,7 @@ export default function CollectorAssignment() {
         count++;
       }
     }
+    
 
     if (count === selectedRows.length) {
       alert("Collector assigned successfully to all of the selected orders!")
@@ -127,7 +136,7 @@ export default function CollectorAssignment() {
     else {
       alert(`Only ${count}! number of orders was assigned.`)
     }
-
+  }
   };
 
 
