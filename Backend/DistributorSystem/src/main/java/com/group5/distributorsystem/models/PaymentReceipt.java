@@ -22,6 +22,8 @@ public class PaymentReceipt {
     //@DBRef
     private PaymentTransaction paymenttransaction;
 
+    private Employee cashier;
+
     //comment sani kay murag nagdala og panganib
    /* @ManyToOne
     @JoinColumn(name = "cashierid")
@@ -31,11 +33,12 @@ public class PaymentReceipt {
     public PaymentReceipt() {
     }
 
-    public PaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction) {
+    public PaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier) {
         this.paymentreceiptid = paymentreceiptid;
         this.remarks = remarks;
         this.paymenttype = paymenttype;
         this.paymenttransaction = paymenttransaction;
+        this.cashier = cashier;
     }
 
     public String getPaymentreceiptid() {
@@ -70,13 +73,11 @@ public class PaymentReceipt {
         this.paymenttransaction = paymenttransaction;
     }
 
-   /* public Employee getCashier() {
+    public Employee getCashier() {
         return cashier;
     }
 
     public void setCashier(Employee cashier) {
         this.cashier = cashier;
     }
-*/
-
 }

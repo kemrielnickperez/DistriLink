@@ -62,7 +62,7 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
     function getOrderByID(orderid: string) {
         axios.get(`http://localhost:8080/order/getOrderByID/${orderid}`)
             .then((response) => {
-                console.log(response.data)
+               // console.log(response.data)
                 setOrder(response.data)
                 if (response.data !== null) {
                     console.log(response.data)

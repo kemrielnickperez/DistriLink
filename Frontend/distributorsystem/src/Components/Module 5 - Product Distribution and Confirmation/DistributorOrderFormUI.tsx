@@ -110,11 +110,12 @@ export default function DistributorOrderForm() {
 
   }, [isDealerFound, products, orderedProducts]);
 
-  function createOrderedProduct(product: IProduct, quantity: number): IOrderedProducts {
+  function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
 
     return {
       product: product,
       quantity: quantity,
+      subtotal: subtotal
     };
   }
 
@@ -144,7 +145,9 @@ export default function DistributorOrderForm() {
       const newOrderedProduct: IOrderedProducts = {
         product: chosenProduct,
         quantity: Number(quantity),
+        subtotal: chosenProduct.price * Number(quantity),
       };
+      console.log(chosenProduct.price * Number(quantity))
       setOrderedProducts([...orderedProducts, newOrderedProduct]);
       setChosenProduct(null);
       setQuantity('');
@@ -238,7 +241,7 @@ export default function DistributorOrderForm() {
     if (isDealerFound) {
       const uuid = uuidv4();
       const orderuuid = uuid.slice(0, 8)
-    
+      console.log(orderedProducts)
     newOrder({
       orderid: orderuuid,
       distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
@@ -422,9 +425,7 @@ export default function DistributorOrderForm() {
           <Box sx={{ m: 3 }} />
           <Box textAlign='center'>
             <Button variant='contained' sx={{ background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6, paddingRight: 6, fontWeight: 'bold', borderRadius: 5 }} disabled={!isDealerFound}
-              onClick={handleSaveOrder}> Save
-
-
+              onClick={handleSaveOrder}> Create Order
             </Button>
           </Box>
         </div>
