@@ -146,9 +146,7 @@ export default function Schedules() {
     const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
     const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>(null);
 
-    //sorting the payment transactions
-    const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
-
+   
     useEffect(() => {
 
         if (order && order.paymenttransactions) {
@@ -161,7 +159,6 @@ export default function Schedules() {
 
     const handleFindOrder = () => {
         getOrderByID(orderIDRef.current?.value + "")
-        //console.log(isOrderFoundError + "error")
         if (isOrderFound === false)
             alert("Order not found. Please try again.");
 
@@ -202,31 +199,6 @@ export default function Schedules() {
             return updatedPaymentTransactions;
         });
     };
-
-    const handleStartDateChange = (newValue: Dayjs | null): void => {
-        if (newValue !== null && sortedPaymentTransactions) {
-          let currentDate = newValue;
-          
-          const updatedTransactions = sortedPaymentTransactions.map((transaction, index) => {
-            setSelectedStartDate(currentDate);
-            setStartDateModified(true);
-      
-            transaction.startingdate = currentDate.format('YYYY-MM-DD');
-      
-            // Calculate the end date with a 15-day interval
-            const endDate = currentDate.add(15, 'day');
-            transaction.enddate = endDate.format('YYYY-MM-DD');
-            
-            currentDate = endDate.add(1, 'day'); // Increment the current date for the next transaction
-            return transaction;
-          });
-      
-          setSortedPaymentTransactions(updatedTransactions);
-        }
-        console.log(sortedPaymentTransactions)
-      };
-
-
 
 
     const handleStartDateUpdate = (newValue: Dayjs | null): void => {
@@ -399,7 +371,7 @@ export default function Schedules() {
                                                                 }
                                                             }}
                                                             value={dayjs(transaction.startingdate)}
-                                                            onChange={(e) => handleStartDateChange(e!)}
+                                                            onChange={(e) => handleStartDateUpdate(e!)}
 
 
                                                         />
