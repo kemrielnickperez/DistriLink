@@ -10,6 +10,8 @@ import com.group5.distributorsystem.repositories.DirectPaymentReceiptRepository;
 import com.group5.distributorsystem.repositories.EmployeeRepository;
 import com.group5.distributorsystem.repositories.PaymentTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,34 +23,49 @@ public class CollectionPaymentReceiptService {
     @Autowired
     PaymentTransactionService paymentTransactionService;
 
-
     @Autowired
     PaymentTransactionRepository paymentTransactionRepository;
 
     @Autowired
     EmployeeRepository employeeRepository;
 
-    public CollectionPaymentReceipt createCollectionPaymentReceipt(CollectionPaymentReceipt collectionPaymentReceipt, String paymenttransactionid){
+
+    public CollectionPaymentReceipt createCollectionPaymentReceipt(CollectionPaymentReceipt collectionPaymentReceipt){
 
         PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
 
-        Employee employee = employeeRepository.findById(collectionPaymentReceipt.getCollector().getEmployeeid()).get();
-
-
-        employee.getCollectionpaymentids().add(collectionPaymentReceipt.getPaymentreceiptid());
-
-        employeeRepository.save(employee);
+        Employee collector = employeeRepository.findById(collectionPaymentReceipt.getCollector().getEmployeeid()).get();
 
         paymentTransaction.setPaymentreceiptid(collectionPaymentReceipt.getPaymentreceiptid());
 
+        collector.getCollectionpaymentids().add(collectionPaymentReceipt.getPaymentreceiptid());
 
-        paymentTransactionService.updatePaidPaymentTransaction(paymenttransactionid);
+        paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
 
         paymentTransactionRepository.save(paymentTransaction);
 
+        employeeRepository.save(collector);
 
+        paymentTransactionRepository.save(paymentTransaction);
 
         return collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
+    }
+
+    public ResponseEntity confirmCollectionPaymentReceipt(String collectionpaymentreciptid, String cashierid) {
+
+        CollectionPaymentReceipt collectionPaymentReceipt = collectionPaymentReceiptRepository.findById(collectionpaymentreciptid).get();
+
+        Employee cashier = employeeRepository.findById(cashierid).get();
+
+        collectionPaymentReceipt.setConfirmed(true);
+        collectionPaymentReceipt.setCashier(cashier);
+        cashier.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
+
+
+        collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
+        employeeRepository.save(cashier);
+
+        return new ResponseEntity("Collection Payment Receipt Confirmed Successfully!", HttpStatus.OK);
     }
 
 }

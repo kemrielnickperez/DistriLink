@@ -34,6 +34,7 @@ public class OrderService {
     DealerRepository dealerRepository;
 
     public Order createOrder(Order order) {
+
         Order newOrder =  orderRepository.save(order);
 
         double orderamount = 0;
@@ -56,14 +57,11 @@ public class OrderService {
                 OrderedProduct newOrderedProduct = new OrderedProduct(op.getOrderedproductid(), quantity, op.getSubtotal(), product, newOrder.getOrderid());
 
                 newOrderedProduct = orderedProductRepository.save(newOrderedProduct);
-                //orderRepository.save(newOrder);
 
                 orderamount += subtotal;
 
                 product.getOrderedproductids().add(newOrderedProduct.getOrderedproductid());
                 productRepository.save(product);
-
-
 
             }
         }
@@ -86,16 +84,15 @@ public class OrderService {
         return orderRepository.findById(orderid);
     }
 
+
     public ResponseEntity assignCollector(String orderid, Employee collector){
 
         Order order = orderRepository.findById(orderid).get();
         Employee employee = employeeRepository.findById(collector.getEmployeeid()).get();
 
-
         order.setCollector(employee);
 
         employee.getOrderids().add(order.getOrderid());
-
 
         orderRepository.save(order);
         employeeRepository.save(employee);
@@ -105,22 +102,20 @@ public class OrderService {
         return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
     }
 
+
     public ResponseEntity removeCollector(String orderid){
 
         Order order = orderRepository.findById(orderid).get();
+
 
         Employee employee = employeeRepository.findById(order.getCollector().getEmployeeid()).get();
         employee.getOrderids().remove(order.getOrderid());
         employeeRepository.save(employee);
 
-
         order.setCollector(null);
         orderRepository.save(order);
 
-
-
         return new ResponseEntity("Collector removed successfully", HttpStatus.OK);
-
     }
 
 }
