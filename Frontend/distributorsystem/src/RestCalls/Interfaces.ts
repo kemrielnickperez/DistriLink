@@ -90,7 +90,9 @@ export interface IPaymentReceipt {
 
 export interface IDirectPaymentReceipt extends IPaymentReceipt{
     remarks: string,
-    datepaid: string,     
+    datepaid: string,  
+    amountpaid: number,
+    daterecorded: string,   
 }
 
 export interface ICollectionPaymentReceipt extends IPaymentReceipt{

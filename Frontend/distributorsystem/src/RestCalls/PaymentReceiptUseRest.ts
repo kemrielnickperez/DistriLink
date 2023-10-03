@@ -1,12 +1,15 @@
 import axios from "axios";
-import { IDirectPaymentReceipt, IPaymentReceipt } from "./Interfaces";
+import { ICollectionPaymentReceipt, IDirectPaymentReceipt, IPaymentReceipt } from "./Interfaces";
 import { useState } from "react";
 
 
 
-export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directpaymentreceipt: IDirectPaymentReceipt) => void, (paymentreceiptid: string) => void, (collectionpaymentreceiptid: string, cashierid: string) => void, IPaymentReceipt | undefined, boolean | undefined]  => {
+export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directpaymentreceipt: IDirectPaymentReceipt) => void, (paymentreceiptid: string) => void, (collectionpaymentreceiptid: string, cashierid: string) => void, IPaymentReceipt | undefined, IDirectPaymentReceipt | undefined, ICollectionPaymentReceipt | undefined, boolean | undefined] => {
 
-    const [paymentReceipt, setPaymentReceipt] = useState<IDirectPaymentReceipt>();
+    const [paymentReceipt, setPaymentReceipt] = useState<IPaymentReceipt>();
+    const [directPaymentReceipt, setDirectPaymentReceipt] = useState<IDirectPaymentReceipt>();
+    const [collectionPaymentReceipt, setCollectionPaymentReceipt] = useState<ICollectionPaymentReceipt>();
+
     const [isPaymentReceiptFound, setIsPaymentReceiptFound] = useState<boolean>();
 
 
@@ -108,10 +111,14 @@ export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directp
     function getPaymentReceiptByID(paymentreceiptid: string) {
         axios.get(`http://localhost:8080/paymentreceipt/getPaymentReceiptByID/${paymentreceiptid}`)
             .then((response) => {
-
                 setPaymentReceipt(response.data);
-                
-                 if (response.data !== null) {
+
+                if (response.data.paymenttype === 'collection')
+                    setCollectionPaymentReceipt(response.data)
+                else
+                    setDirectPaymentReceipt(response.data);
+
+                if (response.data !== null) {
                     setIsPaymentReceiptFound(true);
                 }
                 else {
@@ -129,10 +136,10 @@ export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directp
             .then((response) => {
 
                 //setPaymentReceipt(response.data);
-               // console.log(response.data);
+                // console.log(response.data);
 
                 //if (response.data !== null) {
-                    //setIsPaymentTransactionFound(true);
+                //setIsPaymentTransactionFound(true);
                 //}
                 //else {
                 //    setIsPaymentTransactionFound(false);
@@ -145,6 +152,6 @@ export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directp
 
     }
 
-    return [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, isPaymentReceiptFound]
+    return [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound]
 
 }

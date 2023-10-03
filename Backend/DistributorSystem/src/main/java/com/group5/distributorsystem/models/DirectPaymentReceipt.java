@@ -14,18 +14,22 @@ public class DirectPaymentReceipt extends PaymentReceipt {
 
     private double amountpaid;
 
+    private LocalDate daterecored;
+
     public DirectPaymentReceipt() {
     }
 
-    public DirectPaymentReceipt(LocalDate datepaid, double amountpaid) {
+    public DirectPaymentReceipt(LocalDate datepaid, double amountpaid, LocalDate daterecored) {
         this.datepaid = datepaid;
         this.amountpaid = amountpaid;
+        this.daterecored = daterecored;
     }
 
-    public DirectPaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier, LocalDate datepaid, double amountpaid) {
+    public DirectPaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier, LocalDate datepaid, double amountpaid, LocalDate daterecored) {
         super(paymentreceiptid, remarks, paymenttype, paymenttransaction, cashier);
         this.datepaid = datepaid;
         this.amountpaid = amountpaid;
+        this.daterecored = daterecored;
     }
 
     public LocalDate getDatepaid() {
@@ -44,5 +48,11 @@ public class DirectPaymentReceipt extends PaymentReceipt {
         this.amountpaid = amountpaid;
     }
 
+    public LocalDate getDaterecored() {
+        return daterecored;
+    }
 
+    public void setDaterecored(LocalDate daterecored) {
+        this.daterecored = daterecored;
+    }
 }
