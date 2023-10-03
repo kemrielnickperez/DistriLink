@@ -43,7 +43,6 @@ export interface IOrderedProducts {
     product: IProduct;
     quantity: number;
     subtotal: number;
-
 }
 
 export interface IOrder {

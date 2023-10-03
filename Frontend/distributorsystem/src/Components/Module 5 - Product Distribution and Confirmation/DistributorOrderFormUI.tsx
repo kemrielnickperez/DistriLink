@@ -425,9 +425,7 @@ export default function DistributorOrderForm() {
           <Box sx={{ m: 3 }} />
           <Box textAlign='center'>
             <Button variant='contained' sx={{ background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6, paddingRight: 6, fontWeight: 'bold', borderRadius: 5 }} disabled={!isDealerFound}
-              onClick={handleSaveOrder}> Save
-
-
+              onClick={handleSaveOrder}> Create Order
             </Button>
           </Box>
         </div>
