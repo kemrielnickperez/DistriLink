@@ -1,4 +1,4 @@
-import { Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
+import { Button, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
@@ -10,7 +10,6 @@ import dayjs from "dayjs";
 
 const ContentNameTypography = styled(Typography)({
     marginTop: 60,
-
     marginLeft: '12%',
     fontFamily: 'Inter',
     fontWeight: 'bold',
@@ -18,6 +17,23 @@ const ContentNameTypography = styled(Typography)({
     fontSize: '25px',
     color:'#203949'
 })
+
+const StyledButton = styled(Button)({
+    position: "relative",
+    padding: 5,
+    minHeight: 0,
+    minWidth: 100,
+    borderRadius: "22px",
+    backgroundColor: '#AFD3E2',
+    fontSize: '14px',
+    color: '#146C94',
+    textTransform: "none",
+    fontWeight: "bold",
+    width: 'fit-content',
+    fontFamily: "Inter', sans-serif",
+    display: 'inline-block',
+});
+
 
 const StyldeInfoHeader= styled(Typography)({
     marginTop: '35px',
@@ -229,6 +245,7 @@ export function OrderDetails(){
             )
 
             }
+            {/* <StyledButton>View / Edit Payment Transaction in the Scheduling Page</StyledButton> */}
 
 
         </div>  

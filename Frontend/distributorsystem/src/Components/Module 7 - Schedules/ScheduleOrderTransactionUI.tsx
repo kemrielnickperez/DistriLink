@@ -27,7 +27,7 @@ const Label1 = styled(Typography)({
     color: "#707070",
     transform: 'translateY(-50%)',
     fontFamily: 'Inter, sans-serif',
-    fontWeight: '300', 
+    fontWeight: '550', 
 });
 
 const StyledButton = styled(Button)({
@@ -277,12 +277,12 @@ export default function Schedules() {
         <div>
 
                 <Grid container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
-                <Grid item container sx={{ backgroundColor: 'white', width: '1000px', borderRadius: '22px',  }} justifyContent={"center"}  >
+                <Grid item container sx={{ width: '1000px', borderRadius: '22px',  }} justifyContent={"center"}  >
                     <Grid item xs={4} sx={{marginTop: '15px'}}>
-                        <Typography1 sx={{ color: "#146C94", transform: 'translateY(-50%)', fontFamily: 'Inter, sans - serif', }}>Search Order Transaction ID</Typography1>
+                        <Typography1 sx={{ color: "#203949", transform: 'translateY(-50%)', fontFamily: 'Inter, sans - serif', }}>Search Order Transaction ID</Typography1>
                     </Grid>
                     <Grid item sx={{marginTop: '15px'}}>
-                        <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "fit-content", transform: 'translateY(-50%)', border: '1px solid #ccc', boxShadow: 'none'  }}>
+                        <Paper sx={{ borderRadius: "22px", height: "fit-content", transform: 'translateY(-50%)', border: '1px solid #ccc', boxShadow: 'none'  }}>
                             <TextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true,  }} inputRef={orderIDRef} sx={{width: '300px', height: '50px' ,'& input': {textAlign: 'left', padding: '12px 12px'}}} 
 
                             />
@@ -296,12 +296,12 @@ export default function Schedules() {
                 </Grid>
             </Grid>
 
-            <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
+            <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '5px' }}>
                 <Grid item >
 
                     <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "300px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
 
-                        <Typography sx={{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Inter, sans - serif', fontWeight: 'bold', fontSize: '25px', color: "#000000", paddingTop: '30px' }}>Order Transaction Details</Typography>
+                        <Typography sx={{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Inter, sans - serif', fontWeight: 'bold', fontSize: '25px', color: "#203949", paddingTop: '30px' }}>Order Transaction Details</Typography>
                         
                         <TableContainer sx={{borderBottom: 'none', padding: 2, marginTop: 1, border: 'none'}}>
                             <Table aria-label='simple table' style={{ borderCollapse: 'collapse' }}>
@@ -332,7 +332,7 @@ export default function Schedules() {
             </Grid>
 
             {order?.paymenttransactions?.length !== 0 && order?.collector!==null ?  (
-                <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
+                <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
                 <Grid item >
                     <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none'}}>
                         <TableContainer >

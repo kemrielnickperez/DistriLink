@@ -22,6 +22,7 @@ import NewCollectorAssignment from '../Components/Module 6 - Collector Assignmen
 import { OrderDetails } from '../Components/Module 6 - Collector Assignment/OrderDetails';
 import PaymentTransactionDetails from '../Components/Module 6 - Collector Assignment/PaymentTransactionDetailsUI';
 import RecordCollectionPaymentUI from '../Components/Module 8 - Payments/RecordCollectionPaymentUI';
+import { PaymentReceiptDetails } from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
 
 export default function MainRoutes(){
     return(
@@ -55,6 +56,7 @@ export default function MainRoutes(){
                 {/* <Route path="/productDistributionList" element={<ProductDistributionList/>}/> */}
                 <Route path="/newcollectorAssignment" element={<NewCollectorAssignment/>}/>
                 <Route path="/orderDetails/:objectId" element={<OrderDetails/>}/>
+                <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails/>}></Route>
                 <Route path="/recordCollectionPayment" element={<RecordCollectionPaymentUI/>}/>
             </Route>
          </Routes>  

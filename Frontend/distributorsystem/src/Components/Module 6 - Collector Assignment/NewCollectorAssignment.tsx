@@ -97,13 +97,13 @@ export default function NewCollectorAssignment(){
     };
  {/** Columns for DataGrid */}
     const columns: GridColDef[]=[
-        { field: 'orderID', headerName: 'Order ID', width: 100},
-        { field: 'dealerName', headerName: 'Dealer Name', width: 150 },
-        { field: 'dueDate', headerName: 'Payment Due Date', width: 160 },
-        { field: 'amountDue', headerName: 'Amount Due', width: 160 },
-        { field: 'collectorStatus', headerName: 'Collector Status', width: 180 },
-        { field: 'collectorName', headerName: 'Collector Name', width: 180 },
-        {field: '', headerName:'', width:150, renderCell:(params:{row:any;})=>{
+        { field: 'orderID', headerName: 'Order Transaction ID', width: 200},
+        { field: 'dealerName', headerName: 'Dealer Name', width: 180 },
+        // { field: 'dueDate', headerName: 'Payment Due Date', width: 160 },
+        { field: 'amountDue', headerName: 'Amount Due', width: 180 },
+        { field: 'collectorStatus', headerName: 'Collector Status', width: 200 },
+        { field: 'collectorName', headerName: 'Collector Name', width: 200 },
+        {field: 'action', headerName:'', width:180, renderCell:(params:{row:any;})=>{
             return(
                 <Button 
                 variant="contained"
@@ -158,26 +158,33 @@ const handleRemoveCollector = () => {
 
 {/** Handle Assign */}
 const handleAssignCollector = () => {
-    let count = 0;
-    console.log(assignedStatus)
-    for (const selectedOrderID of selectedRows) {
-      if (assignedStatus === false) {
-        break;
-      }
-      else {
-        assignCollector(selectedOrderID, selectedCollector)
-        count++;
-      }
-    }
 
-    if (count === selectedRows.length) {
-      alert("Collector assigned successfully to all of the selected orders!")
+    
+  if (selectedCollector === null){
+    alert ("Please choose a collector")
+  }else{
+  let count = 0;
+  console.log(assignedStatus)
+  for (const selectedOrderID of selectedRows) {
+    //ngano mogana mani og true diri pero if false kay maguba
+    if (assignedStatus === false) {
+      break;
     }
     else {
-      alert(`Only ${count}! number of orders was assigned.`)
+      assignCollector(selectedOrderID, selectedCollector)
+      count++;
     }
+  }
+  
 
-  };
+  if (count === selectedRows.length) {
+    alert("Collector assigned successfully to all of the selected orders!")
+  }
+  else {
+    alert(`Only ${count}! number of orders was assigned.`)
+  }
+}
+};
 
     return(
         <div>
@@ -234,7 +241,7 @@ const handleAssignCollector = () => {
                 {/**DataGrid */}                  
                     <DataGrid
                     rows={rows}
-                    sx={{ textAlign: 'center', color: '#146C94', height: '350px', margin:'35px 20px 0 20px' }}
+                    sx={{ textAlign: 'center', color: '#203949', height: '350px', margin:'35px 20px 0 20px', fontWeight:330 }}
                     columns={columns.map((column) => ({
                     ...column,
                     }))
