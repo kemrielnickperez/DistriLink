@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -81,6 +82,10 @@ public class OrderService {
     }
 
     public Optional<Order> getOrderByID(String orderid){
+        Order order = orderRepository.findById(orderid).get();
+        System.out.println(order.getDistributiondate());
+        for(PaymentTransaction pt : order.getPaymenttransactions())
+            System.out.println(pt.getStartingdate());
         return orderRepository.findById(orderid);
     }
 
