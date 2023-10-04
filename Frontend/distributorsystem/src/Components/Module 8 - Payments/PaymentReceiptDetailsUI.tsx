@@ -61,8 +61,6 @@ export function PaymentReceiptDetails(){
     const handleFindPaymentReceipt = () => {
         getPaymentReceiptByID(objectId!)
         //console.log(isOrderFoundError + "error")
-
-
     };
 
     useEffect(() => {

@@ -11,15 +11,17 @@ import Schedules from "../Components/Module 7 - Schedules/ScheduleOrderTransacti
 import DistributorOrderForm from "../Components/Module 5 - Product Distribution and Confirmation/DistributorOrderFormUI";
 import DealerOrderForm from "../Components/Module 5 - Product Distribution and Confirmation/DealerOrderFormUI";
 import SignIn from "../Components/Module 1 - Distributor System Sign-in/SignInUI";
-
 import RecordDirectPayment from "../Components/Module 8 - Payments/RecordDirectPaymentUI";
 import Content from "./Contents";
 import DataGridOrder from "../Components/Module 6 - Collector Assignment/CollectorAssignmentUI";
 
 import DealerProfile from '../Components/Module 4 - Profiles & Approval/DealerProfilesListUI';
 import DealerApproval from '../Components/Module 4 - Profiles & Approval/DealerApproval';
+import ProductDistributionList from '../Components/Module 5 - Product Distribution and Confirmation/ProductDistributionsListUI';
+import NewCollectorAssignment from '../Components/Module 6 - Collector Assignment/NewCollectorAssignment';
+import { OrderDetails } from '../Components/Module 6 - Collector Assignment/OrderDetails';
 import PaymentTransactionDetails from '../Components/Module 6 - Collector Assignment/PaymentTransactionDetailsUI';
-import { PaymentReceiptDetails } from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
+import RecordCollectionPaymentUI from '../Components/Module 8 - Payments/RecordCollectionPaymentUI';
 
 export default function MainRoutes(){
     return(
@@ -47,9 +49,14 @@ export default function MainRoutes(){
                 <Route path="/recordDirectPayment" element={<RecordDirectPayment/>}/>
                 <Route path="/dealerApproval" element={<DealerApproval/>}/>
                 <Route path="/employeeRegistration" element={<EmployeeRegistration/>}/>
-                <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails/>}></Route>
-                
-           </Route>
+                {/* <Route path="/productDistributionList" element={<ProductDistributionList>}/>
+                <Route path="/newcollectorAssignment" element={<NewCollectorAssignment/>}/>
+                <Route path="/orderDetails" element={<OrderDetails/>}/> */}
+                {/* <Route path="/productDistributionList" element={<ProductDistributionList/>}/> */}
+                <Route path="/newcollectorAssignment" element={<NewCollectorAssignment/>}/>
+                <Route path="/orderDetails/:objectId" element={<OrderDetails/>}/>
+                <Route path="/recordCollectionPayment" element={<RecordCollectionPaymentUI/>}/>
+            </Route>
          </Routes>  
    );
 }
