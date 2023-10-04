@@ -1,15 +1,4 @@
-import { Button, Divider, Input, Paper, Stack, Table, TableRow, TableBody, TableCell, TableContainer, TextField, styled, TableHead, Typography, Card, makeStyles, IconButton, Grid, TextFieldProps, Box } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
-import NavBar from "../../Global Components/NavBar";
-//import { useRestSchedule } from "../../RestCalls/ScheduleUseRest";
-import { useEffect, useRef, useState } from "react";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dayjs } from "dayjs";
-import { useRestPaymentReceipt } from "../../RestCalls/PaymentReceiptUseRest";
-import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
-import { IEmployee } from "../../RestCalls/Interfaces";
-import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
+import { Stack, Typography, styled } from "@mui/material"
 
 const ContentNameTypography = styled(Typography)({
     marginTop: 60,
@@ -58,8 +47,7 @@ const StyleData=styled(Typography)({
     fontSize: '15px',
     fontFamily: 'Inter, sans - serif',
 })
-
-export default function RecordDirectPayment() {
+export default function RecordCollectionPaymentUI(){
     return(
         <div>   
             <ContentNameTypography>Payment Summary</ContentNameTypography>
@@ -83,38 +71,52 @@ export default function RecordDirectPayment() {
             </StackStyle>
             <StackStyle sx={{left:'72%'}}>
                 <StyleLabel>Payment Type</StyleLabel>
-                <StyleData>Direct</StyleData>
+                <StyleData>Collection</StyleData>
             </StackStyle>
+            
             <StackStyle sx={{top:'40%',left:'12%'}}>
-                <StyleLabel>Date Paid</StyleLabel>
+                <StyleLabel>Date Collected</StyleLabel>
                 <StyleData>20/04/2023</StyleData>
             </StackStyle>
             <StackStyle sx={{top:'40%', left:'26%'}}>
-                <StyleLabel>Amount Paid</StyleLabel>
+                <StyleLabel>Amount Collected</StyleLabel>
                 <StyleData>Php 10,000.00</StyleData>
             </StackStyle>
             <StackStyle sx={{top:'40%',left:'44%'}}>
-                <StyleLabel>Remarks</StyleLabel>
-                <StyleData>None</StyleData>
+                <StyleLabel>Date Remitted</StyleLabel>
+                <StyleData>20/04/2023</StyleData>
             </StackStyle>
             <StackStyle sx={{top:'40%',left:'60%'}}>
+                <StyleLabel>Amount Remitted</StyleLabel>
+                <StyleData>Php 10,000.00</StyleData>
+            </StackStyle>
+            <StackStyle sx={{top:'40%',left:'74%'}}>
+                <StyleLabel>Collector Name</StyleLabel>
+                <StyleData>Ashley Sy</StyleData>
+            </StackStyle>
+            <StackStyle sx={{top:'60%',left:'12%'}}>
                 <StyleLabel>Payment Status</StyleLabel>
                 <StyleData>Confirmed</StyleData>
             </StackStyle>
-            <StackStyle sx={{top:'40%',left:'74%'}}>
+            
+            <StackStyle sx={{top:'60%',left:'27%'}}>
                 <StyleLabel>Date Received</StyleLabel>
-                <StyleData>20/04/2023</StyleData>
+                <StyleData>20/04/2023/</StyleData>
             </StackStyle>
-            <StackStyle sx={{top:'60%',left:'12%'}}>
+
+            <StackStyle sx={{top:'60%',left:'43%'}}>
                 <StyleLabel>Receiver Name</StyleLabel>
                 <StyleData>Charmaine Igot</StyleData>
             </StackStyle>
+
+            <StackStyle sx={{top:'60%',left:'60%'}}>
+                <StyleLabel>Remarks</StyleLabel>
+                <StyleData>None</StyleData>
+            </StackStyle>
+            <StyldeInfoHeader sx={{marginTop:'475px'}}>Proof of Payment</StyldeInfoHeader>
             {/* <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader> */}
             {/* set style left and top manually here in stack */}
             
-
-        </div>  
+        </div>
     );
-
 }
- 

@@ -42,7 +42,7 @@ export interface IEmployee {
 export interface IOrderedProducts {
     product: IProduct;
     quantity: number;
-
+    subtotal: number;
 }
 
 export interface IOrder {
@@ -80,13 +80,27 @@ export interface IPaymentTransaction {
     paymentreceiptid: string | null;
 }
 
-export interface IDirectPaymentReceipt {
-    receiptid: number,
+export interface IPaymentReceipt {
+    paymentreceiptid: number,
     remarks: string,
-    datepaid: string,
-    amountpaid: number,
     paymenttype: string,
-   /*   cashier: IEmployee,  */
     paymenttransaction: IPaymentTransaction, 
-       
+    cashier: IEmployee | null
+}
+
+export interface IDirectPaymentReceipt extends IPaymentReceipt{
+    remarks: string,
+    datepaid: string,  
+    amountpaid: number,
+    daterecorded: string,   
+}
+
+export interface ICollectionPaymentReceipt extends IPaymentReceipt{
+    collectiondate: string,
+    collectionamount: number,     
+    remitteddate: string,
+    remittedamount: number,  
+    confirmationdate: string,
+    confirmed: boolean,  
+    collector: IEmployee
 }

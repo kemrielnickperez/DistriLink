@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -34,6 +35,7 @@ public class OrderService {
     DealerRepository dealerRepository;
 
     public Order createOrder(Order order) {
+
         Order newOrder =  orderRepository.save(order);
 
         double orderamount = 0;
@@ -53,7 +55,8 @@ public class OrderService {
                 float price = product.getPrice();
                 double subtotal = price * quantity;
 
-                OrderedProduct newOrderedProduct = new OrderedProduct(op.getOrderedproductid(), quantity, subtotal, product, newOrder.getOrderid());
+                OrderedProduct newOrderedProduct = new OrderedProduct(op.getOrderedproductid(), quantity, op.getSubtotal(), product, newOrder.getOrderid());
+
                 newOrderedProduct = orderedProductRepository.save(newOrderedProduct);
 
                 orderamount += subtotal;
@@ -61,14 +64,11 @@ public class OrderService {
                 product.getOrderedproductids().add(newOrderedProduct.getOrderedproductid());
                 productRepository.save(product);
 
-
-
             }
         }
         newOrder.setOrderamount(orderamount);
 
         //connection to dealer
-
         dealer.getOrderids().add(newOrder.getOrderid());
         dealerRepository.save(dealer);
 
@@ -82,39 +82,45 @@ public class OrderService {
     }
 
     public Optional<Order> getOrderByID(String orderid){
+        Order order = orderRepository.findById(orderid).get();
+        System.out.println(order.getDistributiondate());
+        for(PaymentTransaction pt : order.getPaymenttransactions())
+            System.out.println(pt.getStartingdate());
         return orderRepository.findById(orderid);
     }
+
 
     public ResponseEntity assignCollector(String orderid, Employee collector){
 
         Order order = orderRepository.findById(orderid).get();
-        System.out.println(order);
-        orderRepository.save(order);
+        Employee employee = employeeRepository.findById(collector.getEmployeeid()).get();
 
-        Employee employee = employeeRepository.findById(order.getCollector().getEmployeeid()).get();
+        order.setCollector(employee);
+
         employee.getOrderids().add(order.getOrderid());
+
+        orderRepository.save(order);
         employeeRepository.save(employee);
+        
 
 
         return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
     }
 
+
     public ResponseEntity removeCollector(String orderid){
 
         Order order = orderRepository.findById(orderid).get();
+
 
         Employee employee = employeeRepository.findById(order.getCollector().getEmployeeid()).get();
         employee.getOrderids().remove(order.getOrderid());
         employeeRepository.save(employee);
 
-
         order.setCollector(null);
         orderRepository.save(order);
 
-
-
         return new ResponseEntity("Collector removed successfully", HttpStatus.OK);
-
     }
 
 }

@@ -65,13 +65,24 @@ public class PaymentTransactionService {
 
     public ResponseEntity updatePaymentTransaction(String paymenttransactionid, PaymentTransaction paymentTransaction) {
         PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
+        System.out.println(updatedPaymentTransaction.getStartingdate());
 
+        Order order = orderRepository.findById(paymentTransaction.getOrderid()).get();
         //07-18-23 - I removed the feature of changing the amount due for each installment/gives kay lisod, might change later if maka gets ko unsaon ni
         //  updatedPaymentTransaction.setAmountdue(paymentTransaction.getAmountdue());
         updatedPaymentTransaction.setEnddate(paymentTransaction.getEnddate());
         updatedPaymentTransaction.setStartingdate(paymentTransaction.getStartingdate());
 
+        PaymentTransaction updated2 =paymentTransactionRepository.save(updatedPaymentTransaction);
+        for(PaymentTransaction pt : order.getPaymenttransactions())
+            if(pt.getPaymenttransactionid().equals(updated2.getPaymenttransactionid())){
+                System.out.println("yey same");
+                pt.setEnddate(updated2.getEnddate());
+                pt.setStartingdate(updated2.getStartingdate());
+            }
+
         paymentTransactionRepository.save(updatedPaymentTransaction);
+        orderRepository.save(order);
         return new ResponseEntity("Payment Transaction Updated Successfully!", HttpStatus.OK);
     }
 

@@ -15,7 +15,20 @@ import moment from "moment";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
 import { v4 as uuidv4 } from 'uuid';
 
+const Typography1 = styled(Typography)({
+    color: "#203949",
+    transform: 'translateY(-50%)',
+    fontSize: 18,
+    fontFamily: 'Inter, sans-serif',
+    fontWeight: '600', 
+});
 
+const Label1 = styled(Typography)({
+    color: "#707070",
+    transform: 'translateY(-50%)',
+    fontFamily: 'Inter, sans-serif',
+    fontWeight: '550', 
+});
 
 const StyledButton = styled(Button)({
     position: "relative",
@@ -131,15 +144,21 @@ export default function Schedules() {
 
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
     const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+    const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>(null);
 
+   
+    useEffect(() => {
 
-    //sorting the payment transactions
-    const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
-
+        if (order && order.paymenttransactions) {
+        
+          // Clone the array and sort it
+          const sorted = [...order.paymenttransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
+          setSortedPaymentTransactions(sorted);
+        }
+      }, [order]); 
 
     const handleFindOrder = () => {
         getOrderByID(orderIDRef.current?.value + "")
-        //console.log(isOrderFoundError + "error")
         if (isOrderFound === false)
             alert("Order not found. Please try again.");
 
@@ -182,7 +201,6 @@ export default function Schedules() {
     };
 
 
-
     const handleStartDateUpdate = (newValue: Dayjs | null): void => {
 
         setSelectedStartDate(newValue);
@@ -199,7 +217,7 @@ export default function Schedules() {
     const handleSaveClick = (transaction: IPaymentTransaction) => {
 
         const startingDateFromDB = dayjs(transaction.startingdate);
-        const endDateFromDB = dayjs(transaction.enddate);
+         const endDateFromDB = dayjs(transaction.enddate);
 
         const updatedStartingDate = startDateModified ? selectedStartDate : startingDateFromDB;
         const updatedEndDate = endDateModified ? selectedEndDate : endDateFromDB;
@@ -217,6 +235,20 @@ export default function Schedules() {
 
         setStartDateModified(false);
         setEndDateModified(false);
+
+        updatePaymentTransaction(
+            transaction.paymenttransactionid,
+            {
+                paymenttransactionid: transaction.paymenttransactionid,
+                amountdue: transaction.amountdue,
+                startingdate: updatedStartingDate?.format('YYYY-MM-DD') || '',
+                enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
+                installmentnumber: transaction.installmentnumber,
+                paid: transaction.paid,
+                orderid: transaction.orderid,
+                paymentreceiptid: transaction.paymentreceiptid
+            }
+        )
 
 
 
@@ -244,18 +276,18 @@ export default function Schedules() {
     return (
         <div>
 
-            <Grid container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
-                <Grid item container sx={{ backgroundColor: 'white', width: '1000px', borderRadius: '22px', }} justifyContent={"center"}  >
-                    <Grid item xs={4}>
-                        <Typography sx={{ color: "#146C94", transform: 'translateY(-50%)', fontFamily: 'Inter, sans - serif', }}>Search Order Transaction ID</Typography>
+                <Grid container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
+                <Grid item container sx={{ width: '1000px', borderRadius: '22px',  }} justifyContent={"center"}  >
+                    <Grid item xs={4} sx={{marginTop: '15px'}}>
+                        <Typography1 sx={{ color: "#203949", transform: 'translateY(-50%)', fontFamily: 'Inter, sans - serif', }}>Search Order Transaction ID</Typography1>
                     </Grid>
-                    <Grid item>
-                        <Paper sx={{ backgroundColor: '#AFD3E2', borderRadius: "22px", height: "fit-content", transform: 'translateY(-50%)' }}>
-                            <TextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={orderIDRef}
+                    <Grid item sx={{marginTop: '15px'}}>
+                        <Paper sx={{ borderRadius: "22px", height: "fit-content", transform: 'translateY(-50%)', border: '1px solid #ccc', boxShadow: 'none'  }}>
+                            <TextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true,  }} inputRef={orderIDRef} sx={{width: '300px', height: '50px' ,'& input': {textAlign: 'left', padding: '12px 12px'}}} 
 
                             />
-                            <IconButton type="button" aria-label="search" onClick={handleFindOrder}>
-                                <SearchIcon />
+                            <IconButton type="button" aria-label="search" sx={{backgroundColor: "#2d85e7",height: '50px',width: '50px',borderRadius: "0 41% 41% 0",'&:hover':{backgroundColor: "#2d85e7"}}} onClick={handleFindOrder}>
+                                <SearchIcon sx={{color:"white"}} />
                             </IconButton>
 
                         </Paper>
@@ -264,33 +296,33 @@ export default function Schedules() {
                 </Grid>
             </Grid>
 
-            <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
+            <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '5px' }}>
                 <Grid item >
 
-                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "200px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
+                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "300px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
 
-                        <Typography sx={{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Inter, sans - serif', fontWeight: 'bold', fontSize: '30px', color: "#146C94" }}>Order Transaction Details</Typography>
-
-                        <TableContainer>
-                            <Table aria-label='simple table'>
-                                <TableHead>
+                        <Typography sx={{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Inter, sans - serif', fontWeight: 'bold', fontSize: '25px', color: "#203949", paddingTop: '30px' }}>Order Transaction Details</Typography>
+                        
+                        <TableContainer sx={{borderBottom: 'none', padding: 2, marginTop: 1, border: 'none'}}>
+                            <Table aria-label='simple table' style={{ borderCollapse: 'collapse' }}>
+                                <TableHead> 
                                     <TableRow>
-                                        <TableHeaderCell align="center">Order Transaction ID</TableHeaderCell>
-                                        <TableHeaderCell align="center">Dealer Name</TableHeaderCell>
-                                        <TableHeaderCell align="center">Distribution Date</TableHeaderCell>
-                                        <TableHeaderCell align="center">Payment Terms</TableHeaderCell>
-                                        <TableHeaderCell align="center">Total Ordered Amount</TableHeaderCell>
-                                        <TableHeaderCell align="center">Penalty Rate</TableHeaderCell>
+                                        <TableHeaderCell align="center"><Label1>Order Transaction ID</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"><Label1>Dealer Name</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"><Label1>Distribution Date</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"><Label1>Payment Terms</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"><Label1>Total Ordered Amount</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"><Label1>Penalty Rate</Label1></TableHeaderCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     <TableRow>
-                                        <TableCell align='center'>{order?.orderid}</TableCell>
-                                        <TableCell align='center'>{order?.dealer!.firstname}  {order?.dealer!.lastname}</TableCell>
-                                        <TableCell align='center'>{order?.distributiondate}</TableCell>
-                                        <TableCell align='center'>{order?.paymentterms} Gives </TableCell>
-                                        <TableCell align='center'>{order?.orderamount}</TableCell>
-                                        <TableCell align='center'>{order?.penaltyrate}</TableCell>
+                                        <TableCell align='center'><Typography1>{order?.orderid}</Typography1></TableCell>
+                                        <TableCell align='center'><Typography1>{order?.dealer!.firstname}  {order?.dealer!.lastname}</Typography1></TableCell>
+                                        <TableCell align='center'><Typography1>{order?.distributiondate}</Typography1></TableCell>
+                                        <TableCell align='center'><Typography1>{order?.paymentterms}</Typography1></TableCell>
+                                        <TableCell align='center'><Typography1>Php {order?.orderamount}</Typography1></TableCell>
+                                        <TableCell align='center'><Typography1>{order?.penaltyrate}%</Typography1></TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -299,34 +331,33 @@ export default function Schedules() {
                 </Grid>
             </Grid>
 
-            {order?.paymenttransactions?.length !== 0 ? (
-                <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
-                    <Grid item >
-                        <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <TableContainer >
-                                <Table aria-label='simple table' >
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableHeaderCell align="center">Payment Transaction ID</TableHeaderCell>
-                                            <TableHeaderCell align="center">Installment Number</TableHeaderCell>
-                                            <TableHeaderCell align="center">Starting Date</TableHeaderCell>
-                                            <TableHeaderCell align="center">Ending Date</TableHeaderCell>
-                                            <TableHeaderCell align="center">Amount Due</TableHeaderCell>
-                                            <TableHeaderCell align="center"></TableHeaderCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
+            {order?.paymenttransactions?.length !== 0 && order?.collector!==null ?  (
+                <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
+                <Grid item >
+                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none'}}>
+                        <TableContainer >
+                            <Table aria-label='simple table'>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableHeaderCell align="center" sx={{paddingTop: 5}}><Label1>Payment Transaction ID</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"sx={{paddingTop: 5}}><Label1>Installment Number</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"sx={{paddingTop: 5}}><Label1>Starting Date</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"sx={{paddingTop: 5}}><Label1>Ending Date</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"sx={{paddingTop: 5}}><Label1>Amount Due</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"sx={{paddingTop: 5}}></TableHeaderCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
 
-                                        {sortedPaymemtTransactions?.map((transaction, index) => (
-                                            <TableRow key={transaction.paymenttransactionid}>
-                                                <TableCell align="center">
-                                                    {transaction.paymenttransactionid}
-                                                </TableCell>
+                                    {sortedPaymentTransactions?.map((transaction, index) => (
+                                        <TableRow key={transaction.paymenttransactionid}>
+                                            <TableCell align="center">
+                                                {transaction.paymenttransactionid}
+                                            </TableCell>
 
-                                                <TableCell align="center">
-                                                    {transaction.installmentnumber}
-                                                </TableCell>
-
+                                            <TableCell align="center">
+                                            Installment {transaction.installmentnumber}
+                                            </TableCell>
                                                 <TableCell align="center">
                                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                                         <DatePicker
@@ -372,7 +403,7 @@ export default function Schedules() {
 
                                                 <TableCell>
 
-                                                    {transaction.amountdue.toFixed(2)}
+                                                Php {transaction.amountdue.toFixed(2)}
 
                                                 </TableCell>
                                                 <TableCell>
@@ -393,6 +424,11 @@ export default function Schedules() {
                         </Grid>
                     </Grid>
                 </Grid>
+                  ) : order.collector === null ? (
+                
+                    <div>
+                        <h2 style={{ color: 'white', marginTop: '50px' }}> No Collector Assigned</h2>
+                        </div>
             ) : (
                 <div>
                     <h2 style={{ color: 'white', marginTop: '50px' }}> no schedules yet</h2>

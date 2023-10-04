@@ -1,170 +1,179 @@
-import NavBar from "../../Global Components/NavBar";
-import Typography  from '@mui/material/Typography';
-import styled from "@emotion/styled";
-import { Stack, Card, CardContent, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
-import { Link } from "react-router-dom";
+import { Stack, Typography, styled } from "@mui/material";
+import { useEffect, useLayoutEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useRestPaymentReceipt } from "../../RestCalls/PaymentReceiptUseRest";
+import { useRestOrder } from "../../RestCalls/OrderUseRest";
 
-const StyledHeaderTypography = styled(Typography)({
-    position: "absolute",
-    fontSize: 40,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginTop: "10px",
-    marginLeft: "80px",
-    fontFamily: "Inter', sans-serif"
-});
+export function PaymentReceiptDetails() {
+    const ContentNameTypography = styled(Typography)({
+        marginTop: 60,
+        marginLeft: '10%',
+        fontFamily: 'Inter',
+        fontWeight: 'bold',
+        textAlign: 'left',
+        fontSize: '25px',
+        color: '#203949'
+    })
 
-const StyledDealerHeader = styled(Typography)({
-    position: "absolute",
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: "80px",
-    marginLeft: "120px"
-});
-
-const StyledOrderHeader = styled(Typography)({
-    position: "absolute",
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: "200px",
-    marginLeft: "120px"
-});
-
-const StyledPaymentHeader = styled(Typography)({
-    position: "absolute",
-    color: "#FFFFFF",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: "300px",
-    marginLeft: "120px"
-});
-
-const StyledAssignedHeader = styled(Typography)({
-    position: "absolute",
-    color: "#FFFFFF",
-    fontSize: 20,
-    marginTop: "300px",
-    marginLeft: "850px"
-});
-
-
-const FieldLabel = styled(Typography)({
-    position: 'absolute',
-    textAlign: 'left',
-    left: '80px',
-    color: '#ffffff',
-    fontSize: '15px',
-    width:'max-content',
-    fontFamily: 'Inter, sans - serif',
-});
-
-const FieldData = styled(Typography)({
-    position: 'absolute',
-    textAlign: 'left',
-    width: 600,
-    left: '100px',
-    top:'20px',
-    color: '#ffffff',
-    fontSize: '20px',
-    fontWeight: 'bold',
-    fontFamily: 'Inter, sans - serif',
-});
-
-const StyledCard = styled(Card)({
-    borderRadius: "20px",
-    padding: 1,
-    width: 1000,
-    position: "absolute",
-    marginLeft: "130px",
-    marginTop: "340px"
-});
-
-const StyledTableHead = styled(TableHead)({
-    backgroundColor: '#AFD3E2'
-});
-
-const TableHeaderCell = styled(TableCell)({
-    fontSize: 15,
-    color: "#146C94",
-    fontWeight: "bold"
-});
+    const StyldeInfoHeader = styled(Typography)({
+        marginTop: '35px',
+        marginBottom: '130px',
+        marginLeft: '12%',
+        fontFamily: 'Inter',
+        fontWeight: 'bold',
+        textAlign: 'left',
+        fontSize: '20px',
+        color: '#203949'
+    })
+    const StackStyle = styled(Stack)({
+        position: 'absolute',
+        top: '150px',
+        //left: '32%'
+    })
+    const StyleLabel = styled(Typography)({
+        position: 'absolute',
+        textAlign: 'left',
+        fontWeight: '550',
+        left: '30px',
+        color: '#707070',
+        fontSize: '15px',
+        width: 'max-content',
+        fontFamily: 'Inter',
+    })
+    const StyleData = styled(Typography)({
+        fontWeight: '550',
+        position: 'absolute',
+        textAlign: 'left',
+        width: 600,
+        left: '50px',
+        top: '35px',
+        color: '#203949',
+        fontSize: '15px',
+        fontFamily: 'Inter, sans - serif',
+    })
 
 
-const RedirectButton = styled(Button)({
-    position: "absolute",
-    align: "center",
-    color: "#FFFFFF",
-    marginTop: "500px",
-    marginLeft: "-280px"
-});
+    const { objectId } = useParams();
 
-export default function PaymentTransactionDetails() {
-    return(
+    const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
+    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+
+
+    const handleFindPaymentReceipt = () => {
+        getPaymentReceiptByID(objectId!)
+        //console.log(isOrderFoundError + "error")
+    };
+
+
+    const handleFindOrder = () => {
+        getOrderByID(paymentReceipt?.paymenttransaction.orderid!)
+    };
+
+
+    const handleGets =() =>{
+        handleFindPaymentReceipt();
+        handleFindOrder();
+    }
+
+    useLayoutEffect(() => {
+        handleGets();
+    }, [paymentReceipt, order]);
+
+
+    return (
         <div>
-            <StyledHeaderTypography>Order Transaction Details</StyledHeaderTypography>
-            <StyledDealerHeader>Dealer Contact Information</StyledDealerHeader>
-            <Stack sx = {{position: 'absolute', top: '180px', left: '70px'}}>
-                <FieldLabel>Dealer Name</FieldLabel>
-                <FieldData>John Doe</FieldData>
-            </Stack>
-            <Stack sx = {{position: 'absolute', top: '180px', left: '230px'}}>
-                <FieldLabel>Dealer ID</FieldLabel>
-                <FieldData>A15-X101</FieldData>
-            </Stack>
-            <Stack sx = {{position: 'absolute', top: '180px', left: '370px'}}>
-                <FieldLabel>Contact Number</FieldLabel>
-                <FieldData>09123456789</FieldData>
-            </Stack>
-            <Stack sx = {{position: 'absolute', top: '180px', left: '570px'}}>
-                <FieldLabel>Address</FieldLabel>
-                <FieldData>306 St. Cypa , Englis V.Rama Cebu City, Cebu</FieldData>
-            </Stack>
+            <ContentNameTypography>Payment Summary</ContentNameTypography>
+            <StackStyle sx={{ left: '12%' }}>
+                <StyleLabel>Receipt ID</StyleLabel>
+                <StyleData>{paymentReceipt?.paymentreceiptid}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '24%' }}>
+                <StyleLabel>Payment Transaction ID</StyleLabel>
+                <StyleData>{paymentReceipt?.paymenttransaction.paymenttransactionid}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '42%' }}>
+                <StyleLabel>Dealer ID</StyleLabel>
+                <StyleData>{order?.dealer.dealerid}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '58%' }}>
+                <StyleLabel>Dealer Name</StyleLabel>
+                <StyleData>{order?.dealer.firstname! + " " + order?.dealer.lastname!}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '72%' }}>
+                <StyleLabel>Payment Type</StyleLabel>
+                <StyleData>{paymentReceipt?.paymenttype}</StyleData>
+            </StackStyle>
 
-            <StyledOrderHeader>Order Transaction Information</StyledOrderHeader>
-            <Stack sx = {{position: 'absolute', top: '300px', left: '70px'}}>
-                <FieldLabel>Order Transaction ID</FieldLabel>
-                <FieldData>45AhZh</FieldData>
-            </Stack>
-            <Stack sx = {{position: 'absolute', top: '300px', left: '280px'}}>
-                <FieldLabel>Order Transaction Date</FieldLabel>
-                <FieldData>May 11, 2023</FieldData>
-            </Stack>
-            <Stack sx = {{position: 'absolute', top: '300px', left: '500px'}}>
-                <FieldLabel>Total Ordered Amount</FieldLabel>
-                <FieldData>Php 10,000</FieldData>
-            </Stack>
+            {paymentReceipt && paymentReceipt?.paymenttype === 'direct' ? (
+                <div>
 
-            <StyledPaymentHeader>Payment Transaction Information</StyledPaymentHeader>
-            <StyledAssignedHeader>Assigned Collector: <b>James Reyes</b></StyledAssignedHeader>
-            <StyledCard>
-                <CardContent>
-                    <TableContainer>
-                        <Table aria-label = 'simple table'>
-                            <StyledTableHead>
-                                <TableRow>
-                                    <TableHeaderCell align = "center">Payment Transaction ID</TableHeaderCell>
-                                    <TableHeaderCell align = "center">Payment Terms</TableHeaderCell>
-                                    <TableHeaderCell align = "center">Starting Date</TableHeaderCell>
-                                    <TableHeaderCell align = "center">Ending Date</TableHeaderCell>
-                                    <TableHeaderCell align = "center">Amount Due</TableHeaderCell>
-                                </TableRow>
-                            </StyledTableHead>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell align = "center">67CjBj</TableCell>
-                                    <TableCell align = "center">Installment (1st gives)</TableCell>
-                                    <TableCell align = "center">18/03/2023</TableCell>
-                                    <TableCell align = "center">02/04/2023</TableCell>
-                                    <TableCell align = "center">Php 5,000.00</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </CardContent>
-            </StyledCard>
-            <Link to="/schedules"><RedirectButton>View/edit payment transactions in the Scheduling page</RedirectButton></Link>
-        </div>      
+                    <StackStyle sx={{ top: '40%', left: '12%' }}>
+                        <StyleLabel>Date Paid</StyleLabel>
+                        <StyleData>{new Date(directPaymentReceipt?.datepaid!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
+                    </StackStyle>
+                    <StackStyle sx={{ top: '40%', left: '26%' }}>
+                        <StyleLabel>Amount Collected</StyleLabel>
+                        <StyleData>{directPaymentReceipt?.amountpaid}</StyleData>
+                    </StackStyle>
+                    <StackStyle sx={{ top: '40%', left: '44%' }}>
+                        <StyleLabel>Receiver Name</StyleLabel>
+                        <StyleData>{paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname} </StyleData>
+                    </StackStyle>
+                    <StackStyle sx={{ top: '40%', left: '60%' }}>
+                        <StyleLabel>Remarks</StyleLabel>
+                        <StyleData>{paymentReceipt?.remarks}</StyleData>
+                    </StackStyle>
+        
+                </div>
+
+            ) : (
+                <div>
+                    <StackStyle sx={{ top: '40%', left: '12%' }}>
+                        <StyleLabel>Date Collected</StyleLabel>
+                        <StyleData>{new Date(collectionPaymentReceipt?.collectiondate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
+                    </StackStyle>
+                    <StackStyle sx={{ top: '40%', left: '26%' }}>
+                        <StyleLabel>Amount Collected</StyleLabel>
+                        <StyleData>{collectionPaymentReceipt?.collectionamount}</StyleData>
+                    </StackStyle>
+                    <StackStyle sx={{ top: '40%', left: '44%' }}>
+                        <StyleLabel>Date Remitted</StyleLabel>
+                        <StyleData>{new Date(collectionPaymentReceipt?.remitteddate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} </StyleData>
+                    </StackStyle>
+                    <StackStyle sx={{ top: '40%', left: '60%' }}>
+                        <StyleLabel>Amount Remitted</StyleLabel>
+                        <StyleData>{collectionPaymentReceipt?.remittedamount}</StyleData>
+                    </StackStyle>
+                    <StackStyle sx={{ top: '40%', left: '74%' }}>
+                        <StyleLabel>Collector Name</StyleLabel>
+                        <StyleData>{collectionPaymentReceipt?.collector.firstname + " " + collectionPaymentReceipt?.collector.lastname}</StyleData>
+                    </StackStyle>
+                    <StackStyle sx={{ top: '60%', left: '12%' }}>
+                        <StyleLabel>Payment Status</StyleLabel>
+                        <StyleData>{collectionPaymentReceipt?.confirmed ? "Confirmed" : "Unconfirmed"}</StyleData>
+                    </StackStyle>
+
+                    <StackStyle sx={{ top: '60%', left: '27%' }}>
+                        <StyleLabel>Date Received</StyleLabel>
+                        <StyleData>{new Date(collectionPaymentReceipt?.confirmationdate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
+                    </StackStyle>
+
+                    <StackStyle sx={{ top: '60%', left: '43%' }}>
+                        <StyleLabel>Receiver Name</StyleLabel>
+                        <StyleData>{paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname}</StyleData>
+                    </StackStyle>
+
+                    <StackStyle sx={{ top: '60%', left: '60%' }}>
+                        <StyleLabel>Remarks</StyleLabel>
+                        <StyleData>{paymentReceipt?.remarks}</StyleData>
+                    </StackStyle>
+                </div>
+            )}
+
+        </div>
+
+
+
     );
+
 }
