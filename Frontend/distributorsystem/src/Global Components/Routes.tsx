@@ -18,6 +18,7 @@ import DataGridOrder from "../Components/Module 6 - Collector Assignment/Collect
 
 import DealerProfile from '../Components/Module 4 - Profiles & Approval/DealerProfilesListUI';
 import DealerApproval from '../Components/Module 4 - Profiles & Approval/DealerApproval';
+import { OrderTransactionDetails } from '../Components/Module 5 - Product Distribution and Confirmation/OrderTransactionDetails';
 export default function MainRoutes(){
     return(
         <Routes>
@@ -39,7 +40,7 @@ export default function MainRoutes(){
                 <Route path="/dealerRegistration" element={<DealerRegistration/>}/>
                 <Route path="/employeeRegistrationn" element={<EmployeeRegistration/>}/>
                 <Route path="/schedules" element={<Schedules/>}/>
-                <Route path="/orderTransactionDetails" element={<PaymentTransactionDetails/>}></Route>
+                <Route path="/orderTransactionDetails" element={<OrderTransactionDetails/>}></Route>
                 <Route path="/signin" element={<SignIn/>}/>
                 <Route path="/recordDirectPayment" element={<RecordDirectPayment/>}/>
                 <Route path="/dealerApproval" element={<DealerApproval/>}/>

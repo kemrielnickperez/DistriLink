@@ -10,7 +10,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import { Dayjs } from 'dayjs';
 import moment from 'moment';
 import { IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
-;
 import { v4 as uuidv4 } from 'uuid';
 
 

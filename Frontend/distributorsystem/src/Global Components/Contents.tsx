@@ -15,6 +15,7 @@ export default function Content() {
 
         '/schedules':'Payment Transaction Schedule',
         '/orderTransactionDetails': 'Order Transaction Details',
+        '/printDetails': 'Print Details',
         '/paymentList': 'Payment Lists',
         '/recordDirectPayment': 'Record Direct Payment',
 
