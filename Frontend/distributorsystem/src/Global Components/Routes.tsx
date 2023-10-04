@@ -20,13 +20,7 @@ import DealerProfile from '../Components/Module 4 - Profiles & Approval/DealerPr
 import DealerApproval from '../Components/Module 4 - Profiles & Approval/DealerApproval';
 import PaymentTransactionDetails from '../Components/Module 6 - Collector Assignment/PaymentTransactionDetailsUI';
 import { PaymentReceiptDetails } from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
-
-<<<<<<< HEAD
-import DealerProfile from '../Components/Profiles/DealerProfile';
-import DealerApproval from "../Components/Approvals/DealerApproval";
-import ProductDistributionList from "../Components/Product Distribution/ProductDistributionList";
-=======
->>>>>>> main
+import ProductDistributionList from '../Components/Module 5 - Product Distribution and Confirmation/ProductDistributionsListUI';
 export default function MainRoutes(){
     return(
         <Routes>
@@ -53,14 +47,11 @@ export default function MainRoutes(){
                 <Route path="/recordDirectPayment" element={<RecordDirectPayment/>}/>
                 <Route path="/dealerApproval" element={<DealerApproval/>}/>
                 <Route path="/employeeRegistration" element={<EmployeeRegistration/>}/>
-<<<<<<< HEAD
                 <Route path="/productDistributionList" element={<ProductDistributionList/>}/>
-            </Route>
-=======
-                <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails/>}></Route>
+
+                <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails/>}/>
                 
            </Route>
->>>>>>> main
          </Routes>  
    );
 }

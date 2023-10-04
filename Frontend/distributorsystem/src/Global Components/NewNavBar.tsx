@@ -18,7 +18,6 @@ const ColorBox = styled(Box)({
     flexDirection: 'column', 
     height: '1000%',
     transition: "ease-in-out 0.3s",
-    overflow: 'hidden',
     ':hover': {
         width: '360px',
         height: '1000%',
