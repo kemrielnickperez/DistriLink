@@ -1,9 +1,10 @@
-import {  Grid, Stack,  Typography, styled } from "@mui/material";
-import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
-import { IDealer } from "../../RestCalls/Interfaces";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { useRestDealer } from "../../RestCalls/DealerUseRest";
+import { IDealer, IDealerDocument } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Box, Button, Modal, Stack, Typography, styled } from "@mui/material";
+import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
+
 
 const ContentNameTypography = styled(Typography)({
     marginTop: 60,
@@ -56,27 +57,94 @@ const StyleData=styled(Typography)({
 })
 
 
-  export function DealerProfileDetails() {
-    const [dealer, setDealer] = useState<IDealer | null>(null);
+export default function DealerProfileDetails() {
 
-    // Use useParams to get the dealer from the URL
-    const { objectId } = useParams();
 
-    useEffect(() => {
-    // Make an Axios GET request to fetch the dealer data using the objectId
-    axios
-    .get<IDealer>(`http://localhost:8080/dealer/getDealerByID/${objectId}`)
-    .then((response) => {
-      setDealer(response.data);
-    })
-    .catch((error) => {
-      console.error("Error fetching dealer data:", error);
-    });
-}, [objectId]);
-   
+    const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
 
-    
-    return(
+
+    const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
+
+
+
+    const [open, setOpen] = useState(false);
+    const [selectedDocument, setSelectedDocument] = useState<IDealerDocument | null>(null);
+
+    const handleOpenDocument = (document: IDealerDocument) => {
+        if (document) {
+            setSelectedDocument(document);
+            setOpen(true);
+        }
+    }
+    const handleCloseDocument = () => {
+        setOpen(false);
+    }
+
+
+    const handleFindDealer = () => {
+     
+        getDealerByID("528b856a");
+    };
+
+
+    function getAllDealerDocuments() {
+        axios.get<IDealerDocument[]>('http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/528b856a')
+            .then((response) => {
+                setDealerDocuments(response.data);
+
+            })
+            .catch((error) => {
+                alert("Error retrieving dealer documents. Please try again.");
+            });
+    }
+
+    useLayoutEffect(() => {
+        handleFindDealer();
+        getAllDealerDocuments();
+    }, [dealer, dealerDocuments]);
+
+    const displayFile = (base64Content: Uint8Array | null, fileType: string, docname: string, documentid: string, dealerparam: IDealer) => {
+        if (base64Content) {
+            // Determine the appropriate way to display the file based on the file type
+            if (fileType === 'application/pdf') {
+                return (
+                    <Button variant={"contained"} onClick={() => handleOpenDocument({
+                        content: base64Content,
+                        type: fileType,
+                        name: docname,
+                        documentid: documentid,
+                        dealer: dealerparam!
+                    })} >
+                        Open PDF
+                    </Button>
+                );
+            } else if (fileType.startsWith('image')) {
+                return (
+                <Button variant={"contained"} onClick={() => handleOpenDocument({
+                    content: base64Content,
+                    type: fileType,
+                    name: docname,
+                    documentid: documentid,
+                    dealer: dealerparam!
+                })}>
+                    Open Image
+                </Button>
+                );
+            } else {
+                // Display a generic download link for other file types
+                return (
+                    <a href={`data:${fileType};base64,${base64Content}`} download={`document.${fileType}`}>
+                        Download Document
+                    </a>
+                );
+            }
+        }
+        else {
+            return <div>No content available</div>;
+        }
+    };
+
+    return (
         <div>
     <ContentNameTypography>Dealer Profile Details</ContentNameTypography>
     {dealer ? (
@@ -117,7 +185,44 @@ const StyleData=styled(Typography)({
                 <StyleData>Php {dealer?.permanentaddress}</StyleData>
             </StackStyle>
            
-            
+            <h1>Dealer Documents</h1>
+            {dealerDocuments.map((document) => (
+                <div key={document.documentid}>
+                    <h2>{document.type}</h2>
+                    {displayFile(document.content, document.type, document.name, document.documentid, document.dealer!)}
+
+                </div>
+            ))}
+            <Modal
+                open={open}
+                onClose={handleCloseDocument}
+            >
+                <div>
+                    <button onClick={handleCloseDocument}>Close</button>
+                    {selectedDocument && (
+                        <div>
+                            {selectedDocument.type === 'application/pdf' ? (
+                                <iframe
+                                    title="PDF Document"
+                                    src={`data:application/pdf;base64,${selectedDocument.content}`}
+                                    width="100%"
+                                    height="1000px"
+                                />
+                            ) : selectedDocument.type.startsWith("image") ? (
+                                <img
+                                    src={`data:${selectedDocument.type};base64,${selectedDocument.content}`}
+                                    alt="Document"
+                                    style={{ maxWidth: '100%', maxHeight: '10000px' }}
+                                />
+                            ) : (
+                                <a href={`data:${selectedDocument.type};base64,${selectedDocument.content}`} download={`document.${selectedDocument.type}`}>
+                                    Download Document
+                                </a>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </Modal>
       </div>
       
             ) : (
@@ -135,4 +240,8 @@ const StyleData=styled(Typography)({
         </div>  
     );
     
+
+
+
+
 }

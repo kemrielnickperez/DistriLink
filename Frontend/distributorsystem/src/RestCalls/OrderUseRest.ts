@@ -41,7 +41,7 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
                 businesstin: order.dealer.businesstin,
                 creditlimit: order.dealer.creditlimit,
                 submissiondate: order.dealer.submissiondate,
-                attachments: order.dealer.attachments,
+               
             },
             collector: null,
             paymenttransactions: [],

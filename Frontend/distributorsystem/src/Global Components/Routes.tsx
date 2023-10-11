@@ -24,6 +24,7 @@ import { OrderDetails } from '../Components/Module 6 - Collector Assignment/Orde
 //import PaymentTransactionDetails from '../Components/Module 6 - Collector Assignment/PaymentTransactionDetailsUI';
 import RecordCollectionPaymentUI from '../Components/Module 8 - Payments/RecordCollectionPaymentUI';
 import { PaymentReceiptDetails } from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
+import DealerProfileDetails from '../Components/Module 4 - Profiles & Approval/DealerProfileDetailsUI';
 import EmployeeProfileListUI from '../Components/Module 4 - Profiles & Approval/EmployeeProfilesListUI';
 import { EmployeeProfileDetails } from '../Components/Module 4 - Profiles & Approval/EmployeeProfileDetailsUI';
 import DealerProfileListUI from '../Components/Module 4 - Profiles & Approval/DealerProfilesListUI';
@@ -63,6 +64,7 @@ export default function MainRoutes(){
                 <Route path="/orderDetails/:objectId" element={<OrderDetails/>}/>
                 <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails/>}></Route>
                 <Route path="/recordCollectionPayment" element={<RecordCollectionPaymentUI/>}/>
+                <Route path="/dealerProfileDetails" element={<DealerProfileDetails/>}/>
             </Route>
          </Routes>  
    );
