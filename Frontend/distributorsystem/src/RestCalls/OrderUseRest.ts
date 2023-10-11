@@ -65,7 +65,6 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
                // console.log(response.data)
                 setOrder(response.data)
                 if (response.data !== null) {
-                    console.log(response.data)
                     setIsOrderFound(true);
                     //setIsOrderFoundError(false);
 
