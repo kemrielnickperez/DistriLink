@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Icon, Stack, TextField, Typography, styled } from "@mui/material";
-import profilepic from "./profilepic.png"
+import profilepic from "./profilepic.png";
 import Modal from '@mui/material/Modal';
 import React from "react";
 import PersonIcon from '@mui/icons-material/Person';
