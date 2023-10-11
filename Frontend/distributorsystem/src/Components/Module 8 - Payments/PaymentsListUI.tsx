@@ -9,9 +9,9 @@ import { useNavigate } from "react-router-dom";
 
 const StyledCard = styled(Card)({
     padding: '10px 10px 10px 2px',
-    margin: "50px 28% 20px 28%",
-    width: '69%',
-    height: '600px',
+    margin: "50px 28% 20px 10%",
+    width: '85%',
+    height: '550px',
     alignItems: 'center',
     borderRadius: '25px',
     justifyContent: 'left'
@@ -41,7 +41,7 @@ const StyledButton = styled(Button)({
     backgroundColor: '#2C85E7',
     fontFamily: 'Inter',
     fontSize: '15px',
-    width: auto,
+    width: '150px',
     height: 40,
     ':hover': {
         backgroundColor: '#87BAF3',
@@ -78,13 +78,13 @@ export default function PaymentList() {
 
     {/** Columns for DataGrid */ }
     const columns: GridColDef[] = [
-        { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 150 },
-        { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 180 },
-        { field: 'paymentType', headerName: 'Payment Type', width: 160 },
-        { field: 'paymentStatus', headerName: 'Payment Status', width: 160 },
-        { field: 'receiverName', headerName: 'Receiver Name', width: 160 },
+        { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 200 },
+        { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 200 },
+        { field: 'paymentType', headerName: 'Payment Type', width: 200 },
+        { field: 'paymentStatus', headerName: 'Payment Status', width: 200 },
+        { field: 'receiverName', headerName: 'Receiver Name', width: 200 },
         {
-            field: '',
+            field: 'action',
             headerName: '',
             width: 150,
             renderCell: (params: { row: any; }) => {
@@ -186,8 +186,8 @@ export default function PaymentList() {
                     }}
                 />
             </StyledCard>
-            <StyledButton onClick={() => handleConfirmPaymentsButton()}>
-                click
+            <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{color:'#FFFFFF', marginTop:'20px'}}>
+                Confirm
             </StyledButton>
         </div>
 

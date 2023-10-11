@@ -17,8 +17,16 @@ export interface IDealer {
     businesstin: string,
     creditlimit: number,
     submissiondate: string,
-    attachments: string,
-    orderids: string[],
+    orderids: string[], // naa ta gihapon ni dapat
+    documentids: string[],
+}
+
+export interface IDealerDocument {
+    documentid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    dealer: IDealer | null; // You can reference the 'IDealer' interface you've already defined.
 }
 
 export interface IEmployee {
@@ -43,7 +51,6 @@ export interface IOrderedProducts {
     product: IProduct;
     quantity: number;
     subtotal: number;
-
 }
 
 export interface IOrder {
@@ -91,7 +98,9 @@ export interface IPaymentReceipt {
 
 export interface IDirectPaymentReceipt extends IPaymentReceipt{
     remarks: string,
-    datepaid: string,     
+    datepaid: string,  
+    amountpaid: number,
+    daterecorded: string,   
 }
 
 export interface ICollectionPaymentReceipt extends IPaymentReceipt{

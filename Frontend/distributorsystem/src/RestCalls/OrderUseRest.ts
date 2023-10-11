@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { IEmployee, IOrder } from "./Interfaces";
@@ -41,7 +41,7 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
                 businesstin: order.dealer.businesstin,
                 creditlimit: order.dealer.creditlimit,
                 submissiondate: order.dealer.submissiondate,
-                attachments: order.dealer.attachments,
+               
             },
             collector: null,
             paymenttransactions: [],
@@ -110,7 +110,6 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
 
 
     function assignCollector(orderID: string, collector: IEmployee) {
-        console.log(assignedStatus)
           axios.put(`http://localhost:8080/order/assignCollector/${orderID}`, collector)
             .then((response) => {
                 setAssignedStatus(true);

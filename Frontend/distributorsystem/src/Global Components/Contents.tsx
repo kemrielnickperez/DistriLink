@@ -15,9 +15,10 @@ export default function Content() {
         //'/dealerApproval':'Dealer Approval',
 
         '/schedules':'Payment Transaction Schedule',
-        //'/orderTransactionDetails': 'Order Transaction Details',
-        //'/paymentList': 'Payment Lists',
-        //'/recordDirectPayment': 'Record Direct Payment',
+        '/orderTransactionDetails': 'Order Transaction Details',
+        '/printDetails': 'Print Details',
+        '/paymentList': 'Payment Lists',
+        '/recordDirectPayment': 'Record Direct Payment',
 
         //'/distributorOrderForm':'Distribution Order Form',
         //'/orderConfirmation': 'Order Confrimation',
@@ -35,7 +36,7 @@ export default function Content() {
    
     return (
       <div>
-        <NewNavBar moduleName={getNavPage()}/> 
+        <NewNavBar moduleName={getNavPage()} /> 
         <Outlet />
       </div>
     );
