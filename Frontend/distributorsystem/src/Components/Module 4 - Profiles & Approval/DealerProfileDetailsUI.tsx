@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import { IDealer, IDealerDocument } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Box, Button, Modal, Stack, Typography, styled } from "@mui/material";
+import { Box, Button, Grid, Modal, Stack, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 
 
@@ -83,12 +83,12 @@ export default function DealerProfileDetails() {
 
     const handleFindDealer = () => {
      
-        getDealerByID("528b856a");
+        getDealerByID("1aca2058");
     };
 
 
     function getAllDealerDocuments() {
-        axios.get<IDealerDocument[]>('http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/528b856a')
+        axios.get<IDealerDocument[]>('http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/1aca2058')
             .then((response) => {
                 setDealerDocuments(response.data);
 

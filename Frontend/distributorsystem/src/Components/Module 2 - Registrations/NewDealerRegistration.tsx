@@ -4,7 +4,6 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
-import dealer1 from 'C:/Users/Asus/OneDrive/Desktop/G5_DistributorSystem/Frontend/distributorsystem/src/Global Components/dealer1.png'
 
 const ImageStyle= styled(Typography)({
     display:'flex',
@@ -319,8 +318,8 @@ export default function NewDealerRegistration(){
                 </Grid>
             {/**Image Grids */}
                 <Grid item>
-                    <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle>
-                </Grid>
+                   {/*  <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle> */}
+                </Grid> 
             </GridBody>
         </div>
     );

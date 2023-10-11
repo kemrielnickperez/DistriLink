@@ -5,7 +5,7 @@ import PaymentList from "../Components/Module 8 - Payments/PaymentsListUI";
 // import DealerProfileList from "./Components/Profiles/DealerProfiles/DealerProfileList";
 // import EmployeeProfileDetails from "./Components/Profiles/EmployeeProfiles/EmployeeProfileDetails";
 // import EmployeeProfileList from "./Components/Profiles/EmployeeProfiles/EmployeeProfileList";
-import DealerRegistration from "../Components/Module 2 - Registrations/DealerRegistrationUI";
+
 import EmployeeRegistration from "../Components/Module 2 - Registrations/EmployeeRegistrationUI";
 import Schedules from "../Components/Module 7 - Schedules/ScheduleOrderTransactionUI";
 import DistributorOrderForm from "../Components/Module 5 - Product Distribution and Confirmation/DistributorOrderFormUI";
@@ -24,11 +24,13 @@ import { OrderDetails } from '../Components/Module 6 - Collector Assignment/Orde
 //import PaymentTransactionDetails from '../Components/Module 6 - Collector Assignment/PaymentTransactionDetailsUI';
 import RecordCollectionPaymentUI from '../Components/Module 8 - Payments/RecordCollectionPaymentUI';
 import { PaymentReceiptDetails } from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
-import DealerProfileDetails from '../Components/Module 4 - Profiles & Approval/DealerProfileDetailsUI';
+/* import DealerProfileDetails from '../Components/Module 4 - Profiles & Approval/DealerProfileDetailsUI'; */
 import EmployeeProfileListUI from '../Components/Module 4 - Profiles & Approval/EmployeeProfilesListUI';
 import { EmployeeProfileDetails } from '../Components/Module 4 - Profiles & Approval/EmployeeProfileDetailsUI';
 import DealerProfileListUI from '../Components/Module 4 - Profiles & Approval/DealerProfilesListUI';
-import { DealerProfileDetails } from '../Components/Module 4 - Profiles & Approval/DealerProfileDetailsUI';
+import DealerProfileDetails from '../Components/Module 4 - Profiles & Approval/DealerProfileDetailsUI';
+import DealerRegistration from '../Components/Module 2 - Registrations/DealerRegistrationUI';
+
 
 export default function MainRoutes(){
     return(

@@ -10,8 +10,8 @@ function App() {
   return (
     <div className="App">
         {/* <SignupScreen/> */}
-      {/* <MainRoutes/> */}
-       <NewDealerRegistration/> 
+       <MainRoutes/> 
+       {/* <NewDealerRegistration/>  */}
       {/* <NewEmployeeRegistration/> */}
    </div>
   );

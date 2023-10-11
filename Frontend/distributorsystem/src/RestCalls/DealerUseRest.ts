@@ -109,7 +109,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
         }
 
         function getDealerByID(dealerID:String) {
-            axios.get(`http://localhost:8080/dealer/getDealerByID?dealerid=${dealerID}`, {
+            axios.get(`http://localhost:8080/dealer/getDealerByID/${dealerID}`, {
                params:{
                    dealerid: dealerID
                }
