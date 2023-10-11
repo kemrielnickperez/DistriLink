@@ -1,11 +1,11 @@
-import logo4 from 'C:/Users/Asus/OneDrive/Desktop/G5_DistributorSystem/Frontend/distributorsystem/src/Global Components/logo4.png'
-import logo5 from 'C:/Users/Asus/OneDrive/Desktop/G5_DistributorSystem/Frontend/distributorsystem/src/Global Components/logo5.png'
-import dealer from 'C:/Users/Asus/OneDrive/Desktop/G5_DistributorSystem/Frontend/distributorsystem/src/Global Components/dealer.png'
-import distributor from 'C:/Users/Asus/OneDrive/Desktop/G5_DistributorSystem/Frontend/distributorsystem/src/Global Components/distributor.png'
-import employee from 'C:/Users/Asus/OneDrive/Desktop/G5_DistributorSystem/Frontend/distributorsystem/src/Global Components/employee.png'
+import logo5 from '../../Global Components/logo5.png'
+import dealer from '../../Global Components/dealer.png'
+import distributor from '../../Global Components/distributor.png'
+import employee from '../../Global Components/employee.png'
 
 
 import { Button, Card, Typography, styled } from '@mui/material'
+import { Link, useNavigate } from 'react-router-dom'
 const Logo=styled(Typography)({
     margin:'5% 10% 0 5% ',
     display: 'flex',
@@ -67,6 +67,14 @@ const ButtonStyle=styled(Button)({
     transition: 'all 0.4s'
 })
 export default function SignupScreen(){
+     
+    const navigate = useNavigate();
+    const handleEmployeeButtonClick = () => {
+       navigate(`/newEmployeeRegistration`)
+    };
+    const handleDealerButtonClick = () => {
+        navigate(`/newDealerRegistration`)
+    };
     return(
         <div>
             {/** Logo*/}
@@ -89,7 +97,7 @@ export default function SignupScreen(){
                     </LabelTypography>
                 </ButtonCard>
                 {/** Sign Up as Employee */}
-                <ButtonCard variant='contained' style={{flexDirection:'column'}}>
+                <ButtonCard variant='contained' style={{flexDirection:'column'}} onClick={handleEmployeeButtonClick}>
                     <CardStyle>
                         <img src={employee} style={{height:'215px',width:'415px',margin:'-14px 0 0 -28px'}}/>
                     </CardStyle>
@@ -98,7 +106,7 @@ export default function SignupScreen(){
                     </LabelTypography>
                 </ButtonCard>
                  {/** Sign Up as Dealer */}
-                <ButtonCard variant='contained' style={{flexDirection:'column'}}>
+                <ButtonCard variant='contained' style={{flexDirection:'column'}} onClick={handleDealerButtonClick} >
                     <CardStyle>
                         <img src={dealer} style={{height:'200px',width:'400px',margin:'-5px 0 0 -15px'}}/>
                         </CardStyle>

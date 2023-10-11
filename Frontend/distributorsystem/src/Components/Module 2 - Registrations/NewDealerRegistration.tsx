@@ -4,7 +4,8 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
-import dealer1 from 'C:/Users/Asus/OneDrive/Desktop/G5_DistributorSystem/Frontend/distributorsystem/src/Global Components/dealer1.png'
+import dealer1 from '../../Global Components/dealer1.png'
+import { useNavigate } from "react-router-dom";
 
 const ImageStyle= styled(Typography)({
     display:'flex',
@@ -154,13 +155,18 @@ const GridField=styled(Grid)({
     
 })
 
+
 export default function NewDealerRegistration(){
     const [checked, setChecked] = useState<boolean>(false);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChecked(event.target.checked);
     };
-
+   
+    const navigate=useNavigate();
+    const handleSignUp=()=>{
+        navigate(`/dashboard`);
+    };
     return(
         <div>
             <GridBody>
@@ -310,7 +316,7 @@ export default function NewDealerRegistration(){
                     </GridField>  
                     <GridField container spacing={0} >
                           <Grid item>
-                               <SignUpButton variant="contained"> 
+                               <SignUpButton variant="contained" onClick={handleSignUp}> 
                                        Sign Up
                                 </SignUpButton>
                             </Grid>
