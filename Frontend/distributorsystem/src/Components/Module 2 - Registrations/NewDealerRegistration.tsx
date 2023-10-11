@@ -325,8 +325,8 @@ export default function NewDealerRegistration(){
                 </Grid>
             {/**Image Grids */}
                 <Grid item>
-                    <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle>
-                </Grid>
+                   {/*  <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle> */}
+                </Grid> 
             </GridBody>
         </div>
     );

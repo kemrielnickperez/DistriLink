@@ -5,6 +5,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -45,14 +47,16 @@ public class Dealer {
 
     private LocalDate submissiondate;
 
-    private String attachments;
 
-    private Set<String> orderids;
+    private Set<String> orderids = new HashSet<>();;
+
+    private Set<String> documentids = new HashSet<>();
 
     public Dealer() {
     }
 
-    public Dealer(String dealerid, String firstname, String middlename, String lastname, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, String attachments, Set<String> orderids) {
+
+    public Dealer(String dealerid, String firstname, String middlename, String lastname, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, Set<String> orderids, Set<String> documentids) {
         this.dealerid = dealerid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -69,8 +73,8 @@ public class Dealer {
         this.businesstin = businesstin;
         this.creditlimit = creditlimit;
         this.submissiondate = submissiondate;
-        this.attachments = attachments;
         this.orderids = orderids;
+        this.documentids = documentids;
     }
 
     public String getDealerid() {
@@ -201,12 +205,12 @@ public class Dealer {
         this.submissiondate = submissiondate;
     }
 
-    public String getAttachments() {
-        return attachments;
+    public Set<String> getDocumentids() {
+        return documentids;
     }
 
-    public void setAttachments(String attachments) {
-        this.attachments = attachments;
+    public void setDocumentids(Set<String> documentids) {
+        this.documentids = documentids;
     }
 
     public Set<String> getOrderids() {

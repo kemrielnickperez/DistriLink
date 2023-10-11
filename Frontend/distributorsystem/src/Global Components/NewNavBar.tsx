@@ -1,5 +1,5 @@
 import { Box, Button, Collapse, Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, styled } from "@mui/material"
-import { makeStyles } from "@mui/styles"
+
 import { ExpandLess, ExpandMore, Height, StarBorder } from '@mui/icons-material/';
 import { useEffect, useState }from "react"
 import { Link, useLocation } from "react-router-dom";
@@ -136,12 +136,16 @@ export default function NewNavBar(props: navProps){
                         </StyledButton>
                         <Collapse in={dropDownProfiles} timeout="auto" unmountOnExit>
                             <List>
+                            <Link to="/dealerProfileList">
                                 <StyledButton>
-                                    <StyledText primary="Collector Profile"/>
+                                    <StyledText primary="Dealer Profile List"/>
                                 </StyledButton>
+                                </Link>
+                            <Link to="/employeeProfileList">
                                 <StyledButton>
-                                    <StyledText sx={{left: -10}} primary="Employee Profiles"/>
+                                    <StyledText sx={{left: -10}} primary="Employee Profiles List"/>
                                 </StyledButton>
+                                </Link>
                             </List>
                         </Collapse>
                          {/** Products */}
@@ -158,12 +162,12 @@ export default function NewNavBar(props: navProps){
                         </StyledButton>
                         <Collapse in={dropDownProducts} timeout="auto" unmountOnExit>
                             <List>
-                                <Link to="/productDistributionLists">
+                                <Link to="/productDistributionList">
                                     <StyledButton>
                                         <StyledText sx={{marginLeft: 10}} primary="Product Distribution List"/>
                                     </StyledButton>
                                 </Link>
-                                <StyledButton>
+                                                                <StyledButton>
                                     <StyledText sx={{marginLeft: 4}} primary="Order Confirmation"/>
                                 </StyledButton>
                                 <Link to="/distributorOrderForm">

@@ -10,9 +10,7 @@ import RoutesSignUp from './Global Components/RoutesSignUp';
 function App() {
   return (
     <div className="App">
-         {/* <SignupScreen/> */}
         <MainRoutes/> 
-       {/* <RoutesSignUp/> */}
        {/* <NewDealerRegistration/>  */}
       {/* <NewEmployeeRegistration/> */}
    </div>

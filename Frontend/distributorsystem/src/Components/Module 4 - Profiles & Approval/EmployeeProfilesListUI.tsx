@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IDealer } from "../../RestCalls/Interfaces";
+import {  IEmployee } from "../../RestCalls/Interfaces";
 import axios from "axios";
 import { Button, Card, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -38,27 +38,26 @@ const StyledButton = styled(Button)({
     }
 })
 
-export default function DealerProfileListUI (){
+export default function EmployeeProfileListUI (){
     const navigate = useNavigate();
-    const [dealer, setDealer] = useState<IDealer[] | null>(null);
+    const [employee, setEmployee] = useState<IEmployee[] | null>(null);
 
     useEffect(() => {
       // Make an Axios GET request to fetch all orders
       axios
-        .get<IDealer[]>('http://localhost:8080/dealer/getAllDealers')
+        .get<IEmployee[]>('http://localhost:8080/employee/getAllEmployees')
         .then((response) => {
-          setDealer(response.data);
+            setEmployee(response.data);
         })
         .catch((error) => {
-          console.error('Error fetching dealer:', error);
+          console.error('Error fetching employee:', error);
         });
     }, []);
   
     {/** Columns for DataGrid */ }
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'Dealer ID', width: 350 },
-        { field: 'dealerName', headerName: 'Dealer Name', width: 350 },
-        { field: 'submissionDate', headerName: 'Date Submitted', width: 350 },
+        { field: 'id', headerName: 'Employee ID', width: 500 },
+        { field: 'employeeName', headerName: 'Employee Name', width: 500 },
         { field: 'action', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
                 return (
@@ -77,16 +76,16 @@ export default function DealerProfileListUI (){
 
     ]
     {/** Rows for DataGrid */ }
-    const rows = (dealer || []).map((dealerList) => ({
-        id: dealerList.dealerid,
-        dealerName: `${dealerList.firstname} ${dealerList.middlename} ${dealerList.lastname}`,
-        submissionDate: dealerList.submissiondate
+    const rows = (employee || []).map((employeeList) => ({
+        id: employeeList.employeeid,
+        employeeName: `${employeeList.firstname} ${employeeList.middlename} ${employeeList.lastname}`,
+        
       }));
 
-    const handleViewButtonClick = (objectId: string) => {
-        console.log(objectId);
-        // Use the `navigate` function to navigate to the details page with the objectId as a parameter
-        navigate(`/dealerProfileDetails/${objectId}`);
+    const handleViewButtonClick = (empId: string) => {
+        console.log(empId);
+        // Use the `navigate` function to navigate to the details page with the empId as a parameter
+        navigate(`/employeeProfileDetails/${empId}`);
       };
 
 
@@ -94,7 +93,7 @@ export default function DealerProfileListUI (){
     return (
         <div>
             <StyledCard>
-                <ContentNameTypography>Dealer Profile List</ContentNameTypography>
+                <ContentNameTypography>Employee Profile List</ContentNameTypography>
 
                 <DataGrid
                     rows={rows}
