@@ -399,7 +399,7 @@ export default function DistributorOrderForm() {
                 value={chosenProduct}
                 onChange={(event, newValue) => setChosenProduct(newValue!)}
                 renderInput={(params) => (
-                  <StyledProductTextField {...params} variant='standard' InputProps={{
+                  <StyledProductField {...params} variant='outlined' InputProps={{
                   ...params.InputProps, disableUnderline: true
                 }}
                 />)}
