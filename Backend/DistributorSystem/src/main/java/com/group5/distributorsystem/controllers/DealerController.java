@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -16,9 +19,17 @@ public class DealerController {
     @Autowired
     DealerService dealerService;
 
+
+
     @PostMapping("/registerDealer")
-    public ResponseEntity<Object> registerDealer(@RequestBody Dealer dealer){
-        dealerService.registerDealer(dealer);
+    public ResponseEntity<Object> registerDealer(
+            @ModelAttribute Dealer dealer,
+            @RequestParam("documentid") List<String> documentIds,
+            @RequestParam("name") List<String> documentNames,
+            @RequestParam("type") List<String> documentTypes,
+            @RequestParam("content") List<MultipartFile> documentContents
+    )  {
+        dealerService.registerDealer(dealer, documentIds, documentNames, documentTypes, documentContents);
 
         return new ResponseEntity<>("Dealer registered successfully!", HttpStatus.CREATED);
     }
