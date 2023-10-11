@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { IEmployee, IOrder } from "./Interfaces";
@@ -65,7 +65,6 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
                // console.log(response.data)
                 setOrder(response.data)
                 if (response.data !== null) {
-                    console.log(response.data)
                     setIsOrderFound(true);
                     //setIsOrderFoundError(false);
 

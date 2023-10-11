@@ -28,8 +28,8 @@ public class DealerController {
         return new ResponseEntity<>(dealerService.getAllDealers(), HttpStatus.OK);
     }
 
-    @GetMapping("/getDealerByID")
-    public ResponseEntity<Object> getDealerByID(@RequestParam String dealerid){
+    @GetMapping("/getDealerByID/{dealerid}")
+    public ResponseEntity<Object> getDealerByID(@PathVariable String dealerid){
         return new ResponseEntity<>(dealerService.getDealerByID(dealerid), HttpStatus.OK);
     }
 

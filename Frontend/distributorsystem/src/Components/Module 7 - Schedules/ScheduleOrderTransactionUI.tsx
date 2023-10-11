@@ -14,20 +14,21 @@ import { IOrder, IPaymentTransaction } from "../../RestCalls/Interfaces";
 import moment from "moment";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
 import { v4 as uuidv4 } from 'uuid';
+import React from "react";
 
 const Typography1 = styled(Typography)({
     color: "#203949",
     transform: 'translateY(-50%)',
     fontSize: 18,
     fontFamily: 'Inter, sans-serif',
-    fontWeight: '600', 
+    fontWeight: '600',
 });
 
 const Label1 = styled(Typography)({
     color: "#707070",
     transform: 'translateY(-50%)',
     fontFamily: 'Inter, sans-serif',
-    fontWeight: '550', 
+    fontWeight: '550',
 });
 
 const StyledButton = styled(Button)({
@@ -131,11 +132,14 @@ const TableHeaderCell = styled(TableCell)({
 
 export default function Schedules() {
 
+    const [startDate, setStartDate] = useState<Dayjs | null>();
 
     const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>();
     const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>();
     const [startDateModified, setStartDateModified] = useState(false);
     const [endDateModified, setEndDateModified] = useState(false);
+
+    const [currentOrder, setCurrentOrder] = useState<IOrder | undefined>();
 
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
@@ -144,18 +148,19 @@ export default function Schedules() {
 
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
     const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
-    const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>(null);
 
-   
+    const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
+    const index = 0;
+
     useEffect(() => {
-
         if (order && order.paymenttransactions) {
-        
-          // Clone the array and sort it
-          const sorted = [...order.paymenttransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
-          setSortedPaymentTransactions(sorted);
+            // Clone the array and sort it
+            const sorted = [...order.paymenttransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
+            setSortedPaymentTransactions(sorted);
         }
-      }, [order]); 
+    }, [order, paymentTransaction]);
+
+
 
     const handleFindOrder = () => {
         getOrderByID(orderIDRef.current?.value + "")
@@ -167,6 +172,8 @@ export default function Schedules() {
 
     const handleCreatePaymentTransaction = () => {
         const newPaymentTransactions: IPaymentTransaction[] = [];
+        let currentEndDate = dayjs(startDate);
+
 
         for (let i = 1; i <= order!.paymentterms; i++) {
             const uuid = uuidv4();
@@ -175,14 +182,14 @@ export default function Schedules() {
             const newPaymentTransaction = {
                 paymenttransactionid: paymenttransactionuuid,
                 amountdue: order!.orderamount / order!.paymentterms,
-                startingdate: "",
-                enddate: "",
+                startingdate: currentEndDate.format('YYYY-MM-DD') || "",
+                enddate: currentEndDate.add(15, 'day').format('YYYY-MM-DD') || "",
                 installmentnumber: i,
                 paid: false,
                 orderid: order!.orderid,
                 paymentreceiptid: null,
             };
-
+            currentEndDate = currentEndDate.add(15, 'day');
             newPaymentTransactions.push(newPaymentTransaction);
         }
 
@@ -201,12 +208,6 @@ export default function Schedules() {
     };
 
 
-    const handleStartDateUpdate = (newValue: Dayjs | null): void => {
-
-        setSelectedStartDate(newValue);
-        setStartDateModified(true);
-    };
-
     const handleEndDateUpdate = (newValue: Dayjs | null): void => {
 
         setSelectedEndDate(newValue);
@@ -215,58 +216,63 @@ export default function Schedules() {
 
 
     const handleSaveClick = (transaction: IPaymentTransaction) => {
-
-        const startingDateFromDB = dayjs(transaction.startingdate);
-         const endDateFromDB = dayjs(transaction.enddate);
-
-        const updatedStartingDate = startDateModified ? selectedStartDate : startingDateFromDB;
-        const updatedEndDate = endDateModified ? selectedEndDate : endDateFromDB;
-
-
-        if (updatedStartingDate?.toString() === 'Invalid Date') {
-            alert('Please select a start date.');
-            return;
-        }
-
-        if (updatedEndDate?.toString() === 'Invalid Date') {
-            alert('Please select an end date.');
-            return;
-        }
-
-        setStartDateModified(false);
-        setEndDateModified(false);
-
-        updatePaymentTransaction(
-            transaction.paymenttransactionid,
-            {
-                paymenttransactionid: transaction.paymenttransactionid,
-                amountdue: transaction.amountdue,
-                startingdate: updatedStartingDate?.format('YYYY-MM-DD') || '',
-                enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
-                installmentnumber: transaction.installmentnumber,
-                paid: transaction.paid,
-                orderid: transaction.orderid,
-                paymentreceiptid: transaction.paymentreceiptid
-            }
-        )
-
-
+       
+               const startingDateFromDB = dayjs(transaction.startingdate);
+                const endDateFromDB = dayjs(transaction.enddate);
+       
+                const updatedStartingDate = selectedStartDate || startingDateFromDB;
+                const updatedEndDate = selectedEndDate || endDateFromDB;
+        /* 
+       
+                if (updatedStartingDate?.toString() === 'Invalid Date') {
+                   alert('Please select a start date.');
+                   return;
+               }
+       
+               if (updatedEndDate?.toString() === 'Invalid Date') {
+                   alert('Please select an end date.');
+                   return;
+               }*/
+       
+               setStartDateModified(false);
+               setEndDateModified(false);
+        
+               updatePaymentTransaction(
+                   transaction.paymenttransactionid,
+                   {
+                       paymenttransactionid: transaction.paymenttransactionid,
+                       amountdue: transaction.amountdue,
+                       startingdate: updatedStartingDate?.format('YYYY-MM-DD') || '',
+                       enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
+                       installmentnumber: transaction.installmentnumber,
+                       paid: transaction.paid,
+                       orderid: transaction.orderid,
+                       paymentreceiptid: transaction.paymentreceiptid
+                   }
+               )
+       
+       
 
     };
 
+
+
     const [isMounted, setIsMounted] = useState(false);
+
 
     useEffect(() => {
         setIsMounted(true); // Set the component as mounted when it renders
 
         // Only make the GET request if the component is mounted
-        if (isMounted) {
+         if (isMounted) {
+ 
+             handleFindOrder();
+         }
+         return () => {
+             setIsMounted(false);
+         }; 
 
-            handleFindOrder();
-        }
-        return () => {
-            setIsMounted(false);
-        };
+        handleFindOrder();
 
     },
         [isOrderFound, order, paymentTransactionsObjects]);
@@ -276,18 +282,18 @@ export default function Schedules() {
     return (
         <div>
 
-                <Grid container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
-                <Grid item container sx={{ width: '1000px', borderRadius: '22px',  }} justifyContent={"center"}  >
-                    <Grid item xs={4} sx={{marginTop: '15px'}}>
+            <Grid container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
+                <Grid item container sx={{ width: '1000px', borderRadius: '22px', }} justifyContent={"center"}  >
+                    <Grid item xs={4} sx={{ marginTop: '15px' }}>
                         <Typography1 sx={{ color: "#203949", transform: 'translateY(-50%)', fontFamily: 'Inter, sans - serif', }}>Search Order Transaction ID</Typography1>
                     </Grid>
-                    <Grid item sx={{marginTop: '15px'}}>
-                        <Paper sx={{ borderRadius: "22px", height: "fit-content", transform: 'translateY(-50%)', border: '1px solid #ccc', boxShadow: 'none'  }}>
-                            <TextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true,  }} inputRef={orderIDRef} sx={{width: '300px', height: '50px' ,'& input': {textAlign: 'left', padding: '12px 12px'}}} 
+                    <Grid item sx={{ marginTop: '15px' }}>
+                        <Paper sx={{ borderRadius: "22px", height: "fit-content", transform: 'translateY(-50%)', border: '1px solid #ccc', boxShadow: 'none' }}>
+                            <TextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true, }} inputRef={orderIDRef} sx={{ width: '300px', height: '50px', '& input': { textAlign: 'left', padding: '12px 12px' } }}
 
                             />
-                            <IconButton type="button" aria-label="search" sx={{backgroundColor: "#2d85e7",height: '50px',width: '50px',borderRadius: "0 41% 41% 0",'&:hover':{backgroundColor: "#2d85e7"}}} onClick={handleFindOrder}>
-                                <SearchIcon sx={{color:"white"}} />
+                            <IconButton type="button" aria-label="search" sx={{ backgroundColor: "#2d85e7", height: '50px', width: '50px', borderRadius: "0 41% 41% 0", '&:hover': { backgroundColor: "#2d85e7" } }} onClick={handleFindOrder}>
+                                <SearchIcon sx={{ color: "white" }} />
                             </IconButton>
 
                         </Paper>
@@ -302,10 +308,10 @@ export default function Schedules() {
                     <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "300px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
 
                         <Typography sx={{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Inter, sans - serif', fontWeight: 'bold', fontSize: '25px', color: "#203949", paddingTop: '30px' }}>Order Transaction Details</Typography>
-                        
-                        <TableContainer sx={{borderBottom: 'none', padding: 2, marginTop: 1, border: 'none'}}>
+
+                        <TableContainer sx={{ borderBottom: 'none', padding: 2, marginTop: 1, border: 'none' }}>
                             <Table aria-label='simple table' style={{ borderCollapse: 'collapse' }}>
-                                <TableHead> 
+                                <TableHead>
                                     <TableRow>
                                         <TableHeaderCell align="center"><Label1>Order Transaction ID</Label1></TableHeaderCell>
                                         <TableHeaderCell align="center"><Label1>Dealer Name</Label1></TableHeaderCell>
@@ -331,110 +337,138 @@ export default function Schedules() {
                 </Grid>
             </Grid>
 
-            {order?.paymenttransactions?.length !== 0 && order?.collector!==null ?  (
-                <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
-                <Grid item >
-                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none'}}>
-                        <TableContainer >
-                            <Table aria-label='simple table'>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableHeaderCell align="center" sx={{paddingTop: 5}}><Label1>Payment Transaction ID</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"sx={{paddingTop: 5}}><Label1>Installment Number</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"sx={{paddingTop: 5}}><Label1>Starting Date</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"sx={{paddingTop: 5}}><Label1>Ending Date</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"sx={{paddingTop: 5}}><Label1>Amount Due</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"sx={{paddingTop: 5}}></TableHeaderCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-
-                                    {sortedPaymentTransactions?.map((transaction, index) => (
-                                        <TableRow key={transaction.paymenttransactionid}>
-                                            <TableCell align="center">
-                                                {transaction.paymenttransactionid}
-                                            </TableCell>
-
-                                            <TableCell align="center">
-                                            Installment {transaction.installmentnumber}
-                                            </TableCell>
-                                                <TableCell align="center">
-                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                        <DatePicker
-                                                            slotProps={{
-                                                                textField: {
-                                                                    InputProps: {
-                                                                        disableUnderline: true
-                                                                    },
-                                                                    variant: "standard",
-                                                                    style: { width: '50%', padding: '0 10px 0 10px' }
-                                                                }
-                                                            }}
-                                                            value={dayjs(transaction.startingdate)}
-                                                            onChange={(e) => handleStartDateUpdate(e!)}
+            {order?.paymenttransactions?.length !== 0 && order?.collector !== null ? (
+                <>
 
 
-                                                        />
-                                                    </LocalizationProvider>
-                                                </TableCell>
 
 
-                                                <TableCell align="center">
-                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                        <DatePicker
-                                                            slotProps={{
-                                                                textField: {
-                                                                    InputProps: {
-                                                                        disableUnderline: true
-                                                                    },
-                                                                    // Set the variant to "standard"
-                                                                    variant: "standard",
-                                                                    style: { width: '50%', padding: '0 10px 0 10px' }
 
-                                                                }
-                                                            }}
-                                                            value={dayjs(transaction.enddate)}
-                                                            onChange={(e) => handleEndDateUpdate(e!)}
-
-                                                        />
-
-                                                    </LocalizationProvider>
-                                                </TableCell>
-
-                                                <TableCell>
-
-                                                Php {transaction.amountdue.toFixed(2)}
-
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Button
-                                                        onClick={() => handleSaveClick(transaction)}
-                                                    > Update </Button>
-                                                </TableCell>
+                    <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
+                        <Grid item >
+                            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>
+                                <TableContainer >
+                                    <Table aria-label='simple table'>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Payment Transaction ID</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Installment Number</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Starting Date</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Ending Date</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Amount Due</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}></TableHeaderCell>
                                             </TableRow>
+                                        </TableHead>
+                                        <TableBody>
 
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
+                                            {order?.paymenttransactions?.map((transaction, index) => (
+                                                <><TableRow key={transaction.paymenttransactionid}>
+                                                    <TableCell align="center">
+                                                        {transaction.paymenttransactionid}
+                                                    </TableCell>
 
-                        </Paper>
-                        <Grid>
+                                                    <TableCell align="center">
+                                                        Installment {transaction.installmentnumber}
+                                                    </TableCell>
+                                                    <TableCell align="center">
+                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                                <Typography >{dayjs(transaction.startingdate).format('MM/DD/YYYY')}</Typography>
+                                                        </LocalizationProvider>
+                                                    </TableCell>
 
+
+                                                    <TableCell align="center">
+                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                            <DatePicker
+                                                                slotProps={{
+                                                                    textField: {
+                                                                        InputProps: {
+                                                                            disableUnderline: true
+                                                                        },
+                                                                        // Set the variant to "standard"
+                                                                        variant: "standard",
+                                                                        style: { width: '50%', padding: '0 10px 0 10px' }
+                                                                    }
+                                                                }}
+                                                                value={dayjs(transaction.enddate)}
+                                                                onChange={(newValue) => handleEndDateUpdate(newValue)} />
+
+                                                        </LocalizationProvider>
+                                                    </TableCell>
+
+                                                    <TableCell>
+
+                                                        Php {transaction.amountdue.toFixed(2)}
+
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <StyledButton
+                                                            onClick={() => handleSaveClick(transaction)}
+                                                        > Update </StyledButton>
+                                                    </TableCell>
+
+                                                    
+                                                </TableRow></>
+
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+
+                            </Paper>
+                            <Grid>
+
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Grid>
-                  ) : order.collector === null ? (
-                
-                    <div>
-                        <h2 style={{ color: 'white', marginTop: '50px' }}> No Collector Assigned</h2>
-                        </div>
+                    </Grid></>
+            ) : order.collector === null ? (
+
+                <div>
+                    <h2 style={{ color: 'white', marginTop: '50px' }}> No Collector Assigned</h2>
+                </div>
             ) : (
                 <div>
                     <h2 style={{ color: 'white', marginTop: '50px' }}> no schedules yet</h2>
+
+                    <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
+                        <Grid item>
+                            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none', height: '50px' }}>
+                                <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
+                                    <Grid>
+                                        <Label1 sx={{ paddingTop: '30px', paddingLeft: '25px' }}>Select Starting Date </Label1>
+                                    </Grid>
+                                    <Grid>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                             <DatePicker
+                                                         slotProps={{
+                                                           textField: {
+                                                             InputProps: {
+                                                               disableUnderline: true
+                                                             },
+                                                             variant: "standard",
+                                                             style: { width: '55%', padding: '0 10px 0 10px' }
+                                                           }
+                                                         }}
+                                                         value={startDate}
+                                                         onChange={(e) => setStartDate(e)} /> 
+                                          {/*   <input
+                                                type="date"
+                                                value={startDate ? startDate.format('YYYY-MM-DD') : ''}
+                                                onChange={(e) => setStartDate(dayjs(e.target.value))}
+                                            /> */}
+                                        </LocalizationProvider>
+                                    </Grid>
+                                    <Grid>
+                                    </Grid>
+                                </Grid>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                                            <br></br>
                     <StyledButton onClick={
                         handleCreatePaymentTransaction
                     }> Create Schedules </StyledButton>
+
 
 
                 </div>

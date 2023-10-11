@@ -200,8 +200,6 @@ export default function DealerRegistration(){
                                             '& .MuiSvgIcon-root': {
                                             fontSize: 30,
                                             color:"white",
-                                            
-                                            
                                             },
                                         }}
                                     >
