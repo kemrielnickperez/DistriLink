@@ -93,6 +93,45 @@ export default function DealerProfileDetails() {
 
     return (
         <div>
+    <ContentNameTypography>Dealer Profile Details</ContentNameTypography>
+    {dealer ? (
+      <div>
+        {/* Render dealer details */}
+            <StyldeInfoHeader>Dealer Information</StyldeInfoHeader>
+            <StackStyle sx={{left:'30%'}}>
+                <StyleLabel>Dealer Name</StyleLabel>
+                <StyleData>{dealer?.firstname} {dealer?.middlename} {dealer?.lastname}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{left:'50%'}}>
+                <StyleLabel>Dealer ID</StyleLabel>
+                <StyleData>{dealer?.dealerid}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{left:'65%'}}>
+                <StyleLabel>Credit Limit</StyleLabel>
+                <StyleData>Php {dealer?.creditlimit}</StyleData>
+            </StackStyle>
+            <StyldeInfoHeader>Basic Information</StyldeInfoHeader>
+            <StackStyle sx={{left:'30%', top:'350px'}}>
+                <StyleLabel>Gender</StyleLabel>
+                <StyleData>{dealer?.gender}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{left:'45%', top:'350px'}}>
+                <StyleLabel>Birthdate</StyleLabel>
+                <StyleData>{dealer?.birthdate}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{left:'60%', top:'350px'}}>
+                <StyleLabel>Contact Number</StyleLabel>
+                <StyleData>{dealer?.contactnumber}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{left:'75%', top:'350px'}}>
+                <StyleLabel>Current Address</StyleLabel>
+                <StyleData>{dealer?.currentaddress}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{left:'90%', top:'350px'}}>
+                <StyleLabel>Permanent Address</StyleLabel>
+                <StyleData>Php {dealer?.permanentaddress}</StyleData>
+            </StackStyle>
+           
             <h1>Dealer Documents</h1>
             {dealerDocuments.map((document) => (
                 <div key={document.documentid}>
@@ -131,8 +170,23 @@ export default function DealerProfileDetails() {
                     )}
                 </div>
             </Modal>
-        </div>
-    )
+      </div>
+      
+            ) : (
+                <Grid sx={{ justifyContent: "center", marginTop: '200px' }}>
+                {dealer === null ? (
+                  <>
+                    <AutorenewOutlinedIcon />
+                    <h4>Loading...</h4>
+                  </>
+                ) : (
+                  <p>Dealer not found.</p>
+                )}
+              </Grid>
+            )}
+        </div>  
+    );
+    
 
 
 

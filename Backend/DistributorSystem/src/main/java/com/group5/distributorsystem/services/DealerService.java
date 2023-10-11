@@ -48,6 +48,7 @@ public class DealerService {
     }
 
     public List<Dealer> getAllDealers(){
+
         return dealerRepository.findAll();
     }
 
@@ -55,6 +56,7 @@ public class DealerService {
         return dealerRepository.findById(dealerid);
     }*/
     public Optional<Dealer> getDealerByID(String dealerid){
+
         return dealerRepository.findById(dealerid);
     }
 }

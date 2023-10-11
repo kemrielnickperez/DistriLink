@@ -63,6 +63,29 @@ public class PaymentTransactionService {
         return paymentTransactionRepository.findById(paymenttransactionid);
     }
 
+    public ResponseEntity updatePaymentTransaction(PaymentTransaction[] paymentTransaction) {
+
+        for(int i=0; i<paymentTransaction.length; i++) {
+
+            PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymentTransaction[i].getPaymenttransactionid()).get();
+            Order order = orderRepository.findById(paymentTransaction[i].getOrderid()).get();
+
+            updatedPaymentTransaction.setEnddate(paymentTransaction[i].getEnddate());
+            updatedPaymentTransaction.setStartingdate(paymentTransaction[i].getStartingdate());
+
+            PaymentTransaction updated2 = paymentTransactionRepository.save(updatedPaymentTransaction);
+
+            for(PaymentTransaction pt : order.getPaymenttransactions()) {
+                if (pt.getPaymenttransactionid().equals(updated2.getPaymenttransactionid())) {
+                    pt.setEnddate(updated2.getEnddate());
+                    pt.setStartingdate(updated2.getStartingdate());
+                }
+                orderRepository.save(order);
+            }
+        }
+
+        return new ResponseEntity("Payment Transaction Updated Successfully!", HttpStatus.OK);
+    }
     public ResponseEntity updatePaymentTransaction(String paymenttransactionid, PaymentTransaction paymentTransaction) {
         PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
         System.out.println(updatedPaymentTransaction.getStartingdate());

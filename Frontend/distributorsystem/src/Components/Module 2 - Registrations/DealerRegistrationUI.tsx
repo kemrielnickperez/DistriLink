@@ -335,6 +335,59 @@ export default function DealerRegistration() {
                                             onChange={(date) => setSelectedBDate(date as Dayjs | null)}
                                         />
                                     </LocalizationProvider>
+                            </Grid>
+                            <Grid item>
+                            <TypographyLabel>Gender</TypographyLabel>
+                            <div style={{ margin:"5px 20px 0px 120px"}}>
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        value={setGender}
+                                        onChange={handleGender}
+                                        name="genderRadioGroup"
+                                        sx={{
+                                            color:"white", 
+                                            '& .MuiSvgIcon-root': {
+                                            fontSize: 30,
+                                            color:"white",
+                                            },
+                                        }}
+                                    >
+                                        <FormControlLabel value="male" control={<Radio />} label={<TypographyRadio>Male</TypographyRadio>}/>
+                                        <FormControlLabel value="female" control={<Radio />} label={<TypographyRadio>Female</TypographyRadio>} />
+                                    </RadioGroup>
+                            </div>
+                            </Grid>
+                </Grid>
+                    <Grid container spacing={20} sx={{ display: "flex", }}>
+                        <Grid item>
+                            <TypographyLabelB>Do you own a business?</TypographyLabelB>
+                            <div style={{ margin:"5px 20px 0px 420px"}}>
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="businessoptionRadioGroup"
+                                        value={setBusinessOpt}
+                                        onChange={handleBussinessOpt}
+                                        sx={{
+                                            color:"white", 
+                                            '& .MuiSvgIcon-root': {
+                                            fontSize: 30,
+                                            color:"white",
+                                        
+                                            },
+                                        }}
+                                    >
+                                        <FormControlLabel value='true' control={<Radio />} label={<TypographyRadio>Yes</TypographyRadio>} />
+                                        <FormControlLabel value='false' control={<Radio />} label={<TypographyRadio>No</TypographyRadio>}/>
+                                    </RadioGroup>
+                            </div>
+                        </Grid>
+                    </Grid>
+                        <Typography style={{color:'white', marginLeft:'240px', marginTop:'5px'}}>If yes, please upload the necessary documents. (Barangay Clearance, TIN)</Typography>
+                
+                    <Grid container spacing={20} sx={{ display: "flex", }}>
+                            <Grid item>
                                 </Grid>
                                 <Grid item>
                                     <TypographyLabel>Gender</TypographyLabel>
