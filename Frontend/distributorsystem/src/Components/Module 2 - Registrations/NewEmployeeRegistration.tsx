@@ -4,8 +4,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React from "react";
 import UploadIcon from '@mui/icons-material/Upload';
-import employee1 from 'C:/Users/Asus/OneDrive/Desktop/G5_DistributorSystem/Frontend/distributorsystem/src/Global Components/employee1.png'
-
+import employee1 from '../../Global Components/employee1.png'
 const ImageStyle= styled(Typography)({
     display:'flex',
     alignItems:'center',
