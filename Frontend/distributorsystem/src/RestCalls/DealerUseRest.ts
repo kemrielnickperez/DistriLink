@@ -108,28 +108,27 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             
         }
 
-    function getDealerByID(dealerID: String) {
-        axios.get('http://localhost:8080/dealer/getDealerByID', {
-            params: {
-                dealerid: dealerID
-            }
-        })
-            .then((response) => {
-               // console.log(response.data)
-                setDealer(response.data);
-
-                //console.log(response.data);
-                if (response.data !== null) {
-                    setIsDealerFound(true);
-
-                }
-                else {
-                    setIsDealerFound(false);
-                }
+        function getDealerByID(dealerID:String) {
+            axios.get(`http://localhost:8080/dealer/getDealerByID?dealerid=${dealerID}`, {
+               params:{
+                   dealerid: dealerID
+               }
             })
-            .catch((error) => {
-                console.error('Error retrieving dealer data:', error);
-            });
-    }
+               .then((response) => {
+                   setDealer(response.data);
+           
+                   console.log(response.data);
+                   if(response.data !== null){
+                       setIsDealerFound(true);
+   
+                   }
+                   else{
+                       setIsDealerFound(false);
+                   }
+               })
+               .catch((error) => {
+                   console.error('Error retrieving dealer data:', error);
+                 });
+       } 
     return [getDealerByID, newDealer, isDealerFound, dealer,]
 }

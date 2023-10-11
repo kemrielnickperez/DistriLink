@@ -2,7 +2,60 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import { IDealer, IDealerDocument } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Box, Button, Modal } from "@mui/material";
+import { Box, Button, Modal, Stack, Typography, styled } from "@mui/material";
+import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
+
+
+const ContentNameTypography = styled(Typography)({
+    marginTop: 60,
+    marginLeft: '8%',
+    fontFamily: 'Inter',
+    fontWeight: 'bold',
+    textAlign:'left',
+    fontSize: '25px',
+    color:'#203949'
+})
+
+
+const StyldeInfoHeader= styled(Typography)({
+    marginTop: '85px',
+    marginBottom: '90px',
+    marginLeft: '10%',
+    fontFamily: 'Inter',
+    fontWeight: 'bold',
+    textAlign:'left',
+    fontSize: '20px',
+    color:'#203949'
+})
+const StackStyle = styled(Stack)({
+    position: 'absolute', 
+    top: '230px', 
+    left: '-12%',
+    fontFamily: 'Inter',
+
+})
+const StyleLabel=styled(Typography)({
+    position: 'absolute',
+    textAlign: 'left',
+    fontWeight: '550',
+    left: '-165px',
+    color: '#707070',
+    fontSize: '15px',
+    width:'max-content',
+    fontFamily: 'Inter',  
+}) 
+const StyleData=styled(Typography)({
+
+    position: 'absolute',
+    textAlign: 'left',
+    width: 200,
+    left: '-140px',
+    top:'35px',
+    color: '#203949',
+    fontSize: '15px',
+    fontFamily: 'Inter, sans - serif',
+})
+
 
 export default function DealerProfileDetails() {
 
