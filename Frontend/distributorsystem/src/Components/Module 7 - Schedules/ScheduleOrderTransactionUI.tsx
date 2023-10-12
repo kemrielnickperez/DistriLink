@@ -15,6 +15,7 @@ import moment from "moment";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
 import { v4 as uuidv4 } from 'uuid';
 import React from "react";
+import axios from "axios";
 
 const Typography1 = styled(Typography)({
     color: "#203949",
@@ -164,11 +165,24 @@ export default function Schedules() {
 
     const handleFindOrder = () => {
         getOrderByID(orderIDRef.current?.value + "")
+        console.log(order?.paymenttransactions?.length);
         if (isOrderFound === false)
             alert("Order not found. Please try again.");
 
 
     };
+
+    const orderPass = () => {
+        axios.post('https://tamworth-wallaby-raqd.2.sg-1.fl0.io/order/createOrder', order)
+        .then(response => {
+            
+            console.log('Order passed successfully:', response.data);
+        })
+        .catch(error => {
+        
+            console.error('Error:', error);
+        });
+    }
 
     const handleCreatePaymentTransaction = () => {
         const newPaymentTransactions: IPaymentTransaction[] = [];
@@ -205,6 +219,9 @@ export default function Schedules() {
 
             return updatedPaymentTransactions;
         });
+
+        console.log(order?.paymenttransactions?.length)
+        orderPass();
     };
 
 
