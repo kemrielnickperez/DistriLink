@@ -83,7 +83,6 @@ export default function DealerRegistration() {
     const [selectedBusinessDocs, setSelectedBusinessDocs] = useState<File | null>();
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
 
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
     const firstnameRef = useRef<TextFieldProps>(null)
     const middlenameRef = useRef<TextFieldProps>(null)
@@ -119,9 +118,6 @@ export default function DealerRegistration() {
         console.log(event.target.files?.[0].name)
         setSelectedBusinessDocs(event.target.files?.[0]);
     };
-
-
-
 
 
     // Function to create an IDealerDocument from a selected file
@@ -181,65 +177,6 @@ export default function DealerRegistration() {
     };
 
 
-    /* const handleUpload = () => {
-        const dealerDocuments: IDealerDocument[] = [];
-
-       console.log(selectedValidID?.name + "valid id");
-        console.log(selectedContract?.name + " contract");
-        console.log(selectedBusinessDocs?.name);
-        
-        //setSelectedFiles([...selectedFiles, selectedContract!]);
-        //setSelectedFiles([...selectedFiles, selectedBusinessDocs!]);
-        //setSelectedFiles([...selectedFiles, selectedValidID!]); 
-
-
-
-       /*  for(let i=0; i>3; i++){
-            if(i===0){
-                const dealerDocument: IDealerDocument = {
-                    documentid: uuidv4().slice(0, 8),
-                    name: "contract",
-                    type: selectedContract!.type,
-                    content: new Uint8Array,
-                    dealer: null
-                };
-                dealerDocuments.push(dealerDocument);
-            }
-            
-        }
-        const Document: IDealerDocument = {
-            documentid: uuidv4().slice(0, 8),
-            name: "contract",
-            type: selectedContract!.type,
-            content: new Uint8Array,
-            dealer: null
-        }; 
-           
-    
-        // Create IDealerDocument objects for each selected file
-        selectedFiles.forEach((file) => {
-
-            const uuid = uuidv4();
-            const dealerdocumentuuid = uuidv4().slice(0, 8);
-            console.log(file.name)
-
-            const dealerDocument: IDealerDocument = {
-                documentid: uuidv4().slice(0, 8),
-                name: file.name,
-                type: file.type,
-                content: new Uint8Array,
-                dealer: null
-            };
-
-            //dealerDocuments.push(dealerDocument);
-        });
-
-        // Now, dealerDocuments array contains the IDealerDocument objects for the selected files
-        console.log(dealerDocuments);
-
-        // You can send this array to your server or perform other actions as needed.
-    };
- */
 
 
 
@@ -274,314 +211,309 @@ export default function DealerRegistration() {
     };
 
     return (
-        <div>
-            <header>
-                <div style={{ textAlign: 'left', marginBottom: '100px' }}>
-                    <TypographyHeader> Dealer Registration </TypographyHeader>
+        <div style={{ textAlign: 'left', marginBottom: '100px' }}>
 
-                    <Grid container spacing={10} sx={{ display: "flex" }}>
+            <TypographyHeader> Dealer Registration </TypographyHeader>
+
+            <Grid container spacing={10} sx={{ display: "flex" }}>
+                <Grid item>
+                    <Grid container spacing={20} sx={{ display: "flex", }}>
+
                         <Grid item>
-                            <Grid container spacing={20} sx={{ display: "flex", }}>
+                            <TypographyLabel>First Name</TypographyLabel>
+                            <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={firstnameRef} />
+                        </Grid>
 
-                                <Grid item>
-                                    <TypographyLabel>First Name</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={firstnameRef} />
-                                </Grid>
+                        <Grid item>
+                            <TypographyLabel>Current Address</TypographyLabel>
+                            <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={currentaddressRef} />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={20} sx={{ display: "flex", }}>
+                        <Grid item>
+                            <TypographyLabel>Middle Name</TypographyLabel>
+                            <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={middlenameRef} />
+                        </Grid>
 
-                                <Grid item>
-                                    <TypographyLabel>Current Address</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={currentaddressRef} />
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={20} sx={{ display: "flex", }}>
-                                <Grid item>
-                                    <TypographyLabel>Middle Name</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={middlenameRef} />
-                                </Grid>
+                        <Grid item>
+                            <TypographyLabel>Permanent Address</TypographyLabel>
+                            <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={permanentAddressRef} />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={20} sx={{ display: "flex", }}>
+                        <Grid item>
+                            <TypographyLabel>Last Name</TypographyLabel>
+                            <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={lastnameRef} />
+                        </Grid>
 
-                                <Grid item>
-                                    <TypographyLabel>Permanent Address</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={permanentAddressRef} />
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={20} sx={{ display: "flex", }}>
-                                <Grid item>
-                                    <TypographyLabel>Last Name</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={lastnameRef} />
-                                </Grid>
-
-                                <Grid item>
-                                    <TypographyLabel>Contact No.</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={contactnumberRef} />
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={20} sx={{ display: "flex", }}>
-                                <Grid item>
-                                    <TypographyLabel>Birthday</TypographyLabel>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <StyledDatePicker sx={{ borderColor: 'white' }}
-                                            slotProps={{
-                                                textField: {
-                                                    InputProps: {
-                                                        disableUnderline: true
-                                                    },
-                                                    // Set the variant to "standard"
-                                                    variant: "standard",
-                                                    style: { padding: '0 10px 0 10px' }
-
-                                                }
-                                            }}
-                                            value={selectedBDate}
-                                            onChange={(date) => setSelectedBDate(date as Dayjs | null)}
-                                        />
-                                    </LocalizationProvider>
-                            </Grid>
-                            <Grid item>
-                            <TypographyLabel>Gender</TypographyLabel>
-                            <div style={{ margin:"5px 20px 0px 120px"}}>
-                                    <RadioGroup
-                                        row
-                                        aria-labelledby="demo-row-radio-buttons-group-label"
-                                        value={setGender}
-                                        onChange={handleGender}
-                                        name="genderRadioGroup"
-                                        sx={{
-                                            color:"white", 
-                                            '& .MuiSvgIcon-root': {
-                                            fontSize: 30,
-                                            color:"white",
+                        <Grid item>
+                            <TypographyLabel>Contact No.</TypographyLabel>
+                            <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={contactnumberRef} />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={20} sx={{ display: "flex", }}>
+                        <Grid item>
+                            <TypographyLabel>Birthday</TypographyLabel>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <StyledDatePicker sx={{ borderColor: 'white' }}
+                                    slotProps={{
+                                        textField: {
+                                            InputProps: {
+                                                disableUnderline: true
                                             },
-                                        }}
-                                    >
-                                        <FormControlLabel value="male" control={<Radio />} label={<TypographyRadio>Male</TypographyRadio>}/>
-                                        <FormControlLabel value="female" control={<Radio />} label={<TypographyRadio>Female</TypographyRadio>} />
-                                    </RadioGroup>
+                                            // Set the variant to "standard"
+                                            variant: "standard",
+                                            style: { padding: '0 10px 0 10px' }
+
+                                        }
+                                    }}
+                                    value={selectedBDate}
+                                    onChange={(date) => setSelectedBDate(date as Dayjs | null)}
+                                />
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid item>
+                            <TypographyLabel>Gender</TypographyLabel>
+                            <div style={{ margin: "5px 20px 0px 120px" }}>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    value={setGender}
+                                    onChange={handleGender}
+                                    name="genderRadioGroup"
+                                    sx={{
+                                        color: "white",
+                                        '& .MuiSvgIcon-root': {
+                                            fontSize: 30,
+                                            color: "white",
+                                        },
+                                    }}
+                                >
+                                    <FormControlLabel value="male" control={<Radio />} label={<TypographyRadio>Male</TypographyRadio>} />
+                                    <FormControlLabel value="female" control={<Radio />} label={<TypographyRadio>Female</TypographyRadio>} />
+                                </RadioGroup>
                             </div>
-                            </Grid>
-                </Grid>
+                        </Grid>
+                    </Grid>
                     <Grid container spacing={20} sx={{ display: "flex", }}>
                         <Grid item>
                             <TypographyLabelB>Do you own a business?</TypographyLabelB>
-                            <div style={{ margin:"5px 20px 0px 420px"}}>
-                                    <RadioGroup
-                                        row
-                                        aria-labelledby="demo-row-radio-buttons-group-label"
-                                        name="businessoptionRadioGroup"
-                                        value={setBusinessOpt}
-                                        onChange={handleBussinessOpt}
-                                        sx={{
-                                            color:"white", 
-                                            '& .MuiSvgIcon-root': {
+                            <div style={{ margin: "5px 20px 0px 420px" }}>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="businessoptionRadioGroup"
+                                    value={setBusinessOpt}
+                                    onChange={handleBussinessOpt}
+                                    sx={{
+                                        color: "white",
+                                        '& .MuiSvgIcon-root': {
                                             fontSize: 30,
-                                            color:"white",
-                                        
-                                            },
-                                        }}
-                                    >
-                                        <FormControlLabel value='true' control={<Radio />} label={<TypographyRadio>Yes</TypographyRadio>} />
-                                        <FormControlLabel value='false' control={<Radio />} label={<TypographyRadio>No</TypographyRadio>}/>
-                                    </RadioGroup>
-                            </div>
-                        </Grid>
-                    </Grid>
-                        <Typography style={{color:'white', marginLeft:'240px', marginTop:'5px'}}>If yes, please upload the necessary documents. (Barangay Clearance, TIN)</Typography>
-                
-                    <Grid container spacing={20} sx={{ display: "flex", }}>
-                            <Grid item>
-                                </Grid>
-                                <Grid item>
-                                    <TypographyLabel>Gender</TypographyLabel>
-                                    <div style={{ margin: "5px 20px 0px 120px" }}>
-                                        <RadioGroup
-                                            row
-                                            aria-labelledby="demo-row-radio-buttons-group-label"
-                                            value={setGender}
-                                            onChange={handleGender}
-                                            name="genderRadioGroup"
-                                            sx={{
-                                                color: "white",
-                                                '& .MuiSvgIcon-root': {
-                                                    fontSize: 30,
-                                                    color: "white",
+                                            color: "white",
 
-
-                                                },
-                                            }}
-                                        >
-                                            <FormControlLabel value="male" control={<Radio />} label={<TypographyRadio>Male</TypographyRadio>} />
-                                            <FormControlLabel value="female" control={<Radio />} label={<TypographyRadio>Female</TypographyRadio>} />
-                                        </RadioGroup>
-                                    </div>
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={20} sx={{ display: "flex", }}>
-                                <Grid item>
-                                    <TypographyLabelB>Do you own a business?</TypographyLabelB>
-                                    <div style={{ margin: "5px 20px 0px 420px" }}>
-                                        <RadioGroup
-                                            row
-                                            aria-labelledby="demo-row-radio-buttons-group-label"
-                                            name="businessoptionRadioGroup"
-                                            value={setBusinessOpt}
-                                            onChange={handleBussinessOpt}
-                                            sx={{
-                                                color: "white",
-                                                '& .MuiSvgIcon-root': {
-                                                    fontSize: 30,
-                                                    color: "white",
-
-                                                },
-                                            }}
-                                        >
-                                            <FormControlLabel value='true' control={<Radio />} label={<TypographyRadio>Yes</TypographyRadio>} />
-                                            <FormControlLabel value='false' control={<Radio />} label={<TypographyRadio>No</TypographyRadio>} />
-                                        </RadioGroup>
-                                    </div>
-                                </Grid>
-                            </Grid>
-                            <Typography style={{ color: 'white', marginLeft: '240px', marginTop: '5px' }}>If yes, please upload the necessary documents. (Barangay Clearance, TIN)</Typography>
-
-                            <Grid container spacing={20} sx={{ display: "flex", }}>
-                                <Grid item>
-                                    <TypographyLabel>Business Name</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={businessnameRef} disabled={!setBusinessOpt} />
-                                </Grid>
-
-                                <Grid item>
-                                    <TypographyLabel>Business Address</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={businessaddressRef} disabled={!setBusinessOpt} />
-                                </Grid>
-                            </Grid>
-
-                            <Grid container spacing={20} sx={{ display: "flex", }}>
-                                <Grid item>
-                                    <TypographyLabel>Business Phone No.</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={businessphonenumberRef} disabled={!setBusinessOpt} />
-                                </Grid>
-
-                                <Grid item>
-                                    <TypographyLabel>TIN Number</TypographyLabel>
-                                    <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={tinnumberRef} disabled={!setBusinessOpt} />
-                                </Grid>
-
-                            </Grid>
-                        </Grid>
-                        <Grid item>
-                            <div style={{ margin: '50px 0px 0px 50px' }}>
-                                <label htmlFor="validid-input">
-                                    <Button variant='contained' component="span" sx={{
-                                        background: "white", fontSize: 20, paddingLeft: 6,
-                                        paddingRight: 6, fontWeight: 'bold', borderRadius: 2, width: '250px', height: '150px',
-                                        '&:hover': {
-                                            background: "white",
-                                            color: "#146C94",
                                         },
                                     }}
-                                        disabled={!setBusinessOpt}>
-                                        <Icon style={{ color: '#146C94' }}>
-                                            <input
-                                                type="file"
-                                                accept=".pdf,.jpg,.png"
-                                                onChange={handleValidIDFileChange}
-                                                style={{ display: 'none' }}
-                                                id="validid-input"
-                                            />
-                                            <UploadIcon />
-                                        </Icon>
-                                    </Button>
-                                </label>
-
-
-
+                                >
+                                    <FormControlLabel value='true' control={<Radio />} label={<TypographyRadio>Yes</TypographyRadio>} />
+                                    <FormControlLabel value='false' control={<Radio />} label={<TypographyRadio>No</TypographyRadio>} />
+                                </RadioGroup>
                             </div>
-                            <Grid item>
-                                <TypographyUpload>Upload Valid ID</TypographyUpload>
-                            </Grid>
-                            <div style={{ margin: '80px 0px 0px 50px' }}>
+                        </Grid>
+                    </Grid>
+                    <Typography style={{ color: 'white', marginLeft: '240px', marginTop: '5px' }}>If yes, please upload the necessary documents. (Barangay Clearance, TIN)</Typography>
 
-                                <label htmlFor="contract-input">
-                                    <Button variant='contained' component="span" sx={{
-                                        background: "white", fontSize: 20, paddingLeft: 6,
-                                        paddingRight: 6, fontWeight: 'bold', borderRadius: 2, width: '250px', height: '150px',
-                                        '&:hover': {
-                                            background: "white",
-                                            color: "#146C94",
+                    <Grid container spacing={20} sx={{ display: "flex", }}>
+                        <Grid item>
+                        </Grid>
+                        <Grid item>
+                            <TypographyLabel>Gender</TypographyLabel>
+                            <div style={{ margin: "5px 20px 0px 120px" }}>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    value={setGender}
+                                    onChange={handleGender}
+                                    name="genderRadioGroup"
+                                    sx={{
+                                        color: "white",
+                                        '& .MuiSvgIcon-root': {
+                                            fontSize: 30,
+                                            color: "white",
+
+
                                         },
-                                    }} disabled={!setBusinessOpt}>
-                                        <Icon style={{ color: '#146C94' }}>
-                                            <input
-                                                type="file"
-                                                accept=".pdf,.jpg,.png"
-                                                onChange={handleContractFileChange}
-                                                style={{ display: 'none' }}
-                                                id="contract-input"
-                                            />
-                                            <UploadIcon />
-                                        </Icon>
-                                    </Button>
-                                </label>
+                                    }}
+                                >
+                                    <FormControlLabel value="male" control={<Radio />} label={<TypographyRadio>Male</TypographyRadio>} />
+                                    <FormControlLabel value="female" control={<Radio />} label={<TypographyRadio>Female</TypographyRadio>} />
+                                </RadioGroup>
                             </div>
-                            <Grid item>
-                                <TypographyUpload>Upload the Contract</TypographyUpload>
-                            </Grid>
-                            <div style={{ margin: '80px 0px 0px 50px' }}>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={20} sx={{ display: "flex", }}>
+                        <Grid item>
+                            <TypographyLabelB>Do you own a business?</TypographyLabelB>
+                            <div style={{ margin: "5px 20px 0px 420px" }}>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="businessoptionRadioGroup"
+                                    value={setBusinessOpt}
+                                    onChange={handleBussinessOpt}
+                                    sx={{
+                                        color: "white",
+                                        '& .MuiSvgIcon-root': {
+                                            fontSize: 30,
+                                            color: "white",
 
-
-                                <label htmlFor="business-input">
-                                    <Button variant='contained' component="span" sx={{
-                                        background: "white", fontSize: 20, paddingLeft: 6,
-                                        paddingRight: 6, fontWeight: 'bold', borderRadius: 2, width: '250px', height: '150px',
-                                        '&:hover': {
-                                            background: "white",
-                                            color: "#146C94",
                                         },
-                                    }} disabled={!setBusinessOpt}>
-                                        <Icon style={{ color: '#146C94' }}>
-                                            <input
-                                                type="file"
-                                                accept=".pdf,.jpg,.png"
-                                                onChange={handleBusinessDocChange}
-                                                style={{ display: 'none' }}
-                                                id="business-input"
-                                            />
-                                            <UploadIcon />
-                                        </Icon>
-                                    </Button>
-                                </label>
-
-                                {selectedBusinessDocs && (
-                                    <Typography variant="body1">
-                                        Selected File: {selectedBusinessDocs.name}
-                                    </Typography>
-                                )}
-
-                                <button onClick={() => setSelectedBusinessDocs(null)}>
-                                    empty business docs
-                                </button>
-
+                                    }}
+                                >
+                                    <FormControlLabel value='true' control={<Radio />} label={<TypographyRadio>Yes</TypographyRadio>} />
+                                    <FormControlLabel value='false' control={<Radio />} label={<TypographyRadio>No</TypographyRadio>} />
+                                </RadioGroup>
                             </div>
-                            <Grid item>
-                                <Typography style={{ textAlign: 'center', fontSize: 20, color: 'white', marginLeft: '50px' }}>Upload Business Documents</Typography>
-                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Typography style={{ color: 'white', marginLeft: '240px', marginTop: '5px' }}>If yes, please upload the necessary documents. (Barangay Clearance, TIN)</Typography>
+
+                    <Grid container spacing={20} sx={{ display: "flex", }}>
+                        <Grid item>
+                            <TypographyLabel>Business Name</TypographyLabel>
+                            <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={businessnameRef} disabled={!setBusinessOpt} />
+                        </Grid>
+
+                        <Grid item>
+                            <TypographyLabel>Business Address</TypographyLabel>
+                            <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={businessaddressRef} disabled={!setBusinessOpt} />
+                        </Grid>
+                    </Grid>
+
+                    <Grid container spacing={20} sx={{ display: "flex", }}>
+                        <Grid item>
+                            <TypographyLabel>Business Phone No.</TypographyLabel>
+                            <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={businessphonenumberRef} disabled={!setBusinessOpt} />
+                        </Grid>
+
+                        <Grid item>
+                            <TypographyLabel>TIN Number</TypographyLabel>
+                            <StyledTextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true }} inputRef={tinnumberRef} disabled={!setBusinessOpt} />
                         </Grid>
 
                     </Grid>
-                    <div style={{ margin: '80px 0px 0px 635px' }}>
-                        <Button variant='contained' sx={{
-                            background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6,
-                            paddingRight: 6, fontWeight: 'bold', borderRadius: 2, width: '270px', height: '60px',
-                            '&:hover': {
-                                background: "white",
-                                color: "#146C94",
-                            },
-                        }}
-                            onClick={() => { handleNewDealer() }}>
-                            Submit
-                        </Button>
-                    </div>
+                </Grid>
+                <Grid item>
+                    <div style={{ margin: '50px 0px 0px 50px' }}>
+                        <label htmlFor="validid-input">
+                            <Button variant='contained' component="span" sx={{
+                                background: "white", fontSize: 20, paddingLeft: 6,
+                                paddingRight: 6, fontWeight: 'bold', borderRadius: 2, width: '250px', height: '150px',
+                                '&:hover': {
+                                    background: "white",
+                                    color: "#146C94",
+                                },
+                            }}
+                                disabled={!setBusinessOpt}>
+                                <Icon style={{ color: '#146C94' }}>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.jpg,.png"
+                                        onChange={handleValidIDFileChange}
+                                        style={{ display: 'none' }}
+                                        id="validid-input"
+                                    />
+                                    <UploadIcon />
+                                </Icon>
+                            </Button>
+                        </label>
 
-                </div>
-            </header>
+
+
+                    </div>
+                    <Grid item>
+                        <TypographyUpload>Upload Valid ID</TypographyUpload>
+                    </Grid>
+                    <div style={{ margin: '80px 0px 0px 50px' }}>
+
+                        <label htmlFor="contract-input">
+                            <Button variant='contained' component="span" sx={{
+                                background: "white", fontSize: 20, paddingLeft: 6,
+                                paddingRight: 6, fontWeight: 'bold', borderRadius: 2, width: '250px', height: '150px',
+                                '&:hover': {
+                                    background: "white",
+                                    color: "#146C94",
+                                },
+                            }} disabled={!setBusinessOpt}>
+                                <Icon style={{ color: '#146C94' }}>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.jpg,.png"
+                                        onChange={handleContractFileChange}
+                                        style={{ display: 'none' }}
+                                        id="contract-input"
+                                    />
+                                    <UploadIcon />
+                                </Icon>
+                            </Button>
+                        </label>
+                    </div>
+                    <Grid item>
+                        <TypographyUpload>Upload the Contract</TypographyUpload>
+                    </Grid>
+                    <div style={{ margin: '80px 0px 0px 50px' }}>
+                        <label htmlFor="business-input">
+                            <Button variant='contained' component="span" sx={{
+                                background: "white", fontSize: 20, paddingLeft: 6,
+                                paddingRight: 6, fontWeight: 'bold', borderRadius: 2, width: '250px', height: '150px',
+                                '&:hover': {
+                                    background: "white",
+                                    color: "#146C94",
+                                },
+                            }} disabled={!setBusinessOpt}>
+                                <Icon style={{ color: '#146C94' }}>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.jpg,.png"
+                                        onChange={handleBusinessDocChange}
+                                        style={{ display: 'none' }}
+                                        id="business-input"
+                                    />
+                                    <UploadIcon />
+                                </Icon>
+                            </Button>
+                        </label>
+
+                        {selectedBusinessDocs && (
+                            <Typography variant="body1">
+                                Selected File: {selectedBusinessDocs.name}
+                            </Typography>
+                        )}
+
+                        <button onClick={() => setSelectedBusinessDocs(null)}>
+                            empty business docs
+                        </button>
+
+                    </div>
+                    <Grid item>
+                        <Typography style={{ textAlign: 'center', fontSize: 20, color: 'white', marginLeft: '50px' }}>Upload Business Documents</Typography>
+                    </Grid>
+                </Grid>
+
+            </Grid>
+            <div style={{ margin: '80px 0px 0px 635px' }}>
+                <Button variant='contained' sx={{
+                    background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6,
+                    paddingRight: 6, fontWeight: 'bold', borderRadius: 2, width: '270px', height: '60px',
+                    '&:hover': {
+                        background: "white",
+                        color: "#146C94",
+                    },
+                }}
+                    onClick={() => { handleNewDealer() }}>
+                    Submit
+                </Button>
+            </div>
+
         </div>
     )
 }
