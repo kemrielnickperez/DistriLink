@@ -24,7 +24,7 @@ import PaymentTransactionDetails from '../Components/Module 6 - Collector Assign
 import RecordCollectionPaymentUI from '../Components/Module 8 - Payments/RecordCollectionPaymentUI';
 import { PaymentReceiptDetails } from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
 import NewDealerRegistration from '../Components/Module 2 - Registrations/NewDealerRegistration';
-import NewEmployeeRegistration from '../Components/Module 2 - Registrations/NewEmployeeRegistration';
+import NewEmployeeRegistration from '../Components/Module 2 - Registrations/EmployeeRegistrationUI';
 import SignupScreen from '../Components/B - Registration(SplashScreen)/SignupScreen';
 import SignInContent from './ContentsSignIn';
 import SignUpContent from './ContentsSignUp';
@@ -43,7 +43,7 @@ export default function MainRoutes(){
                <Route path="/" element={<Navigate replace to="SignUpScreen"/>}/>
                <Route path="/SignUpScreen" element={<SignupScreen/>}/>
                <Route path="/newDealerRegistration" element={<NewDealerRegistration/>}/>
-               <Route path="/newEmployeeRegistration" element={<NewEmployeeRegistration/>}/>
+               <Route path="/EmployeeRegistration" element={<EmployeeRegistration/>}/>
             </Route>
 
                 {/* <SigninScreen/> */}
