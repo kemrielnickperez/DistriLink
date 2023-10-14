@@ -4,6 +4,7 @@ import { IDealer, IDealerDocument } from "../../RestCalls/Interfaces";
 import axios from "axios";
 import { Box, Button, Grid, Modal, Stack, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
+import { useParams } from "react-router";
 
 
 const ContentNameTypography = styled(Typography)({
@@ -60,11 +61,11 @@ const StyleData=styled(Typography)({
 export default function DealerProfileDetails() {
 
 
+    const { objectId } = useParams();
+
     const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
 
-
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
-
 
 
     const [open, setOpen] = useState(false);
@@ -83,12 +84,12 @@ export default function DealerProfileDetails() {
 
     const handleFindDealer = () => {
      
-        getDealerByID("1aca2058");
+        getDealerByID(objectId!);
     };
 
 
     function getAllDealerDocuments() {
-        axios.get<IDealerDocument[]>('http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/1aca2058')
+        axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId!}`)
             .then((response) => {
                 setDealerDocuments(response.data);
 

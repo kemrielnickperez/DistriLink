@@ -30,6 +30,7 @@ import SignInContent from './ContentsSignIn';
 import SignUpContent from './ContentsSignUp';
 import SplashscreenContent from './ContentsSplashscreen';
 import WelcomeScreen from '../Components/A - SplashScreen/WelcomeScreen';
+import DealerProfileDetails from '../Components/Module 4 - Profiles & Approval/DealerProfileDetailsUI';
 
 export default function MainRoutes(){
     return(
@@ -66,7 +67,8 @@ export default function MainRoutes(){
                         {/* <Route path="/dealerProfileList" element={<DealerProfileList/>}/> */}
                         {/* <Route path="/employeeProfileDetails" element={<EmployeeProfileDetails/>}/>
                         <Route path="/employeeProfileList" element={<EmployeeProfileList/>}/> */}
-                        <Route path="/dealerProfile" element={<DealerProfile/>}/>        
+                        <Route path="/dealerProfile" element={<DealerProfile/>}/>    
+                        <Route path="//dealerProfileDetails/:objectId" element={<DealerProfileDetails/>}></Route>    
                         <Route path="/dealerRegistration" element={<DealerRegistration/>}/>
                         <Route path="/employeeRegistrationn" element={<EmployeeRegistration/>}/>
                         <Route path="/schedules" element={<Schedules/>}/>

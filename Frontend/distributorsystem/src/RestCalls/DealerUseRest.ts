@@ -13,45 +13,8 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
     const [isDealerFound, setIsDealerFound] = useState(false);
 
     function newDealer(dealer: IDealer, dealerDocuments: IDealerDocument[]) {
-        /*  axios.post('http://localhost:8080/dealer/registerDealer', {
-             dealer: {
-                 dealerid: dealer.dealerid,
-                 firstname: dealer.firstname,
-                 middlename: dealer.middlename,
-                 lastname: dealer.lastname,
-                 birthdate: dealer.birthdate,
-                 gender: dealer.gender,
-                 currentaddress: dealer.currentaddress,
-                 permanentaddress: dealer.permanentaddress,
-                 contactnumber: dealer.contactnumber,
-                 hasbusiness: dealer.hasbusiness,
-                 businessname: dealer.businessname,
-                 businessphone: dealer.businessphone,
-                 businessaddress: dealer.businessaddress,
-                 businesstin: dealer.businesstin,
-                 creditlimit: dealer.creditlimit,
-                 submissiondate: dealer.submissiondate,
-                 attachments: dealer.attachments,
-                 orderids: [],
-             },
-             documentid: ["attachmentId1"],
-             name: ["attachmentName1"],
-             type: ["png"],
-             content: [
-              "distributorsystem/public/logo192.png"
-             ],
-         })
-             .then((response) => {
-                 console.log(response.data);
-                 alert("success!");
-             })
-             .catch((error) => {
-                 console.error('Error creating a new record:', error);
-                 alert("Error creating a new record. Please try again.");
-             }); */
-
-
-           console.log(dealerDocuments[0])
+       
+        console.log(dealerDocuments.length)
         const formData = new FormData();
 
         // Add dealer object properties to formData
