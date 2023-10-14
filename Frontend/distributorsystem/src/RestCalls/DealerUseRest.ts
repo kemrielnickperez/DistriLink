@@ -22,6 +22,8 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
         formData.append('firstname', dealer.firstname.toString());
         formData.append('middlename', dealer.middlename.toString());
         formData.append('lastname', dealer.lastname.toString());
+        formData.append('email', dealer.email.toString());
+        formData.append('password', dealer.password.toString());
         formData.append('birthdate', dealer.birthdate.toString());
         formData.append('gender', dealer.gender.toString());
         formData.append('currentaddress', dealer.currentaddress);

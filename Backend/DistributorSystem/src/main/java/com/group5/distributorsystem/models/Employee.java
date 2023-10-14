@@ -22,6 +22,10 @@ public class Employee {
 
     private String lastname;
 
+    private String emailaddress;
+
+    private String password;
+
     private String birthdate;
 
     private String gender;
@@ -31,6 +35,8 @@ public class Employee {
     private String permanentaddress;
 
     private String contactnumber;
+
+    private String tinnumber;
 
     private boolean is_cashier;
 
@@ -66,16 +72,19 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String employeeid, String firstname, String middlename, String lastname, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, Set<String> orderids, Set<String> paymentreceiptids, Set<String> collectionpaymentids) {
+    public Employee(String employeeid, String firstname, String middlename, String lastname, String emailaddress, String password, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, String tinnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, Set<String> orderids, Set<String> paymentreceiptids, Set<String> collectionpaymentids) {
         this.employeeid = employeeid;
         this.firstname = firstname;
         this.middlename = middlename;
         this.lastname = lastname;
+        this.emailaddress = emailaddress;
+        this.password = password;
         this.birthdate = birthdate;
         this.gender = gender;
         this.currentaddress = currentaddress;
         this.permanentaddress = permanentaddress;
         this.contactnumber = contactnumber;
+        this.tinnumber = tinnumber;
         this.is_cashier = is_cashier;
         this.is_salesassociate = is_salesassociate;
         this.is_collector = is_collector;
@@ -116,6 +125,22 @@ public class Employee {
         this.lastname = lastname;
     }
 
+    public String getEmailaddress() {
+        return emailaddress;
+    }
+
+    public void setEmailaddress(String emailaddress) {
+        this.emailaddress = emailaddress;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getBirthdate() {
         return birthdate;
     }
@@ -154,6 +179,14 @@ public class Employee {
 
     public void setContactnumber(String contactnumber) {
         this.contactnumber = contactnumber;
+    }
+
+    public String getTinnumber() {
+        return tinnumber;
+    }
+
+    public void setTinnumber(String tinnumber) {
+        this.tinnumber = tinnumber;
     }
 
     public boolean isIs_cashier() {

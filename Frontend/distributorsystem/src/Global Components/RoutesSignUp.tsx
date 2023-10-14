@@ -3,8 +3,8 @@ import Content from "./Contents";
 
 import SignupScreen from "../Components/B - Registration(SplashScreen)/SignupScreen";
 import SignUpContent from "./ContentsSignIn";
-import NewDealerRegistration from "../Components/Module 2 - Registrations/NewDealerRegistration";
-import NewEmployeeRegistration from "../Components/Module 2 - Registrations/NewEmployeeRegistration";
+import NewDealerRegistration from "../Components/Module 2 - Registrations/DealerRegistrationUI";
+import NewEmployeeRegistration from "../Components/Module 2 - Registrations/EmployeeRegistrationUI";
 import MainRoutes from "./Routes";
 import NewNavBar from "./NewNavBar";
 import { Dashboard } from "@mui/icons-material";
