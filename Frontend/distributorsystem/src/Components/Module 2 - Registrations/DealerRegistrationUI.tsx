@@ -294,6 +294,8 @@ export default function DealerRegistration() {
             firstname: String(firstnameRef.current?.value),
             middlename: String(middlenameRef.current?.value),
             lastname: String(lastnameRef.current?.value),
+            email: String(emailladdressRef.current?.value),
+            password: String(passwordRef.current?.value),
             birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
             gender: selectedGender,
             currentaddress: String(currentaddressRef.current?.value),

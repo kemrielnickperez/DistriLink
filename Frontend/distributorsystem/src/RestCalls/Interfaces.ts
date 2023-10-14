@@ -5,6 +5,8 @@ export interface IDealer {
     firstname: string,
     middlename: string,
     lastname: string,
+    email :String,
+    password: String,
     birthdate: string,
     gender: string,
     currentaddress: string,
