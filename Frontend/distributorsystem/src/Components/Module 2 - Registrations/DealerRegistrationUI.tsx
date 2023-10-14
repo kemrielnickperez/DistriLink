@@ -420,7 +420,7 @@ export default function DealerRegistration() {
                                 }}>
                                 <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
                                     <input hidden type="file"
-                                        accept=".pdf,.jpg,.png"
+                                        accept=".pdf,.jpg, .jpeg, .png"
                                         onChange={handleValidIDFileChange}
                                         style={{ display: 'none' }}
                                         id="validid-input" />

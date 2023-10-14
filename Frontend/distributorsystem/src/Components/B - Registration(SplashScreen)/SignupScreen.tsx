@@ -70,10 +70,10 @@ export default function SignupScreen(){
      
     const navigate = useNavigate();
     const handleEmployeeButtonClick = () => {
-       navigate(`/newEmployeeRegistration`)
+       navigate(`/EmployeeRegistration`)
     };
     const handleDealerButtonClick = () => {
-        navigate(`/newDealerRegistration`)
+        navigate(`/DealerRegistration`)
     };
     return(
         <div>
