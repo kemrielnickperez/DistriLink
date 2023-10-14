@@ -59,13 +59,7 @@ export default function MainRoutes(){
                         <Route path="/paymentList" element={<PaymentList/>}/>
                         <Route path="/dealearOrderForm" element={<DealerOrderForm/>}/>
                         <Route path="/distributorOrderForm" element={<DistributorOrderForm/>}/>
-                        {/* <Route path="/orderConfirmation" element={<orderConfirmation/>}/> */}
-                        {/* <Route path="/dealerTransactionDetails" element={<DealerTransactionDetails/>}/> */}
-                        {/* <Route path="/productDistributionList" element={<ProductDistributionList/>}/> */}
-                            
-                        {/* <Route path="/dealerProfileList" element={<DealerProfileList/>}/> */}
-                        {/* <Route path="/employeeProfileDetails" element={<EmployeeProfileDetails/>}/>
-                        <Route path="/employeeProfileList" element={<EmployeeProfileList/>}/> */}
+                       
                         <Route path="/dealerProfile" element={<DealerProfile/>}/>    
                         <Route path="//dealerProfileDetails/:objectId" element={<DealerProfileDetails/>}></Route>    
                         <Route path="/dealerRegistration" element={<DealerRegistration/>}/>
