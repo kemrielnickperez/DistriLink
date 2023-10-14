@@ -145,7 +145,7 @@ const SignUpButton = styled(Button)({
 const GridField = styled(Grid)({
 
 })
-export default function NewEmployeeRegistration() {
+export default function EmployeeRegistration() {
 
 
     const [newEmployee, getCollectorByID, collector] = useRestEmployee();
