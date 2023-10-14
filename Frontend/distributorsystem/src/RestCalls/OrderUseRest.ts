@@ -77,7 +77,7 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
 
             })
             .catch((error) => {
-                if (error.response) {
+               /*  if (error.response) {
                     // The request was made, and the server responded with a non-2xx status code
                     let errorMessage = `Error Response Data: ${error.response.data}\nStatus Code: ${error.response.status}`;
               
@@ -101,7 +101,7 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
                   } else {
                     // Something happened in setting up the request that triggered an error
                     window.alert(`Error: ${error.message}`);
-                  }
+                  } */
             })
             .finally(() =>{
                // setIsOrderFound(true);

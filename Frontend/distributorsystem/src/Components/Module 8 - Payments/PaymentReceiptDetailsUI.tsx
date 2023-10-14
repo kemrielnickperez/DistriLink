@@ -75,7 +75,7 @@ export function PaymentReceiptDetails() {
         handleFindOrder();
     }
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         handleGets();
     }, [paymentReceipt, order]);
 
@@ -117,7 +117,8 @@ export function PaymentReceiptDetails() {
                     </StackStyle>
                     <StackStyle sx={{ top: '40%', left: '44%' }}>
                         <StyleLabel>Receiver Name</StyleLabel>
-                        <StyleData>{paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname} </StyleData>
+                        <StyleData>{collectionPaymentReceipt?.confirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
+                : ''} </StyleData>
                     </StackStyle>
                     <StackStyle sx={{ top: '40%', left: '60%' }}>
                         <StyleLabel>Remarks</StyleLabel>
@@ -160,7 +161,8 @@ export function PaymentReceiptDetails() {
 
                     <StackStyle sx={{ top: '60%', left: '43%' }}>
                         <StyleLabel>Receiver Name</StyleLabel>
-                        <StyleData>{paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname}</StyleData>
+                        <StyleData>{collectionPaymentReceipt?.confirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
+                : ''}</StyleData>
                     </StackStyle>
 
                     <StackStyle sx={{ top: '60%', left: '60%' }}>
