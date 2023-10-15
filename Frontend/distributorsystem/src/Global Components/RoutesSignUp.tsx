@@ -19,11 +19,11 @@ import PaymentTransactionDetails from "../Components/Module 6 - Collector Assign
 import RecordDirectPayment from "../Components/Module 8 - Payments/RecordDirectPaymentUI";
 import SignIn from "../Components/Module 1 - Distributor System Sign-in/SignInUI";
 import DealerApproval from "../Components/Module 4 - Profiles & Approval/DealerApproval";
-import NewCollectorAssignment from "../Components/Module 6 - Collector Assignment/NewCollectorAssignment";
 import { OrderDetails } from "../Components/Module 6 - Collector Assignment/OrderDetails";
 import { PaymentReceiptDetails } from "../Components/Module 8 - Payments/PaymentReceiptDetailsUI";
 import RecordCollectionPaymentUI from "../Components/Module 8 - Payments/RecordCollectionPaymentUI";
 import SignInContent from "./ContentsSignIn";
+import CollectorAssignment from "../Components/Module 6 - Collector Assignment/CollectorAssignmentUI";
 
 export default function SignUpRoutes(){
     return(
@@ -52,7 +52,7 @@ export default function SignUpRoutes(){
                             <Route path="/recordDirectPayment" element={<RecordDirectPayment/>}/>
                             <Route path="/dealerApproval" element={<DealerApproval/>}/>
                             <Route path="/employeeRegistration" element={<EmployeeRegistration/>}/>
-                            <Route path="/newcollectorAssignment" element={<NewCollectorAssignment/>}/>
+                            <Route path="/collectorAssignment" element={<CollectorAssignment/>}/>
                             <Route path="/orderDetails/:objectId" element={<OrderDetails/>}/>
                             <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails/>}></Route>
                             <Route path="/recordCollectionPayment" element={<RecordCollectionPaymentUI/>}/>
