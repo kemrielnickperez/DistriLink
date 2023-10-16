@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CollectionPaymentReceiptService {
 
@@ -68,4 +70,7 @@ public class CollectionPaymentReceiptService {
         return new ResponseEntity("Collection Payment Receipt Confirmed Successfully!", HttpStatus.OK);
     }
 
+    public List<CollectionPaymentReceipt> findByIsConfirmedFalse() {
+        return collectionPaymentReceiptRepository.findByIsConfirmedFalse();
+    }
 }

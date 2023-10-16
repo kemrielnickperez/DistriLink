@@ -7,9 +7,10 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface PaymentReceiptRepository extends MongoRepository<PaymentReceipt, String> {
-
     //di rako need ani kay sa list of receipts kay nagsagol raman tanan
     /*Iterable<DirectPaymentReceipt> getPaymentReceiptsByDiscriminatorValue(String discriminatorValue);
      */
