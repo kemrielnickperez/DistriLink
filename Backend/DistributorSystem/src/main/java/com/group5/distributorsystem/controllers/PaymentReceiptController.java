@@ -4,6 +4,7 @@ package com.group5.distributorsystem.controllers;
 import com.group5.distributorsystem.models.CollectionPaymentReceipt;
 import com.group5.distributorsystem.models.DirectPaymentReceipt;
 import com.group5.distributorsystem.models.PaymentReceipt;
+import com.group5.distributorsystem.repositories.PaymentReceiptRepository;
 import com.group5.distributorsystem.services.CollectionPaymentReceiptService;
 import com.group5.distributorsystem.services.DirectPaymentReceiptService;
 import com.group5.distributorsystem.services.PaymentReceiptService;
@@ -12,12 +13,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/paymentreceipt")
 public class PaymentReceiptController {
+
+    @Autowired
+    PaymentReceiptRepository paymentReceiptRepository;
 
     @Autowired
     PaymentReceiptService paymentReceiptService;
@@ -70,7 +75,6 @@ public class PaymentReceiptController {
     @PutMapping("/updateCollectionPaymentReceipt/{collectionpaymentreciptid}/{cashierid}")
     public ResponseEntity<Object> confirmCollectionPaymentReceipt(@PathVariable String collectionpaymentreciptid, @PathVariable String cashierid){
         return new ResponseEntity<>(collectionPaymentReceiptService.confirmCollectionPaymentReceipt(collectionpaymentreciptid, cashierid), HttpStatus.OK);
-
     }
 
 }
