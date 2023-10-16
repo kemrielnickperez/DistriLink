@@ -24,6 +24,7 @@ import { OrderDetails } from '../Components/Module 6 - Collector Assignment/Orde
 import PaymentTransactionDetails from '../Components/Module 6 - Collector Assignment/PaymentTransactionDetailsUI';
 import RecordCollectionPaymentUI from '../Components/Module 8 - Payments/RecordCollectionPaymentUI';
 import { PaymentReceiptDetails } from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
+import OrderConfirmation from '../Components/Module 5 - Product Distribution and Confirmation/OrderConfirmationUI';
 
 export default function MainRoutes(){
     return(
@@ -33,9 +34,9 @@ export default function MainRoutes(){
                 <Route path="/dashboard" element={<Dashboard/>}/>
                 <Route path="/assignmentCollector" element={<DataGridOrder/>}/>
                 <Route path="/paymentList" element={<PaymentList/>}/>
-                <Route path="/dealearOrderForm" element={<DealerOrderForm/>}/>
+                <Route path="/dealerOrderForm" element={<DealerOrderForm/>}/>
                 <Route path="/distributorOrderForm" element={<DistributorOrderForm/>}/>
-                {/* <Route path="/orderConfirmation" element={<orderConfirmation/>}/> */}
+                <Route path="/orderConfirmation" element={<OrderConfirmation/>}/> 
                 {/* <Route path="/dealerTransactionDetails" element={<DealerTransactionDetails/>}/> */}
                 {/* <Route path="/productDistributionList" element={<ProductDistributionList/>}/> */}
                        

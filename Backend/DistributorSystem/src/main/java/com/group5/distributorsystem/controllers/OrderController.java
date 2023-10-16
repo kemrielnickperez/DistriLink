@@ -46,4 +46,9 @@ public class OrderController {
         return new ResponseEntity<>(orderService.removeCollector(orderid), HttpStatus.OK);
     }
 
+    @PutMapping("/updateOrder/{orderId}")
+    public ResponseEntity<Object> updateOrder(@PathVariable String orderId, @RequestBody Order updatedOrder) {
+        return new ResponseEntity<>(orderService.updateOrder(orderId, updatedOrder), HttpStatus.OK);
+    }
+
 }

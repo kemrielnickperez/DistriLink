@@ -178,14 +178,14 @@ export default function DistributorOrderForm() {
 
   }, [isDealerFound, products, orderedProducts]);
 
-  function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
+/*   function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
     return {
       product: product,
       quantity: quantity,
       subtotal: product.price * quantity
     };
   }
-
+ */
   function getAllProducts() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
       .then((response) => {
@@ -200,6 +200,8 @@ export default function DistributorOrderForm() {
 
   const handleAddToCart = () => {
     if (chosenProduct) {
+      const uuid = uuidv4();
+      const orderedproductuuid = uuid.slice(0, 8);
       const existingProductIndex = orderedProducts.findIndex(
         (item) => item.product.productid === chosenProduct.productid
       );
@@ -208,6 +210,7 @@ export default function DistributorOrderForm() {
         alert('Product already added to the cart');
       } else {
         const newOrderedProduct: IOrderedProducts = {
+          orderedproductid: orderedproductuuid,
           product: chosenProduct,
           quantity: Number(quantity),
           subtotal: chosenProduct.price * Number(quantity),
@@ -319,6 +322,7 @@ export default function DistributorOrderForm() {
         dealer: dealer!,
         orderedproducts: orderedProducts,
         paymenttransactions: [],
+        confirmed: true
       });
     }
     // Update your order state or send the order data to your API for saving
@@ -413,7 +417,7 @@ export default function DistributorOrderForm() {
         </Grid>
         <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
           <Grid item >
-            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "200px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
+          <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>
               <TableContainer>
                 <Table aria-label='simple table'>
                   <TableHead>

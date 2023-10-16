@@ -7,7 +7,16 @@ import { IEmployee, IOrder } from "./Interfaces";
 
 
 
-export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => void, (orderID: string, collector: IEmployee) => void, (orderID: string) => void, IOrder | undefined, boolean | undefined, boolean | undefined, boolean | undefined] => {
+export const useRestOrder = (): [
+    (order: IOrder) => void,
+    (orderid: string) => void,
+    (orderID: string, collector: IEmployee) => void,
+    (orderID: string) => void,
+    IOrder | undefined,
+    boolean | undefined,
+    boolean | undefined,
+    boolean | undefined,
+    (orderID: string | undefined, updatedOrder: IOrder) => void] => {
 
     const [order, setOrder] = useState<IOrder>();
     const [isOrderFound, setIsOrderFound] = useState<boolean>(true);
@@ -45,6 +54,7 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
             },
             collector: null,
             paymenttransactions: [],
+            confirmed: order.confirmed
 
 
 
@@ -59,10 +69,28 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
             });
     }
 
+    function updateOrder(orderID: string | undefined, updatedOrder: IOrder) {
+        updatedOrder.orderedproducts.map((op) => {
+            console.log(op)
+        })
+        axios.put(`http://localhost:8080/order/updateOrder/${orderID}`, updatedOrder)
+          .then((response) => {
+            // Handle the success response as needed
+            console.log(response.data);
+            alert("Order updated successfully!");
+          })
+          .catch((error) => {
+            // Handle errors
+            console.error('Error updating the order:', error);
+            alert("Error updating the order. Please try again.");
+          });
+      }
+    
+
     function getOrderByID(orderid: string) {
         axios.get(`http://localhost:8080/order/getOrderByID/${orderid}`)
             .then((response) => {
-               // console.log(response.data)
+               
                 setOrder(response.data)
                 if (response.data !== null) {
                     setIsOrderFound(true);
@@ -134,5 +162,5 @@ export const useRestOrder = (): [(order: IOrder) => void, (orderid: string) => v
     }
 
 
-    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus]
+    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder];
 }

@@ -159,6 +159,8 @@ export default function Schedules() {
             const sorted = [...order.paymenttransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
             setSortedPaymentTransactions(sorted);
         }
+        
+        console.log(order)
     }, [order, paymentTransaction]);
 
 

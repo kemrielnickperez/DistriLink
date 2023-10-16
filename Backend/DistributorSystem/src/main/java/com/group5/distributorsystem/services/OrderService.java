@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -43,6 +44,7 @@ public class OrderService {
         Dealer dealer = dealerRepository.findById(order.getDealer().getDealerid()).get();
 
         Set<OrderedProduct> newOrderedProducts = order.getOrderedproducts();
+        Set<OrderedProduct> savedOrderedProducts = new HashSet<>();
 
         for(OrderedProduct op :newOrderedProducts) {
             String productid = op.getProduct().getProductid();
@@ -50,6 +52,7 @@ public class OrderService {
 
 
             Product product = productRepository.findById(productid).get();
+
 
             if(product != null) {
                 float price = product.getPrice();
@@ -59,13 +62,18 @@ public class OrderService {
 
                 newOrderedProduct = orderedProductRepository.save(newOrderedProduct);
 
+                savedOrderedProducts.add(newOrderedProduct);
+
                 orderamount += subtotal;
 
                 product.getOrderedproductids().add(newOrderedProduct.getOrderedproductid());
                 productRepository.save(product);
 
+
+
             }
         }
+        newOrder.setOrderedproducts(savedOrderedProducts);
         newOrder.setOrderamount(orderamount);
 
         //connection to dealer
@@ -83,9 +91,9 @@ public class OrderService {
 
     public Optional<Order> getOrderByID(String orderid){
         Order order = orderRepository.findById(orderid).get();
-        System.out.println(order.getDistributiondate());
-        for(PaymentTransaction pt : order.getPaymenttransactions())
-            System.out.println(pt.getStartingdate());
+       // System.out.println(order.getDistributiondate());
+        /*for(PaymentTransaction pt : order.getPaymenttransactions())
+            System.out.println(pt.getStartingdate());*/
         return orderRepository.findById(orderid);
     }
 
@@ -108,7 +116,7 @@ public class OrderService {
     }
 
 
-    public ResponseEntity removeCollector(String orderid){
+    public ResponseEntity removeCollector(String orderid) {
 
         Order order = orderRepository.findById(orderid).get();
 
@@ -121,6 +129,30 @@ public class OrderService {
         orderRepository.save(order);
 
         return new ResponseEntity("Collector removed successfully", HttpStatus.OK);
+    }
+    public ResponseEntity updateOrder(String orderId, Order updatedOrder) {
+        Order optionalOrder = orderRepository.findById(orderId).get();
+        System.out.println(updatedOrder.getOrderedproducts());
+        if (optionalOrder != null) {
+
+            // Update order details from the updatedOrder object
+            optionalOrder.setPenaltyrate(updatedOrder.getPenaltyrate());
+            optionalOrder.setDistributiondate(updatedOrder.getDistributiondate());
+            optionalOrder.setPaymentterms(updatedOrder.getPaymentterms());
+            optionalOrder.setOrderedproducts(updatedOrder.getOrderedproducts());
+
+
+
+            // You can add more fields to update as needed
+
+            // Save the updated order to the repository
+            orderRepository.save(optionalOrder);
+
+
+            return new ResponseEntity<>("Order updated successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
+        }
     }
 
 }
