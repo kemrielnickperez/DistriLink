@@ -34,11 +34,11 @@ export const useRestEmployee = (): [(employee: IEmployee) => void, (employeid: n
             orderids : [],
         })
             .then((response) => {
-                console.log(response.data);
+            
                 alert("success!");
             })
             .catch((error) => {
-                console.error('Error creating a new record:', error);
+                
                 alert("Error creating a new record. Please try again.");
             });
     }
@@ -48,7 +48,7 @@ export const useRestEmployee = (): [(employee: IEmployee) => void, (employeid: n
          axios.get(`http://localhost:8080/employee/getCollectorByID?employeeid=${collectorID}`)
             .then((response) => {
                 setCollector(response.data)
-                //console.log(response.data)
+                
             })
             .catch((error) => {
                 console.error('Error finding collector', error);
@@ -61,7 +61,7 @@ export const useRestEmployee = (): [(employee: IEmployee) => void, (employeid: n
         axios.get(`http://localhost:8080/employee/getEmployeeByID?employeeid=${employeeid}`)
            .then((response) => {
                setEmployee(response.data)
-               //console.log(response.data)
+              
            })
            .catch((error) => {
                console.error('Error finding employee', error);

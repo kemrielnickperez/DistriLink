@@ -1,4 +1,4 @@
- import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { IEmployee, IOrder } from "./Interfaces";
@@ -50,21 +50,19 @@ export const useRestOrder = (): [
                 businesstin: order.dealer.businesstin,
                 creditlimit: order.dealer.creditlimit,
                 submissiondate: order.dealer.submissiondate,
-               
+
             },
             collector: null,
             paymenttransactions: [],
             confirmed: order.confirmed
 
-
-
         })
             .then((response) => {
-                console.log(response.data);
+
                 alert("success!");
             })
             .catch((error) => {
-                console.error('Error creating a new record:', error);
+
                 alert("Error creating a new record. Please try again.");
             });
     }
@@ -74,23 +72,23 @@ export const useRestOrder = (): [
             console.log(op)
         })
         axios.put(`http://localhost:8080/order/updateOrder/${orderID}`, updatedOrder)
-          .then((response) => {
-            // Handle the success response as needed
-            console.log(response.data);
-            alert("Order updated successfully!");
-          })
-          .catch((error) => {
-            // Handle errors
-            console.error('Error updating the order:', error);
-            alert("Error updating the order. Please try again.");
-          });
-      }
-    
+            .then((response) => {
+
+                alert("Order updated successfully!");
+            })
+            .catch((error) => {
+
+                alert("Error updating the order. Please try again.");
+            });
+    }
+
 
     function getOrderByID(orderid: string) {
+        console.log(orderid 
+            + "use rest")
         axios.get(`http://localhost:8080/order/getOrderByID/${orderid}`)
             .then((response) => {
-               
+
                 setOrder(response.data)
                 if (response.data !== null) {
                     setIsOrderFound(true);
@@ -105,47 +103,22 @@ export const useRestOrder = (): [
 
             })
             .catch((error) => {
-               /*  if (error.response) {
-                    // The request was made, and the server responded with a non-2xx status code
-                    let errorMessage = `Error Response Data: ${error.response.data}\nStatus Code: ${error.response.status}`;
-              
-                    // You can differentiate errors based on the status code
-                    if (error.response.status === 400) {
-                      errorMessage += '\nBad Request Error';
-                    } else if (error.response.status === 401) {
-                      errorMessage += '\nUnauthorized Error';
-                    }// else if (error.response.status === 404) {
-                     // errorMessage += '\nNot Found Error';
-                    //}
-                     //else {
-                    //  errorMessage += '\nOther Error';
-                    //}
-              
-                    // Display the error message in an alert dialog
-                    window.alert(errorMessage);
-                  } else if (error.request) {
-                    // The request was made, but no response was received
-                    window.alert('No Response Received');
-                  } else {
-                    // Something happened in setting up the request that triggered an error
-                    window.alert(`Error: ${error.message}`);
-                  } */
-            })
-            .finally(() =>{
-               // setIsOrderFound(true);
+
+                alert("Error finding the order. Please try again.");
             });
-    }
+        }
+           
 
 
     function assignCollector(orderID: string, collector: IEmployee) {
-          axios.put(`http://localhost:8080/order/assignCollector/${orderID}`, collector)
+        axios.put(`http://localhost:8080/order/assignCollector/${orderID}`, collector)
             .then((response) => {
                 setAssignedStatus(true);
             })
             .catch((error) => {
                 setAssignedStatus(false);
                 console.error('Error assigning collector:', error);
-            });  
+            });
     }
 
     function removeCollector(orderID: string) {
@@ -155,7 +128,6 @@ export const useRestOrder = (): [
             })
             .catch((error) => {
                 setRemoveStatus(false);
-                console.error('Error removing collector:', error);
                 alert("Error removing collector. Please try again.");
             });
     }

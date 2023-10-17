@@ -90,10 +90,6 @@ public class OrderService {
     }
 
     public Optional<Order> getOrderByID(String orderid){
-        Order order = orderRepository.findById(orderid).get();
-       // System.out.println(order.getDistributiondate());
-        /*for(PaymentTransaction pt : order.getPaymenttransactions())
-            System.out.println(pt.getStartingdate());*/
         return orderRepository.findById(orderid);
     }
 
@@ -132,7 +128,7 @@ public class OrderService {
     }
     public ResponseEntity updateOrder(String orderId, Order updatedOrder) {
         Order optionalOrder = orderRepository.findById(orderId).get();
-        System.out.println(updatedOrder.getOrderedproducts());
+
         if (optionalOrder != null) {
 
             // Update order details from the updatedOrder object
