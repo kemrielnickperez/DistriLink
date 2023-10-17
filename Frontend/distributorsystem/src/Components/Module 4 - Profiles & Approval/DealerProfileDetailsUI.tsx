@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
-import { IDealer, IDealerDocument } from "../../RestCalls/Interfaces";
+import { IDealer, IDealerDocument, IDealerPaymentProof } from "../../RestCalls/Interfaces";
 import axios from "axios";
 import { Button, Grid, Icon, Modal, Paper, Stack, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
@@ -89,7 +89,7 @@ const StyleCredit = styled(Paper)({
     left: '-150px',
     top: '35px',
 
-  })
+})
 
 const ButtonInfo = styled(Button)({
     background: "#F5F7F9",
@@ -212,7 +212,18 @@ export default function DealerProfileDetails() {
 
     const [editedCreditLimit, setEditedCreditLimit] = useState(dealer?.creditlimit);
 
+
+
+
+
+
+
     const basicInfoClickHandler = () => {
+        console.log(objectId)
+
+        //console.log(dealerDocuments)
+        //getAllDealerPaymentProofDocuments();
+
         setDisplayInfo(<BasicInfo />)
     };
 
@@ -231,8 +242,23 @@ export default function DealerProfileDetails() {
     }
 
 
+    const handleFindDealer = () => {
+        getDealerByID(objectId!);
+    };
+    function getAllDealerDocuments() {
+        axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId!}`)
+            .then((response) => {
+                console.log("ni run")
+                console.log(response.data)
+                setDealerDocuments(response.data);
 
-    // Check if objectId is defined before calling the getDealerByID function
+            })
+            .catch((error) => {
+                alert("Error retrieving dealer documents. Please try again.");
+            });
+    };
+
+
     useEffect(() => {
         if (objectId) {
             handleFindDealer();
@@ -240,27 +266,7 @@ export default function DealerProfileDetails() {
         }
     }, [objectId, dealer, dealerDocuments]);
 
-    const handleFindDealer = () => {
-     
-        getDealerByID("1aca2058");
-    };
 
-    function getAllDealerDocuments() {
-        axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId!}`)
-            .then((response) => {
-                setDealerDocuments(response.data);
-
-            })
-            .catch((error) => {
-                alert("Error retrieving dealer documents. Please try again.");
-            });
-    }
-
-
-    // useLayoutEffect(() => {
-    //     handleFindDealer();
-    //     getAllDealerDocuments();
-    // }, [dealer, dealerDocuments]);
 
     const displayFile = (base64Content: Uint8Array | null, fileType: string, docname: string, documentid: string, dealerparam: IDealer) => {
         if (base64Content) {
@@ -302,7 +308,7 @@ export default function DealerProfileDetails() {
             return <div>No content available</div>;
         }
     };
-
+ 
     const handleEditCreditLimit = () => {
         setIsEditing(true);
     };
@@ -367,12 +373,12 @@ export default function DealerProfileDetails() {
                                         <ButtonCredit variant="contained" onClick={handleSaveCreditLimit} >
                                             Save
                                         </ButtonCredit>
-                                        </div>
+                                    </div>
                                     <div>
-                                        <ButtonCredit variant="contained"  onClick={handleCancelEdit} >
+                                        <ButtonCredit variant="contained" onClick={handleCancelEdit} >
                                             Cancel
                                         </ButtonCredit>
-                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ) : (
@@ -397,7 +403,7 @@ export default function DealerProfileDetails() {
 
                     <StyldeInfoHeader>Dealer Documents</StyldeInfoHeader>
 
-                    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+                     <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
                         {dealerDocuments.map((document) => (
                             <div key={document.documentid} style={{ marginRight: '10px', marginBottom: '10px' }}>
                                 {displayFile(document.content, document.type, document.name, document.documentid, document.dealer!)}
