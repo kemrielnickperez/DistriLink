@@ -76,37 +76,6 @@ export default function MainRoutes() {
                         <Route path="/recordCollectionPayment" element={<RecordCollectionPaymentUI />} />
                     </Route>
                 </Route>
-            <Route path="/" element={<Content/>}>
-                <Route path="/" element={<Navigate replace to="dashboard"/>}/>
-                <Route path="/dashboard" element={<Dashboard/>}/>
-                <Route path="/assignmentCollector" element={<DataGridOrder/>}/>
-                <Route path="/paymentList" element={<PaymentList/>}/>
-                <Route path="/dealerOrderForm" element={<DealerOrderForm/>}/>
-                <Route path="/distributorOrderForm" element={<DistributorOrderForm/>}/>
-                <Route path="/orderConfirmation" element={<OrderConfirmation/>}/> 
-                {/* <Route path="/dealerTransactionDetails" element={<DealerTransactionDetails/>}/> */}
-                {/* <Route path="/productDistributionList" element={<ProductDistributionList/>}/> */}
-                       
-                {/* <Route path="/dealerProfileList" element={<DealerProfileList/>}/> */}
-                {/* <Route path="/employeeProfileDetails" element={<EmployeeProfileDetails/>}/>
-                <Route path="/employeeProfileList" element={<EmployeeProfileList/>}/> */}
-                <Route path="/dealerProfile" element={<DealerProfile/>}/>        
-                <Route path="/dealerRegistration" element={<DealerRegistration/>}/>
-                <Route path="/employeeRegistrationn" element={<EmployeeRegistration/>}/>
-                <Route path="/schedules" element={<Schedules/>}/>
-                <Route path="/orderTransactionDetails" element={<OrderTransactionDetails/>}></Route>
-                <Route path="/signin" element={<SignIn/>}/>
-                <Route path="/recordDirectPayment" element={<RecordDirectPayment/>}/>
-                <Route path="/dealerApproval" element={<DealerApproval/>}/>
-                <Route path="/employeeRegistration" element={<EmployeeRegistration/>}/>
-                {/* <Route path="/productDistributionList" element={<ProductDistributionList>}/>
-                <Route path="/newcollectorAssignment" element={<NewCollectorAssignment/>}/>
-                <Route path="/orderDetails" element={<OrderDetails/>}/> */}
-                {/* <Route path="/productDistributionList" element={<ProductDistributionList/>}/> */}
-                <Route path="/newcollectorAssignment" element={<NewCollectorAssignment/>}/>
-                <Route path="/orderDetails/:objectId" element={<OrderDetails/>}/>
-                <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails/>}></Route>
-                <Route path="/recordCollectionPayment" element={<RecordCollectionPaymentUI/>}/>
             </Route>
         </Routes>
 
