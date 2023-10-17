@@ -219,10 +219,8 @@ export default function DealerProfileDetails() {
 
 
     const basicInfoClickHandler = () => {
-        console.log(objectId)
 
-        //console.log(dealerDocuments)
-        //getAllDealerPaymentProofDocuments();
+
 
         setDisplayInfo(<BasicInfo />)
     };
@@ -248,8 +246,7 @@ export default function DealerProfileDetails() {
     function getAllDealerDocuments() {
         axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId!}`)
             .then((response) => {
-                console.log("ni run")
-                console.log(response.data)
+
                 setDealerDocuments(response.data);
 
             })
@@ -308,7 +305,7 @@ export default function DealerProfileDetails() {
             return <div>No content available</div>;
         }
     };
- 
+
     const handleEditCreditLimit = () => {
         setIsEditing(true);
     };
@@ -403,7 +400,7 @@ export default function DealerProfileDetails() {
 
                     <StyldeInfoHeader>Dealer Documents</StyldeInfoHeader>
 
-                     <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
                         {dealerDocuments.map((document) => (
                             <div key={document.documentid} style={{ marginRight: '10px', marginBottom: '10px' }}>
                                 {displayFile(document.content, document.type, document.name, document.documentid, document.dealer!)}

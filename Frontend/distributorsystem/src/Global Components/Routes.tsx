@@ -29,6 +29,9 @@ import SplashscreenContent from './ContentsSplashscreen';
 import WelcomeScreen from '../Components/A - SplashScreen/WelcomeScreen';
 import DealerProfileDetails from '../Components/Module 4 - Profiles & Approval/DealerProfileDetailsUI';
 import CollectorAssignment from '../Components/Module 6 - Collector Assignment/CollectorAssignmentUI';
+import EmployeeProfileListUI from '../Components/Module 4 - Profiles & Approval/EmployeeProfilesListUI';
+import DealerProfileListUI from '../Components/Module 4 - Profiles & Approval/DealerProfilesListUI';
+import { EmployeeProfileDetails } from '../Components/Module 4 - Profiles & Approval/EmployeeProfileDetailsUI';
 
 export default function MainRoutes() {
     return (
@@ -59,10 +62,15 @@ export default function MainRoutes() {
                         <Route path="/dealearOrderForm" element={<DealerOrderForm />} />
                         <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
 
-                        <Route path="/dealerProfileList" element={<DealerProfile />} />
-                        <Route path="//dealerProfileDetails/:objectId" element={<DealerProfileDetails />}></Route>
+                        <Route path="/dealerProfileList" element={<DealerProfileListUI />} />
+                        <Route path="/dealerProfileDetails/:objectId" element={<DealerProfileDetails />}></Route>
                         <Route path="/dealerRegistration" element={<DealerRegistration />} />
+                        
+                        <Route path="/employeeProfileList" element={<EmployeeProfileListUI />} />
+                        <Route path="/employeeProfileDetails/:objectId" element={<EmployeeProfileDetails/>}></Route>
                         <Route path="/employeeRegistrationn" element={<EmployeeRegistration />} />
+                        
+                        
                         <Route path="/schedules/:objectId" element={<Schedules />} />
                        
                         <Route path="/signin" element={<SignIn />} />
