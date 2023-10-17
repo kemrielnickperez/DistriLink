@@ -20,22 +20,25 @@ export const useRestEmployee = (): [(employee: IEmployee) => void, (employeid: n
             firstname : employee.firstname,
             middlename : employee.middlename,
             lastname : employee.lastname,
+            email :employee.email,
+            password: employee.password,
             birthdate : employee.birthdate,
             gender : employee.gender,
             currentaddress : employee.currentaddress,
             permanentaddress : employee.permanentaddress,
             contactnumber : employee.contactnumber,
+            tinnumber: employee.tinnumber,
             is_cashier : employee.is_cashier,
             is_salesassociate : employee.is_salesassociate,
             is_collector : employee.is_collector,
             orderids : [],
         })
             .then((response) => {
-                console.log(response.data);
+            
                 alert("success!");
             })
             .catch((error) => {
-                console.error('Error creating a new record:', error);
+                
                 alert("Error creating a new record. Please try again.");
             });
     }
@@ -45,7 +48,7 @@ export const useRestEmployee = (): [(employee: IEmployee) => void, (employeid: n
          axios.get(`http://localhost:8080/employee/getCollectorByID?employeeid=${collectorID}`)
             .then((response) => {
                 setCollector(response.data)
-                //console.log(response.data)
+                
             })
             .catch((error) => {
                 console.error('Error finding collector', error);
@@ -58,7 +61,7 @@ export const useRestEmployee = (): [(employee: IEmployee) => void, (employeid: n
         axios.get(`http://localhost:8080/employee/getEmployeeByID?employeeid=${employeeid}`)
            .then((response) => {
                setEmployee(response.data)
-               //console.log(response.data)
+              
            })
            .catch((error) => {
                console.error('Error finding employee', error);

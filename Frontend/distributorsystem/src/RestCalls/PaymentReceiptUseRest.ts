@@ -126,7 +126,7 @@ export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directp
                 }
             })
             .catch((error) => {
-                console.error('Cannot find Payment Receipt:', error);
+               
                 alert("Cannot find Payment Receipt. Please try again.");
             });
     }
@@ -135,18 +135,10 @@ export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directp
         axios.put(`http://localhost:8080/paymentreceipt/updateCollectionPaymentReceipt/${collectionpaymentreceiptid}/${cashierid}`)
             .then((response) => {
 
-                //setPaymentReceipt(response.data);
-                // console.log(response.data);
-
-                //if (response.data !== null) {
-                //setIsPaymentTransactionFound(true);
-                //}
-                //else {
-                //    setIsPaymentTransactionFound(false);
-                //}
+                
             })
             .catch((error) => {
-                console.error('Cannot update Payment Receipt:', error);
+                
                 alert("Cannot update Payment Receipt. Please try again.");
             });
 

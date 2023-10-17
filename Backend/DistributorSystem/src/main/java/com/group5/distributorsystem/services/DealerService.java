@@ -24,8 +24,6 @@ public class DealerService {
 
     public Dealer registerDealer(Dealer dealer, List<String> documentIds, List<String> documentNames, List<String> documentTypes, List<MultipartFile> documentContents) {
         Dealer updatedDealer = dealerRepository.save(dealer);
-        System.out.println(dealer.getFirstname());
-        System.out.println(updatedDealer.getFirstname());
         for (int i = 0; i < documentIds.size(); i++) {
             DealerDocument document = new DealerDocument();
             document.setDocumentid(documentIds.get(i));
@@ -58,5 +56,9 @@ public class DealerService {
     public Optional<Dealer> getDealerByID(String dealerid){
 
         return dealerRepository.findById(dealerid);
+    }
+
+    public Dealer findByDealeridAndPassword(String dealerid, String password){
+        return dealerRepository.findByDealeridAndPassword(dealerid, password);
     }
 }

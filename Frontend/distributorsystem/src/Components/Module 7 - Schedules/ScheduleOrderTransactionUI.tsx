@@ -15,6 +15,7 @@ import moment from "moment";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
 import { v4 as uuidv4 } from 'uuid';
 import React from "react";
+import { useParams } from "react-router-dom";
 
 const Typography1 = styled(Typography)({
     color: "#203949",
@@ -132,6 +133,8 @@ const TableHeaderCell = styled(TableCell)({
 
 export default function Schedules() {
 
+    const { objectId } = useParams();
+
     const [startDate, setStartDate] = useState<Dayjs | null>();
 
     const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>();
@@ -163,7 +166,11 @@ export default function Schedules() {
 
 
     const handleFindOrder = () => {
-        getOrderByID(orderIDRef.current?.value + "")
+        
+        
+        const idToSearch = objectId !== 'null' ? objectId : orderIDRef.current?.value+"";
+        getOrderByID(idToSearch!);
+      
         if (isOrderFound === false)
             alert("Order not found. Please try again.");
 
@@ -209,19 +216,18 @@ export default function Schedules() {
 
 
     const handleEndDateUpdate = (newValue: Dayjs | null): void => {
-
         setSelectedEndDate(newValue);
         setEndDateModified(true);
     };
 
 
     const handleSaveClick = (transaction: IPaymentTransaction) => {
-       
-               const startingDateFromDB = dayjs(transaction.startingdate);
-                const endDateFromDB = dayjs(transaction.enddate);
-       
-                const updatedStartingDate = selectedStartDate || startingDateFromDB;
-                const updatedEndDate = selectedEndDate || endDateFromDB;
+
+        const startingDateFromDB = dayjs(transaction.startingdate);
+        const endDateFromDB = dayjs(transaction.enddate);
+
+        const updatedStartingDate = selectedStartDate || startingDateFromDB;
+        const updatedEndDate = selectedEndDate || endDateFromDB;
         /* 
        
                 if (updatedStartingDate?.toString() === 'Invalid Date') {
@@ -233,52 +239,36 @@ export default function Schedules() {
                    alert('Please select an end date.');
                    return;
                }*/
-       
-               setStartDateModified(false);
-               setEndDateModified(false);
-        
-               updatePaymentTransaction(
-                   transaction.paymenttransactionid,
-                   {
-                       paymenttransactionid: transaction.paymenttransactionid,
-                       amountdue: transaction.amountdue,
-                       startingdate: updatedStartingDate?.format('YYYY-MM-DD') || '',
-                       enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
-                       installmentnumber: transaction.installmentnumber,
-                       paid: transaction.paid,
-                       orderid: transaction.orderid,
-                       paymentreceiptid: transaction.paymentreceiptid
-                   }
-               )
-       
-       
+
+        setStartDateModified(false);
+        setEndDateModified(false);
+
+        updatePaymentTransaction(
+            transaction.paymenttransactionid,
+            {
+                paymenttransactionid: transaction.paymenttransactionid,
+                amountdue: transaction.amountdue,
+                startingdate: updatedStartingDate?.format('YYYY-MM-DD') || '',
+                enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
+                installmentnumber: transaction.installmentnumber,
+                paid: transaction.paid,
+                orderid: transaction.orderid,
+                paymentreceiptid: transaction.paymentreceiptid
+            }
+        )
 
     };
 
-
-
-    const [isMounted, setIsMounted] = useState(false);
-
-
     useEffect(() => {
-        setIsMounted(true); // Set the component as mounted when it renders
-
-        // Only make the GET request if the component is mounted
-         if (isMounted) {
- 
-             handleFindOrder();
-         }
-         return () => {
-             setIsMounted(false);
-         }; 
-
-        handleFindOrder();
+       
+        if (objectId !== 'null') {
+            handleFindOrder();
+        }
 
     },
         [isOrderFound, order, paymentTransactionsObjects]);
 
 
-    //put a snackbar on latur nalang sa pag notify nga wlaa ga na order/order not found
     return (
         <div>
 
@@ -362,7 +352,7 @@ export default function Schedules() {
                                         <TableBody>
 
                                             {order?.paymenttransactions?.map((transaction, index) => (
-                                                <><TableRow key={transaction.paymenttransactionid}>
+                                                <TableRow key={transaction.paymenttransactionid}>
                                                     <TableCell align="center">
                                                         {transaction.paymenttransactionid}
                                                     </TableCell>
@@ -372,7 +362,7 @@ export default function Schedules() {
                                                     </TableCell>
                                                     <TableCell align="center">
                                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                <Typography >{dayjs(transaction.startingdate).format('MM/DD/YYYY')}</Typography>
+                                                            <Typography >{dayjs(transaction.startingdate).format('MM/DD/YYYY')}</Typography>
                                                         </LocalizationProvider>
                                                     </TableCell>
 
@@ -407,8 +397,8 @@ export default function Schedules() {
                                                         > Update </StyledButton>
                                                     </TableCell>
 
-                                                    
-                                                </TableRow></>
+
+                                                </TableRow>
 
                                             ))}
                                         </TableBody>
@@ -439,23 +429,19 @@ export default function Schedules() {
                                     </Grid>
                                     <Grid>
                                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                             <DatePicker
-                                                         slotProps={{
-                                                           textField: {
-                                                             InputProps: {
-                                                               disableUnderline: true
-                                                             },
-                                                             variant: "standard",
-                                                             style: { width: '55%', padding: '0 10px 0 10px' }
-                                                           }
-                                                         }}
-                                                         value={startDate}
-                                                         onChange={(e) => setStartDate(e)} /> 
-                                          {/*   <input
-                                                type="date"
-                                                value={startDate ? startDate.format('YYYY-MM-DD') : ''}
-                                                onChange={(e) => setStartDate(dayjs(e.target.value))}
-                                            /> */}
+                                            <DatePicker
+                                                slotProps={{
+                                                    textField: {
+                                                        InputProps: {
+                                                            disableUnderline: true
+                                                        },
+                                                        variant: "standard",
+                                                        style: { width: '55%', padding: '0 10px 0 10px' }
+                                                    }
+                                                }}
+                                                value={dayjs(startDate)}
+                                                onChange={(e) => setStartDate(e)} />
+                                            
                                         </LocalizationProvider>
                                     </Grid>
                                     <Grid>
@@ -464,7 +450,7 @@ export default function Schedules() {
                             </Paper>
                         </Grid>
                     </Grid>
-                                            <br></br>
+                    <br></br>
                     <StyledButton onClick={
                         handleCreatePaymentTransaction
                     }> Create Schedules </StyledButton>

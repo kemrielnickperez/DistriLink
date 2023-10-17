@@ -13,45 +13,8 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
     const [isDealerFound, setIsDealerFound] = useState(false);
 
     function newDealer(dealer: IDealer, dealerDocuments: IDealerDocument[]) {
-        /*  axios.post('http://localhost:8080/dealer/registerDealer', {
-             dealer: {
-                 dealerid: dealer.dealerid,
-                 firstname: dealer.firstname,
-                 middlename: dealer.middlename,
-                 lastname: dealer.lastname,
-                 birthdate: dealer.birthdate,
-                 gender: dealer.gender,
-                 currentaddress: dealer.currentaddress,
-                 permanentaddress: dealer.permanentaddress,
-                 contactnumber: dealer.contactnumber,
-                 hasbusiness: dealer.hasbusiness,
-                 businessname: dealer.businessname,
-                 businessphone: dealer.businessphone,
-                 businessaddress: dealer.businessaddress,
-                 businesstin: dealer.businesstin,
-                 creditlimit: dealer.creditlimit,
-                 submissiondate: dealer.submissiondate,
-                 attachments: dealer.attachments,
-                 orderids: [],
-             },
-             documentid: ["attachmentId1"],
-             name: ["attachmentName1"],
-             type: ["png"],
-             content: [
-              "distributorsystem/public/logo192.png"
-             ],
-         })
-             .then((response) => {
-                 console.log(response.data);
-                 alert("success!");
-             })
-             .catch((error) => {
-                 console.error('Error creating a new record:', error);
-                 alert("Error creating a new record. Please try again.");
-             }); */
-
-
-           console.log(dealerDocuments[0])
+       
+        console.log(dealerDocuments.length)
         const formData = new FormData();
 
         // Add dealer object properties to formData
@@ -59,6 +22,8 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
         formData.append('firstname', dealer.firstname.toString());
         formData.append('middlename', dealer.middlename.toString());
         formData.append('lastname', dealer.lastname.toString());
+        formData.append('email', dealer.email.toString());
+        formData.append('password', dealer.password.toString());
         formData.append('birthdate', dealer.birthdate.toString());
         formData.append('gender', dealer.gender.toString());
         formData.append('currentaddress', dealer.currentaddress);
@@ -72,13 +37,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
         formData.append('creditlimit', dealer.creditlimit.toString());
         formData.append('submissiondate', dealer.submissiondate);
     
-       /*  documents.forEach((document, index) => {
-            formData.append(`documentid`, document.documentId);
-            formData.append(`name`, document.name);
-            formData.append(`type`, document.type);
-            // Add more fields as needed for each document
-          }); */
-
            dealerDocuments.forEach((document, index) => {
            
             formData.append(`documentid`, document.documentid);
@@ -88,7 +46,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
           }); 
        
         console.log(formData.get('dealer.firstname'))
-        // Make the POST request
+        
 
          axios.post('http://localhost:8080/dealer/registerDealer', formData, {
             headers: {
@@ -96,12 +54,11 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             },
         })
             .then((response) => {
-               // console.log(response.data);
+               
                 alert('Success!');
             })
             .catch((error) => {
 
-                console.error('Error creating a new record:', error);
                 alert('Error creating a new record. Please try again.');
             }); 
 
@@ -116,8 +73,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             })
                .then((response) => {
                    setDealer(response.data);
-           
-                   console.log(response.data);
                    if(response.data !== null){
                        setIsDealerFound(true);
    

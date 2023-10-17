@@ -10,6 +10,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import profilepic from "./profilepic.png"
 import { useParams } from "react-router-dom";
 
+
 const ContentNameTypography = styled(Typography)({
     marginTop: 60,
     marginLeft: '8%',
@@ -147,6 +148,8 @@ const ButtonDocument = styled(Button)({
 
 export default function DealerProfileDetails() {
 
+
+    const { objectId } = useParams();
     const BasicInfo = () => (
         <>
             <StackStyle sx={{ left: '40%', top: '380px' }}>
@@ -197,6 +200,8 @@ export default function DealerProfileDetails() {
 
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
 
+
+
     const [open, setOpen] = useState(false);
 
     const [selectedDocument, setSelectedDocument] = useState<IDealerDocument | null>(null);
@@ -226,7 +231,6 @@ export default function DealerProfileDetails() {
     }
 
 
-    const { objectId } = useParams(); // objectId is of type string | undefined
 
     // Check if objectId is defined before calling the getDealerByID function
     useEffect(() => {
@@ -237,13 +241,12 @@ export default function DealerProfileDetails() {
     }, [objectId, dealer, dealerDocuments]);
 
     const handleFindDealer = () => {
-        if (objectId) {
-            getDealerByID(objectId);
-        }
+     
+        getDealerByID("1aca2058");
     };
 
     function getAllDealerDocuments() {
-        axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId}`)
+        axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId!}`)
             .then((response) => {
                 setDealerDocuments(response.data);
 
