@@ -57,4 +57,8 @@ public class DealerService {
 
         return dealerRepository.findById(dealerid);
     }
+
+    public Dealer findByDealeridAndPassword(String dealerid, String password){
+        return dealerRepository.findByDealeridAndPassword(dealerid, password);
+    }
 }
