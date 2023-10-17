@@ -1,6 +1,6 @@
 import { Button, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
 import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
 import { IPaymentTransaction } from "../../RestCalls/Interfaces";
@@ -13,9 +13,9 @@ const ContentNameTypography = styled(Typography)({
     marginLeft: '12%',
     fontFamily: 'Inter',
     fontWeight: 'bold',
-    textAlign:'left',
+    textAlign: 'left',
     fontSize: '25px',
-    color:'#203949'
+    color: '#203949'
 })
 
 const StyledButton = styled(Button)({
@@ -35,38 +35,38 @@ const StyledButton = styled(Button)({
 });
 
 
-const StyldeInfoHeader= styled(Typography)({
+const StyldeInfoHeader = styled(Typography)({
     marginTop: '35px',
     marginBottom: '130px',
     marginLeft: '15%',
     fontFamily: 'Inter',
     fontWeight: 'bold',
-    textAlign:'left',
+    textAlign: 'left',
     fontSize: '20px',
-    color:'#203949'
+    color: '#203949'
 })
 const StackStyle = styled(Stack)({
-    position: 'absolute', 
-    top: '190px', 
+    position: 'absolute',
+    top: '190px',
     //left: '32%'
 })
-const StyleLabel=styled(Typography)({
+const StyleLabel = styled(Typography)({
     position: 'absolute',
     textAlign: 'left',
     fontWeight: '550',
     left: '30px',
     color: '#707070',
     fontSize: '15px',
-    width:'max-content',
-    fontFamily: 'Inter',  
-}) 
-const StyleData=styled(Typography)({
+    width: 'max-content',
+    fontFamily: 'Inter',
+})
+const StyleData = styled(Typography)({
 
     position: 'absolute',
     textAlign: 'left',
     width: 600,
     left: '50px',
-    top:'35px',
+    top: '35px',
     color: '#203949',
     fontSize: '15px',
     fontFamily: 'Inter, sans - serif',
@@ -79,27 +79,30 @@ const TableHeaderCell = styled(TableCell)({
 });
 
 
-export function OrderDetails(){
+export function OrderDetails() {
     const { objectId } = useParams();
-    const  [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus]=useRestOrder();
+
+    const navigate = useNavigate();
+    
+    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
     const [paymentTransactionsObjects, setPaymentTransactionsObjects] = useState<IPaymentTransaction[]>([]);
     const [isMounted, setIsMounted] = useState(false);
 
     //sorting the payment transactions
     const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
-   
-    {/*Handlers*/} 
-    const handleFindValue=()=>{
+
+    {/*Handlers*/ }
+    const handleFindValue = () => {
         getOrderByID(objectId!);
     };
-    
-    {/* useEffects*/} 
-    useEffect(()=>{
+
+    {/* useEffects*/ }
+    useEffect(() => {
         handleFindValue();
-      },
-          [order]
-      );
+    },
+        [order]
+    );
     useEffect(() => {
         setIsMounted(true); // Set the component as mounted when it renders
 
@@ -116,139 +119,124 @@ export function OrderDetails(){
         [isOrderFound, order, paymentTransactionsObjects]);
 
 
-    return(
-        <div>   
-            <ContentNameTypography>Order Transaction Details</ContentNameTypography>
-            <StyldeInfoHeader>Dealer Contact Information</StyldeInfoHeader>
-            {/* set style left manually here in stack */}
-            <StackStyle sx={{left:'15%'}}>
-                <StyleLabel>Dealer Name</StyleLabel>
-                <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{left:'33%'}}>
-                <StyleLabel>Dealer ID</StyleLabel>
-                <StyleData>{order?.dealer.dealerid}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{left:'45%'}}>
-                <StyleLabel>Email Address</StyleLabel>
-                <StyleData>johndoe@gmail.com</StyleData>
-            </StackStyle>
-            <StackStyle sx={{left:'59%'}}>
-                <StyleLabel>Contact Number</StyleLabel>
-                <StyleData>{order?.dealer.contactnumber}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{left:'72%'}}>
-                <StyleLabel>Address</StyleLabel>
-                <StyleData>{order?.dealer.currentaddress}</StyleData>
-            </StackStyle>
-            <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader>
-            {/* set style left and top manually here in stack */}
-            <StackStyle sx={{left:'15%', top:'350px'}}>
-                <StyleLabel>Order Transaction ID</StyleLabel>
-                <StyleData>{order?.orderid}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{left:'33%', top:'350px'}}>
-                <StyleLabel>Order Transaction Date</StyleLabel>
-                <StyleData>{order?.orderdate}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{left:'50%', top:'350px'}}>
-                <StyleLabel>Total Ordered Amount</StyleLabel>
-                <StyleData>{order?.orderamount}</StyleData>
-            </StackStyle>
+    const handleH2Click = () => {
+        navigate(`/schedules/${order?.orderid}`);
+    }
 
-        {/* Payment Transaction Information */}
-        <StyldeInfoHeader>Payment Transaction Information</StyldeInfoHeader>
-        {order?.paymenttransactions?.length !== 0 ? (
-            
-                        <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin:'-5% 0px 50px 12%' }}>
-                            <TableContainer >
-                                <Table aria-label='simple table' >
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableHeaderCell align="center">Payment Transaction ID</TableHeaderCell>
-                                            <TableHeaderCell align="center">Installment Number</TableHeaderCell>
-                                            <TableHeaderCell align="center">Starting Date</TableHeaderCell>
-                                            <TableHeaderCell align="center">Ending Date</TableHeaderCell>
-                                            <TableHeaderCell align="center">Amount Due</TableHeaderCell>
-                                            <TableHeaderCell align="center"></TableHeaderCell>
+
+        return (
+            <div>
+                <ContentNameTypography>Order Transaction Details</ContentNameTypography>
+                <StyldeInfoHeader>Dealer Contact Information</StyldeInfoHeader>
+                {/* set style left manually here in stack */}
+                <StackStyle sx={{ left: '15%' }}>
+                    <StyleLabel>Dealer Name</StyleLabel>
+                    <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
+                </StackStyle>
+                <StackStyle sx={{ left: '33%' }}>
+                    <StyleLabel>Dealer ID</StyleLabel>
+                    <StyleData>{order?.dealer.dealerid}</StyleData>
+                </StackStyle>
+                <StackStyle sx={{ left: '45%' }}>
+                    <StyleLabel>Email Address</StyleLabel>
+                    <StyleData>johndoe@gmail.com</StyleData>
+                </StackStyle>
+                <StackStyle sx={{ left: '59%' }}>
+                    <StyleLabel>Contact Number</StyleLabel>
+                    <StyleData>{order?.dealer.contactnumber}</StyleData>
+                </StackStyle>
+                <StackStyle sx={{ left: '72%' }}>
+                    <StyleLabel>Address</StyleLabel>
+                    <StyleData>{order?.dealer.currentaddress}</StyleData>
+                </StackStyle>
+                <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader>
+                {/* set style left and top manually here in stack */}
+                <StackStyle sx={{ left: '15%', top: '350px' }}>
+                    <StyleLabel>Order Transaction ID</StyleLabel>
+                    <StyleData>{order?.orderid}</StyleData>
+                </StackStyle>
+                <StackStyle sx={{ left: '33%', top: '350px' }}>
+                    <StyleLabel>Order Transaction Date</StyleLabel>
+                    <StyleData>{order?.orderdate}</StyleData>
+                </StackStyle>
+                <StackStyle sx={{ left: '50%', top: '350px' }}>
+                    <StyleLabel>Total Ordered Amount</StyleLabel>
+                    <StyleData>{order?.orderamount}</StyleData>
+                </StackStyle>
+
+                {/* Payment Transaction Information */}
+                <StyldeInfoHeader>Payment Transaction Information</StyldeInfoHeader>
+                {order?.paymenttransactions?.length !== 0 ? (
+
+                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '-5% 0px 50px 12%' }}>
+                        <TableContainer >
+                            <Table aria-label='simple table' >
+                                <TableHead>
+                                    <TableRow>
+                                        <TableHeaderCell align="center">Payment Transaction ID</TableHeaderCell>
+                                        <TableHeaderCell align="center">Installment Number</TableHeaderCell>
+                                        <TableHeaderCell align="center">Starting Date</TableHeaderCell>
+                                        <TableHeaderCell align="center">Ending Date</TableHeaderCell>
+                                        <TableHeaderCell align="center">Amount Due</TableHeaderCell>
+                                        <TableHeaderCell align="center"></TableHeaderCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+
+                                    {sortedPaymemtTransactions?.map((transaction, index) => (
+                                        <TableRow key={transaction.paymenttransactionid}>
+                                            <TableCell align="center">
+                                                {transaction.paymenttransactionid}
+                                            </TableCell>
+
+                                            <TableCell align="center">
+                                                {transaction.installmentnumber}
+                                            </TableCell>
+
+
+                                            <TableCell align="center">
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <Typography >{dayjs(transaction.startingdate).format('MM/DD/YYYY')}</Typography>
+                                                </LocalizationProvider>
+                                            </TableCell>
+
+
+                                            <TableCell align="center">
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <Typography >{dayjs(transaction.enddate).format('MM/DD/YYYY')}</Typography>
+                                                </LocalizationProvider>
+                                            </TableCell>
+
+                                            <TableCell>
+
+                                                {transaction.amountdue.toFixed(2)}
+
+                                            </TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
 
-                                        {sortedPaymemtTransactions?.map((transaction, index) => (
-                                            <TableRow key={transaction.paymenttransactionid}>
-                                                <TableCell align="center">
-                                                    {transaction.paymenttransactionid}
-                                                </TableCell>
-
-                                                <TableCell align="center">
-                                                    {transaction.installmentnumber}
-                                                </TableCell>
-
-                                                <TableCell align="center">
-                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                        <DatePicker
-                                                            slotProps={{
-                                                                textField: {
-                                                                    InputProps: {
-                                                                        disableUnderline: true
-                                                                    },
-                                                                    variant: "standard",
-                                                                    style: { width: '50%', padding: '0 10px 0 10px' }
-                                                                }
-                                                            }}
-                                                            value={dayjs(transaction.startingdate)}
-                                                        />
-                                                    </LocalizationProvider>
-                                                </TableCell>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
 
 
-                                                <TableCell align="center">
-                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                        <DatePicker
-                                                            slotProps={{
-                                                                textField: {
-                                                                    InputProps: {
-                                                                        disableUnderline: true
-                                                                    },
-                                                                    // Set the variant to "standard"
-                                                                    variant: "standard",
-                                                                    style: { width: '50%', padding: '0 10px 0 10px' }
+                        <StyledButton>View / Edit Payment Transaction in the Scheduling Page</StyledButton> 
+                    </Paper>
 
-                                                                }
-                                                            }}
-                                                            value={dayjs(transaction.enddate)}
-                                                        />
+                    
 
-                                                    </LocalizationProvider>
-                                                </TableCell>
+                ) : (
+                    <div>
+                        <h2 style={{ color: 'grey', marginTop: '50px', textDecoration: 'underline black 2px', fontStyle: 'italic'}} onClick={() => handleH2Click()}> No schedules yet. Set Payment Transaction in the Scheduling Page. </h2>
+                    </div>
 
-                                                <TableCell>
+                )
 
-                                                    {transaction.amountdue.toFixed(2)}
-
-                                                </TableCell>
-                                            </TableRow>
-
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-
-                        </Paper>
-                       
-            ): (
-                <div>
-                    <h2 style={{ color: 'white', marginTop: '50px' }}> no schedules yet</h2>
-                </div>
-
-            )
-
-            }
-            {/* <StyledButton>View / Edit Payment Transaction in the Scheduling Page</StyledButton> */}
+                }
+                
 
 
-        </div>  
-    );
+            </div>
+        );
 
-}
+    }

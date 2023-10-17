@@ -3,7 +3,7 @@ package com.group5.distributorsystem.controllers;
 
 import com.group5.distributorsystem.models.CollectionPaymentReceipt;
 import com.group5.distributorsystem.models.DirectPaymentReceipt;
-import com.group5.distributorsystem.models.PaymentReceipt;
+import com.group5.distributorsystem.repositories.PaymentReceiptRepository;
 import com.group5.distributorsystem.services.CollectionPaymentReceiptService;
 import com.group5.distributorsystem.services.DirectPaymentReceiptService;
 import com.group5.distributorsystem.services.PaymentReceiptService;
@@ -11,13 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/paymentreceipt")
 public class PaymentReceiptController {
+
+    @Autowired
+    PaymentReceiptRepository paymentReceiptRepository;
 
     @Autowired
     PaymentReceiptService paymentReceiptService;
@@ -60,8 +64,15 @@ public class PaymentReceiptController {
     }
 
     @PostMapping("/createCollectionPaymentReceipt")
-    public ResponseEntity<Object> createCollectionPaymentReceipt(@RequestBody CollectionPaymentReceipt collectionPaymentReceipt){
-        collectionPaymentReceiptService.createCollectionPaymentReceipt(collectionPaymentReceipt);
+    public ResponseEntity<Object> createCollectionPaymentReceipt(
+            @ModelAttribute CollectionPaymentReceipt collectionPaymentReceipt,
+            @RequestParam("collectorproofid") List<String> collectorproofid, @RequestParam("dealerproofid") List<String> dealerproofid,
+            @RequestParam("collectordocumentNames") List<String> collectordocumentNames, @RequestParam("dealerdocumentNames") List<String> dealerdocumentNames,
+            @RequestParam("collectordocumentTypes") List<String> collectordocumentTypes, @RequestParam("dealerdocumentTypes") List<String> dealerdocumentTypes,
+            @RequestParam("collectordocumentContents") List<MultipartFile> collectordocumentContents, @RequestParam("dealerdocumentContents") List<MultipartFile> dealerdocumentContents
+    )
+    {
+        collectionPaymentReceiptService.createCollectionPaymentReceipt(collectionPaymentReceipt, collectorproofid, dealerproofid, collectordocumentNames, dealerdocumentNames, collectordocumentTypes, dealerdocumentTypes, collectordocumentContents, dealerdocumentContents);
 
         return new ResponseEntity<>("Collection Payment Receipt created successfully!", HttpStatus.CREATED);
 
@@ -70,7 +81,6 @@ public class PaymentReceiptController {
     @PutMapping("/updateCollectionPaymentReceipt/{collectionpaymentreciptid}/{cashierid}")
     public ResponseEntity<Object> confirmCollectionPaymentReceipt(@PathVariable String collectionpaymentreciptid, @PathVariable String cashierid){
         return new ResponseEntity<>(collectionPaymentReceiptService.confirmCollectionPaymentReceipt(collectionpaymentreciptid, cashierid), HttpStatus.OK);
-
     }
 
 }

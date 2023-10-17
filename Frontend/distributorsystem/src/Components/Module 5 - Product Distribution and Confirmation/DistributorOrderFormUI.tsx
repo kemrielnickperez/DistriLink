@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useEffect, useRef, useState } from 'react';
 
+
 const StyledDatePicker = styled(DatePicker)({
   [`& fieldset`]: {
     borderRadius: 20
@@ -109,64 +110,63 @@ const OverallGrid = styled(Grid)({
   top: 50
 })
 
-export default function DistributorOrderForm() {
+export default function ProductDistributionList(){
 
-  const [newOrder] = useRestOrder();
+    const [newOrder] = useRestOrder();
 
-  const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
-
-  const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
-
-  const [products, setProducts] = useState<IProduct[]>([]);
-
-  const [orderedProducts, setOrderedProducts] = useState<IOrderedProducts[]>([]);
-
-  const [chosenProduct, setChosenProduct] = useState<IProduct | null>(null);
-
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-
-  const [paymentTerm, setPaymentTerm] = useState(0);
-
-  const [totalAmount, setTotalAmount] = useState(0);
-
-  const [quantity, setQuantity] = useState<string>('');
-
-  const quantityRef = useRef<TextFieldProps>(null);
-  const penaltyRateRef = useRef<TextFieldProps>(null);
-  const dealerIDRef = useRef<TextFieldProps>(null);
-
-
-  const paymentchoices = [
-    {
-      value: '0',
-      label: '----------',
-    },
-    {
-      value: '1',
-      label: 'Cash',
-    },
-    {
-      value: '2',
-      label: '2 Gives',
-    },
-    {
-      value: '3',
-      label: '3 Gives',
-    },
-    {
-      value: '4',
-      label: '4 Gives',
-    },
-    {
-      value: '5',
-      label: '5 Gives',
-    },
-    {
-      value: '6',
-      label: '6 Gives',
-    }
-  ];
-
+    const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
+  
+    const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
+  
+    const [products, setProducts] = useState<IProduct[]>([]);
+  
+    const [orderedProducts, setOrderedProducts] = useState<IOrderedProducts[]>([]);
+  
+    const [chosenProduct, setChosenProduct] = useState<IProduct | null>(null);
+  
+    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+  
+    const [paymentTerm, setPaymentTerm] = useState(0);
+  
+    const [totalAmount, setTotalAmount] = useState(0);
+  
+    const [quantity, setQuantity] = useState<string>('');
+  
+    const quantityRef = useRef<TextFieldProps>(null);
+    const penaltyRateRef = useRef<TextFieldProps>(null);
+    const dealerIDRef = useRef<TextFieldProps>(null);
+  
+  
+    const paymentchoices = [
+      {
+        value: '0',
+        label: '----------',
+      },
+      {
+        value: '1',
+        label: 'Cash',
+      },
+      {
+        value: '2',
+        label: '2 Gives',
+      },
+      {
+        value: '3',
+        label: '3 Gives',
+      },
+      {
+        value: '4',
+        label: '4 Gives',
+      },
+      {
+        value: '5',
+        label: '5 Gives',
+      },
+      {
+        value: '6',
+        label: '6 Gives',
+      }
+    ];
   useEffect(() => {
     getAllProducts();
     const newTotalAmount = orderedProducts.reduce((total, product) => {
