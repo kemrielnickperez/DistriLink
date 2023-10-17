@@ -1,6 +1,9 @@
 import styled from "@emotion/styled"
-import { Button, Grid, Link, TextField, Typography } from "@mui/material"
+import { Box, Button, Grid, Link, TextField, TextFieldProps, Typography } from "@mui/material"
 import signin from "../../Global Components/Group 8 (1).png"
+import { useEffect, useRef, useState } from "react"
+import axios from "axios"
+import Dashboard from "../Module 3 - Distributor Dashboard/DashboardUI"
 
 const HeaderTypo = styled(Typography)({
     position: "relative",
@@ -80,21 +83,72 @@ const SignInFieldsGrid = styled(Grid)({
 })
 
 export default function SignIn() {
-    return (
-        <SignInGrid item container>
-            <SignInFieldsGrid item>
-                <HeaderTypo>Sign In</HeaderTypo>
-                <SubHeaderTypo>Distributor System</SubHeaderTypo>
-                <EmailTextfield variant="outlined" label="Email"/>
-                <PasswordTextfield variant="outlined" label="Password"/>
-                <SignInButton variant="contained">Sign In</SignInButton>
-                <SignUpTypo>Don't have an account? <a href="/signup">Sign Up</a></SignUpTypo>
-            </SignInFieldsGrid>
-            <Grid item>
-                <ImageStyles>
-                    <img src={signin} style={{width:'auto',height:'580px'}}></img>
-                </ImageStyles>
-            </Grid>
-        </SignInGrid>
-    )
+    const [userid, setUserid] = useState("");
+    const [password, setPassword] = useState("");
+    const [code, setCode] = useState(0);
+    const [open, setOpen] = useState(false);
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setOpen(true);
+        axios.get('http://localhost:8080/dealer/getAllDealers', {
+            params: {
+                dealerid: userid,
+                password: password
+            }
+        })
+        axios.get('http://localhost:8080/employee/getAllEmployees', {
+            params: {
+                employeeid: userid,
+                password: password
+            }
+        })
+
+            .then(response => {
+                if (response.status === 200) {
+                    const user = response.data.find(
+                        (u: any) => u.dealerid === userid && u.password === password || u.employeeid === userid && u.password === password);
+                    if (user) {
+                        console.log(userid, password);
+                        console.log("Login successful!");
+                        sessionStorage.setItem('user', JSON.stringify(user));
+                        setCode(2);
+                        window.location.assign('http://localhost:3000/dashboard');
+                    } else {
+                        console.log('Invalid username or password');
+                        setCode(1);
+                    }
+
+                } else {
+                    console.log("error");
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
+
+    useEffect(() => {
+
+    }, [code]);
+
+    return (
+        <Box component="form" noValidate onSubmit={handleSubmit}>
+            <SignInGrid item container>
+                <SignInFieldsGrid item>
+                    <HeaderTypo>Sign In</HeaderTypo>
+                    <SubHeaderTypo>Distributor System</SubHeaderTypo>
+                    <EmailTextfield required id="userid" variant="outlined" label="User ID" onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUserid(event.target.value)} />
+                    <PasswordTextfield required id="password" variant="outlined" label="Password" onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)} />
+                    <SignInButton type="submit" variant="contained">Sign In</SignInButton>
+                    <SignUpTypo>Don't have an account? <a href="/SignUpScreen">Sign Up</a></SignUpTypo>
+                </SignInFieldsGrid>
+                <Grid item>
+                    <ImageStyles>
+                        <img src={signin} style={{ width: 'auto', height: '580px' }}></img>
+                    </ImageStyles>
+                </Grid>
+            </SignInGrid>
+        </Box>
+    )
+}

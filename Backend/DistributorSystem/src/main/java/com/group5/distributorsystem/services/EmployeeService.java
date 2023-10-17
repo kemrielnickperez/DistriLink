@@ -1,5 +1,6 @@
 package com.group5.distributorsystem.services;
 
+import com.group5.distributorsystem.models.Dealer;
 import com.group5.distributorsystem.models.Employee;
 import com.group5.distributorsystem.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,9 @@ public class EmployeeService {
         return collector;
     }
 
-
+    public Employee findByEmployeeidAndPassword(String employeeid, String password){
+        return employeeRepository.findByEmployeeidAndPassword(employeeid, password);
+    }
 
 
 }
