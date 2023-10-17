@@ -53,6 +53,7 @@ export interface IEmployee {
 
 
 export interface IOrderedProducts {
+    orderedproductid: string;
     product: IProduct;
     quantity: number;
     subtotal: number;
@@ -69,6 +70,8 @@ export interface IOrder {
     dealer: IDealer,
     orderedproducts: IOrderedProducts[],
     paymenttransactions: IPaymentTransaction[] | null,
+    confirmed: boolean
+    
 }
 
 
