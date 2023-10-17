@@ -5,6 +5,8 @@ export interface IDealer {
     firstname: string,
     middlename: string,
     lastname: string,
+    email :String,
+    password: String,
     birthdate: string,
     gender: string,
     currentaddress: string,
@@ -17,8 +19,16 @@ export interface IDealer {
     businesstin: string,
     creditlimit: number,
     submissiondate: string,
-    attachments: string,
-    orderids: string[],
+    orderids: string[], // naa ta gihapon ni dapat
+    documentids: string[],
+}
+
+export interface IDealerDocument {
+    documentid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    dealer: IDealer | null; // You can reference the 'IDealer' interface you've already defined.
 }
 
 export interface IEmployee {
@@ -26,11 +36,14 @@ export interface IEmployee {
     firstname: string,
     middlename: string,
     lastname: string,
+    email :String,
+    password: String,
     birthdate: string,
     gender: string,
     currentaddress: string,
     permanentaddress: string,
     contactnumber: string,
+    tinnumber: String,
     is_cashier: boolean,
     is_salesassociate: boolean,
     is_collector: boolean,
@@ -105,5 +118,20 @@ export interface ICollectionPaymentReceipt extends IPaymentReceipt{
     remittedamount: number,  
     confirmationdate: string,
     confirmed: boolean,  
-    collector: IEmployee
+}
+
+export interface ICollectorRemittanceProof {
+    collectorremittanceproofid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    collectionPaymentReceipt: ICollectionPaymentReceipt | null; // You can reference the 'IDealer' interface you've already defined.
+}
+
+export interface IDealerPaymentProof {
+    dealerpaymentproofid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    collectionPaymentReceipt: ICollectionPaymentReceipt | null; // You can reference the 'IDealer' interface you've already defined.
 }

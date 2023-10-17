@@ -1,7 +1,6 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { useEffect, useState } from "react";
+import axios, { } from "axios";
+import {  useState } from "react";
 import { IEmployee } from "./Interfaces";
-import { multiSectionDigitalClockClasses } from "@mui/x-date-pickers";
 
 
 
@@ -9,10 +8,10 @@ import { multiSectionDigitalClockClasses } from "@mui/x-date-pickers";
 
 
 
-export const useRestEmployee = (): [(employee: IEmployee) => void,(collectorID: number) => void, IEmployee | undefined] => {
+export const useRestEmployee = (): [(employee: IEmployee) => void, (employeid: number) => void , (collectorID: number) => void, IEmployee | undefined] =>  {
 
     const [collector, setCollector] = useState<IEmployee>();
-    //const [employee, setEmployee] = useState<IEmployee>();
+    const [employee, setEmployee] = useState<IEmployee>();
 
     function newEmployee(employee: IEmployee) {
     
@@ -21,11 +20,14 @@ export const useRestEmployee = (): [(employee: IEmployee) => void,(collectorID: 
             firstname : employee.firstname,
             middlename : employee.middlename,
             lastname : employee.lastname,
+            email :employee.email,
+            password: employee.password,
             birthdate : employee.birthdate,
             gender : employee.gender,
             currentaddress : employee.currentaddress,
             permanentaddress : employee.permanentaddress,
             contactnumber : employee.contactnumber,
+            tinnumber: employee.tinnumber,
             is_cashier : employee.is_cashier,
             is_salesassociate : employee.is_salesassociate,
             is_collector : employee.is_collector,
@@ -54,8 +56,20 @@ export const useRestEmployee = (): [(employee: IEmployee) => void,(collectorID: 
             }); 
     }
 
+    function getEmployeeByID(employeeid:number) {
+        
+        axios.get(`http://localhost:8080/employee/getEmployeeByID?employeeid=${employeeid}`)
+           .then((response) => {
+               setEmployee(response.data)
+               //console.log(response.data)
+           })
+           .catch((error) => {
+               console.error('Error finding employee', error);
+               alert("ErrorError finding employee. Please try again.");
+           }); 
+   }
    
 
 
-    return [newEmployee, getCollectorByID, collector ]
+    return [newEmployee, getEmployeeByID, getCollectorByID, employee  ]
 }

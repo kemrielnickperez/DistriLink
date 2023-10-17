@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { IEmployee, IOrder } from "./Interfaces";
@@ -50,7 +50,7 @@ export const useRestOrder = (): [
                 businesstin: order.dealer.businesstin,
                 creditlimit: order.dealer.creditlimit,
                 submissiondate: order.dealer.submissiondate,
-                attachments: order.dealer.attachments,
+               
             },
             collector: null,
             paymenttransactions: [],
@@ -105,7 +105,7 @@ export const useRestOrder = (): [
 
             })
             .catch((error) => {
-                if (error.response) {
+               /*  if (error.response) {
                     // The request was made, and the server responded with a non-2xx status code
                     let errorMessage = `Error Response Data: ${error.response.data}\nStatus Code: ${error.response.status}`;
               
@@ -129,7 +129,7 @@ export const useRestOrder = (): [
                   } else {
                     // Something happened in setting up the request that triggered an error
                     window.alert(`Error: ${error.message}`);
-                  }
+                  } */
             })
             .finally(() =>{
                // setIsOrderFound(true);
@@ -138,7 +138,6 @@ export const useRestOrder = (): [
 
 
     function assignCollector(orderID: string, collector: IEmployee) {
-        console.log(assignedStatus)
           axios.put(`http://localhost:8080/order/assignCollector/${orderID}`, collector)
             .then((response) => {
                 setAssignedStatus(true);

@@ -5,6 +5,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +22,10 @@ public class Dealer {
     private String middlename;
 
     private String lastname;
+
+    private String emailaddress;
+
+    private String password;
 
     private LocalDate birthdate;
 
@@ -45,18 +51,21 @@ public class Dealer {
 
     private LocalDate submissiondate;
 
-    private String attachments;
+    private Set<String> orderids = new HashSet<>();;
 
-    private Set<String> orderids;
+    private Set<String> documentids = new HashSet<>();
 
     public Dealer() {
     }
 
-    public Dealer(String dealerid, String firstname, String middlename, String lastname, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, String attachments, Set<String> orderids) {
+
+    public Dealer(String dealerid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, Set<String> orderids, Set<String> documentids) {
         this.dealerid = dealerid;
         this.firstname = firstname;
         this.middlename = middlename;
         this.lastname = lastname;
+        this.emailaddress = emailaddress;
+        this.password = password;
         this.birthdate = birthdate;
         this.gender = gender;
         this.currentaddress = currentaddress;
@@ -69,8 +78,8 @@ public class Dealer {
         this.businesstin = businesstin;
         this.creditlimit = creditlimit;
         this.submissiondate = submissiondate;
-        this.attachments = attachments;
         this.orderids = orderids;
+        this.documentids = documentids;
     }
 
     public String getDealerid() {
@@ -103,6 +112,22 @@ public class Dealer {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    public String getEmailaddress() {
+        return emailaddress;
+    }
+
+    public void setEmailaddress(String emailaddress) {
+        this.emailaddress = emailaddress;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public LocalDate getBirthdate() {
@@ -161,20 +186,20 @@ public class Dealer {
         this.businessname = businessname;
     }
 
-    public String getBusinessphone() {
-        return businessphone;
-    }
-
-    public void setBusinessphone(String businessphone) {
-        this.businessphone = businessphone;
-    }
-
     public String getBusinessaddress() {
         return businessaddress;
     }
 
     public void setBusinessaddress(String businessaddress) {
         this.businessaddress = businessaddress;
+    }
+
+    public String getBusinessphone() {
+        return businessphone;
+    }
+
+    public void setBusinessphone(String businessphone) {
+        this.businessphone = businessphone;
     }
 
     public String getBusinesstin() {
@@ -201,19 +226,19 @@ public class Dealer {
         this.submissiondate = submissiondate;
     }
 
-    public String getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(String attachments) {
-        this.attachments = attachments;
-    }
-
     public Set<String> getOrderids() {
         return orderids;
     }
 
     public void setOrderids(Set<String> orderids) {
         this.orderids = orderids;
+    }
+
+    public Set<String> getDocumentids() {
+        return documentids;
+    }
+
+    public void setDocumentids(Set<String> documentids) {
+        this.documentids = documentids;
     }
 }
