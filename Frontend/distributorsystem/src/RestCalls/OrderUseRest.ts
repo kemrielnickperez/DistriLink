@@ -84,8 +84,7 @@ export const useRestOrder = (): [
 
 
     function getOrderByID(orderid: string) {
-        console.log(orderid 
-            + "use rest")
+    
         axios.get(`http://localhost:8080/order/getOrderByID/${orderid}`)
             .then((response) => {
 

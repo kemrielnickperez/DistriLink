@@ -59,7 +59,7 @@ export default function MainRoutes() {
                         <Route path="/dealearOrderForm" element={<DealerOrderForm />} />
                         <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
 
-                        <Route path="/dealerProfile" element={<DealerProfile />} />
+                        <Route path="/dealerProfileList" element={<DealerProfile />} />
                         <Route path="//dealerProfileDetails/:objectId" element={<DealerProfileDetails />}></Route>
                         <Route path="/dealerRegistration" element={<DealerRegistration />} />
                         <Route path="/employeeRegistrationn" element={<EmployeeRegistration />} />

@@ -15,7 +15,6 @@ import moment from "moment";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
 import { v4 as uuidv4 } from 'uuid';
 import React from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 
 const Typography1 = styled(Typography)({
@@ -162,8 +161,6 @@ export default function Schedules() {
             const sorted = [...order.paymenttransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
             setSortedPaymentTransactions(sorted);
         }
-        
-        console.log(order)
     }, [order, paymentTransaction]);
 
 
@@ -179,18 +176,6 @@ export default function Schedules() {
 
 
     };
-
-    const orderPass = () => {
-        axios.post('https://tamworth-wallaby-raqd.2.sg-1.fl0.io/order/createOrder', order)
-        .then(response => {
-            
-            console.log('Order passed successfully:', response.data);
-        })
-        .catch(error => {
-        
-            console.error('Error:', error);
-        });
-    }
 
     const handleCreatePaymentTransaction = () => {
         const newPaymentTransactions: IPaymentTransaction[] = [];
@@ -227,9 +212,6 @@ export default function Schedules() {
 
             return updatedPaymentTransactions;
         });
-
-        console.log(order?.paymenttransactions?.length)
-        orderPass();
     };
 
 
@@ -275,18 +257,13 @@ export default function Schedules() {
             }
         )
 
-
-
     };
-
-
-
-    const [isMounted, setIsMounted] = useState(false);
-
 
     useEffect(() => {
        
-        handleFindOrder();
+        if (objectId !== 'null') {
+            handleFindOrder();
+        }
 
     },
         [isOrderFound, order, paymentTransactionsObjects]);
