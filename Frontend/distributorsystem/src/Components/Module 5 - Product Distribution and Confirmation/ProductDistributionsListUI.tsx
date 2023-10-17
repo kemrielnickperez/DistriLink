@@ -10,7 +10,7 @@ const StyledCard = styled(Card)({
     padding: '10px 10px 10px 2px',
     margin: "50px 28% 20px 10%",
     width: '85%',
-    height: '550px',
+    height: '590px',
     alignItems: 'center',
     borderRadius: '25px',
     justifyContent: 'center'
@@ -34,44 +34,64 @@ const StyledButton = styled(Button)({
     width: '50px',
     height: 35,
     ':hover': {
-        backgroundColor: '#87BAF3',
-    }
+        backgroundColor: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s'
 })
 
-export default function ProductDistributionList(){
+const StyledAddButton = styled(Button)({
+    backgroundColor: '#2D85E7',
+    display: 'flex',
+    marginLeft: 30,
+    color: '#FFFFFF',
+    fontFamily: 'Inter',
+    fontSize: '15px',
+    width: '350px',
+    height: 35,
+    ':hover': {
+        backgroundColor: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s'
+}
+)
+
+export default function ProductDistributionList() {
     const navigate = useNavigate();
     const [order, setOrder] = useState<IOrder[] | null>(null);
 
     useEffect(() => {
-      // Make an Axios GET request to fetch all orders
-      axios
-        .get<IOrder[]>('http://localhost:8080/order/getAllOrders')
-        .then((response) => {
-          setOrder(response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching orders:', error);
-        });
+        // Make an Axios GET request to fetch all orders
+        axios
+            .get<IOrder[]>('http://localhost:8080/order/getAllOrders')
+            .then((response) => {
+                setOrder(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching orders:', error);
+            });
     }, []);
-  
+
     {/** Columns for DataGrid */ }
     const columns: GridColDef[] = [
-        { field: 'dealerId', headerName: 'Dealer ID', width: 300 },
-        { field: 'dealerName', headerName: 'Dealer Name', width: 300 },
-        { field: 'orderId', headerName: 'Order Transaction ID', width: 300 },
-        { field: 'orderDate', headerName: 'Order Date', width: 300 },
-        { field: 'action', headerName: '', width: 150,
+        { field: 'dealerId', headerName: 'Dealer ID', width: 250 },
+        { field: 'dealerName', headerName: 'Dealer Name', width: 250 },
+        { field: 'orderId', headerName: 'Order Transaction ID', width: 250 },
+        { field: 'orderDate', headerName: 'Order Date', width: 250 },
+        {
+            field: 'action', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
                 return (
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
                             console.log('Button clicked for row:', params.row.orderId);
-                           handleViewButtonClick(params.row.orderId);
+                            handleViewButtonClick(params.row.orderId);
                         }}
-                        >
-                            View
-                        </StyledButton>
+                    >
+                        View
+                    </StyledButton>
                 )
             }
         }
@@ -90,18 +110,20 @@ export default function ProductDistributionList(){
         console.log(objectId);
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
         navigate(`/orderTransactionDetails/${objectId}`);
-      };
-
+    };
 
 
     return (
         <div>
             <StyledCard>
                 <ContentNameTypography>Product Distribution</ContentNameTypography>
-
+                <StyledAddButton onClick={() => {
+                    console.log('Button clicked for adding a new order');
+                    navigate("/distributorOrderForm");
+                }}>Add new Product Distribution</StyledAddButton>
                 <DataGrid
                     rows={rows}
-                    sx={{ textAlign: 'center', color: '#146C94', height: '370px', margin: '40px 30px 0px 30px' }}
+                    sx={{ textAlign: 'center', color: '#203949', height: '370px', margin: '40px 30px 0px 30px' }}
                     columns={columns.map((column) => ({
                         ...column,
                     }))}
@@ -113,7 +135,7 @@ export default function ProductDistributionList(){
                         },
                     }}
                     pageSizeOptions={[5]}
-                    
+
                 />
             </StyledCard>
         </div>
