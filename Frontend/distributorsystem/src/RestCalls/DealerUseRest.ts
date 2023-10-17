@@ -37,13 +37,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
         formData.append('creditlimit', dealer.creditlimit.toString());
         formData.append('submissiondate', dealer.submissiondate);
     
-       /*  documents.forEach((document, index) => {
-            formData.append(`documentid`, document.documentId);
-            formData.append(`name`, document.name);
-            formData.append(`type`, document.type);
-            // Add more fields as needed for each document
-          }); */
-
            dealerDocuments.forEach((document, index) => {
            
             formData.append(`documentid`, document.documentid);
@@ -53,7 +46,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
           }); 
        
         console.log(formData.get('dealer.firstname'))
-        // Make the POST request
+        
 
          axios.post('http://localhost:8080/dealer/registerDealer', formData, {
             headers: {
@@ -61,12 +54,11 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             },
         })
             .then((response) => {
-               // console.log(response.data);
+               
                 alert('Success!');
             })
             .catch((error) => {
 
-                console.error('Error creating a new record:', error);
                 alert('Error creating a new record. Please try again.');
             }); 
 
@@ -81,8 +73,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             })
                .then((response) => {
                    setDealer(response.data);
-           
-                   console.log(response.data);
                    if(response.data !== null){
                        setIsDealerFound(true);
    

@@ -257,18 +257,13 @@ export default function Schedules() {
             }
         )
 
-
-
     };
-
-
-
-    const [isMounted, setIsMounted] = useState(false);
-
 
     useEffect(() => {
        
-        handleFindOrder();
+        if (objectId !== 'null') {
+            handleFindOrder();
+        }
 
     },
         [isOrderFound, order, paymentTransactionsObjects]);

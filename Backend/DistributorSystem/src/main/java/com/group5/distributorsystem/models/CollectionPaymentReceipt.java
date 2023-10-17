@@ -6,8 +6,8 @@ import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
-
-
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class CollectionPaymentReceipt extends PaymentReceipt {
@@ -22,24 +22,27 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
 
     private LocalDate confirmationdate;
 
-
     private boolean isConfirmed;
 
-    //DBRef
-    private Employee collector;
+    private Set<String> collectorremittanceproofids = new HashSet<>();
 
-
-
-   /* @ManyToOne
-    @JoinColumn(name = "collectorid")
-    @JsonBackReference("employee-collectionpaymenttransactions-reference")
-    */
-
+    private Set<String> dealerpaymentproofids = new HashSet<>();
 
     public CollectionPaymentReceipt() {
     }
 
-    public CollectionPaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier, LocalDate collectiondate, String collectionamount, LocalDate remitteddate, String remittedamount, LocalDate confirmationdate, boolean isConfirmed, Employee collector) {
+    public CollectionPaymentReceipt(LocalDate collectiondate, String collectionamount, LocalDate remitteddate, String remittedamount, LocalDate confirmationdate, boolean isConfirmed, Set<String> collectorremittanceproofids, Set<String> dealerpaymentproofids) {
+        this.collectiondate = collectiondate;
+        this.collectionamount = collectionamount;
+        this.remitteddate = remitteddate;
+        this.remittedamount = remittedamount;
+        this.confirmationdate = confirmationdate;
+        this.isConfirmed = isConfirmed;
+        this.collectorremittanceproofids = collectorremittanceproofids;
+        this.dealerpaymentproofids = dealerpaymentproofids;
+    }
+
+    public CollectionPaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier, LocalDate collectiondate, String collectionamount, LocalDate remitteddate, String remittedamount, LocalDate confirmationdate, boolean isConfirmed, Set<String> collectorremittanceproofids, Set<String> dealerpaymentproofids) {
         super(paymentreceiptid, remarks, paymenttype, paymenttransaction, cashier);
         this.collectiondate = collectiondate;
         this.collectionamount = collectionamount;
@@ -47,7 +50,8 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
         this.remittedamount = remittedamount;
         this.confirmationdate = confirmationdate;
         this.isConfirmed = isConfirmed;
-        this.collector = collector;
+        this.collectorremittanceproofids = collectorremittanceproofids;
+        this.dealerpaymentproofids = dealerpaymentproofids;
     }
 
     public LocalDate getCollectiondate() {
@@ -98,11 +102,19 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
         isConfirmed = confirmed;
     }
 
-    public Employee getCollector() {
-        return collector;
+    public Set<String> getCollectorremittanceproofids() {
+        return collectorremittanceproofids;
     }
 
-    public void setCollector(Employee collector) {
-        this.collector = collector;
+    public void setCollectorremittanceproofids(Set<String> collectorremittanceproofids) {
+        this.collectorremittanceproofids = collectorremittanceproofids;
+    }
+
+    public Set<String> getDealerpaymentproofids() {
+        return dealerpaymentproofids;
+    }
+
+    public void setDealerpaymentproofids(Set<String> dealerpaymentproofids) {
+        this.dealerpaymentproofids = dealerpaymentproofids;
     }
 }

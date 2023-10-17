@@ -53,6 +53,7 @@ export interface IEmployee {
 
 
 export interface IOrderedProducts {
+    orderedproductid: string;
     product: IProduct;
     quantity: number;
     subtotal: number;
@@ -69,6 +70,8 @@ export interface IOrder {
     dealer: IDealer,
     orderedproducts: IOrderedProducts[],
     paymenttransactions: IPaymentTransaction[] | null,
+    confirmed: boolean
+    
 }
 
 
@@ -115,5 +118,20 @@ export interface ICollectionPaymentReceipt extends IPaymentReceipt{
     remittedamount: number,  
     confirmationdate: string,
     confirmed: boolean,  
-    collector: IEmployee
+}
+
+export interface ICollectorRemittanceProof {
+    collectorremittanceproofid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    collectionPaymentReceipt: ICollectionPaymentReceipt | null; // You can reference the 'IDealer' interface you've already defined.
+}
+
+export interface IDealerPaymentProof {
+    dealerpaymentproofid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    collectionPaymentReceipt: ICollectionPaymentReceipt | null; // You can reference the 'IDealer' interface you've already defined.
 }
