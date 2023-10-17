@@ -1,19 +1,15 @@
 package com.group5.distributorsystem.services;
 
 
-import com.group5.distributorsystem.models.CollectionPaymentReceipt;
-import com.group5.distributorsystem.models.DirectPaymentReceipt;
-import com.group5.distributorsystem.models.Employee;
-import com.group5.distributorsystem.models.PaymentTransaction;
-import com.group5.distributorsystem.repositories.CollectionPaymentReceiptRepository;
-import com.group5.distributorsystem.repositories.DirectPaymentReceiptRepository;
-import com.group5.distributorsystem.repositories.EmployeeRepository;
-import com.group5.distributorsystem.repositories.PaymentTransactionRepository;
+import com.group5.distributorsystem.models.*;
+import com.group5.distributorsystem.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -31,8 +27,74 @@ public class CollectionPaymentReceiptService {
     @Autowired
     EmployeeRepository employeeRepository;
 
+    @Autowired
+    CollectorRemittanceProofRepository collectionPaymentProofRepository;
 
-    public CollectionPaymentReceipt createCollectionPaymentReceipt(CollectionPaymentReceipt collectionPaymentReceipt){
+    @Autowired
+    DealerPaymentProofRepository dealerPaymentProofRepository;
+
+
+
+    public CollectionPaymentReceipt createCollectionPaymentReceipt(
+            CollectionPaymentReceipt collectionPaymentReceipt,
+            List<String> collectorproofid, List<String> dealerproofid,
+            List<String> collectordocumentNames, List<String> dealerdocumentNames,
+            List<String> collectordocumentTypes, List<String> dealerdocumentTypes,
+            List<MultipartFile> collectordocumentContents, List<MultipartFile> dealerdocumentContents
+    ) {
+        CollectionPaymentReceipt savedCollectionPaymentReceipt = collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
+
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
+
+        for (int i = 0; i < collectorproofid.size(); i++) {
+            CollectorRemittanceProof collectorProof = new CollectorRemittanceProof();
+            collectorProof.setCollectorremittanceproofid(collectorproofid.get(i));
+            collectorProof.setName(collectordocumentNames.get(i));
+            collectorProof.setType(collectordocumentTypes.get(i));
+            collectorProof.setCollectionPaymentReceipt(savedCollectionPaymentReceipt);
+
+            try {
+                collectorProof.setContent(collectordocumentContents.get(i).getBytes());
+            } catch (IOException e) {
+                // Handle the exception (e.g., log an error).
+                System.err.println("Error reading file bytes for attachment: " + collectorProof.getName());
+                e.printStackTrace();
+                continue;
+            }
+            collectionPaymentProofRepository.save(collectorProof);
+            savedCollectionPaymentReceipt.getCollectorremittanceproofids().add(collectorProof.getCollectorremittanceproofid());
+
+        }
+
+        for (int i = 0; i < dealerproofid.size(); i++) {
+            DealerPaymentProof dealerProof = new DealerPaymentProof();
+            dealerProof.setDealerpaymentproofid(dealerproofid.get(i));
+            dealerProof.setName(dealerdocumentNames.get(i));
+            dealerProof.setType(dealerdocumentTypes.get(i));
+            dealerProof.setCollectionPaymentReceipt(savedCollectionPaymentReceipt);
+            try {
+                dealerProof.setContent(dealerdocumentContents.get(i).getBytes());
+            } catch (IOException e) {
+                // Handle the exception (e.g., log an error).
+                System.err.println("Error reading file bytes for attachment: " + dealerProof.getName());
+                e.printStackTrace();
+                continue;
+            }
+            dealerPaymentProofRepository.save(dealerProof);
+            savedCollectionPaymentReceipt.getDealerpaymentproofids().add(dealerProof.getDealerpaymentproofid());
+        }
+
+        //dili paman ta ni mo isPaid diri, adto na sa confirm
+        //paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
+
+        paymentTransaction.setPaymentreceiptid(savedCollectionPaymentReceipt.getPaymentreceiptid());
+
+        paymentTransactionRepository.save(paymentTransaction);
+
+        return collectionPaymentReceiptRepository.save(savedCollectionPaymentReceipt);
+    }
+
+    /*public CollectionPaymentReceipt createCollectionPaymentReceipt(CollectionPaymentReceipt collectionPaymentReceipt){
 
         PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
 
@@ -51,7 +113,7 @@ public class CollectionPaymentReceiptService {
         paymentTransactionRepository.save(paymentTransaction);
 
         return collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
-    }
+    }*/
 
     public ResponseEntity confirmCollectionPaymentReceipt(String collectionpaymentreciptid, String cashierid) {
 

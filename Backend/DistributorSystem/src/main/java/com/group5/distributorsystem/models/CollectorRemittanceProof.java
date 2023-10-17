@@ -18,6 +18,7 @@ public class CollectorRemittanceProof {
     public CollectorRemittanceProof() {
     }
 
+
     public CollectorRemittanceProof(String collectorremittanceproofid, String name, String type, byte[] content, CollectionPaymentReceipt collectionPaymentReceipt) {
         this.collectorremittanceproofid = collectorremittanceproofid;
         this.name = name;
@@ -25,7 +26,6 @@ public class CollectorRemittanceProof {
         this.content = content;
         this.collectionPaymentReceipt = collectionPaymentReceipt;
     }
-
 
     public String getCollectorremittanceproofid() {
         return collectorremittanceproofid;
