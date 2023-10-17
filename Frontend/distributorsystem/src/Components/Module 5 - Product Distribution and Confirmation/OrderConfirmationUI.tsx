@@ -12,7 +12,7 @@ import { IOrder, IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
 
 import { v4 as uuidv4 } from 'uuid';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 const StyledDatePicker = styled(DatePicker)({
   [`& fieldset`]: {
@@ -138,7 +138,7 @@ export default function OrderConfirmation() {
   const dealerIDRef = useRef<TextFieldProps>(null);
 
 
-  const orderID = '1797e53c';
+  const orderID = '7955070b';
 
   const paymentchoices = [
     {
@@ -173,47 +173,12 @@ export default function OrderConfirmation() {
 
   const [isMounted, setIsMounted] = useState(false);
 
-  const findOrder = () => {
-    getOrderByID(orderID)
-    //setOrderedProducts1(order?.orderedproducts)
-      /* const updateOrderedProducts = [...orderedProducts, order?.orderedproducts];  */
-     // setOrderedProducts1(order?.orderedproducts!);  
-   }
-
-  useEffect(() => {
-    getAllProducts();
-    findOrder();
-    const newTotalAmount = orderedProducts?.reduce((total, product) => {
-      return total + product.product.price * product.quantity;
-    }, 0);
-    setOrderedProducts1(order?.orderedproducts!)
-    setOrderedProducts(order?.orderedproducts!)
-
-    setIsMounted(true); // Set the component as mounted when it renders
-
-        // Only make the GET request if the component is mounted
-         if (isMounted) {
- 
-            // setOrderedProducts1(order?.orderedproducts!)
-         }
-         return () => {
-             setIsMounted(false);
-         }; 
-         console.log(orderedProducts1)
+  const handleFindOrder = () => {
+    getOrderByID(orderID);
+  }
 
 
-    // Update the total amount state
-    setTotalAmount(newTotalAmount);
 
-  }, [isDealerFound, products, orderedProducts, order, orderedProducts1]);
-
-/*   function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
-    return {
-      product: product,
-      quantity: quantity,
-      subtotal: product.price * quantity
-    };
-  } */
 
   function getAllProducts() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
@@ -227,50 +192,72 @@ export default function OrderConfirmation() {
       });
   }
 
-  /* const handleAddToCart = () => {
-    if (chosenProduct) {
-      const uuid = uuidv4();
-      const orderedproductuuid = uuid.slice(0, 8);
-      const existingProductIndex = orderedProducts.findIndex(
-        (item) => item.product.productid === chosenProduct.productid
-      );
-  
-      if (existingProductIndex !== -1) {
-        alert('Product already added to the cart');
-      } else {
-        const newOrderedProduct: IOrderedProducts = {
-          orderedproductid: orderedproductuuid,
-          product: chosenProduct,
-          quantity: Number(quantity),
-          subtotal: chosenProduct.price * Number(quantity),
-        };
-  
-        // Update the ordered products in the updated order
-        const updatedOrderedProducts = [...orderedProducts, newOrderedProduct];
-  
-        // Calculate the total order amount based on updatedOrderedProducts 
-  
-        console.log(updatedOrderedProducts)
-  
-        // Update your orderedProducts state
-        setOrderedProducts(updatedOrderedProducts);
-        setChosenProduct(null);
-        setQuantity('');
-      }
+  const [isDataFetched, setDataFetched] = useState(false);
+
+  useEffect(() => {
+
+    if (!isDataFetched) {
+      getAllProducts();
+      handleFindOrder();
+
+      const newTotalAmount = orderedProducts?.reduce((total, product) => {
+        return total + product.product.price * product.quantity;
+      }, 0);
+
+      setTotalAmount(newTotalAmount);
+
+
+
+
+      setDataFetched(true); // Set the flag to true to prevent re-fetching
     }
-  }; */
+
+    setOrderedProducts(order?.orderedproducts!);
+
+
+    /* getAllProducts();
+    handleFindOrder();
+  
+    const newTotalAmount = orderedProducts?.reduce((total, product) => {
+      return total + product.product.price * product.quantity;
+    }, 0);
+    
+    setTotalAmount(newTotalAmount); */
+
+    //console.log(orderedProducts)
+
+    // setIsMounted(true); // Set the component as mounted when it renders
+
+    // Only make the GET request if the component is mounted
+    // if (isMounted) {
+
+    //setOrderedProducts(order?.orderedproducts!)
+    //console.log("sa mount")
+    //console.log(orderedProducts)
+    //  }
+    // return () => {
+    //     setIsMounted(false);
+    // }; 
+
+
+  }, [order, isDataFetched]);
+
+  /* useLayoutEffect(()=> {
+    setOrderedProducts(order?.orderedproducts!)
+    console.log("sa mount")
+    console.log(orderedProducts)
+  },[]) */
+
 
   const handleAddToCart = () => {
 
-   // setOrderedProducts1(order?.orderedproducts!)
-    console.log("start" + orderedProducts1)
     if (chosenProduct) {
       const uuid = uuidv4();
       const orderedproductuuid = uuid.slice(0, 8);
       const existingProductIndex = orderedProducts.findIndex(
         (item) => item.product.productid === chosenProduct.productid
       );
-  
+
       if (existingProductIndex !== -1) {
         alert('Product already added to the cart');
       } else {
@@ -280,119 +267,26 @@ export default function OrderConfirmation() {
           quantity: Number(quantity),
           subtotal: chosenProduct.price * Number(quantity),
         };
-  
+
         // Update the ordered products in the updated order
-      /*   const updatedOrderedProducts = [...orderedProducts, newOrderedProduct]; */
-      const updatedOrderedProducts = [...order?.orderedproducts!, newOrderedProduct];
+        /*   const updatedOrderedProducts = [...orderedProducts, newOrderedProduct]; */
+        const updatedOrderedProducts = [...orderedProducts, newOrderedProduct];
 
-      console.log(updatedOrderedProducts)
-    
-
-        setOrderedProducts(updatedOrderedProducts);
-
-  
         // Calculate the total order amount based on updatedOrderedProducts
         const orderAmount = updatedOrderedProducts.reduce((total, product) => {
           return total + product.product.price * product.quantity;
         }, 0);
-  
-        console.log(updatedOrderedProducts)
-        // Create an updated order object with the necessary data
-        const updatedOrder: IOrder = {
-          orderid: order?.orderid!, // Replace with the ID of the existing order
-          distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-          orderdate: moment().format('YYYY-MM-DD'),
-          penaltyrate: Number(penaltyRateRef.current?.value),
-          paymentterms: paymentTerm,
-          orderamount: orderAmount,
-          collector: null,
-          dealer: dealer!,
-          orderedproducts: [...order!.orderedproducts, newOrderedProduct],
-          paymenttransactions: [],
-          confirmed: true,
-        };
-  
-        // Call the updateOrder function with the order ID and updated order data
-        //updateOrder(order?.orderid, updatedOrder);
-  
-        // Update your orderedProducts state
+
+
         setOrderedProducts(updatedOrderedProducts);
         setChosenProduct(null);
         setQuantity('');
       }
     }
-  };
-  
 
- /*  const handleAddToCart = () => {
-    if (chosenProduct) {
-      const existingProductIndex = orderedProducts.findIndex(
-        (item) => item.product.productid === chosenProduct.productid
-      );
-  
-      if (existingProductIndex !== -1) {
-        alert('Product already added to the cart');
-      } else {
-        const newOrderedProduct: IOrderedProducts = {
-          product: chosenProduct,
-          quantity: Number(quantity),
-          subtotal: chosenProduct.price * Number(quantity),
-        };
-  
-        // Create a copy of the orderedProducts array with the new product added
-        const updatedOrderedProducts = [...orderedProducts, newOrderedProduct];
-  
-        const orderAmount = orderedProducts.reduce((total, product) => {
-          return total + product.product.price * product.quantity;
-        }, 0);
-      
-        // Update the orderedProducts in the updatedOrder object
-        const updatedOrder : IOrder = {
-          orderid: order?.orderid!, // Replace with the ID of the existing order
-          distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-          orderdate: moment().format('YYYY-MM-DD'),
-          penaltyrate: Number(penaltyRateRef.current?.value),
-          paymentterms: paymentTerm,
-          orderamount: orderAmount,
-          collector: null,
-          dealer: dealer!,
-          orderedproducts: updatedOrderedProducts,
-          paymenttransactions: [],
-          confirmed: true
-        };
-  
-        // Call the updateOrder function with the order ID and updated order data
-        updateOrder(order?.orderid, updatedOrder);
-  
-        // Update the local state (if needed)
-        setOrderedProducts(updatedOrderedProducts);
-        setChosenProduct(null);
-        setQuantity('');
-      }
-    }
+    console.log(orderedProducts)
   };
-   */
 
-    const handleAddProduct = () => {
-      const value = quantityRef.current?.value;
-  
-      if (chosenProduct) {
-        const quantity = parseInt(value as string);
-        const productAmount = quantity * chosenProduct.price;
-        const newTableData = [...tableData, {
-          quantity: parseInt(value as string),
-          productName: chosenProduct.name,
-          productPrice: chosenProduct.price,
-          productUnit: chosenProduct.unit,
-          productCommissionRate: chosenProduct.commissionrate,
-          productAmount: productAmount
-        }];
-        const updatedTotalAmount = newTableData.reduce((sum, product) => sum + product.productAmount, 0);
-        setTotalAmount(updatedTotalAmount);
-  
-        setTableData(newTableData);
-      }
-    }; 
 
   const handleUpdateQuantity = (product: IOrderedProducts, updatedQuantity: number) => {
     // Update the quantity of a product in the cart
@@ -422,29 +316,8 @@ export default function OrderConfirmation() {
     setTableData(tableData.slice(0, -1));
     setTotalAmount(totalAmount - lastProductAmount);
 
-    setOrderedProducts(orderedProducts.slice(0, -1));
+    // setOrderedProducts(orderedProducts.slice(0, -1));
   };
-
-  /* const handleNewOrder = () => {
-    if (isDealerFound) {
-      const uuid = uuidv4();
-      const orderuuid = uuid.slice(0, 8);
-
-      newOrder({
-        orderid: orderuuid,
-        distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-        //moment ang gamit ani para maka generate og date today
-        orderdate: moment().format('YYYY-MM-DD'),
-        penaltyrate: Number(penaltyRateRef.current?.value),
-        paymentterms: paymentTerm,
-        orderamount: totalAmount,
-        collector: null,
-        dealer: dealer!,
-        orderedproducts: orderedProducts,
-        paymenttransactions: [],
-      });
-    }
-  }; */
 
 
   const handleSaveOrder = () => {
@@ -455,32 +328,34 @@ export default function OrderConfirmation() {
     const orderAmount = orderedProducts.reduce((total, product) => {
       return total + product.product.price * product.quantity;
     }, 0);
-  
+
     // Create an updated order object with the necessary data
-  const savedProduct = [...orderedProducts]
-      const updatedOrder : IOrder = {
-        orderid: existingOrderId!, // Replace with the ID of the existing order
-        distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-        orderdate: moment().format('YYYY-MM-DD'),
-        penaltyrate: Number(penaltyRateRef.current?.value),
-        paymentterms: paymentTerm,
-        orderamount: orderAmount,
-        collector: null,
-        dealer: dealer!,
-        orderedproducts: orderedProducts,
-        paymenttransactions: [],
-        confirmed: true
-      };
-      // Call the updateOrder function with the order ID and updated order data
-      updateOrder(existingOrderId, updatedOrder);
-    
-      console.log(existingOrderedProducts)
+    const savedProduct = [...orderedProducts]
+    const updatedOrder: IOrder = {
+      orderid: existingOrderId!, // Replace with the ID of the existing order
+      distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
+      orderdate: moment().format('YYYY-MM-DD'),
+      penaltyrate: Number(penaltyRateRef.current?.value),
+      paymentterms: paymentTerm,
+      orderamount: orderAmount,
+      collector: null,
+      dealer: dealer!,
+      orderedproducts: orderedProducts,
+      paymenttransactions: [],
+      confirmed: true
+    };
+    // Call the updateOrder function with the order ID and updated order data
+    updateOrder(existingOrderId, updatedOrder);
+
   }
 
 
   const handleFindDealer = () => {
     getDealerByID(dealerIDRef.current?.value + "")
   };
+
+
+
 
 
 
@@ -491,59 +366,66 @@ export default function OrderConfirmation() {
       </TitleBox>
       <OverallGrid container>
         <LabelGrid container>
-          <Grid item sx={{  }}>
+          <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography>Order ID</Typography>
           </Grid>
-          <Grid item sx={{ marginLeft: 13 }}>
+          <Grid item sx={{ display: 'flex', alignItems: 'center', marginLeft: 13 }}>
             <Typography>Dealer ID</Typography>
           </Grid>
-          <Grid item sx={{ marginLeft: 13 }}>
+          <Grid item sx={{ display: 'flex', alignItems: 'center', marginLeft: 13 }}>
             <Typography>Dealer Name</Typography>
           </Grid>
-          <Grid item sx={{ marginLeft: 13 }}>
+          <Grid item sx={{ display: 'flex', alignItems: 'center', marginLeft: 13 }}>
             <Typography>Distribution Date</Typography>
           </Grid>
-          <Grid item sx={{ marginLeft: 13 }}>
+          <Grid item sx={{ display: 'flex', alignItems: 'center', marginLeft: 13 }}>
             <Typography>Penalty Rate</Typography>
           </Grid>
-          <Grid item sx={{ marginLeft: 13}}>
+          <Grid item sx={{ display: 'flex', alignItems: 'center', marginLeft: 13, marginRight: -1 }}>
             <Typography>Payment Terms</Typography>
           </Grid>
         </LabelGrid>
-        {/* <Box component="form" sx={{ '& > :not(style)': { position: 'relative', top: 10, left: 10, m: 2, width: '28ch', borderRadius: "25px" } }}> */}
-         {/*  <StyledTextField
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end" >
-                  <IconButton onClick={handleFindDealer}>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            variant="outlined"
-            inputRef={dealerIDRef}
-          >
-          </StyledTextField> */}
-          <div style={{ display: "flex", flexDirection: "row", marginTop: '50px'}}>
-          <Typography sx={{marginRight: '70px'}}>{order?.orderid}</Typography>
-          <Typography sx={{marginRight: '70px'}}>{order?.dealer.dealerid}</Typography>
-          <Typography sx={{marginRight: '70px'}}>{order?.dealer.firstname+" "+order?.dealer.middlename+" "+order?.dealer.lastname}</Typography>
-          <Typography sx={{marginLeft: '70px'}}>{order?.distributiondate}</Typography>
-          <StyledTextField variant="outlined" InputProps={{ disableUnderline: true }} inputRef={penaltyRateRef}  sx={{marginLeft: '100px'}} ></StyledTextField>
-          <StyledTextField variant="outlined"  sx={{marginLeft: '50px', marginRight: '120px'}} select
-            value={paymentTerm}
-            onChange={(event) => setPaymentTerm(Number(event.target.value))}>
-            {paymentchoices.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </StyledTextField>
-          </div>
 
-        
-      {/*   </Box> */}
+        <div style={{ display: "flex", flexDirection: "row", marginTop: '50px', alignItems: 'center' }}>
+   <Typography sx={{ marginRight: '90px', marginLeft: -8   }}>{order?.orderid}</Typography>
+  <Typography sx={{ marginRight: '100px', marginLeft: 1 }}>{order?.dealer.dealerid}</Typography>
+  <Typography sx={{ marginRight: '20px', marginLeft: 1 }}>{order?.dealer.firstname + " " + order?.dealer.middlename + " " + order?.dealer.lastname}</Typography>
+  <Typography sx={{ marginRight: '20px', marginLeft: 1 }}>{order?.distributiondate}</Typography>
+  <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <StyledDatePicker
+      sx={{ marginLeft: '20px', marginRight: '20px' }}
+      slotProps={{
+        textField: {
+          InputProps: {
+            disableUnderline: true
+          },
+          variant: "outlined",
+        }
+      }}
+      value={selectedDate}
+      onChange={(date) => setSelectedDate(date as Dayjs | null)}
+    />
+  </LocalizationProvider>
+  <StyledTextField
+    variant="outlined"
+    InputProps={{ disableUnderline: true }}
+    inputRef={penaltyRateRef}
+    sx={{ marginRight: '20px' }}
+  ></StyledTextField>
+  <StyledTextField
+    variant="outlined"
+    select
+    value={paymentTerm}
+    onChange={(event) => setPaymentTerm(Number(event.target.value))}
+  >
+    {paymentchoices.map((option) => (
+      <MenuItem key={option.value} value={option.value}>
+        {option.label}
+      </MenuItem>
+    ))}
+  </StyledTextField>
+</div>
+        {/*   </Box> */}
         <Grid item container sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
           <Grid item>
             <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "200px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
@@ -555,20 +437,20 @@ export default function OrderConfirmation() {
                 onChange={(event, newValue) => setChosenProduct(newValue!)}
                 renderInput={(params) => (
                   <StyledProductField {...params} variant='outlined' InputProps={{
-                  ...params.InputProps, disableUnderline: true
-                }}
-                />)}
+                    ...params.InputProps, disableUnderline: true
+                  }}
+                  />)}
               />
-               <QuantityName>Quantity</QuantityName>
-              <StyledQuantityField variant="outlined" InputProps={{ disableUnderline: true }} value={quantity} onChange={(e) =>setQuantity(e.target.value)} />
-              <AddToCart variant="contained" onClick={() => { handleAddToCart();}}>ADD TO CART</AddToCart>
+              <QuantityName>Quantity</QuantityName>
+              <StyledQuantityField variant="outlined" InputProps={{ disableUnderline: true }} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+              <AddToCart variant="contained" onClick={() => { handleAddToCart(); }}>ADD TO CART</AddToCart>
             </Paper>
           </Grid>
         </Grid>
         <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
           <Grid item >
-          <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>              
-          <TableContainer>
+            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>
+              <TableContainer>
                 <Table aria-label='simple table'>
                   <TableHead>
                     <TableRow>
