@@ -15,7 +15,6 @@ import DealerProfile from "../Components/Module 4 - Profiles & Approval/DealerPr
 import DealerRegistration from "../Components/Module 2 - Registrations/DealerRegistrationUI";
 import EmployeeRegistration from "../Components/Module 2 - Registrations/EmployeeRegistrationUI";
 import Schedules from "../Components/Module 7 - Schedules/ScheduleOrderTransactionUI";
-import PaymentTransactionDetails from "../Components/Module 6 - Collector Assignment/PaymentTransactionDetailsUI";
 import RecordDirectPayment from "../Components/Module 8 - Payments/RecordDirectPaymentUI";
 import SignIn from "../Components/Module 1 - Distributor System Sign-in/SignInUI";
 import DealerApproval from "../Components/Module 4 - Profiles & Approval/DealerApproval";
@@ -47,7 +46,7 @@ export default function SignUpRoutes(){
                             <Route path="/dealerRegistration" element={<DealerRegistration/>}/>
                             <Route path="/employeeRegistrationn" element={<EmployeeRegistration/>}/>
                             <Route path="/schedules" element={<Schedules/>}/>
-                            <Route path="/orderTransactionDetails" element={<PaymentTransactionDetails/>}></Route>
+                            {/* <Route path="/orderTransactionDetails" element={<PaymentTransactionDetails/>}></Route> */}
                             <Route path="/signin" element={<SignIn/>}/>
                             <Route path="/recordDirectPayment" element={<RecordDirectPayment/>}/>
                             <Route path="/dealerApproval" element={<DealerApproval/>}/>

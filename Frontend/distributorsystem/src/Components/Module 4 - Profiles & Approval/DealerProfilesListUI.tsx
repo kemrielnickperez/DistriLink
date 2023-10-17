@@ -81,8 +81,7 @@ export default function DealerProfileListUI() {
                 return (
                     <StyledButton
                         onClick={() => {
-                            // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.id);
+
                             handleViewButtonClick(params.row.id);
                         }}
                     >
@@ -139,7 +138,7 @@ export default function DealerProfileListUI() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.id);
+                            
                         }}
                     >
                         Confirm
@@ -153,7 +152,7 @@ export default function DealerProfileListUI() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.id);
+                        
                         }}
                     >
                         Decline
@@ -170,7 +169,7 @@ export default function DealerProfileListUI() {
     }));
 
     const handleViewButtonClick = (objectId: string) => {
-        console.log(objectId);
+    
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
         navigate(`/dealerProfileDetails/${objectId}`);
     };
