@@ -141,7 +141,9 @@ public class OrderService {
             optionalOrder.setPaymentterms(updatedOrder.getPaymentterms());
             optionalOrder.setOrderedproducts(updatedOrder.getOrderedproducts());
 
-
+            for (OrderedProduct op: updatedOrder.getOrderedproducts()){
+                op.setOrderid(updatedOrder.getOrderid());
+            }
 
             // You can add more fields to update as needed
 
