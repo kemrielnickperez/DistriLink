@@ -56,7 +56,7 @@ public class DealerController {
         return new ResponseEntity<>("Dealer credit limit updated successfully!", HttpStatus.OK);
     }
 
-    @PutMapping("/{dealerId}")
+    @PutMapping("/setDealer/{dealerId}")
     public ResponseEntity<String> updateDealerDetails(@PathVariable String dealerId, @RequestBody Dealer updatedDealer) {
         try {
             dealerService.updateDealerDetails(dealerId, updatedDealer);

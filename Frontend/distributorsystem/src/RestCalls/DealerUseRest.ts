@@ -7,7 +7,7 @@ import { de } from "date-fns/locale";
 
 
 
-export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, dealerDocuments:IDealerDocument[]) => void, boolean | undefined, IDealer | undefined] => {
+export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, dealerDocuments:IDealerDocument[]) => void,(dealerID: string) => void, boolean | undefined, IDealer | undefined] => {
 
     const [dealer, setDealer] = useState<IDealer>();
     const [isDealerFound, setIsDealerFound] = useState(false);
@@ -49,6 +49,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
        
         
         
+        
 
          axios.post('http://localhost:8080/dealer/registerDealer', formData, {
             headers: {
@@ -65,6 +66,25 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             }); 
 
             
+        }
+
+        function updateDealer(dealerID: string){
+            const updatedDealer = {
+                dealerid: dealerID,
+                confirmed: true,
+            };
+        
+            axios.put(`http://localhost:8080/dealer/setDealer/${dealerID}`, updatedDealer, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then((response) => {
+                alert('Dealer confirmation updated successfully!');
+            })
+            .catch((error) => {
+                alert('Error updating dealer confirmation. Please try again.');
+            });
         }
 
         function getDealerByID(dealerID:String) {
@@ -87,5 +107,5 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
                    console.error('Error retrieving dealer data:', error);
                  });
        } 
-    return [getDealerByID, newDealer, isDealerFound, dealer,]
+    return [getDealerByID, newDealer, updateDealer, isDealerFound, dealer,]
 }
