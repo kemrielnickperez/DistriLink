@@ -18,9 +18,8 @@ export function PaymentReceiptDetails() {
         color: '#203949'
     })
 
-    const StyldeInfoHeader = styled(Typography)({
-        marginTop: '35px',
-        marginBottom: '130px',
+    const StyledCollectorHeader = styled(Typography)({
+        marginTop: '435px',
         marginLeft: '12%',
         fontFamily: 'Inter',
         fontWeight: 'bold',
@@ -28,6 +27,16 @@ export function PaymentReceiptDetails() {
         fontSize: '20px',
         color: '#203949'
     })
+    const StyledDealerHeader = styled(Typography)({
+        marginTop: '-207px',
+        marginLeft: '52%',
+        fontFamily: 'Inter',
+        fontWeight: 'bold',
+        textAlign: 'left',
+        fontSize: '20px',
+        color: '#203949'
+    })
+
     const StackStyle = styled(Stack)({
         position: 'absolute',
         top: '150px',
@@ -54,6 +63,43 @@ export function PaymentReceiptDetails() {
         fontSize: '15px',
         fontFamily: 'Inter, sans - serif',
     })
+
+    const ButtonDealerProof = styled(Button)({
+        background: "#F5F7F9",
+        color: "#203949",
+        fontSize: 15,
+        marginLeft: 600,
+        marginTop: 25,
+        marginBottom: 5,
+        fontWeight: 'bold',
+        borderRadius: 10,
+        width: '220px',
+        height: '60px',
+        ':hover': {
+            backgroundColor: '#F5F7F9',
+            transform: 'scale(1.1)'
+        },
+        transition: 'all 0.4s'
+    });
+    
+    const ButtonColectorProof = styled(Button)({
+        background: "#F5F7F9",
+        color: "#203949",
+        fontSize: 15,
+        marginLeft: -720,
+        marginTop: 25,
+        marginBottom: 5,
+        fontWeight: 'bold',
+        borderRadius: 10,
+        width: '220px',
+        height: '60px',
+        ':hover': {
+            backgroundColor: '#F5F7F9',
+            transform: 'scale(1.1)'
+        },
+        transition: 'all 0.4s'
+    });
+    
 
 
     const { objectId } = useParams();
@@ -106,7 +152,7 @@ export function PaymentReceiptDetails() {
 
     function getAllCollectorRemittanceProofDocuments() {
         axios.get<ICollectorRemittanceProof[]>(`http://localhost:8080/collectorremittanceproof/findAllCollectorProofByCollectionPaymentReceiptId/${objectId!}`)
-            .then((response) => {
+            .then((response) => { 
                 setCollectorRemittanceProofs(response.data);
 
             })
@@ -138,30 +184,30 @@ export function PaymentReceiptDetails() {
     const displayCollectorRemittanceProofs = (base64Content: Uint8Array | null, fileType: string, docname: string, collectorproofid: string, collectionpaymentreceiptparam: ICollectionPaymentReceipt) => {
         if (base64Content) {
             // Determine the appropriate way to display the file based on the file type
-            
+
             if (fileType === 'application/pdf') {
                 return (
-                    <Button variant={"contained"} onClick={() => handleOpenCollectorProof({
+                    <ButtonColectorProof variant={"contained"} onClick={() => handleOpenCollectorProof({
                         content: base64Content,
                         type: fileType,
                         name: docname,
                         collectorremittanceproofid: collectorproofid,
                         collectionPaymentReceipt: collectionpaymentreceiptparam!
                     })} >
-                        Open PDF
-                    </Button>
+                        {docname}
+                    </ButtonColectorProof>
                 );
             } else if (fileType.startsWith("image")) {
                 return (
-                    <Button variant={"contained"} onClick={() => handleOpenCollectorProof({
+                    <ButtonColectorProof variant={"contained"} onClick={() => handleOpenCollectorProof({
                         content: base64Content,
                         type: fileType,
                         name: docname,
                         collectorremittanceproofid: collectorproofid,
                         collectionPaymentReceipt: collectionpaymentreceiptparam!
                     })}>
-                        Open Image
-                    </Button>
+                        {docname}
+                    </ButtonColectorProof>
                 );
             } else {
                 // Display a generic download link for other file types
@@ -183,30 +229,29 @@ export function PaymentReceiptDetails() {
             // Determine the appropriate way to display the file based on the file type
             if (fileType === 'application/pdf') {
                 return (
-                    <Button variant={"contained"} onClick={() => handleOpenDealerProof({
+                    <ButtonDealerProof variant={"contained"} onClick={() => handleOpenDealerProof({
                         content: base64Content,
                         type: fileType,
                         name: docname,
                         dealerpaymentproofid: dealerproofid,
                         collectionPaymentReceipt: collectionpaymentreceiptparam!
                     })} >
-                        Open PDF
-                        
-                    </Button>
-                    
+                        {docname}
+                    </ButtonDealerProof>
+
                 );
-                
+
             } else if (fileType.startsWith("image")) {
                 return (
-                    <Button variant={"contained"} onClick={() => handleOpenDealerProof({
+                    <ButtonDealerProof variant={"contained"} onClick={() => handleOpenDealerProof({
                         content: base64Content,
                         type: fileType,
                         name: docname,
                         dealerpaymentproofid: dealerproofid,
                         collectionPaymentReceipt: collectionpaymentreceiptparam!
                     })}>
-                        Open Image
-                    </Button>
+                        {docname}
+                    </ButtonDealerProof>
                 );
             } else {
                 // Display a generic download link for other file types
@@ -314,15 +359,14 @@ export function PaymentReceiptDetails() {
                         <StyleData>{paymentReceipt?.remarks}</StyleData>
                     </StackStyle>
 
-
-                    <h1>Collector Remittance Proofs </h1>
-                    {collectorRemittanceProofs!.map((document) => (
-                        <div key={document.collectorremittanceproofid}>
-                            <h2>{document.type}</h2>
-                            {displayCollectorRemittanceProofs(document.content, document.type, document.name, document.collectorremittanceproofid, document.collectionPaymentReceipt!)}
-
-                        </div>
-                    ))}
+                    <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }}>
+                        <StyledCollectorHeader>Collector Proofs </StyledCollectorHeader>
+                        {collectorRemittanceProofs!.map((document) => (
+                            <div key={document.collectorremittanceproofid}>
+                                {displayCollectorRemittanceProofs(document.content, document.type, document.name, document.collectorremittanceproofid, document.collectionPaymentReceipt!)}
+                            </div>
+                        ))}
+                    </div>
                     <Modal
                         open={openCollectorProof}
                         onClose={handleCloseCollectorProof} >
@@ -354,18 +398,18 @@ export function PaymentReceiptDetails() {
                     </Modal>
 
 
-
-                    <h1>Dealer Payment Proofs </h1>
+                    <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }}>
+                    <StyledDealerHeader>Dealer Payment Proofs </StyledDealerHeader>
                     {dealerPaymentProofs!.map((document) => (
                         <div key={document.dealerpaymentproofid}>
-                            <h2>{document.type}</h2>
                             {displayDealerPaymentProofs(document.content, document.type, document.name, document.dealerpaymentproofid, document.collectionPaymentReceipt!)}
 
                         </div>
                     ))}
+                    </div>
                     <Modal
                         open={openDealerProof}
-                        onClose={handleCloseDealerProof} >
+                        onClose={handleCloseDealerProof} >   
                         <div>
                             <button onClick={handleCloseDealerProof}>Close</button>
                             {selectedDealerProof && (
