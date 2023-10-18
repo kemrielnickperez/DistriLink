@@ -89,6 +89,7 @@ export const useRestOrder = (): [
             .then((response) => {
 
                 setOrder(response.data)
+                console.log(response.data.paymenttransactions)
                 if (response.data !== null) {
                     setIsOrderFound(true);
                     //setIsOrderFoundError(false);

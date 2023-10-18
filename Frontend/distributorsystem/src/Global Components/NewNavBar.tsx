@@ -233,11 +233,11 @@ export default function NewNavBar(props: navProps){
                                         <StyledText primary="Payment List"/>
                                     </StyledButton>
                                 </Link>
-                                {/* <Link to="/recordDirectPayment">
+                                <Link to="/recordDirectPayment">
                                     <StyledButton>
                                         <StyledText sx={{marginLeft: 9}} primary="Record Direct Payment"/>
                                     </StyledButton>
-                                </Link> */}
+                                </Link> 
                             </List>
                         </Collapse>
                       
