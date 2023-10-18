@@ -75,7 +75,9 @@ export default function CollectorAssignment() {
   function getAllOrders() {
     axios.get<IOrder[]>('http://localhost:8080/order/getAllOrders')
       .then((response) => {
-        setOrders(response.data);
+        const confirmedOrders = response.data.filter(order => order.confirmed);
+
+        setOrders(confirmedOrders);
         
       })
       .catch((error) => {

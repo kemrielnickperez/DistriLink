@@ -32,6 +32,7 @@ import CollectorAssignment from '../Components/Module 6 - Collector Assignment/C
 import EmployeeProfileListUI from '../Components/Module 4 - Profiles & Approval/EmployeeProfilesListUI';
 import DealerProfileListUI from '../Components/Module 4 - Profiles & Approval/DealerProfilesListUI';
 import { EmployeeProfileDetails } from '../Components/Module 4 - Profiles & Approval/EmployeeProfileDetailsUI';
+import OrderConfirmation from '../Components/Module 5 - Product Distribution and Confirmation/OrderConfirmationUI';
 
 export default function MainRoutes() {
     return (
@@ -59,8 +60,9 @@ export default function MainRoutes() {
                         <Route path="/" element={<Navigate replace to="dashboard" />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/paymentList" element={<PaymentList />} />
-                        <Route path="/dealearOrderForm" element={<DealerOrderForm />} />
+                        <Route path="/dealerOrderForm" element={<DealerOrderForm />} />
                         <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
+                        <Route path="/orderConfirmation" element={<OrderConfirmation/>}/>
 
                         <Route path="/dealerProfileList" element={<DealerProfileListUI />} />
                         <Route path="/dealerProfileDetails/:objectId" element={<DealerProfileDetails />}></Route>

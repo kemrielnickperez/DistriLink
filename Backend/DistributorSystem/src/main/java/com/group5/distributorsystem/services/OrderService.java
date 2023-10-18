@@ -136,7 +136,7 @@ public class OrderService {
             optionalOrder.setDistributiondate(updatedOrder.getDistributiondate());
             optionalOrder.setPaymentterms(updatedOrder.getPaymentterms());
             optionalOrder.setOrderedproducts(updatedOrder.getOrderedproducts());
-
+            optionalOrder.setConfirmed(updatedOrder.getConfirmed());
             for (OrderedProduct op: updatedOrder.getOrderedproducts()){
                 op.setOrderid(updatedOrder.getOrderid());
             }
