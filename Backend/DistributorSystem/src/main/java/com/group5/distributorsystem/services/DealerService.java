@@ -81,13 +81,18 @@ public class DealerService {
         }
     }
 
-    public void updateDealerDetails(String dealerId, Dealer updatedDealer){
-        Optional<Dealer> dealer = dealerRepository.findById(dealerId);
+    public void updateDealerDetails(String dealerId, Dealer updatedDealer) {
+        Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
 
-        if (dealer.isPresent()){
+        if (optionalDealer.isPresent()) {
+            Dealer existingDealer = optionalDealer.get();
 
+            // Update the fields you want
+            existingDealer.setRemarks(updatedDealer.getRemarks());
+            existingDealer.setConfirmed(updatedDealer.getConfirmed());
 
-
+            // Save the updated Dealer back to the database
+            dealerRepository.save(existingDealer);
         }
     }
 

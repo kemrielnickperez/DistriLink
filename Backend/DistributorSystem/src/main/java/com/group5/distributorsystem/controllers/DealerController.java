@@ -56,4 +56,15 @@ public class DealerController {
         return new ResponseEntity<>("Dealer credit limit updated successfully!", HttpStatus.OK);
     }
 
+    @PutMapping("/{dealerId}")
+    public ResponseEntity<String> updateDealerDetails(@PathVariable String dealerId, @RequestBody Dealer updatedDealer) {
+        try {
+            dealerService.updateDealerDetails(dealerId, updatedDealer);
+            return ResponseEntity.ok("Dealer set");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to set dealer" + e.getMessage());
+        }
+    }
+
 }
