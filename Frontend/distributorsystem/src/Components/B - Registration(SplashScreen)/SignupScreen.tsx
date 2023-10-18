@@ -9,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom'
 const Logo=styled(Typography)({
     margin:'5% 10% 0 5% ',
     display: 'flex',
-    fontFamily:'Inter',
+    fontFamily:'Inter, sans-serif',
     fontWeight:'bold',
     fontSize:'25px',
     color:'#203949',
@@ -17,7 +17,7 @@ const Logo=styled(Typography)({
 })
 const ContentNameTypography = styled(Typography)({
     marginTop: 10,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     textAlign:'center',
     fontSize: '50px',
@@ -25,7 +25,7 @@ const ContentNameTypography = styled(Typography)({
 })
 const LabelTypography= styled(Typography)({
     marginTop: 20,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: '500',
     textAlign:'center',
     fontSize: '20px',
@@ -57,7 +57,7 @@ const ButtonStyle=styled(Button)({
     height:50,
     color:'#203949', 
     fontWeight:'bold',
-    fontFamily:'Inter',
+    fontFamily:'Inter, sans-serif',
     fontSize:'20px',
     textDecorationLine: 'underline',
     ':hover':{

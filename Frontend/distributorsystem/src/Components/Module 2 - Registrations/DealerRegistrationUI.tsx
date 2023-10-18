@@ -15,12 +15,12 @@ import { Dayjs } from "dayjs";
 const ImageStyle = styled(Typography)({
     display: 'flex',
     alignItems: 'center',
-    marginRight: '-50px',
+    marginRight: '-1px',
     marginTop: '-30px'
 })
 const ContentNameTypography = styled(Typography)({
     marginTop: -10,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: '30px',
@@ -31,7 +31,7 @@ const ContentNameTypography = styled(Typography)({
 const LabelTypography = styled(Typography)({
     marginTop: 5,
     marginBottom: 10,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: '500',
     textAlign: 'center',
     fontSize: '20px',
@@ -43,7 +43,7 @@ const TypographyLabel = styled(Typography)({
     marginLeft: '25px',
     marginBottom: '10px',
     marginRight: '-175px',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: '550',
     textAlign: 'left',
     fontSize: 17,
@@ -59,7 +59,7 @@ const TypographyLabelB = styled(Typography)({
     color: '#707070',
     display: 'flex',
     fontWeight: '550',
-    fontFamily: 'inter',
+    fontFamily: 'Inter, sans-serif',
 })
 const TypographyLabelC = styled(Typography)({
     textAlign: 'center',
@@ -67,14 +67,14 @@ const TypographyLabelC = styled(Typography)({
     color: '#ffffff',
     display: 'flex',
     fontWeight: '550',
-    fontFamily: 'inter',
+    fontFamily: 'Inter, sans-serif',
 })
 const RadioLabel = styled(Typography)({
     textAlign: 'left',
     fontSize: '17px',
     fontWeight: '550',
     color: '#707070',
-    fontFamily: 'inter',
+    fontFamily: 'Inter, sans-serif',
 
 });
 const RadioStyle = styled(RadioGroup)({
@@ -97,12 +97,12 @@ const StyledTextField = styled(TextField)({
     marginBottom: '43px',
     input: {
         color: '#707070',
-        fontFamily: 'Inter'
+        fontFamily: 'Inter, sans-serif'
     },
     label: {
         color: '#707070',
         fontWeight: '550',
-        fontFamily: 'Inter',
+        fontFamily: 'Inter, sans-serif',
     },
 });
 
@@ -113,7 +113,7 @@ const StyledDatePicker = styled(DatePicker)({
     // marginBottom:'43px',
     input: {
         color: '#707070',
-        fontFamily: 'Inter'
+        fontFamily: 'Inter, sans-serif'
     },
 });
 
@@ -127,7 +127,7 @@ const GridBody = styled(Grid)({
 const labelStyle: React.CSSProperties = {
     fontWeight: '550',
     color: '#707070',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
 };
 const ButtonStyle = styled(Button)({
     backgroundColor: '#2D85E7',
@@ -176,6 +176,7 @@ export default function DealerRegistration() {
     const [selectedContract, setSelectedContract] = useState<File>();
     const [selectedBusinessDocs, setSelectedBusinessDocs] = useState<File | null>();
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
+    
 
 
     const firstnameRef = useRef<TextFieldProps>(null)
@@ -563,7 +564,7 @@ export default function DealerRegistration() {
                 </Grid>
                 {/**Image Grids */}
                 <Grid item>
-                    {/*  <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle> */}
+                    <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle>
                 </Grid>
             </GridBody>
         </div>
