@@ -19,6 +19,8 @@ export interface IDealer {
     businesstin: string,
     creditlimit: number,
     submissiondate: string,
+    confirmed: boolean,
+    remarks: string,
     orderids: string[], // naa ta gihapon ni dapat
     documentids: string[],
 }

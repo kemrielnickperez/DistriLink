@@ -308,6 +308,8 @@ export default function DealerRegistration() {
             businesstin: String(tinnumberRef.current?.value),
             creditlimit: 0,
             submissiondate: moment().format('YYYY-MM-DD'),
+            confirmed: false,
+            remarks: '',
             orderids: [],
             documentids: []
 

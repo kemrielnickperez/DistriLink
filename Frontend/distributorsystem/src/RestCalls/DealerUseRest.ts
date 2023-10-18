@@ -36,6 +36,8 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
         formData.append('businesstin', dealer.businesstin);
         formData.append('creditlimit', dealer.creditlimit.toString());
         formData.append('submissiondate', dealer.submissiondate);
+        formData.append('confirmed', dealer.confirmed.toString());
+        formData.append('remarks', dealer.remarks);
     
            dealerDocuments.forEach((document, index) => {
            
@@ -45,7 +47,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             formData.append(`content`, new Blob([document.content], { type: 'application/octet-stream' }));
           }); 
        
-        console.log(formData.get('dealer.firstname'))
+        
         
 
          axios.post('http://localhost:8080/dealer/registerDealer', formData, {

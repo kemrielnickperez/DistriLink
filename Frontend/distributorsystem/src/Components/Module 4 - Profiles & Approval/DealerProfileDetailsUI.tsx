@@ -242,7 +242,7 @@ export default function DealerProfileDetails() {
 
     const handleFindDealer = () => {
      
-        getDealerByID("1aca2058");
+        getDealerByID(objectId!);
     };
 
     function getAllDealerDocuments() {
@@ -308,23 +308,18 @@ export default function DealerProfileDetails() {
     };
 
     const handleSaveCreditLimit = () => {
-        // Send the updated credit limit to the server using an API call.
-        // You'll need to implement the API endpoint for updating the credit limit.
-        // After a successful update, you can set isEditing to false.
-
-        // Example API call using Axios (make sure to import Axios):
-        axios.put(`http://your-api-endpoint/update-credit-limit`, {
+        axios.put(`http://localhost:8080/dealer/updateCreditLimit`, {
             dealerId: dealer?.dealerid,
-            creditLimit: editedCreditLimit,
+            newCreditLimit: editedCreditLimit,
         })
-            .then((response) => {
-                setIsEditing(false);
-                // You can update the 'dealer' object in the state with the updated credit limit here if needed.
-            })
-            .catch((error) => {
-                console.error("Error updating credit limit:", error);
-                // Handle the error appropriately.
-            });
+        .then((response) => {
+            setIsEditing(false);
+            // You can update the 'dealer' object in the state with the updated credit limit here if needed.
+        })
+        .catch((error) => {
+            console.error("Error updating credit limit:", error);
+            // Handle the error appropriately.
+        });
     };
 
     const handleCancelEdit = () => {
@@ -332,6 +327,7 @@ export default function DealerProfileDetails() {
         // Reset the edited credit limit to the current value.
         setEditedCreditLimit(dealer?.creditlimit);
     };
+
 
 
     return (

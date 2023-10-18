@@ -44,5 +44,16 @@ public class DealerController {
         return new ResponseEntity<>(dealerService.getDealerByID(dealerid), HttpStatus.OK);
     }
 
+    @GetMapping("/getCreditLimit/{dealerId}")
+    public ResponseEntity<Object> getCreditLimit(@PathVariable String dealerId) {
+        double creditLimit = dealerService.getDealerCreditLimit(dealerId);
+        return new ResponseEntity<>(creditLimit, HttpStatus.OK);
+    }
+
+    @PutMapping("/updateCreditLimit")
+    public ResponseEntity<Object> updateCreditLimit(@RequestParam String dealerId, @RequestParam double newCreditLimit) {
+        dealerService.updateDealerCreditLimit(dealerId, newCreditLimit);
+        return new ResponseEntity<>("Dealer credit limit updated successfully!", HttpStatus.OK);
+    }
 
 }

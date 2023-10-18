@@ -61,4 +61,24 @@ public class DealerService {
     public Dealer findByDealeridAndPassword(String dealerid, String password){
         return dealerRepository.findByDealeridAndPassword(dealerid, password);
     }
+
+    public double getDealerCreditLimit(String dealerId) {
+        Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
+        if (optionalDealer.isPresent()) {
+            return optionalDealer.get().getCreditlimit();
+        }
+        return 0.0; // Return a default value or handle the case where the dealer doesn't exist.
+    }
+
+    public void updateDealerCreditLimit(String dealerId, double newCreditLimit) {
+        Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
+        if (optionalDealer.isPresent()) {
+            Dealer dealer = optionalDealer.get();
+            dealer.setCreditlimit(newCreditLimit);
+            dealerRepository.save(dealer);
+        } else {
+            // Handle the case where the dealer doesn't exist.
+        }
+    }
+
 }
