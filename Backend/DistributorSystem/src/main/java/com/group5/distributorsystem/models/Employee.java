@@ -48,7 +48,7 @@ public class Employee {
 
     private Set<String> paymentreceiptids;
 
-    private Set<String> collectionpaymentids;
+
     //private Set<Order> orders;
 
     //private Set<PaymentReceipt> paymentReceipts;
@@ -90,7 +90,7 @@ public class Employee {
         this.is_collector = is_collector;
         this.orderids = orderids;
         this.paymentreceiptids = paymentreceiptids;
-        this.collectionpaymentids = collectionpaymentids;
+
     }
 
     public String getEmployeeid() {
@@ -229,11 +229,4 @@ public class Employee {
         this.paymentreceiptids = paymentreceiptids;
     }
 
-    public Set<String> getCollectionpaymentids() {
-        return collectionpaymentids;
-    }
-
-    public void setCollectionpaymentids(Set<String> collectionpaymentids) {
-        this.collectionpaymentids = collectionpaymentids;
-    }
 }
