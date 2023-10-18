@@ -29,6 +29,7 @@ import SplashscreenContent from './ContentsSplashscreen';
 import WelcomeScreen from '../Components/A - SplashScreen/WelcomeScreen';
 import DealerProfileDetails from '../Components/Module 4 - Profiles & Approval/DealerProfileDetailsUI';
 import CollectorAssignment from '../Components/Module 6 - Collector Assignment/CollectorAssignmentUI';
+import OrderConfirmation from '../Components/Module 5 - Product Distribution and Confirmation/OrderConfirmationUI';
 
 export default function MainRoutes() {
     return (
@@ -56,8 +57,9 @@ export default function MainRoutes() {
                         <Route path="/" element={<Navigate replace to="dashboard" />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/paymentList" element={<PaymentList />} />
-                        <Route path="/dealearOrderForm" element={<DealerOrderForm />} />
+                        <Route path="/dealerOrderForm" element={<DealerOrderForm />} />
                         <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
+                        <Route path="/orderConfirmation" element={<OrderConfirmation/>}/>
 
                         <Route path="/dealerProfileList" element={<DealerProfile />} />
                         <Route path="//dealerProfileDetails/:objectId" element={<DealerProfileDetails />}></Route>

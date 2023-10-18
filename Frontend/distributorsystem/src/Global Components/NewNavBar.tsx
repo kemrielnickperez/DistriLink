@@ -167,17 +167,21 @@ export default function NewNavBar(props: navProps){
                                         <StyledText sx={{marginLeft: 10}} primary="Product Distribution List"/>
                                     </StyledButton>
                                 </Link>
-                                                                <StyledButton>
+                                <Link to ="/orderConfirmation">
+                                <StyledButton>
                                     <StyledText sx={{marginLeft: 4}} primary="Order Confirmation"/>
                                 </StyledButton>
+                                </Link>
                                 <Link to="/distributorOrderForm">
                                     <StyledButton>
                                         <StyledText sx={{marginLeft: 9}} primary="Distributor Order Form"/>
                                     </StyledButton>
                                 </Link>
+                                <Link to ="/dealerOrderForm">
                                 <StyledButton>
                                     <StyledText sx={{marginLeft: 4}} primary="Dealer Order Form"/>
                                 </StyledButton>
+                                </Link>
                             </List>
                         </Collapse>
                          {/** Collector Assignment */}
