@@ -1,4 +1,7 @@
 import { Grid, Paper, Autocomplete, Typography, styled, Table, TableContainer, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { ICollectionPaymentReceipt, IDirectPaymentReceipt, IPaymentReceipt } from "../../RestCalls/Interfaces";
 
 const ProductName = styled(Typography)({
     position: 'relative',
@@ -112,6 +115,20 @@ const PendingDealerGrid = styled(Grid)({
 
 
 export default function Dashboard() {
+    const [paymentReceipts, setPaymentReceipts] = useState<IPaymentReceipt[]>();
+    const [directPaymentReceipt, setDirectPaymentReceipt] = useState<IDirectPaymentReceipt[]>();
+    const [collectionPaymentReceipts, setCollectionPaymentReceipts] = useState<ICollectionPaymentReceipt[]>();
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/collectionPaymentReceipt/unconfirmed')
+            .then((response) => {
+                setCollectionPaymentReceipts(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data: ', error);
+            });
+    }, []);
+
     return (
         <Grid container>
             <PendingOrdersGrid item container>
@@ -149,16 +166,16 @@ export default function Dashboard() {
                                     <TableHeaderCell align="center">Payment Transaction ID</TableHeaderCell>
                                     <TableHeaderCell align="center">Payment Date</TableHeaderCell>
                                     <TableHeaderCell align="center">Amount Paid</TableHeaderCell>
-                                    <TableHeaderCell align="center">Dealer Name</TableHeaderCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <TableRow>
-                                    <TableCell align="center">120390</TableCell>
-                                    <TableCell align="center">10/10/2023</TableCell>
-                                    <TableCell align="center">16,200</TableCell>
-                                    <TableCell align="center">John Doe</TableCell>
-                                </TableRow>
+                                {collectionPaymentReceipts?.map((receipts) => (
+                                    <TableRow key={receipts.paymentreceiptid}>
+                                        <TableCell align="center">{receipts.paymentreceiptid}</TableCell>
+                                        <TableCell align="center">{receipts.remitteddate}</TableCell>
+                                        <TableCell align="center">{receipts.remittedamount}</TableCell>
+                                    </TableRow>
+                                ))}
                             </TableBody>
                         </Table>
                     </TableContainer>

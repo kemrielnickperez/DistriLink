@@ -21,7 +21,7 @@ const ContentNameTypography = styled(Typography)({
     marginTop: 60,
     marginBottom: 35,
     marginLeft: 65,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     textAlign: 'left',
     fontSize: '25px',
@@ -29,7 +29,7 @@ const ContentNameTypography = styled(Typography)({
 })
 const LabelTypography = styled(Typography)({
     marginLeft: 50,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     textAlign: 'left',
     fontSize: '15px',
@@ -39,7 +39,7 @@ const StyledButton = styled(Button)({
     marginTop: -5,
     marginLeft: 30,
     backgroundColor: '#2C85E7',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontSize: '15px',
     width: '150px',
     height: 40,
@@ -63,10 +63,10 @@ export default function PaymentList() {
         axios.get<IDirectPaymentReceipt[]>('http://localhost:8080/paymentreceipt/getAllPaymentReceipts')
             .then((response) => {
                 setPaymentReceipts(response.data);
-                //console.log(response.data);
+               
             })
             .catch((error) => {
-                //console.error('Error retrieving payment receipts:', error);
+               
                 alert("Error retrieving payment receipts. Please try again.");
             });
     }
@@ -94,7 +94,7 @@ export default function PaymentList() {
                         color="primary"
                         onClick={() => {
                             // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.paymentReceiptid);
+                           
                             handleViewButtonClick(params.row.paymentReceiptid);
                         }}
                         >
@@ -134,8 +134,7 @@ export default function PaymentList() {
         setSelectedRows(selectedRowIds);
     };
     const handleConfirmPaymentsButton = () => {
-        console.log(paymentreceipts);
-        console.log(selectedRows)
+       
         let count = 0;
         selectedRows.map((id) => {
             confirmCollectionPaymentReceipt(id, 'employee1')
@@ -147,7 +146,7 @@ export default function PaymentList() {
     }
 
     const handleViewButtonClick = (objectId: string) => {
-        console.log(objectId);
+        
         navigate(`/paymentReceiptDetails/${objectId}`);
     };
 

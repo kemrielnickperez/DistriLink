@@ -16,6 +16,8 @@ public class DirectPaymentReceipt extends PaymentReceipt {
 
     private LocalDate daterecorded;
 
+    public DirectPaymentReceipt(){}
+
     public DirectPaymentReceipt(LocalDate datepaid, double receivedamount, LocalDate daterecorded) {
         this.datepaid = datepaid;
         this.receivedamount = receivedamount;

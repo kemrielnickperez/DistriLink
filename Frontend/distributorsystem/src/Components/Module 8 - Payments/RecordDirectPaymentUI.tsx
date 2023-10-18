@@ -203,13 +203,14 @@ export default function RecordDirectPayment() {
 
     const handleFindOrder = () => {
         getOrderByID(orderIDRef.current?.value + '');
+        
     };
 
 
     const handleSaveDirectPayment = () => {
         const uuid = uuidv4();
         const paymentreceiptuuid = uuid.slice(0, 8);
-        createDirectPaymentReceipt(selectedPaymentTransaction + '', {
+        createDirectPaymentReceipt({
             paymentreceiptid: paymentreceiptuuid,
             remarks: remarksRef.current?.value + "",
             datepaid: selectedDate?.format('YYYY-MM-DD') || '',
@@ -251,9 +252,9 @@ export default function RecordDirectPayment() {
     useEffect(() => {
         handleFindOrder();
         // handleFindPaymentTransaction();
-        console.log(order?.paymenttransactions)
+        
     },
-        [isOrderFound, order]);
+        [isOrderFound, order, order?.paymenttransactions]);
 
 
     return (
@@ -285,9 +286,9 @@ export default function RecordDirectPayment() {
                                     <TableCellStyle align="center">Installment Number</TableCellStyle>
                                     <TableCellStyle align="center">Payment Due Date</TableCellStyle>
                                     <TableCellStyle align="center"> Amount Due</TableCellStyle>
-                                    <TableCellStyle align="center"> Amount Paid</TableCellStyle>
-                                    <TableCellStyle align="center">Payment Type</TableCellStyle>
-                                    <TableCellStyle align="center">Remarks</TableCellStyle>
+                                    <TableCellStyle align="center"> Status</TableCellStyle>
+                                    {/* <TableCellStyle align="center">Payment Type</TableCellStyle>
+                                    <TableCellStyle align="center">Remarks</TableCellStyle> */}
                                     {/* <TableCellStyle align="center">New Balance</TableCellStyle>  */}
                                 </TableRow>
                             </TableHead>
@@ -300,9 +301,9 @@ export default function RecordDirectPayment() {
                                         {/* <TableCell component="th" scope="row" align="center">{transaction.startingdate}</TableCell> */}
                                         <TableCell align="center">{transaction.enddate}</TableCell>
                                         <TableCell align="center">{transaction.amountdue}</TableCell>
-                                        <TableCell align="center">{paymentReceipt?.amountpaid}</TableCell>
-                                        <TableCell align="center">{paymentReceipt?.paymenttype}</TableCell>
-                                        <TableCell align="center">{paymentReceipt?.remarks}</TableCell> 
+                                        <TableCell align="center">{transaction.paid? 'Paid' :'Not Paid'}</TableCell>
+                                        {/* <TableCell align="center">{paymentReceipt?.paymenttype}</TableCell>
+                                        <TableCell align="center">{paymentReceipt?.remarks}</TableCell>  */}
                                     </StyledTableRow>
                                 ))}
                             </TableBody>

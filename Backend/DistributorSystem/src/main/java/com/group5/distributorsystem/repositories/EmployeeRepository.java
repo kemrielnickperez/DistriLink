@@ -9,10 +9,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.swing.text.html.Option;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface EmployeeRepository extends MongoRepository<Employee, String> {
-
-
-
+    Employee findByEmployeeidAndPassword(String employeeid, String password);
 }
