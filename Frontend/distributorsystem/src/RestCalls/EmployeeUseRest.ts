@@ -20,7 +20,7 @@ export const useRestEmployee = (): [(employee: IEmployee) => void, (employeid: n
             firstname : employee.firstname,
             middlename : employee.middlename,
             lastname : employee.lastname,
-            email :employee.email,
+            emailaddress :employee.emailaddress,
             password: employee.password,
             birthdate : employee.birthdate,
             gender : employee.gender,
