@@ -22,7 +22,7 @@ const ContentNameTypography = styled(Typography)({
   marginTop: 60,
   marginBottom: 35,
   marginLeft: 65,
-  fontFamily: 'Inter',
+  fontFamily: 'Inter, sans-serif',
   fontWeight: 'bold',
   textAlign: 'left',
   fontSize: '25px',
@@ -30,7 +30,7 @@ const ContentNameTypography = styled(Typography)({
 })
 const LabelTypography = styled(Typography)({
   marginLeft: 50,
-  fontFamily: 'Inter',
+  fontFamily: 'Inter, sans-serif',
   fontWeight: 'bold',
   textAlign: 'left',
   fontSize: '15px',
@@ -40,7 +40,7 @@ const StyledButton = styled(Button)({
   marginTop: -5,
   marginLeft: 30,
   backgroundColor: '#2C85E7',
-  fontFamily: 'Inter',
+  fontFamily: 'Inter, sans-serif',
   fontSize: '15px',
   width: auto,
   height: 40,
