@@ -116,7 +116,7 @@ export default function OrderConfirmation() {
   
   const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder] = useRestOrder();
 
-  const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
+  const [getDealerByID, newDealer,updateDealer, isDealerFound, dealer] = useRestDealer();
 
   const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
