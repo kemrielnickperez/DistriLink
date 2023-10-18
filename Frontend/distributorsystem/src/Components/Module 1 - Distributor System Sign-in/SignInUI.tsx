@@ -1,6 +1,7 @@
 import styled from "@emotion/styled"
 import { Button, Grid, Link, TextField, Typography } from "@mui/material"
 import signin from "../../Global Components/Group 8 (1).png"
+import { useNavigate } from "react-router-dom"
 
 const HeaderTypo = styled(Typography)({
     position: "relative",
@@ -80,6 +81,13 @@ const SignInFieldsGrid = styled(Grid)({
 })
 
 export default function SignIn() {
+    const navigate=useNavigate();
+    const handleSignIn=()=>{
+        navigate(`/dashboard`);
+    }
+    const signUpHandler=()=>{
+        navigate(`/SignUpScreen`)
+       }
     return (
         <SignInGrid item container>
             <SignInFieldsGrid item>
@@ -87,8 +95,8 @@ export default function SignIn() {
                 <SubHeaderTypo>Distributor System</SubHeaderTypo>
                 <EmailTextfield variant="outlined" label="Email"/>
                 <PasswordTextfield variant="outlined" label="Password"/>
-                <SignInButton variant="contained">Sign In</SignInButton>
-                <SignUpTypo>Don't have an account? <a href="/signup">Sign Up</a></SignUpTypo>
+                <SignInButton variant="contained" onClick={handleSignIn}>Sign In</SignInButton>
+                <SignUpTypo >Don't have an account? <a href="SignUpScreen">Sign Up</a></SignUpTypo>
             </SignInFieldsGrid>
             <Grid item>
                 <ImageStyles>

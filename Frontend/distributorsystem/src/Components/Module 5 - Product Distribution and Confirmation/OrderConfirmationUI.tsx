@@ -29,7 +29,7 @@ function createData(
 ];
 
 
-export default function orderConfirmation(){
+export default function OrderConfirmation(){
     return(
         <>
         <div>

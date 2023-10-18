@@ -30,16 +30,18 @@ public class DirectPaymentReceiptService {
     EmployeeRepository employeeRepository;
 
     public DirectPaymentReceipt createDirectPaymentReceipt(DirectPaymentReceipt directPaymentReceipt){
+        //Save direct payment receipt pass as parameter
+        DirectPaymentReceipt newdirectPaymentReceipt= directPaymentReceiptRepository.save(directPaymentReceipt);
 
-        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(directPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(newdirectPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
 
-        paymentTransaction.setPaymentreceiptid(directPaymentReceipt.getPaymentreceiptid());
+        paymentTransaction.setPaymentreceiptid(newdirectPaymentReceipt.getPaymentreceiptid());
 
-        Employee cashier = employeeRepository.findById(directPaymentReceipt.getCashier().getEmployeeid()).get();
+        Employee cashier = employeeRepository.findById(newdirectPaymentReceipt.getCashier().getEmployeeid()).get();
 
-        paymentTransaction.setPaymentreceiptid(directPaymentReceipt.getPaymentreceiptid());
+        paymentTransaction.setPaymentreceiptid(newdirectPaymentReceipt.getPaymentreceiptid());
 
-        cashier.getPaymentreceiptids().add(directPaymentReceipt.getPaymentreceiptid());
+        cashier.getPaymentreceiptids().add(newdirectPaymentReceipt.getPaymentreceiptid());
 
         paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
 
@@ -47,7 +49,7 @@ public class DirectPaymentReceiptService {
 
         employeeRepository.save(cashier);
 
-        return directPaymentReceiptRepository.save(directPaymentReceipt);
+        return directPaymentReceiptRepository.save(newdirectPaymentReceipt);
     }
 
     public List<DirectPaymentReceipt> getAllDirectPaymentReceipts(){

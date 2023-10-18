@@ -62,7 +62,6 @@ export default function MainRoutes(){
                         {/* <Route path="/orderConfirmation" element={<orderConfirmation/>}/> */}
                         {/* <Route path="/dealerTransactionDetails" element={<DealerTransactionDetails/>}/> */}
                         {/* <Route path="/productDistributionList" element={<ProductDistributionList/>}/> */}
-                            
                         {/* <Route path="/dealerProfileList" element={<DealerProfileList/>}/> */}
                         {/* <Route path="/employeeProfileDetails" element={<EmployeeProfileDetails/>}/>
                         <Route path="/employeeProfileList" element={<EmployeeProfileList/>}/> */}

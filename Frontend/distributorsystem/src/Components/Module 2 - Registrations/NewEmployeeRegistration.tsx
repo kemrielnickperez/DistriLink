@@ -6,10 +6,11 @@ import React from "react";
 import UploadIcon from '@mui/icons-material/Upload';
 import employee1 from '../../Global Components/employee1.png'
 const ImageStyle= styled(Typography)({
+    position:'absolute',
     display:'flex',
     alignItems:'center',
-     marginRight:'-50px',
-     marginTop:'-30px'
+    top:-60, 
+    left:800,
 })
 const ContentNameTypography = styled(Typography)({
     marginTop: 10,

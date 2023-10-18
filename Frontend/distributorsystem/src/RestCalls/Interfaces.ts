@@ -89,8 +89,9 @@ export interface IPaymentTransaction {
 }
 
 export interface IPaymentReceipt {
-    paymentreceiptid: number,
+    paymentreceiptid: string,
     remarks: string,
+    amountpaid: number,
     paymenttype: string,
     paymenttransaction: IPaymentTransaction, 
     cashier: IEmployee | null
@@ -99,7 +100,7 @@ export interface IPaymentReceipt {
 export interface IDirectPaymentReceipt extends IPaymentReceipt{
     remarks: string,
     datepaid: string,  
-    amountpaid: number,
+    receivedamount: number,
     daterecorded: string,   
 }
 

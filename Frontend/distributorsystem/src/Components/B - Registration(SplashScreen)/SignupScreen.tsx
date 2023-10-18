@@ -75,13 +75,17 @@ export default function SignupScreen(){
     const handleDealerButtonClick = () => {
         navigate(`/newDealerRegistration`)
     };
+    const signInHandler=()=>{
+        navigate(`/SignIn`)
+    }
+       
     return(
         <div>
             {/** Logo*/}
             <Logo>
                     <img src={logo5} style={{height:'150px',width:'270px',marginTop:'-5%'}}/>
             {/** Sign-In*/}
-                    <ButtonStyle>Sign In</ButtonStyle>
+                    <ButtonStyle onClick={signInHandler}>Sign In</ButtonStyle>
             </Logo>
             <ContentNameTypography>Tell us About Yourself</ContentNameTypography>
             <LabelTypography>Choose Who You Want to Sign Up As</LabelTypography>

@@ -5,13 +5,17 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
 import dealer1 from '../../Global Components/dealer1.png'
+
 import { useNavigate } from "react-router-dom";
 
 const ImageStyle= styled(Typography)({
+    position:'absolute',
     display:'flex',
     alignItems:'center',
-     marginRight:'-50px',
-     marginTop:'-30px'
+    //  marginRight:'50px',
+    //  marginTop:'-30px'
+    top:-10, 
+    left:800,
 })
 const ContentNameTypography = styled(Typography)({
     marginTop: -10,
@@ -325,7 +329,7 @@ export default function NewDealerRegistration(){
                 </Grid>
             {/**Image Grids */}
                 <Grid item>
-                   {/*  <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle> */}
+                   <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle>
                 </Grid> 
             </GridBody>
         </div>
