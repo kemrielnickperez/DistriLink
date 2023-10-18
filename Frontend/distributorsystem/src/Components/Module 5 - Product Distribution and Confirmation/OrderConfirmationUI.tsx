@@ -138,7 +138,7 @@ export default function OrderConfirmation() {
   const dealerIDRef = useRef<TextFieldProps>(null);
 
 
-  const orderID = '7955070b';
+  const orderID = 'fa20eeaf';
 
   const paymentchoices = [
     {
@@ -390,7 +390,6 @@ export default function OrderConfirmation() {
    <Typography sx={{ marginRight: '90px', marginLeft: -8   }}>{order?.orderid}</Typography>
   <Typography sx={{ marginRight: '100px', marginLeft: 1 }}>{order?.dealer.dealerid}</Typography>
   <Typography sx={{ marginRight: '20px', marginLeft: 1 }}>{order?.dealer.firstname + " " + order?.dealer.middlename + " " + order?.dealer.lastname}</Typography>
-  <Typography sx={{ marginRight: '20px', marginLeft: 1 }}>{order?.distributiondate}</Typography>
   <LocalizationProvider dateAdapter={AdapterDayjs}>
     <StyledDatePicker
       sx={{ marginLeft: '20px', marginRight: '20px' }}
@@ -465,12 +464,20 @@ export default function OrderConfirmation() {
                   <TableBody>
                     {orderedProducts?.map((product) => (
                       <TableRow key={product.product.productid}>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }} ><input
-                          type="number"
-                          value={product.quantity}
-                          onChange={(e) =>
-                            handleUpdateQuantity(product, Number(e.target.value))
-                          } /></TableCell>
+                       <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>
+                          <input
+                            type="number"
+                            value={product.quantity}
+                            onChange={(e) => {
+                              const newValue = Number(e.target.value);
+                              if (newValue < 0) {
+                                handleUpdateQuantity(product, 0);
+                              } else {
+                                handleUpdateQuantity(product, newValue);
+                              }
+                            }}
+                          />
+                        </TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.unit}</TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.name}</TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price}</TableCell>

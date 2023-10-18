@@ -110,63 +110,63 @@ const OverallGrid = styled(Grid)({
   top: 50
 })
 
-export default function ProductDistributionList(){
+export default function ProductDistributionList() {
 
-    const [newOrder] = useRestOrder();
+  const [newOrder] = useRestOrder();
 
-    const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
-  
-    const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
-  
-    const [products, setProducts] = useState<IProduct[]>([]);
-  
-    const [orderedProducts, setOrderedProducts] = useState<IOrderedProducts[]>([]);
-  
-    const [chosenProduct, setChosenProduct] = useState<IProduct | null>(null);
-  
-    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-  
-    const [paymentTerm, setPaymentTerm] = useState(0);
-  
-    const [totalAmount, setTotalAmount] = useState(0);
-  
-    const [quantity, setQuantity] = useState<string>('');
-  
-    const quantityRef = useRef<TextFieldProps>(null);
-    const penaltyRateRef = useRef<TextFieldProps>(null);
-    const dealerIDRef = useRef<TextFieldProps>(null);
-  
-  
-    const paymentchoices = [
-      {
-        value: '0',
-        label: '----------',
-      },
-      {
-        value: '1',
-        label: 'Cash',
-      },
-      {
-        value: '2',
-        label: '2 Gives',
-      },
-      {
-        value: '3',
-        label: '3 Gives',
-      },
-      {
-        value: '4',
-        label: '4 Gives',
-      },
-      {
-        value: '5',
-        label: '5 Gives',
-      },
-      {
-        value: '6',
-        label: '6 Gives',
-      }
-    ];
+  const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
+
+  const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
+
+  const [products, setProducts] = useState<IProduct[]>([]);
+
+  const [orderedProducts, setOrderedProducts] = useState<IOrderedProducts[]>([]);
+
+  const [chosenProduct, setChosenProduct] = useState<IProduct | null>(null);
+
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+
+  const [paymentTerm, setPaymentTerm] = useState(0);
+
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  const [quantity, setQuantity] = useState<string>('');
+
+  const quantityRef = useRef<TextFieldProps>(null);
+  const penaltyRateRef = useRef<TextFieldProps>(null);
+  const dealerIDRef = useRef<TextFieldProps>(null);
+
+
+  const paymentchoices = [
+    {
+      value: '0',
+      label: '----------',
+    },
+    {
+      value: '1',
+      label: 'Cash',
+    },
+    {
+      value: '2',
+      label: '2 Gives',
+    },
+    {
+      value: '3',
+      label: '3 Gives',
+    },
+    {
+      value: '4',
+      label: '4 Gives',
+    },
+    {
+      value: '5',
+      label: '5 Gives',
+    },
+    {
+      value: '6',
+      label: '6 Gives',
+    }
+  ];
   useEffect(() => {
     getAllProducts();
     const newTotalAmount = orderedProducts.reduce((total, product) => {
@@ -178,14 +178,14 @@ export default function ProductDistributionList(){
 
   }, [isDealerFound, products, orderedProducts]);
 
-/*   function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
-    return {
-      product: product,
-      quantity: quantity,
-      subtotal: product.price * quantity
-    };
-  }
- */
+  /*   function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
+      return {
+        product: product,
+        quantity: quantity,
+        subtotal: product.price * quantity
+      };
+    }
+   */
   function getAllProducts() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
       .then((response) => {
@@ -225,26 +225,26 @@ export default function ProductDistributionList(){
   };
 
 
-    const handleAddProduct = () => {
-      const value = quantityRef.current?.value;
-  
-      if (chosenProduct) {
-        const quantity = parseInt(value as string);
-        const productAmount = quantity * chosenProduct.price;
-        const newTableData = [...tableData, {
-          quantity: parseInt(value as string),
-          productName: chosenProduct.name,
-          productPrice: chosenProduct.price,
-          productUnit: chosenProduct.unit,
-          productCommissionRate: chosenProduct.commissionrate,
-          productAmount: productAmount
-        }];
-        const updatedTotalAmount = newTableData.reduce((sum, product) => sum + product.productAmount, 0);
-        setTotalAmount(updatedTotalAmount);
-  
-        setTableData(newTableData);
-      }
-    }; 
+  const handleAddProduct = () => {
+    const value = quantityRef.current?.value;
+
+    if (chosenProduct) {
+      const quantity = parseInt(value as string);
+      const productAmount = quantity * chosenProduct.price;
+      const newTableData = [...tableData, {
+        quantity: parseInt(value as string),
+        productName: chosenProduct.name,
+        productPrice: chosenProduct.price,
+        productUnit: chosenProduct.unit,
+        productCommissionRate: chosenProduct.commissionrate,
+        productAmount: productAmount
+      }];
+      const updatedTotalAmount = newTableData.reduce((sum, product) => sum + product.productAmount, 0);
+      setTotalAmount(updatedTotalAmount);
+
+      setTableData(newTableData);
+    }
+  };
 
   const handleUpdateQuantity = (product: IOrderedProducts, updatedQuantity: number) => {
     // Update the quantity of a product in the cart
@@ -405,19 +405,19 @@ export default function ProductDistributionList(){
                 onChange={(event, newValue) => setChosenProduct(newValue!)}
                 renderInput={(params) => (
                   <StyledProductField {...params} variant='outlined' InputProps={{
-                  ...params.InputProps, disableUnderline: true
-                }}
-                />)}
+                    ...params.InputProps, disableUnderline: true
+                  }}
+                  />)}
               />
               <QuantityName>Quantity</QuantityName>
-              <StyledQuantityField variant="outlined" InputProps={{ disableUnderline: true }} value={quantity} onChange={(e) =>setQuantity(e.target.value)} />
-              <AddToCart variant="contained" onClick={() => { handleAddToCart();}}>ADD TO CART</AddToCart>
+              <StyledQuantityField variant="outlined" InputProps={{ disableUnderline: true }} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+              <AddToCart variant="contained" onClick={() => { handleAddToCart(); }}>ADD TO CART</AddToCart>
             </Paper>
           </Grid>
         </Grid>
         <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
           <Grid item >
-          <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>
+            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>
               <TableContainer>
                 <Table aria-label='simple table'>
                   <TableHead>
@@ -433,12 +433,20 @@ export default function ProductDistributionList(){
                   <TableBody>
                     {orderedProducts.map((product) => (
                       <TableRow key={product.product.productid}>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }} ><input
-                          type="number"
-                          value={product.quantity}
-                          onChange={(e) =>
-                            handleUpdateQuantity(product, Number(e.target.value))
-                          } /></TableCell>
+                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>
+                          <input
+                            type="number"
+                            value={product.quantity}
+                            onChange={(e) => {
+                              const newValue = Number(e.target.value);
+                              if (newValue < 0) {
+                                handleUpdateQuantity(product, 0);
+                              } else {
+                                handleUpdateQuantity(product, newValue);
+                              }
+                            }}
+                          />
+                        </TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.unit}</TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.name}</TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price}</TableCell>
@@ -451,6 +459,9 @@ export default function ProductDistributionList(){
                 </Table>
               </TableContainer>
             </Paper>
+            <br></br>
+            <Paper sx={{width:'200px',display: 'flex', marginLeft:'auto', alignContent:'center'}}><Typography sx={{fontSize: 15,color: "#000000",fontWeight: "bold"}}>Total Amount:</Typography><Typography>  Php {totalAmount}</Typography></Paper>
+            <br></br>
           </Grid>
         </Grid>
         <Button variant='contained' sx={{ background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6, paddingRight: 6, fontWeight: 'bold', borderRadius: 5 }} disabled={!isDealerFound}

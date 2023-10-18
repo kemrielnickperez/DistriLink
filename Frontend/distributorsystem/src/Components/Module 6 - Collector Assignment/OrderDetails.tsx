@@ -83,7 +83,7 @@ export function OrderDetails() {
     const { objectId } = useParams();
 
     const navigate = useNavigate();
-    
+
     const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
     const [paymentTransactionsObjects, setPaymentTransactionsObjects] = useState<IPaymentTransaction[]>([]);
@@ -124,50 +124,50 @@ export function OrderDetails() {
     }
 
 
-        return (
-            <div>
-                <ContentNameTypography>Order Transaction Details</ContentNameTypography>
-                <StyldeInfoHeader>Dealer Contact Information</StyldeInfoHeader>
-                {/* set style left manually here in stack */}
-                <StackStyle sx={{ left: '15%' }}>
-                    <StyleLabel>Dealer Name</StyleLabel>
-                    <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
-                </StackStyle>
-                <StackStyle sx={{ left: '33%' }}>
-                    <StyleLabel>Dealer ID</StyleLabel>
-                    <StyleData>{order?.dealer.dealerid}</StyleData>
-                </StackStyle>
-                <StackStyle sx={{ left: '45%' }}>
-                    <StyleLabel>Email Address</StyleLabel>
-                    <StyleData>johndoe@gmail.com</StyleData>
-                </StackStyle>
-                <StackStyle sx={{ left: '59%' }}>
-                    <StyleLabel>Contact Number</StyleLabel>
-                    <StyleData>{order?.dealer.contactnumber}</StyleData>
-                </StackStyle>
-                <StackStyle sx={{ left: '72%' }}>
-                    <StyleLabel>Address</StyleLabel>
-                    <StyleData>{order?.dealer.currentaddress}</StyleData>
-                </StackStyle>
-                <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader>
-                {/* set style left and top manually here in stack */}
-                <StackStyle sx={{ left: '15%', top: '350px' }}>
-                    <StyleLabel>Order Transaction ID</StyleLabel>
-                    <StyleData>{order?.orderid}</StyleData>
-                </StackStyle>
-                <StackStyle sx={{ left: '33%', top: '350px' }}>
-                    <StyleLabel>Order Transaction Date</StyleLabel>
-                    <StyleData>{order?.orderdate}</StyleData>
-                </StackStyle>
-                <StackStyle sx={{ left: '50%', top: '350px' }}>
-                    <StyleLabel>Total Ordered Amount</StyleLabel>
-                    <StyleData>{order?.orderamount}</StyleData>
-                </StackStyle>
+    return (
+        <div>
+            <ContentNameTypography>Order Transaction Details</ContentNameTypography>
+            <StyldeInfoHeader>Dealer Contact Information</StyldeInfoHeader>
+            {/* set style left manually here in stack */}
+            <StackStyle sx={{ left: '15%' }}>
+                <StyleLabel>Dealer Name</StyleLabel>
+                <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '33%' }}>
+                <StyleLabel>Dealer ID</StyleLabel>
+                <StyleData>{order?.dealer.dealerid}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '45%' }}>
+                <StyleLabel>Email Address</StyleLabel>
+                <StyleData>johndoe@gmail.com</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '59%' }}>
+                <StyleLabel>Contact Number</StyleLabel>
+                <StyleData>{order?.dealer.contactnumber}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '72%' }}>
+                <StyleLabel>Address</StyleLabel>
+                <StyleData>{order?.dealer.currentaddress}</StyleData>
+            </StackStyle>
+            <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader>
+            {/* set style left and top manually here in stack */}
+            <StackStyle sx={{ left: '15%', top: '350px' }}>
+                <StyleLabel>Order Transaction ID</StyleLabel>
+                <StyleData>{order?.orderid}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '33%', top: '350px' }}>
+                <StyleLabel>Order Transaction Date</StyleLabel>
+                <StyleData>{order?.orderdate}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '50%', top: '350px' }}>
+                <StyleLabel>Total Ordered Amount</StyleLabel>
+                <StyleData>{order?.orderamount}</StyleData>
+            </StackStyle>
 
-                {/* Payment Transaction Information */}
-                <StyldeInfoHeader>Payment Transaction Information</StyldeInfoHeader>
-                {order?.paymenttransactions?.length !== 0 ? (
-
+            {/* Payment Transaction Information */}
+            <StyldeInfoHeader>Payment Transaction Information</StyldeInfoHeader>
+            {order?.paymenttransactions?.length !== 0 ? (
+                <div>
                     <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '-5% 0px 50px 12%' }}>
                         <TableContainer >
                             <Table aria-label='simple table' >
@@ -218,25 +218,24 @@ export function OrderDetails() {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-
-
-                        <StyledButton>View / Edit Payment Transaction in the Scheduling Page</StyledButton> 
                     </Paper>
 
-                    
+                    <h2 style={{ color: 'grey', marginTop: '50px', textDecoration: 'underline black 2px', fontStyle: 'italic' }} onClick={() => handleH2Click()}> Edit Payment Transaction in the Scheduling Page. </h2>
 
-                ) : (
-                    <div>
-                        <h2 style={{ color: 'grey', marginTop: '50px', textDecoration: 'underline black 2px', fontStyle: 'italic'}} onClick={() => handleH2Click()}> No schedules yet. Set Payment Transaction in the Scheduling Page. </h2>
-                    </div>
+                </div>
 
-                )
+            ) : (
+                <div>
+                    <h2 style={{ color: 'grey', marginTop: '50px', textDecoration: 'underline black 2px', fontStyle: 'italic' }} onClick={() => handleH2Click()}> No schedules yet. Set Payment Transaction in the Scheduling Page. </h2>
+                </div>
 
-                }
-                
+            )
+
+            }
 
 
-            </div>
-        );
 
-    }
+        </div>
+    );
+
+}

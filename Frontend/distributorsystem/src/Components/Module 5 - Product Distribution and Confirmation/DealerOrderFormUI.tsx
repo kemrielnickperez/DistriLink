@@ -392,12 +392,20 @@ export default function DealerOrderForm() {
                   <TableBody>
                     {orderedProducts.map((product) => (
                       <TableRow key={product.product.productid}>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }} ><input
-                          type="number"
-                          value={product.quantity}
-                          onChange={(e) =>
-                            handleUpdateQuantity(product, Number(e.target.value))
-                          } /></TableCell>
+                       <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>
+                          <input
+                            type="number"
+                            value={product.quantity}
+                            onChange={(e) => {
+                              const newValue = Number(e.target.value);
+                              if (newValue < 0) {
+                                handleUpdateQuantity(product, 0);
+                              } else {
+                                handleUpdateQuantity(product, newValue);
+                              }
+                            }}
+                          />
+                        </TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.unit}</TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.name}</TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price}</TableCell>
