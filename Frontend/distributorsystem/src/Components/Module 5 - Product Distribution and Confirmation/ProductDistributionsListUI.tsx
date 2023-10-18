@@ -19,7 +19,7 @@ const ContentNameTypography = styled(Typography)({
     marginTop: 60,
     marginBottom: 35,
     marginLeft: 65,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     textAlign: 'left',
     fontSize: '25px',
@@ -29,7 +29,7 @@ const ContentNameTypography = styled(Typography)({
 const StyledButton = styled(Button)({
     backgroundColor: '#2D85E7',
     color: '#FFFFFF',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontSize: '15px',
     width: '50px',
     height: 35,
@@ -45,7 +45,7 @@ const StyledAddButton = styled(Button)({
     display: 'flex',
     marginLeft: 30,
     color: '#FFFFFF',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontSize: '15px',
     width: '350px',
     height: 35,
@@ -79,6 +79,7 @@ export default function ProductDistributionList() {
         { field: 'dealerName', headerName: 'Dealer Name', width: 250 },
         { field: 'orderId', headerName: 'Order Transaction ID', width: 250 },
         { field: 'orderDate', headerName: 'Order Date', width: 250 },
+        {field: 'confirmed', headerName: 'Status', width: 250},
         {
             field: 'action', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
@@ -87,7 +88,12 @@ export default function ProductDistributionList() {
                         onClick={() => {
                             // Handle button click for this row here
                             console.log('Button clicked for row:', params.row.orderId);
+                            if(params.row.confirmed === false){
+
+                                handleViewButtonFalse(params.row.orderId);
+                            }else{
                             handleViewButtonClick(params.row.orderId);
+                        }
                         }}
                     >
                         View
@@ -104,13 +110,20 @@ export default function ProductDistributionList() {
         dealerName: `${orderItem.dealer.firstname} ${orderItem.dealer.middlename} ${orderItem.dealer.lastname}`,
         orderId: orderItem.orderid,
         orderDate: orderItem.orderdate,
+        confirmed: orderItem.confirmed
     }));
 
     const handleViewButtonClick = (objectId: string) => {
         console.log(objectId);
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
+        
         navigate(`/orderTransactionDetails/${objectId}`);
     };
+
+    const handleViewButtonFalse = (objectId : string) => {
+
+        navigate(`/orderConfirmation/${objectId}`);
+    }
 
 
     return (

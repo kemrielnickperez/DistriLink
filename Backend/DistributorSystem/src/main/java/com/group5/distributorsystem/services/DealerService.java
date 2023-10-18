@@ -81,4 +81,14 @@ public class DealerService {
         }
     }
 
+    public void updateDealerDetails(String dealerId, Dealer updatedDealer){
+        Optional<Dealer> dealer = dealerRepository.findById(dealerId);
+
+        if (dealer.isPresent()){
+
+
+
+        }
+    }
+
 }

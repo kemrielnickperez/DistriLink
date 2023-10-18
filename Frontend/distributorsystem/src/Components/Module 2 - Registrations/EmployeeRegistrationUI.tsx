@@ -209,7 +209,7 @@ export default function EmployeeRegistration() {
             firstname: String(firstnameRef.current?.value),
             middlename: String(middlenameRef.current?.value),
             lastname: String(lastnameRef.current?.value),
-            email: String(emailRef.current?.value),
+            emailaddress: String(emailRef.current?.value),
             password: String(passwordRef.current?.value),
             birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
             gender: gender,

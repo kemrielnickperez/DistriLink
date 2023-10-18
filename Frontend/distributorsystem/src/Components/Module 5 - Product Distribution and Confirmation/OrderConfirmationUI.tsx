@@ -13,6 +13,7 @@ import { IOrder, IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router';
 
 const StyledDatePicker = styled(DatePicker)({
   [`& fieldset`]: {
@@ -111,6 +112,8 @@ const OverallGrid = styled(Grid)({
 
 export default function OrderConfirmation() {
 
+  const {objectId} = useParams();
+  
   const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder] = useRestOrder();
 
   const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
@@ -138,7 +141,7 @@ export default function OrderConfirmation() {
   const dealerIDRef = useRef<TextFieldProps>(null);
 
 
-  const orderID = '7955070b';
+  const orderID = 'fa20eeaf';
 
   const paymentchoices = [
     {
@@ -174,7 +177,7 @@ export default function OrderConfirmation() {
   const [isMounted, setIsMounted] = useState(false);
 
   const handleFindOrder = () => {
-    getOrderByID(orderID);
+    getOrderByID(objectId!);
   }
 
 
@@ -204,7 +207,7 @@ export default function OrderConfirmation() {
         return total + product.product.price * product.quantity;
       }, 0);
 
-      setTotalAmount(newTotalAmount);
+     
 
 
 
@@ -213,6 +216,7 @@ export default function OrderConfirmation() {
     }
 
     setOrderedProducts(order?.orderedproducts!);
+    setTotalAmount(order?.orderamount!);
 
 
     /* getAllProducts();
@@ -277,7 +281,7 @@ export default function OrderConfirmation() {
           return total + product.product.price * product.quantity;
         }, 0);
 
-
+        setTotalAmount(orderAmount)
         setOrderedProducts(updatedOrderedProducts);
         setChosenProduct(null);
         setQuantity('');
@@ -321,6 +325,10 @@ export default function OrderConfirmation() {
 
 
   const handleSaveOrder = () => {
+    if(penaltyRateRef === null || selectedDate === null || paymentTerm === 0){
+      alert("Please fill in all the necessary fields.")
+    }
+    else{
     console.log("1" + orderedProducts)
     const existingOrderId = order?.orderid
     const existingOrderedProducts = order?.orderedproducts
@@ -349,11 +357,10 @@ export default function OrderConfirmation() {
 
   }
 
+  }
 
-  const handleFindDealer = () => {
-    getDealerByID(dealerIDRef.current?.value + "")
-  };
 
+ 
 
 
 
@@ -390,7 +397,6 @@ export default function OrderConfirmation() {
    <Typography sx={{ marginRight: '90px', marginLeft: -8   }}>{order?.orderid}</Typography>
   <Typography sx={{ marginRight: '100px', marginLeft: 1 }}>{order?.dealer.dealerid}</Typography>
   <Typography sx={{ marginRight: '20px', marginLeft: 1 }}>{order?.dealer.firstname + " " + order?.dealer.middlename + " " + order?.dealer.lastname}</Typography>
-  <Typography sx={{ marginRight: '20px', marginLeft: 1 }}>{order?.distributiondate}</Typography>
   <LocalizationProvider dateAdapter={AdapterDayjs}>
     <StyledDatePicker
       sx={{ marginLeft: '20px', marginRight: '20px' }}
@@ -465,12 +471,20 @@ export default function OrderConfirmation() {
                   <TableBody>
                     {orderedProducts?.map((product) => (
                       <TableRow key={product.product.productid}>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }} ><input
-                          type="number"
-                          value={product.quantity}
-                          onChange={(e) =>
-                            handleUpdateQuantity(product, Number(e.target.value))
-                          } /></TableCell>
+                       <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>
+                          <input
+                            type="number"
+                            value={product.quantity}
+                            onChange={(e) => {
+                              const newValue = Number(e.target.value);
+                              if (newValue < 0) {
+                                handleUpdateQuantity(product, 0);
+                              } else {
+                                handleUpdateQuantity(product, newValue);
+                              }
+                            }}
+                          />
+                        </TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.unit}</TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.name}</TableCell>
                         <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price}</TableCell>
@@ -483,6 +497,9 @@ export default function OrderConfirmation() {
                 </Table>
               </TableContainer>
             </Paper>
+            <br></br>
+            <Paper sx={{width:'200px',display: 'flex', marginLeft:'auto', alignContent:'center'}}><Typography sx={{fontSize: 15,color: "#000000",fontWeight: "bold"}}>Total Amount:</Typography><Typography>  Php {totalAmount}</Typography></Paper>
+            <br></br>
           </Grid>
         </Grid>
         <Button variant='contained' sx={{ background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6, paddingRight: 6, fontWeight: 'bold', borderRadius: 5 }}

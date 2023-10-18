@@ -38,7 +38,7 @@ export interface IEmployee {
     firstname: string,
     middlename: string,
     lastname: string,
-    email :String,
+    emailaddress :String,
     password: String,
     birthdate: string,
     gender: string,

@@ -19,7 +19,7 @@ const ContentNameTypography = styled(Typography)({
     marginTop: 60,
     marginBottom: 35,
     marginLeft: 65,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     textAlign: 'left',
     fontSize: '25px',
@@ -29,7 +29,7 @@ const ContentNameTypography = styled(Typography)({
 const StyledButton = styled(Button)({
     backgroundColor: '#2D85E7',
     color: '#FFFFFF',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontSize: '15px',
     width: '50px',
     height: 35,
@@ -46,8 +46,7 @@ export default function EmployeeProfileListUI() {
 
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
-        axios
-            .get<IEmployee[]>('http://localhost:8080/employee/getAllEmployees')
+        axios.get<IEmployee[]>('http://localhost:8080/employee/getAllEmployees')
             .then((response) => {
                 setEmployee(response.data);
             })
@@ -68,7 +67,6 @@ export default function EmployeeProfileListUI() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.id);
                             handleViewButtonClick(params.row.id);
                         }}
                     >
@@ -90,10 +88,8 @@ export default function EmployeeProfileListUI() {
         ].filter(Boolean).join(', ')
     }));
 
-    const handleViewButtonClick = (empId: string) => {
-        console.log(empId);
-        // Use the `navigate` function to navigate to the details page with the empId as a parameter
-        navigate(`/employeeProfileDetails/${empId}`);
+    const handleViewButtonClick = (objectId: string) => {
+        navigate(`/employeeProfileDetails/${objectId}`);
     };
 
 
