@@ -8,6 +8,8 @@ import employee1 from '../../Global Components/employee1.png'
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 import { Dayjs } from "dayjs";
 import { v4 as uuidv4 } from 'uuid';
+import { IEmployeeDocument } from "../../RestCalls/Interfaces";
+import moment from "moment";
 
 const ImageStyle = styled(Typography)({
     display: 'flex',
@@ -145,6 +147,16 @@ const SignUpButton = styled(Button)({
 const GridField = styled(Grid)({
 
 })
+
+const TypographyLabelC = styled(Typography)({
+    textAlign: 'center',
+    fontSize: 12,
+    color: '#ffffff',
+    display: 'flex',
+    fontWeight: '550',
+    fontFamily: 'inter',
+})
+
 export default function EmployeeRegistration() {
 
 
@@ -155,6 +167,9 @@ export default function EmployeeRegistration() {
     const [isCashierSelected, setIsCashierSelected] = useState<boolean>(false);
     const [isSalesAssociateSelected, setIsSalesAssociateSelected] = useState<boolean>(false);
     const [isCollectorSelected, setIsCollectorSelected] = useState<boolean>(false)
+    const [selectedProfilePicture, setSelectedProfilePicture] = useState<File>();
+    const [employeeDocuments, setEmployeeDocuments] = useState<IEmployeeDocument[]>([]);
+
     const firstnameRef = useRef<TextFieldProps>(null)
     const middlenameRef = useRef<TextFieldProps>(null)
     const lastnameRef = useRef<TextFieldProps>(null)
@@ -198,11 +213,69 @@ export default function EmployeeRegistration() {
         console.log(event.target.checked);
     };
 
+    const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedProfilePicture(event.target.files?.[0]);
+    };
 
 
-    const handleNewEmployee = () => {
+    // Function to create an IDealerDocument from a selected file
+    const createDocument = async (file: File | null, name: string) => {
+        if (file) {
+            // Create a Promise to read the file as an array buffer
+            const readFileAsArrayBuffer = (file: File) =>
+                new Promise<ArrayBuffer>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        if (event.target && event.target.result instanceof ArrayBuffer) {
+                            resolve(event.target.result);
+                        } else {
+                            resolve(new ArrayBuffer(0));
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                });
+
+            // Read the file content as an array buffer
+            const fileContentArrayBuffer = await readFileAsArrayBuffer(file);
+
+            // Create a Uint8Array from the array buffer
+            const content = new Uint8Array(fileContentArrayBuffer);
+
+            return {
+                documentid: uuidv4().slice(0, 8),
+                name: name,
+                type: file.type,
+                content,
+                employee: null,
+            };
+        }
+        return null;
+    };
+
+    const handleFiles = async () => {
+
+        const profilepictureDocument = await createDocument(selectedProfilePicture!, String(lastnameRef.current?.value) + "_profilepicture");
+
+
+        // Create an array with the new documents and update the state
+        const newEmployeeDocuments: IEmployeeDocument[] = [];
+        if (profilepictureDocument) newEmployeeDocuments.push(profilepictureDocument);
+
+        setEmployeeDocuments((prevDealerDocuments) => [...prevDealerDocuments, ...newEmployeeDocuments]);
+
+        // You can access the updated dealerDocuments state after this update
+
+        return newEmployeeDocuments;
+    };
+
+
+
+    const handleNewEmployee = async () => {
         const uuid = uuidv4();
         const employeeuuid = uuid.slice(0, 8);
+
+        const newEmployeeDocuments = await handleFiles();
+
 
         newEmployee({
             employeeid: employeeuuid,
@@ -220,9 +293,11 @@ export default function EmployeeRegistration() {
             is_cashier: isCashierSelected,
             is_salesassociate: isSalesAssociateSelected,
             is_collector: isCollectorSelected,
-            orderids: [],
-            collectionpaymentids: []
-        });
+            submissiondate: moment().format('YYYY-MM-DD'),
+            orders: [],
+            collectionpaymentids: [],
+            documentids: []
+        }, newEmployeeDocuments!);
     };
 
     return (
@@ -325,6 +400,38 @@ export default function EmployeeRegistration() {
                     </Grid>
                 </GridField>
                 <GridField container spacing={0} >
+                    <GridField container spacing={8} >
+
+                        <Grid item>
+                            <label htmlFor="profilepicture-input">
+
+                                <Button variant="contained" component="span"
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '380px',
+                                        marginBottom: '43px',
+                                        margin: '10px 0 0 80px',
+                                        height: '40px',
+                                        marginRight: '-110px',
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}>
+                                    <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                        <input hidden accept=".jpeg,.jpg,.png" type="file"
+                                            onChange={handleProfilePictureFileChange}
+                                            style={{ display: 'none' }}
+                                            id="profilepicture-input" />
+                                        <UploadIcon />
+                                    </Icon>
+                                    <TypographyLabelC >Upload Profile Picture</TypographyLabelC>
+                                </Button>
+                            </label>
+                        </Grid>
+
+                    </GridField>
                     <Grid item>
                         <SignUpButton variant="contained" onClick={handleNewEmployee}>
                             Sign Up
