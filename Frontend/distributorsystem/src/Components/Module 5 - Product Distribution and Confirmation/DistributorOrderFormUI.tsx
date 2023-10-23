@@ -6,7 +6,7 @@ import { useRestDealer } from '../../RestCalls/DealerUseRest';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import { Dayjs } from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import dayjs, { Dayjs } from 'dayjs';
 import moment from 'moment';
 import { IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
 
@@ -132,6 +132,8 @@ export default function ProductDistributionList() {
 
   const [quantity, setQuantity] = useState<string>('');
 
+  const [minDate, setMinDate] = useState<Dayjs | null>(null);
+
   const quantityRef = useRef<TextFieldProps>(null);
   const penaltyRateRef = useRef<TextFieldProps>(null);
   const dealerIDRef = useRef<TextFieldProps>(null);
@@ -175,8 +177,12 @@ export default function ProductDistributionList() {
 
     // Update the total amount state
     setTotalAmount(newTotalAmount);
+    
+    setMinDate(dayjs() as Dayjs);
 
   }, [isDealerFound, products, orderedProducts]);
+
+ 
 
   /*   function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
       return {
@@ -381,6 +387,7 @@ export default function ProductDistributionList() {
                 }
               }}
               value={selectedDate}
+              minDate={minDate}
               onChange={(date) => setSelectedDate(date as Dayjs | null)} />
           </LocalizationProvider>
           <StyledTextField variant="outlined" InputProps={{ disableUnderline: true }} inputRef={penaltyRateRef}></StyledTextField>

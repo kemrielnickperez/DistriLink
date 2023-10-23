@@ -6,7 +6,7 @@ import { useRestDealer } from '../../RestCalls/DealerUseRest';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import { Dayjs } from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import dayjs, { Dayjs } from 'dayjs';
 import moment from 'moment';
 import { IOrder, IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
 
@@ -136,6 +136,8 @@ export default function OrderConfirmation() {
 
   const [quantity, setQuantity] = useState<string>('');
 
+  const [minDate, setMinDate] = useState<Dayjs | null>(null);
+
   const quantityRef = useRef<TextFieldProps>(null);
   const penaltyRateRef = useRef<TextFieldProps>(null);
   const dealerIDRef = useRef<TextFieldProps>(null);
@@ -217,6 +219,8 @@ export default function OrderConfirmation() {
 
     setOrderedProducts(order?.orderedproducts!);
     setTotalAmount(order?.orderamount!);
+
+    setMinDate(dayjs() as Dayjs);
 
 
     /* getAllProducts();
@@ -409,6 +413,7 @@ export default function OrderConfirmation() {
         }
       }}
       value={selectedDate}
+      minDate={minDate}
       onChange={(date) => setSelectedDate(date as Dayjs | null)}
     />
   </LocalizationProvider>
