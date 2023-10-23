@@ -1,6 +1,6 @@
 import axios, { } from "axios";
 import {  useState } from "react";
-import { IEmployee } from "./Interfaces";
+import { IEmployee, IEmployeeDocument } from "./Interfaces";
 
 
 
@@ -8,30 +8,45 @@ import { IEmployee } from "./Interfaces";
 
 
 
-export const useRestEmployee = (): [(employee: IEmployee) => void, (employeid: number) => void , (collectorID: number) => void, IEmployee | undefined] =>  {
+export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEmployeeDocument[]) => void, (employeid: number) => void , (collectorID: number) => void, IEmployee | undefined] =>  {
 
     const [collector, setCollector] = useState<IEmployee>();
     const [employee, setEmployee] = useState<IEmployee>();
 
-    function newEmployee(employee: IEmployee) {
+    function newEmployee(employee: IEmployee, employeeDocuments: IEmployeeDocument[]) {
     
-        axios.post('http://localhost:8080/employee/registerEmployee', {
-            employeeid: employee.employeeid,
-            firstname : employee.firstname,
-            middlename : employee.middlename,
-            lastname : employee.lastname,
-            emailaddress :employee.emailaddress,
-            password: employee.password,
-            birthdate : employee.birthdate,
-            gender : employee.gender,
-            currentaddress : employee.currentaddress,
-            permanentaddress : employee.permanentaddress,
-            contactnumber : employee.contactnumber,
-            tinnumber: employee.tinnumber,
-            is_cashier : employee.is_cashier,
-            is_salesassociate : employee.is_salesassociate,
-            is_collector : employee.is_collector,
-            orderids : [],
+        const formData = new FormData();
+
+        // Add dealer object properties to formData
+        formData.append('employeeid', employee.employeeid.toString());
+        formData.append('firstname', employee.firstname.toString());
+        formData.append('middlename', employee.middlename.toString());
+        formData.append('lastname', employee.lastname.toString());
+        formData.append('emailaddress', employee.emailaddress.toString());
+        formData.append('password', employee.password.toString());
+        formData.append('birthdate', employee.birthdate.toString());
+        formData.append('gender', employee.gender.toString());
+        formData.append('currentaddress', employee.currentaddress);
+        formData.append('permanentaddress', employee.permanentaddress);
+        formData.append('contactnumber', employee.contactnumber);
+        formData.append('submissiondate', employee.submissiondate);
+        formData.append('is_cashier', employee.is_cashier.toString());
+        formData.append('is_salesassociate', employee.is_salesassociate.toString());
+        formData.append('is_collector', employee.is_collector.toString());
+
+           employeeDocuments.forEach((document, index) => {
+           
+            formData.append(`documentid`, document.documentid);
+            formData.append(`name`, document.name);
+            formData.append(`type`, document.type);
+            formData.append(`content`, new Blob([document.content], { type: 'application/octet-stream' }));
+          }); 
+
+
+        axios.post('http://localhost:8080/employee/registerEmployee', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         })
             .then((response) => {
             
@@ -42,6 +57,8 @@ export const useRestEmployee = (): [(employee: IEmployee) => void, (employeid: n
                 alert("Error creating a new record. Please try again.");
             });
     }
+
+    
 
     function getCollectorByID(collectorID:number) {
         

@@ -47,8 +47,18 @@ export interface IEmployee {
     is_cashier: boolean,
     is_salesassociate: boolean,
     is_collector: boolean,
-    orderids: string[],
-    collectionpaymentids: string[] 
+    submissiondate: string,
+    orders: IOrder[],
+    collectionpaymentids: string[],
+    documentids: string[],
+}
+
+export interface IEmployeeDocument {
+    documentid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    employee: IEmployee | null; // You can reference the 'IDealer' interface you've already defined.
 }
 
 
