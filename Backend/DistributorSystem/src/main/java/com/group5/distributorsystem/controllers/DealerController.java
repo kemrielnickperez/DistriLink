@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RequestMapping("/dealer")
 public class DealerController {
 
@@ -44,5 +44,27 @@ public class DealerController {
         return new ResponseEntity<>(dealerService.getDealerByID(dealerid), HttpStatus.OK);
     }
 
+    @GetMapping("/getCreditLimit/{dealerId}")
+    public ResponseEntity<Object> getCreditLimit(@PathVariable String dealerId) {
+        double creditLimit = dealerService.getDealerCreditLimit(dealerId);
+        return new ResponseEntity<>(creditLimit, HttpStatus.OK);
+    }
+
+    @PutMapping("/updateCreditLimit")
+    public ResponseEntity<Object> updateCreditLimit(@RequestParam String dealerId, @RequestParam double newCreditLimit) {
+        dealerService.updateDealerCreditLimit(dealerId, newCreditLimit);
+        return new ResponseEntity<>("Dealer credit limit updated successfully!", HttpStatus.OK);
+    }
+
+    @PutMapping("/setDealer/{dealerId}")
+    public ResponseEntity<String> updateDealerDetails(@PathVariable String dealerId, @RequestBody Dealer updatedDealer) {
+        try {
+            dealerService.updateDealerDetails(dealerId, updatedDealer);
+            return ResponseEntity.ok("Dealer set");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to set dealer" + e.getMessage());
+        }
+    }
 
 }

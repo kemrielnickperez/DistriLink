@@ -79,19 +79,19 @@ export function EmployeeProfileDetails() {
   const [employee, setEmployee] = useState<IEmployee | null>(null);
 
   // Use useParams to get the employee from the URL
-  const { empId } = useParams();
+  const { objectId } = useParams();
 
   useEffect(() => {
     // Make an Axios GET request to fetch the employee data using the objectId
     axios
-      .get<IEmployee>(`http://localhost:8080/employee/getEmployeeByID/${empId}`)
+      .get<IEmployee>(`http://localhost:8080/employee/getEmployeeByID/${objectId}`)
       .then((response) => {
         setEmployee(response.data);
       })
       .catch((error) => {
         console.error("Error fetching employee data:", error);
       });
-  }, [empId]);
+  }, [objectId]);
 
 
 

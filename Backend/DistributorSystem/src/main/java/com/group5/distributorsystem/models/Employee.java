@@ -225,7 +225,7 @@ public class Employee {
     public void setPaymentreceiptids(Set<String> paymentreceiptids) {
         this.paymentreceiptids = paymentreceiptids;
     }
-
+    
     public Set<String> getCollectionpaymentids() {
         return collectionpaymentids;
     }
@@ -241,4 +241,5 @@ public class Employee {
     public void setDocumentids(Set<String> documentids) {
         this.documentids = documentids;
     }
+
 }

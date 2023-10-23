@@ -5,6 +5,7 @@ import { Box, Button, Card, Grid, Modal, TextField, Typography, styled } from "@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import { useRestDealer } from "../../RestCalls/DealerUseRest";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -31,7 +32,7 @@ const ContentNameTypography = styled(Typography)({
     marginTop: 60,
     marginBottom: 35,
     marginLeft: 65,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     textAlign: 'left',
     fontSize: '25px',
@@ -41,7 +42,7 @@ const ContentNameTypography = styled(Typography)({
 const StyledButton = styled(Button)({
     backgroundColor: '#2D85E7',
     color: '#FFFFFF',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontSize: '15px',
     width: '100px',
     height: 35,
@@ -54,16 +55,17 @@ const StyledButton = styled(Button)({
 
 export default function DealerProfileListUI() {
     const navigate = useNavigate();
-    const [dealer, setDealer] = useState<IDealer[] | null>(null);
+    const [dealer1, setDealer1] = useState<IDealer[] | null>(null);
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const [getDealerByID, newDealer,updateDealer, isDealerFound, dealer] = useRestDealer();
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
         axios
             .get<IDealer[]>('http://localhost:8080/dealer/getAllDealers')
             .then((response) => {
-                setDealer(response.data);
+                setDealer1(response.data);
             })
             .catch((error) => {
                 console.error('Error fetching dealer:', error);
@@ -78,12 +80,12 @@ export default function DealerProfileListUI() {
         {
             field: 'view', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
+                const dealer = params.row;
                 return (
                     <StyledButton
                         onClick={() => {
-                            // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.id);
-                            handleViewButtonClick(params.row.id);
+
+                            handleViewButtonClick(dealer.id);
                         }}
                     >
                         View
@@ -93,6 +95,7 @@ export default function DealerProfileListUI() {
         {
             field: 'pending', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
+                const dealer= params.row
                 return (
                     <><StyledButton variant='contained'
                         onClick={handleOpen} >
@@ -135,15 +138,15 @@ export default function DealerProfileListUI() {
         {
             field: 'confirm', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
+                const dealer = params.row
                 return (
                     <StyledButton
-                        onClick={() => {
-                            // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.id);
-                        }}
+                        onClick={() => handleConfirmButton(dealer.id)}
+                        
                     >
                         Confirm
-                    </StyledButton>)
+                    </StyledButton>
+                );
             }
         },
         {
@@ -153,7 +156,7 @@ export default function DealerProfileListUI() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.id);
+                        
                         }}
                     >
                         Decline
@@ -163,17 +166,43 @@ export default function DealerProfileListUI() {
 
     ]
     {/** Rows for DataGrid */ }
-    const rows = (dealer || []).map((dealerList) => ({
+    const rows = (dealer1 || []).map((dealerList) => ({
         id: dealerList.dealerid,
         dealerName: `${dealerList.firstname} ${dealerList.middlename} ${dealerList.lastname}`,
         submissionDate: dealerList.submissiondate
     }));
 
     const handleViewButtonClick = (objectId: string) => {
-        console.log(objectId);
+    
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
         navigate(`/dealerProfileDetails/${objectId}`);
     };
+    const handleConfirmButton = (objectId: string) => {
+        // Create the updated dealer object with only the "confirmed" property set to true
+        const confirmDealer = {
+            dealerid: objectId,
+            confirmed: true, // Set "confirmed" to true
+        };
+    
+        // If dealer1 is not null
+        if (dealer1) {
+            // Create a copy of the dealer1 array with updated dealers
+            const updatedDealer1 = dealer1.map((dealerItem) => {
+                // Check if the dealer's ID matches the objectId
+                if (dealerItem.dealerid === objectId) {
+                    return { ...dealerItem, ...confirmDealer };
+                } else {
+                    return dealerItem;
+                }
+            });
+    
+            // Update the state with the updated array
+            setDealer1(updatedDealer1);
+        }
+    
+        // Call the updateDealer function to update the "confirmed" property on the server
+        updateDealer(objectId);
+    }
 
 
 

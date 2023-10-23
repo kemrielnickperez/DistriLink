@@ -160,7 +160,7 @@ public class Order {
         this.paymenttransactions = paymenttransactions;
     }
 
-    public boolean isConfirmed() {
+    public boolean getConfirmed() {
         return isconfirmed;
     }
 

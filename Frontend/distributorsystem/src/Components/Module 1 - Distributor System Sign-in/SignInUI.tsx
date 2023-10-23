@@ -1,6 +1,7 @@
 import styled from "@emotion/styled"
 import { Box, Button, Grid, Link, TextField, TextFieldProps, Typography } from "@mui/material"
 import signin from "../../Global Components/Group 8 (1).png"
+import { useNavigate } from "react-router-dom"
 import { useEffect, useRef, useState } from "react"
 import axios from "axios"
 import Dashboard from "../Module 3 - Distributor Dashboard/DashboardUI"
@@ -97,17 +98,10 @@ export default function SignIn() {
                 password: password
             }
         })
-        axios.get('http://localhost:8080/employee/getAllEmployees', {
-            params: {
-                employeeid: userid,
-                password: password
-            }
-        })
-
             .then(response => {
                 if (response.status === 200) {
                     const user = response.data.find(
-                        (u: any) => u.dealerid === userid && u.password === password || u.employeeid === userid && u.password === password);
+                        (u: any) => u.dealerid === userid && u.password === password );
                     if (user) {
                         console.log(userid, password);
                         console.log("Login successful!");
@@ -118,7 +112,6 @@ export default function SignIn() {
                         console.log('Invalid username or password');
                         setCode(1);
                     }
-
                 } else {
                     console.log("error");
                 }

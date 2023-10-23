@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
-import { IDealer, IDealerDocument } from "../../RestCalls/Interfaces";
+import { IDealer, IDealerDocument, IDealerPaymentProof } from "../../RestCalls/Interfaces";
 import axios from "axios";
 import { Button, Grid, Icon, Modal, Paper, Stack, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
@@ -89,7 +89,7 @@ const StyleCredit = styled(Paper)({
     left: '-150px',
     top: '35px',
 
-  })
+})
 
 const ButtonInfo = styled(Button)({
     background: "#F5F7F9",
@@ -196,7 +196,7 @@ export default function DealerProfileDetails() {
         </>
     )
 
-    const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
+    const [getDealerByID, newDealer,updateDealer, isDealerFound, dealer] = useRestDealer();
 
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
 
@@ -212,7 +212,16 @@ export default function DealerProfileDetails() {
 
     const [editedCreditLimit, setEditedCreditLimit] = useState(dealer?.creditlimit);
 
+
+
+
+
+
+
     const basicInfoClickHandler = () => {
+
+
+
         setDisplayInfo(<BasicInfo />)
     };
 
@@ -231,8 +240,22 @@ export default function DealerProfileDetails() {
     }
 
 
+    const handleFindDealer = () => {
+        getDealerByID(objectId!);
+    };
+    function getAllDealerDocuments() {
+        axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId!}`)
+            .then((response) => {
 
-    // Check if objectId is defined before calling the getDealerByID function
+                setDealerDocuments(response.data);
+
+            })
+            .catch((error) => {
+                alert("Error retrieving dealer documents. Please try again.");
+            });
+    };
+
+
     useEffect(() => {
         if (objectId) {
             handleFindDealer();
@@ -240,27 +263,7 @@ export default function DealerProfileDetails() {
         }
     }, [objectId, dealer, dealerDocuments]);
 
-    const handleFindDealer = () => {
-     
-        getDealerByID("1aca2058");
-    };
 
-    function getAllDealerDocuments() {
-        axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId!}`)
-            .then((response) => {
-                setDealerDocuments(response.data);
-
-            })
-            .catch((error) => {
-                alert("Error retrieving dealer documents. Please try again.");
-            });
-    }
-
-
-    // useLayoutEffect(() => {
-    //     handleFindDealer();
-    //     getAllDealerDocuments();
-    // }, [dealer, dealerDocuments]);
 
     const displayFile = (base64Content: Uint8Array | null, fileType: string, docname: string, documentid: string, dealerparam: IDealer) => {
         if (base64Content) {
@@ -308,23 +311,18 @@ export default function DealerProfileDetails() {
     };
 
     const handleSaveCreditLimit = () => {
-        // Send the updated credit limit to the server using an API call.
-        // You'll need to implement the API endpoint for updating the credit limit.
-        // After a successful update, you can set isEditing to false.
-
-        // Example API call using Axios (make sure to import Axios):
-        axios.put(`http://your-api-endpoint/update-credit-limit`, {
+        axios.put(`http://localhost:8080/dealer/updateCreditLimit`, {
             dealerId: dealer?.dealerid,
-            creditLimit: editedCreditLimit,
+            newCreditLimit: editedCreditLimit,
         })
-            .then((response) => {
-                setIsEditing(false);
-                // You can update the 'dealer' object in the state with the updated credit limit here if needed.
-            })
-            .catch((error) => {
-                console.error("Error updating credit limit:", error);
-                // Handle the error appropriately.
-            });
+        .then((response) => {
+            setIsEditing(false);
+            // You can update the 'dealer' object in the state with the updated credit limit here if needed.
+        })
+        .catch((error) => {
+            console.error("Error updating credit limit:", error);
+            // Handle the error appropriately.
+        });
     };
 
     const handleCancelEdit = () => {
@@ -332,6 +330,7 @@ export default function DealerProfileDetails() {
         // Reset the edited credit limit to the current value.
         setEditedCreditLimit(dealer?.creditlimit);
     };
+
 
 
     return (
@@ -367,12 +366,12 @@ export default function DealerProfileDetails() {
                                         <ButtonCredit variant="contained" onClick={handleSaveCreditLimit} >
                                             Save
                                         </ButtonCredit>
-                                        </div>
+                                    </div>
                                     <div>
-                                        <ButtonCredit variant="contained"  onClick={handleCancelEdit} >
+                                        <ButtonCredit variant="contained" onClick={handleCancelEdit} >
                                             Cancel
                                         </ButtonCredit>
-                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ) : (

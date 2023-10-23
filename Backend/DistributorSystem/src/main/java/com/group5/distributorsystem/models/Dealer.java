@@ -51,6 +51,10 @@ public class Dealer {
 
     private LocalDate submissiondate;
 
+    private Boolean isconfirmed;
+
+    private String remarks;
+
     private Set<String> orderids = new HashSet<>();;
 
     private Set<String> documentids = new HashSet<>();
@@ -59,7 +63,7 @@ public class Dealer {
     }
 
 
-    public Dealer(String dealerid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, Set<String> orderids, Set<String> documentids) {
+    public Dealer(String dealerid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, Boolean isconfirmed, String remarks, Set<String> orderids, Set<String> documentids) {
         this.dealerid = dealerid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -78,6 +82,8 @@ public class Dealer {
         this.businesstin = businesstin;
         this.creditlimit = creditlimit;
         this.submissiondate = submissiondate;
+        this.isconfirmed = isconfirmed;
+        this.remarks = remarks;
         this.orderids = orderids;
         this.documentids = documentids;
     }
@@ -226,6 +232,22 @@ public class Dealer {
         this.submissiondate = submissiondate;
     }
 
+    public Boolean getConfirmed() {
+        return isconfirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        isconfirmed = confirmed;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
     public Set<String> getOrderids() {
         return orderids;
     }
@@ -241,4 +263,6 @@ public class Dealer {
     public void setDocumentids(Set<String> documentids) {
         this.documentids = documentids;
     }
+
+
 }
