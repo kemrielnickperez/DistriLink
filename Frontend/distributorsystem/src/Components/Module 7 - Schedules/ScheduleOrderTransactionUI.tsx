@@ -153,15 +153,23 @@ export default function Schedules() {
     const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
 
     const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
-    const index = 0;
+    
+    const [initialMinDate, setInitialMinDate] = useState<Dayjs | null>(null);
+
+    const [endingMinDate, setEndingMinDate] = useState<Dayjs | null>(null);
+
 
     useEffect(() => {
         if (order && order.paymenttransactions) {
             // Clone the array and sort it
             const sorted = [...order.paymenttransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
             setSortedPaymentTransactions(sorted);
+
         }
+        setInitialMinDate(dayjs() as Dayjs);
+        
     }, [order, paymentTransaction]);
+
 
 
 
@@ -381,6 +389,7 @@ export default function Schedules() {
                                                                     }
                                                                 }}
                                                                 value={dayjs(transaction.enddate)}
+                                                                minDate={dayjs(transaction.enddate)}
                                                                 onChange={(newValue) => handleEndDateUpdate(newValue)} />
 
                                                         </LocalizationProvider>
@@ -440,6 +449,7 @@ export default function Schedules() {
                                                     }
                                                 }}
                                                 value={dayjs(startDate)}
+                                                minDate={initialMinDate}
                                                 onChange={(e) => setStartDate(e)} />
                                             
                                         </LocalizationProvider>
