@@ -268,6 +268,8 @@ export default function OrderConfirmation() {
 
       if (existingProductIndex !== -1) {
         alert('Product already added to the cart');
+        setChosenProduct(null);
+        setQuantity('');
       } else {
         const newOrderedProduct: IOrderedProducts = {
           orderedproductid: orderedproductuuid,
@@ -317,16 +319,19 @@ export default function OrderConfirmation() {
     setOrderedProducts(updatedProducts);
   };
 
-  const handleRemoveLastProduct = () => {
-    const lastProduct = tableData[tableData.length - 1];
-    const lastProductAmount = lastProduct.productAmount;
+ 
 
-    setTableData(tableData.slice(0, -1));
-    setTotalAmount(totalAmount - lastProductAmount);
+  const clearInputValues = () => {
+    setOrderedProducts([]);
+    setSelectedDate(null);
+    setPaymentTerm(0);
+    setTotalAmount(0);
 
-    // setOrderedProducts(orderedProducts.slice(0, -1));
-  };
+    if (penaltyRateRef.current?.value) {
+      penaltyRateRef.current!.value = '';
+    }
 
+  }
 
   const handleSaveOrder = () => {
     if(penaltyRateRef === null || selectedDate === null || paymentTerm === 0){
@@ -358,7 +363,8 @@ export default function OrderConfirmation() {
     };
     // Call the updateOrder function with the order ID and updated order data
     updateOrder(existingOrderId, updatedOrder);
-
+    //if possible kay ara na siya mo clear after sa snackbar
+    clearInputValues();
   }
 
   }
