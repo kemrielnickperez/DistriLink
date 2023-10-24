@@ -414,11 +414,11 @@ export default function Schedules() {
             ) : order.collector === null ? (
 
                 <div>
-                    <h2 style={{ color: 'white', marginTop: '50px' }}> No Collector Assigned</h2>
+                    <h2 style={{ color: 'black', marginTop: '50px' }}> No Collector Assigned</h2>
                 </div>
             ) : (
                 <div>
-                    <h2 style={{ color: 'white', marginTop: '50px' }}> no schedules yet</h2>
+                    <h2 style={{ color: 'black', marginTop: '50px' }}> no schedules yet</h2>
 
                     <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
                         <Grid item>

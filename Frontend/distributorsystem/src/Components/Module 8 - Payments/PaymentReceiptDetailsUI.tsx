@@ -306,8 +306,7 @@ export function PaymentReceiptDetails() {
                     </StackStyle>
                     <StackStyle sx={{ top: '40%', left: '44%' }}>
                         <StyleLabel>Receiver Name</StyleLabel>
-                        <StyleData>{collectionPaymentReceipt?.confirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
-                            : ''} </StyleData>
+                        <StyleData>{paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname} </StyleData>
                     </StackStyle>
                     <StackStyle sx={{ top: '40%', left: '60%' }}>
                         <StyleLabel>Remarks</StyleLabel>
