@@ -153,15 +153,23 @@ export default function Schedules() {
     const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
 
     const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
-    const index = 0;
+    
+    const [initialMinDate, setInitialMinDate] = useState<Dayjs | null>(null);
+
+    const [endingMinDate, setEndingMinDate] = useState<Dayjs | null>(null);
+
 
     useEffect(() => {
         if (order && order.paymenttransactions) {
             // Clone the array and sort it
             const sorted = [...order.paymenttransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
             setSortedPaymentTransactions(sorted);
+
         }
+        setInitialMinDate(dayjs() as Dayjs);
+        
     }, [order, paymentTransaction]);
+
 
 
 
@@ -381,6 +389,7 @@ export default function Schedules() {
                                                                     }
                                                                 }}
                                                                 value={dayjs(transaction.enddate)}
+                                                                minDate={dayjs(transaction.enddate)}
                                                                 onChange={(newValue) => handleEndDateUpdate(newValue)} />
 
                                                         </LocalizationProvider>
@@ -414,11 +423,11 @@ export default function Schedules() {
             ) : order.collector === null ? (
 
                 <div>
-                    <h2 style={{ color: 'white', marginTop: '50px' }}> No Collector Assigned</h2>
+                    <h2 style={{ color: 'black', marginTop: '50px' }}> No Collector Assigned</h2>
                 </div>
             ) : (
                 <div>
-                    <h2 style={{ color: 'white', marginTop: '50px' }}> no schedules yet</h2>
+                    <h2 style={{ color: 'black', marginTop: '50px' }}> no schedules yet</h2>
 
                     <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
                         <Grid item>
@@ -440,6 +449,7 @@ export default function Schedules() {
                                                     }
                                                 }}
                                                 value={dayjs(startDate)}
+                                                minDate={initialMinDate}
                                                 onChange={(e) => setStartDate(e)} />
                                             
                                         </LocalizationProvider>

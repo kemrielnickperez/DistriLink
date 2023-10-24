@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Button, FormControlLabel, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
 import dealer1 from '../../Global Components/dealer1.png'
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import { IDealer, IDealerDocument } from "../../RestCalls/Interfaces";
 import moment from "moment";
 import { v4 as uuidv4 } from 'uuid';
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 const ImageStyle = styled(Typography)({
     display: 'flex',
@@ -176,7 +176,7 @@ export default function DealerRegistration() {
     const [selectedContract, setSelectedContract] = useState<File>();
     const [selectedBusinessDocs, setSelectedBusinessDocs] = useState<File | null>();
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
-
+    const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
 
     const firstnameRef = useRef<TextFieldProps>(null)
     const middlenameRef = useRef<TextFieldProps>(null)
@@ -224,6 +224,7 @@ export default function DealerRegistration() {
     const handleHasBusinessChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedBusinessOpt(event.target.checked);
     };
+
 
 
     // Function to create an IDealerDocument from a selected file
@@ -283,6 +284,7 @@ export default function DealerRegistration() {
     };
 
 
+
     const handleNewDealer = async () => {
 
         const newDealerDocuments = await handleFiles();
@@ -316,7 +318,11 @@ export default function DealerRegistration() {
         }, newDealerDocuments!);
     };
 
-
+    useEffect(() => {
+        const currentDate = dayjs().subtract(18, 'year') as Dayjs;
+        setMaxDate(currentDate);
+        //setSelectedBDate(currentDate);
+    }, []);
 
 
     return (
@@ -367,6 +373,7 @@ export default function DealerRegistration() {
                                         }
                                     }}
                                     value={selectedBDate}
+                                    maxDate={maxDate}
                                     onChange={(date) => setSelectedBDate(date as Dayjs | null)}
                                 />
                             </LocalizationProvider>

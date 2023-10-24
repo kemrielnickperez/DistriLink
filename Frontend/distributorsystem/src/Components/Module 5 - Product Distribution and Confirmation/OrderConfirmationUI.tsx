@@ -6,7 +6,7 @@ import { useRestDealer } from '../../RestCalls/DealerUseRest';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import { Dayjs } from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import dayjs, { Dayjs } from 'dayjs';
 import moment from 'moment';
 import { IOrder, IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
 
@@ -136,6 +136,8 @@ export default function OrderConfirmation() {
 
   const [quantity, setQuantity] = useState<string>('');
 
+  const [minDate, setMinDate] = useState<Dayjs | null>(null);
+
   const quantityRef = useRef<TextFieldProps>(null);
   const penaltyRateRef = useRef<TextFieldProps>(null);
   const dealerIDRef = useRef<TextFieldProps>(null);
@@ -203,9 +205,9 @@ export default function OrderConfirmation() {
       getAllProducts();
       handleFindOrder();
 
-      const newTotalAmount = orderedProducts?.reduce((total, product) => {
+     /*  const newTotalAmount = orderedProducts?.reduce((total, product) => {
         return total + product.product.price * product.quantity;
-      }, 0);
+      }, 0); */
 
      
 
@@ -217,6 +219,8 @@ export default function OrderConfirmation() {
 
     setOrderedProducts(order?.orderedproducts!);
     setTotalAmount(order?.orderamount!);
+
+    setMinDate(dayjs() as Dayjs);
 
 
     /* getAllProducts();
@@ -264,6 +268,8 @@ export default function OrderConfirmation() {
 
       if (existingProductIndex !== -1) {
         alert('Product already added to the cart');
+        setChosenProduct(null);
+        setQuantity('');
       } else {
         const newOrderedProduct: IOrderedProducts = {
           orderedproductid: orderedproductuuid,
@@ -313,18 +319,22 @@ export default function OrderConfirmation() {
     setOrderedProducts(updatedProducts);
   };
 
-  const handleRemoveLastProduct = () => {
-    const lastProduct = tableData[tableData.length - 1];
-    const lastProductAmount = lastProduct.productAmount;
+ 
 
-    setTableData(tableData.slice(0, -1));
-    setTotalAmount(totalAmount - lastProductAmount);
+  const clearInputValues = () => {
+    setOrderedProducts([]);
+    setSelectedDate(null);
+    setPaymentTerm(0);
+    setTotalAmount(0);
 
-    // setOrderedProducts(orderedProducts.slice(0, -1));
-  };
+    if (penaltyRateRef.current?.value) {
+      penaltyRateRef.current!.value = '';
+    }
 
+  }
 
   const handleSaveOrder = () => {
+    console.log(totalAmount)
     if(penaltyRateRef === null || selectedDate === null || paymentTerm === 0){
       alert("Please fill in all the necessary fields.")
     }
@@ -345,7 +355,7 @@ export default function OrderConfirmation() {
       orderdate: moment().format('YYYY-MM-DD'),
       penaltyrate: Number(penaltyRateRef.current?.value),
       paymentterms: paymentTerm,
-      orderamount: orderAmount,
+      orderamount: totalAmount,
       collector: null,
       dealer: dealer!,
       orderedproducts: orderedProducts,
@@ -354,7 +364,8 @@ export default function OrderConfirmation() {
     };
     // Call the updateOrder function with the order ID and updated order data
     updateOrder(existingOrderId, updatedOrder);
-
+    //if possible kay ara na siya mo clear after sa snackbar
+    clearInputValues();
   }
 
   }
@@ -409,6 +420,7 @@ export default function OrderConfirmation() {
         }
       }}
       value={selectedDate}
+      minDate={minDate}
       onChange={(date) => setSelectedDate(date as Dayjs | null)}
     />
   </LocalizationProvider>

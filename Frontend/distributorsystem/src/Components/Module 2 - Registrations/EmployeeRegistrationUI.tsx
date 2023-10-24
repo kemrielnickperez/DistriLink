@@ -2,11 +2,11 @@ import styled from "@emotion/styled";
 import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
 import employee1 from '../../Global Components/employee1.png'
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { v4 as uuidv4 } from 'uuid';
 import { IEmployeeDocument } from "../../RestCalls/Interfaces";
 import moment from "moment";
@@ -169,6 +169,8 @@ export default function EmployeeRegistration() {
     const [isCollectorSelected, setIsCollectorSelected] = useState<boolean>(false)
     const [selectedProfilePicture, setSelectedProfilePicture] = useState<File>();
     const [employeeDocuments, setEmployeeDocuments] = useState<IEmployeeDocument[]>([]);
+    const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
+
 
     const firstnameRef = useRef<TextFieldProps>(null)
     const middlenameRef = useRef<TextFieldProps>(null)
@@ -277,6 +279,7 @@ export default function EmployeeRegistration() {
         const newEmployeeDocuments = await handleFiles();
 
 
+
         newEmployee({
             employeeid: employeeuuid,
             firstname: String(firstnameRef.current?.value),
@@ -298,7 +301,15 @@ export default function EmployeeRegistration() {
             collectionpaymentids: [],
             documentids: []
         }, newEmployeeDocuments!);
+        
     };
+
+
+    useEffect(() => {
+        const currentDate = dayjs().subtract(18, 'year') as Dayjs;
+        setMaxDate(currentDate);
+        //setSelectedBDate(currentDate);
+    }, []);
 
     return (
         <GridBody>
@@ -347,7 +358,10 @@ export default function EmployeeRegistration() {
                                     }
                                 }}
                                 value={selectedBDate}
+                                maxDate={maxDate}
+                                
                                 onChange={(date) => setSelectedBDate(date as Dayjs | null)}
+
                             />
                         </LocalizationProvider>
                     </Grid>

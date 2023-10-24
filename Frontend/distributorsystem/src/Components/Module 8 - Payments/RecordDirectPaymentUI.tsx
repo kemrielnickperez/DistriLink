@@ -139,18 +139,18 @@ const SearchButton = styled(IconButton)({
 })
 const StyledButton = styled(Button)({
     marginTop: 40,
-    marginBottom:40,
+    marginBottom: 40,
     marginLeft: 20,
     backgroundColor: '#2C85E7',
-    color:'#ffffff',
+    color: '#ffffff',
     fontFamily: 'Inter',
     fontSize: '15px',
     width: '240px',
     height: 50,
     ':hover': {
         backgroundColor: '#87BAF3',
-      }
-  })
+    }
+})
 const StyledPaymentTransactionCard = styled(Card)({
     borderRadius: "22px",
     borderColor: 'black',
@@ -190,7 +190,7 @@ export default function RecordDirectPayment() {
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
     const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
-   
+
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
     const [selectedPaymentTransaction, setSelectedPaymentTransaction] = useState<IPaymentTransaction | null>();
     const [selectedpaymentTransactionID, setPaymentTransactionID] = useState('')
@@ -203,7 +203,7 @@ export default function RecordDirectPayment() {
 
     const handleFindOrder = () => {
         getOrderByID(orderIDRef.current?.value + '');
-        
+
     };
 
 
@@ -215,7 +215,7 @@ export default function RecordDirectPayment() {
             remarks: remarksRef.current?.value + "",
             datepaid: selectedDate?.format('YYYY-MM-DD') || '',
             amountpaid: Number(amountPaidRef.current?.value),
-            receivedamount:Number(amountPaidRef.current?.value),
+            receivedamount: Number(amountPaidRef.current?.value),
             paymenttype: 'direct',
             daterecorded: moment().format('YYYY-MM-DD'),
             cashier: null,
@@ -250,11 +250,12 @@ export default function RecordDirectPayment() {
 
 
     useEffect(() => {
-        handleFindOrder();
-        // handleFindPaymentTransaction();
-        
-    },
-        [isOrderFound, order, order?.paymenttransactions]);
+
+        if (orderIDRef.current?.value+'' !== '') {
+            handleFindOrder();
+        }
+
+    }, [isOrderFound, order, order?.paymenttransactions]);
 
 
     return (
@@ -301,7 +302,7 @@ export default function RecordDirectPayment() {
                                         {/* <TableCell component="th" scope="row" align="center">{transaction.startingdate}</TableCell> */}
                                         <TableCell align="center">{transaction.enddate}</TableCell>
                                         <TableCell align="center">{transaction.amountdue}</TableCell>
-                                        <TableCell align="center">{transaction.paid? 'Paid' :'Not Paid'}</TableCell>
+                                        <TableCell align="center">{transaction.paid ? 'Paid' : 'Not Paid'}</TableCell>
                                         {/* <TableCell align="center">{paymentReceipt?.paymenttype}</TableCell>
                                         <TableCell align="center">{paymentReceipt?.remarks}</TableCell>  */}
                                     </StyledTableRow>
@@ -352,10 +353,10 @@ export default function RecordDirectPayment() {
                             setSelectedPaymentTransaction(newValue);
                         }}
                         // Style for the Autocomplete(Combo Box - Separated from global styling due to error )   
-                         sx={{
-                          marginTop:2,
-                          marginRight:15
-                         }}
+                        sx={{
+                            marginTop: 2,
+                            marginRight: 15
+                        }}
                         // Style for the TextField(Input - Separated from global styling due to error )  
                         renderInput={
                             (params) =>
@@ -366,16 +367,16 @@ export default function RecordDirectPayment() {
                                             [`& fieldset`]: {
                                                 borderRadius: 15,
                                                 height: 40,
-                                                width:220,
+                                                width: 220,
                                                 top: 4.5,
-                                                right:-250
-                                               
+                                                right: -250
+
                                             },
-                                            left:180
+                                            left: 180
                                         }
                                         // style: {
                                         //     width: 220,
-                                            
+
                                         // }
                                     }}
                                     variant="outlined"
@@ -393,13 +394,13 @@ export default function RecordDirectPayment() {
                                     variant: 'outlined',
                                 }
                             }}
-                        value={selectedDate}
-                        onChange={(date)=>setSelectedDate(date as Dayjs | null)} />
+                            value={selectedDate}
+                            onChange={(date) => setSelectedDate(date as Dayjs | null)} />
                     </LocalizationProvider>
                 </Grid>
                 <Grid item>
                     <StyleLabel>Amount Paid</StyleLabel>
-                    <StyleTextField2 style={{ marginLeft: 63 }} inputRef={amountPaidRef}/>
+                    <StyleTextField2 style={{ marginLeft: 63 }} inputRef={amountPaidRef} />
                 </Grid>
                 <Grid item><StyleLabel>Remarks</StyleLabel>
                     <StyleTextField2 style={{ marginLeft: 63 }} inputRef={remarksRef} />
