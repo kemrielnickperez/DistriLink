@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Set;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/order")
@@ -36,9 +39,16 @@ public class OrderController {
     }
 
 
-    @PutMapping("/assignCollector/{orderid}")
+   /* @PutMapping("/assignCollector/{orderid}")
     public ResponseEntity<Object> assignCollector(@PathVariable String orderid, @RequestBody Employee collector){
         return new ResponseEntity<>(orderService.assignCollector(orderid, collector), HttpStatus.OK);
+    }*/
+
+    @PutMapping("/assignCollector")
+    public ResponseEntity<Object> assignCollector(@RequestBody Employee collector) {
+        Set<String> orderIds = collector.getOrderids();
+
+        return orderService.assignCollector(orderIds, collector);
     }
 
     @PutMapping("/removeCollector/{orderid}")

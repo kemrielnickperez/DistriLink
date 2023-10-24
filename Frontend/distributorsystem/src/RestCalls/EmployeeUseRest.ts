@@ -34,6 +34,7 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
         formData.append('is_salesassociate', employee.is_salesassociate.toString());
         formData.append('is_collector', employee.is_collector.toString());
 
+
            employeeDocuments.forEach((document, index) => {
            
             formData.append(`documentid`, document.documentid);
