@@ -205,9 +205,9 @@ export default function OrderConfirmation() {
       getAllProducts();
       handleFindOrder();
 
-      const newTotalAmount = orderedProducts?.reduce((total, product) => {
+     /*  const newTotalAmount = orderedProducts?.reduce((total, product) => {
         return total + product.product.price * product.quantity;
-      }, 0);
+      }, 0); */
 
      
 
@@ -334,6 +334,7 @@ export default function OrderConfirmation() {
   }
 
   const handleSaveOrder = () => {
+    console.log(totalAmount)
     if(penaltyRateRef === null || selectedDate === null || paymentTerm === 0){
       alert("Please fill in all the necessary fields.")
     }
@@ -354,7 +355,7 @@ export default function OrderConfirmation() {
       orderdate: moment().format('YYYY-MM-DD'),
       penaltyrate: Number(penaltyRateRef.current?.value),
       paymentterms: paymentTerm,
-      orderamount: orderAmount,
+      orderamount: totalAmount,
       collector: null,
       dealer: dealer!,
       orderedproducts: orderedProducts,
