@@ -6,7 +6,7 @@ import { useRestDealer } from '../../RestCalls/DealerUseRest';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import { Dayjs } from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import dayjs, { Dayjs } from 'dayjs';
 import moment from 'moment';
 import { IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
 
@@ -132,9 +132,13 @@ export default function ProductDistributionList() {
 
   const [quantity, setQuantity] = useState<string>('');
 
-  const quantityRef = useRef<TextFieldProps>(null);
+  const [minDate, setMinDate] = useState<Dayjs | null>(null);
+
+
   const penaltyRateRef = useRef<TextFieldProps>(null);
   const dealerIDRef = useRef<TextFieldProps>(null);
+
+  
 
 
   const paymentchoices = [
@@ -175,8 +179,12 @@ export default function ProductDistributionList() {
 
     // Update the total amount state
     setTotalAmount(newTotalAmount);
+    
+    setMinDate(dayjs() as Dayjs);
 
   }, [isDealerFound, products, orderedProducts]);
+
+ 
 
   /*   function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
       return {
@@ -208,6 +216,8 @@ export default function ProductDistributionList() {
 
       if (existingProductIndex !== -1) {
         alert('Product already added to the cart');
+        setChosenProduct(null);
+        setQuantity('');
       } else {
         const newOrderedProduct: IOrderedProducts = {
           orderedproductid: orderedproductuuid,
@@ -225,26 +235,6 @@ export default function ProductDistributionList() {
   };
 
 
-  const handleAddProduct = () => {
-    const value = quantityRef.current?.value;
-
-    if (chosenProduct) {
-      const quantity = parseInt(value as string);
-      const productAmount = quantity * chosenProduct.price;
-      const newTableData = [...tableData, {
-        quantity: parseInt(value as string),
-        productName: chosenProduct.name,
-        productPrice: chosenProduct.price,
-        productUnit: chosenProduct.unit,
-        productCommissionRate: chosenProduct.commissionrate,
-        productAmount: productAmount
-      }];
-      const updatedTotalAmount = newTableData.reduce((sum, product) => sum + product.productAmount, 0);
-      setTotalAmount(updatedTotalAmount);
-
-      setTableData(newTableData);
-    }
-  };
 
   const handleUpdateQuantity = (product: IOrderedProducts, updatedQuantity: number) => {
     // Update the quantity of a product in the cart
@@ -267,37 +257,18 @@ export default function ProductDistributionList() {
     setOrderedProducts(updatedProducts);
   };
 
-  const handleRemoveLastProduct = () => {
-    const lastProduct = tableData[tableData.length - 1];
-    const lastProductAmount = lastProduct.productAmount;
+  const clearInputValues = () => {
+    setOrderedProducts([]);
+    setSelectedDate(null);
+    setPaymentTerm(0);
+    setTotalAmount(0);
 
-    setTableData(tableData.slice(0, -1));
-    setTotalAmount(totalAmount - lastProductAmount);
-
-    setOrderedProducts(orderedProducts.slice(0, -1));
-  };
-
-  /* const handleNewOrder = () => {
-    if (isDealerFound) {
-      const uuid = uuidv4();
-      const orderuuid = uuid.slice(0, 8);
-
-      newOrder({
-        orderid: orderuuid,
-        distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-        //moment ang gamit ani para maka generate og date today
-        orderdate: moment().format('YYYY-MM-DD'),
-        penaltyrate: Number(penaltyRateRef.current?.value),
-        paymentterms: paymentTerm,
-        orderamount: totalAmount,
-        collector: null,
-        dealer: dealer!,
-        orderedproducts: orderedProducts,
-        paymenttransactions: [],
-      });
+    if (dealerIDRef.current || penaltyRateRef.current?.value) {
+      dealerIDRef.current!.value = '';
+      penaltyRateRef.current!.value = '';
     }
-  }; */
 
+  }
 
   const handleSaveOrder = () => {
     // Calculate the total order amount based on orderedProducts
@@ -324,8 +295,10 @@ export default function ProductDistributionList() {
         paymenttransactions: [],
         confirmed: true
       });
+      //if possible kay ara na siya mo clear after sa snackbar
+    clearInputValues();
     }
-    // Update your order state or send the order data to your API for saving
+    
   };
 
 
@@ -381,6 +354,7 @@ export default function ProductDistributionList() {
                 }
               }}
               value={selectedDate}
+              minDate={minDate}
               onChange={(date) => setSelectedDate(date as Dayjs | null)} />
           </LocalizationProvider>
           <StyledTextField variant="outlined" InputProps={{ disableUnderline: true }} inputRef={penaltyRateRef}></StyledTextField>
