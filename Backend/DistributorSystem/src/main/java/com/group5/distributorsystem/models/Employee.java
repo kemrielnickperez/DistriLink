@@ -47,7 +47,7 @@ public class Employee {
 
     private LocalDate submissiondate;
 
-    private Set<Order> orders = new HashSet<>();
+    private Set<String> orderids = new HashSet<>();
 
     private Set<String> paymentreceiptids;
 
@@ -59,7 +59,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String employeeid, String firstname, String middlename, String lastname, String emailaddress, String password, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, String tinnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, LocalDate submissiondate, Set<Order> orders, Set<String> paymentreceiptids, Set<String> collectionpaymentids, Set<String> documentids) {
+    public Employee(String employeeid, String firstname, String middlename, String lastname, String emailaddress, String password, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, String tinnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, LocalDate submissiondate, Set<String> orderid, Set<String> paymentreceiptids, Set<String> collectionpaymentids, Set<String> documentids) {
         this.employeeid = employeeid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -76,7 +76,7 @@ public class Employee {
         this.is_salesassociate = is_salesassociate;
         this.is_collector = is_collector;
         this.submissiondate = submissiondate;
-        this.orders = orders;
+        this.orderids = orderid;
         this.paymentreceiptids = paymentreceiptids;
         this.collectionpaymentids = collectionpaymentids;
         this.documentids = documentids;
@@ -210,12 +210,12 @@ public class Employee {
         this.submissiondate = submissiondate;
     }
 
-    public Set<Order> getOrders() {
-        return orders;
+    public Set<String> getOrderids() {
+        return orderids;
     }
 
-    public void setOrders(Set<Order> orders) {
-        this.orders = orders;
+    public void setOrderids(Set<String> orderids) {
+        this.orderids = orderids;
     }
 
     public Set<String> getPaymentreceiptids() {
