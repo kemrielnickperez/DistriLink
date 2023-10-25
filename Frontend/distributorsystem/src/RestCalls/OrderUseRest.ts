@@ -10,7 +10,7 @@ import { IEmployee, IOrder } from "./Interfaces";
 export const useRestOrder = (): [
     (order: IOrder) => void,
     (orderid: string) => void,
-    (collector: IEmployee) => void,
+    (collectorid: string, orderids:string[]) => void,
     (orderID: string) => void,
     IOrder | undefined,
     boolean | undefined,
@@ -119,8 +119,8 @@ export const useRestOrder = (): [
                 console.error('Error assigning collector:', error);
             });
     } */
-    function assignCollector(collector: IEmployee) {
-        axios.put("http://localhost:8080/order/assignCollector", collector)
+    function assignCollector(collectorid: string, orderids:string[]) {
+        axios.put(`http://localhost:8080/order/assignCollector/${collectorid}`, orderids)
             .then((response) => {
                 setAssignedStatus(true);
             })
