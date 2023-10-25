@@ -219,10 +219,7 @@ export default function CollectorAssignment() {
       alert("Please select at least one order to assign a collector");
     } else {
       
-      assignCollector({
-        ...selectedCollector,
-        orderids: selectedRows
-      });
+      assignCollector(selectedCollector.employeeid!, selectedRows);
       alert("Collector assigned successfully to all of the selected orders!")
       
     }
