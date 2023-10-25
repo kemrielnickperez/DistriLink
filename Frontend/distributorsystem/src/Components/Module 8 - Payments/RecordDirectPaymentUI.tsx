@@ -5,7 +5,7 @@ import NavBar from "../../Global Components/NavBar";
 import { useEffect, useRef, useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useRestPaymentReceipt } from "../../RestCalls/PaymentReceiptUseRest";
 import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
@@ -199,6 +199,8 @@ export default function RecordDirectPayment() {
     const amountPaidRef = useRef<TextFieldProps>(null);
     const remarksRef = useRef<TextFieldProps>(null);
 
+    const [minDate, setMinDate] = useState<Dayjs | null>(null);
+
     {/** functions */ }
 
     const handleFindOrder = () => {
@@ -206,10 +208,10 @@ export default function RecordDirectPayment() {
 
     };
 
-
     const handleSaveDirectPayment = () => {
         const uuid = uuidv4();
         const paymentreceiptuuid = uuid.slice(0, 8);
+        console.log(paymentreceiptuuid);
         createDirectPaymentReceipt({
             paymentreceiptid: paymentreceiptuuid,
             remarks: remarksRef.current?.value + "",
@@ -222,30 +224,7 @@ export default function RecordDirectPayment() {
             paymenttransaction: selectedPaymentTransaction!
         })
     }
-    {/** Columns for DataGrid */ }
-    // const columns: GridColDef[] = [
-    //     { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
-    //     { field: 'paymentDueDate', headerName: 'Payment Due Date', width: 180 },
-    //     { field: 'amountDue', headerName: 'Amount Due', width: 160 },
-    //     // { field: 'amountPaid', headerName: 'Amount Paid', width: 180 },
-    //     // { field: 'remarks', headerName: 'Remarks', width: 200 },
-    //     // { field: 'newBalance', headerName: 'New Balance', width: 200 },
-    // ]
-    // {/** Rows for DataGrid */ }
 
-    // let rows = []; 
-
-    // if (order && order!.paymenttransactions!) {
-    //     rows = order.paymenttransactions.map((transaction) => {
-    //         return {
-    //             id: transaction?.paymenttransactionid || '',
-    //             paymentTransactionID: transaction?.paymenttransactionid || '',
-    //             paymentDueDate: transaction?.enddate || '',
-    //             amountDue: transaction?.amountdue || '',
-    //             // remarks: transaction?.remarks || '', // Uncomment if remarks is a property of transaction
-    //         };
-    //     });
-    // }
     const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
 
@@ -255,7 +234,9 @@ export default function RecordDirectPayment() {
             handleFindOrder();
         }
 
-    }, [isOrderFound, order, order?.paymenttransactions]);
+        setMinDate(dayjs() as Dayjs);
+
+    }, [isOrderFound, order, order?.paymenttransactions, sortedPaymemtTransactions]);
 
 
     return (
@@ -395,6 +376,7 @@ export default function RecordDirectPayment() {
                                 }
                             }}
                             value={selectedDate}
+                            minDate={minDate}
                             onChange={(date) => setSelectedDate(date as Dayjs | null)} />
                     </LocalizationProvider>
                 </Grid>
