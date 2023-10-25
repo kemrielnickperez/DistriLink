@@ -15,6 +15,7 @@ import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -91,8 +92,8 @@ const StyleMainLabel = styled(Typography)({
     marginTop: 160,
     textAlign: 'left',
     fontWeight: '550',
-    marginLeft: 100,
-    marginRight: 100,
+    marginLeft: 90,
+    marginRight: 50,
     color: '#707070',
     fontSize: '20px',
     fontFamily: 'Inter',
@@ -102,7 +103,7 @@ const StyleMainInfo = styled(Typography)({
     position: 'relative',
     fontWeight: '550',
     textAlign: 'left',
-    marginLeft: 120,
+    marginLeft: 110,
     marginRight: 10,
 
     // left: 565,
@@ -146,15 +147,30 @@ const ButtonInfo = styled(Button)({
     },
     transition: 'all 0.4s'
 });
-
+const IconStyle = styled(Icon)({
+    color: '#2A9221',
+    ':hover': {
+        color: '#1E6717',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s'
+})
+const IconStyle2 = styled(Icon)({
+    marginLeft: 5,
+    color: '#E77D7D',
+    ':hover': {
+        color: 'red',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s'
+})
 const ButtonCredit = styled(Button)({
     background: "#F5F7F9",
     color: "#203949",
     fontSize: 15,
     fontWeight: 'bold',
-    borderRadius: 10,
-    width: '90px',
-    height: '40px',
+    width: '20px',
+    height: '35px',
     ':hover': {
         backgroundColor: '#F5F7F9',
         transform: 'scale(1.1)'
@@ -317,7 +333,7 @@ export default function DealerProfileDetails() {
 
     const [editedCreditLimit, setEditedCreditLimit] = useState(dealer?.creditlimit);
 
-
+    const [isEditIcon, setIsEditIcon] = useState(true);
 
 
 
@@ -439,6 +455,7 @@ export default function DealerProfileDetails() {
 
     const handleEditCreditLimit = () => {
         setIsEditing(true);
+        setIsEditIcon(!isEditIcon);
     };
 
 
@@ -462,6 +479,8 @@ export default function DealerProfileDetails() {
         setIsEditing(false);
         // Reset the edited credit limit to the current value.
         setEditedCreditLimit(dealer?.creditlimit);
+        setIsEditIcon(true);
+
     };
 
     const profilePic = dealerDocuments.find(image => image.name === dealer?.lastname + '_profilepicture');
@@ -474,7 +493,7 @@ export default function DealerProfileDetails() {
                 <Grid item style={{ marginRight: -70 }}>
                     <Grid>
                         <ProfileCard>
-                            <img src={imageSource} style={{ inset: 0, margin: 'auto' }}></img>
+                            <img src={imageSource} style={{ inset: 0, margin: 'auto', maxHeight:'100%', maxWidth: '100%' }}></img>
                         </ProfileCard>
                     </Grid>
                     <Grid>
@@ -533,52 +552,54 @@ export default function DealerProfileDetails() {
                     </Modal>
                 </Grid>
 
-                <Grid item>
+                <Grid item style={{ marginLeft: 15 }}>
                     <Grid container style={{ marginTop: 15 }}>
                         <Grid item>
                             <StyleMainLabel>Dealer's Name</StyleMainLabel>
                             <StyleMainInfo style={{ marginTop: 15 }}>{dealer?.firstname} {dealer?.middlename} {dealer?.lastname}</StyleMainInfo>
                         </Grid>
                         <Grid item >
-                            <StyleMainLabel >Dealer ID</StyleMainLabel>
-                            <StyleMainInfo style={{ marginTop: 15 }}>{dealer?.dealerid}</StyleMainInfo>
+                            <StyleMainLabel style={{ marginLeft: 70 }}>Dealer ID</StyleMainLabel>
+                            <StyleMainInfo style={{ marginTop: 15, marginLeft: 90 }}>{dealer?.dealerid}</StyleMainInfo>
                         </Grid>
                         <Grid item>
                             <StyleMainLabel>
                                 Credit Limit
-                                <svg width="25" height="25" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg" style={{
-                                    marginLeft: 6, marginBottom: -5,
-                                }} onClick={handleEditCreditLimit}>
-                                    <path d="M23.1852 6.16996L25.5049 3.84896C25.9884 3.36541 26.6443 3.09375 27.3281 3.09375C28.012 3.09375 28.6678 3.36541 29.1514 3.84896C29.6349 4.33252 29.9066 4.98836 29.9066 5.67221C29.9066 6.35607 29.6349 7.01191 29.1514 7.49547L14.5502 22.0966C13.8233 22.8231 12.9269 23.3571 11.9419 23.6503L8.25 24.7503L9.35 21.0585C9.64326 20.0735 10.1772 19.177 10.9037 18.4501L23.1852 6.16996ZM23.1852 6.16996L26.8125 9.79721M24.75 19.2503V25.7816C24.75 26.6021 24.4241 27.389 23.8439 27.9692C23.2637 28.5494 22.4768 28.8753 21.6562 28.8753H7.21875C6.39824 28.8753 5.61133 28.5494 5.03114 27.9692C4.45095 27.389 4.125 26.6021 4.125 25.7816V11.3441C4.125 10.5236 4.45095 9.73667 5.03114 9.15648C5.61133 8.57629 6.39824 8.25034 7.21875 8.25034H13.75" stroke="#2D85E7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
+                                {isEditIcon ? (
+                                    <svg width="25" height="25" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg" style={{
+                                        marginLeft: 6, marginBottom: -5,
+                                    }} onClick={handleEditCreditLimit}>
+                                        <path d="M23.1852 6.16996L25.5049 3.84896C25.9884 3.36541 26.6443 3.09375 27.3281 3.09375C28.012 3.09375 28.6678 3.36541 29.1514 3.84896C29.6349 4.33252 29.9066 4.98836 29.9066 5.67221C29.9066 6.35607 29.6349 7.01191 29.1514 7.49547L14.5502 22.0966C13.8233 22.8231 12.9269 23.3571 11.9419 23.6503L8.25 24.7503L9.35 21.0585C9.64326 20.0735 10.1772 19.177 10.9037 18.4501L23.1852 6.16996ZM23.1852 6.16996L26.8125 9.79721M24.75 19.2503V25.7816C24.75 26.6021 24.4241 27.389 23.8439 27.9692C23.2637 28.5494 22.4768 28.8753 21.6562 28.8753H7.21875C6.39824 28.8753 5.61133 28.5494 5.03114 27.9692C4.45095 27.389 4.125 26.6021 4.125 25.7816V11.3441C4.125 10.5236 4.45095 9.73667 5.03114 9.15648C5.61133 8.57629 6.39824 8.25034 7.21875 8.25034H13.75" stroke="#2D85E7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                ) : (
+                                    <IconStyle2 onClick={handleCancelEdit} >
+                                        <CloseIcon style={{ marginTop: 5 }} />
+                                    </IconStyle2>
+                                )}
                             </StyleMainLabel>
-                           
-                                {isEditing ? (
-                                    <div>
-                                        <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gridGap: "10px", alignItems: "left" }}>
-                                            <input
-                                                type="number"
-                                                value={editedCreditLimit || ""}
-                                                onChange={(e) => setEditedCreditLimit(parseInt(e.target.value, 10) || undefined)}
-                                            />
-                                            <div >
-                                                <ButtonCredit variant="contained" onClick={handleSaveCreditLimit} >
-                                                    Save
-                                                </ButtonCredit>
-                                            </div>
-                                            <div>
-                                                <ButtonCredit variant="contained" onClick={handleCancelEdit} >
-                                                    Cancel
-                                                </ButtonCredit>
-                                            </div>
+
+                            {isEditing ? (
+                                <div>
+                                    <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gridGap: "10px", alignItems: "left" }}>
+                                        <input
+                                            type="number"
+                                            style={{ height: 20, width: 120, marginTop: 15, marginLeft: 115 }}
+                                            value={editedCreditLimit || ""}
+                                            onChange={(e) => setEditedCreditLimit(parseInt(e.target.value, 10) || undefined)}
+                                        />
+                                        <div >
+                                            <ButtonCredit variant="contained" style={{marginTop:10}}>
+                                                <CheckIcon style={{ color: '#2A9221', }}/>
+                                            </ButtonCredit>
                                         </div>
                                     </div>
-                                ) : (
-                                    <StyleMainInfo style={{ marginTop: 15 }}>
-                                       Php {dealer?.creditlimit}
-                                    </StyleMainInfo>
-                                )}
-                             
+                                </div>
+                            ) : (
+                                <StyleMainInfo style={{ marginTop: 15 }}>
+                                    Php {dealer?.creditlimit}
+                                </StyleMainInfo>
+                            )}
+
                         </Grid>
                     </Grid>
                     <Grid container>
@@ -625,6 +646,7 @@ export default function DealerProfileDetails() {
                                         </Grid>
                                     </Grid>
                                 </CustomTabPanel>
+                                {/* Business Information */}
                                 <CustomTabPanel value={value} index={1}>
                                     {business}
                                 </CustomTabPanel>
