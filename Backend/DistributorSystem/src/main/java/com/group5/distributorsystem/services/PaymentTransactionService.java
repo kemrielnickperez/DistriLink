@@ -107,13 +107,25 @@ public class PaymentTransactionService {
         return new ResponseEntity("Payment Transaction Updated Successfully!", HttpStatus.OK);
     }
 
-    public ResponseEntity updatePaidPaymentTransaction(String paymenttransactionid) {
+    public PaymentTransaction updatePaidPaymentTransaction(String paymenttransactionid) {
         PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
+
+        Order order = orderRepository.findById(updatedPaymentTransaction.getOrderid()).get();
 
         updatedPaymentTransaction.setPaid(true);
 
-        paymentTransactionRepository.save(updatedPaymentTransaction);
-        return new ResponseEntity("Payment Transaction Updated as Paid Successfully!", HttpStatus.OK);
+        for(PaymentTransaction pt : order.getPaymenttransactions()) {
+            if (pt.getPaymenttransactionid().equals(updatedPaymentTransaction.getPaymenttransactionid())) {
+                pt.setPaid(updatedPaymentTransaction.isPaid());
+                pt.setPaymentreceiptid(updatedPaymentTransaction.getPaymentreceiptid());
+            }
+        }
+
+        orderRepository.save(order);
+
+        return paymentTransactionRepository.save(updatedPaymentTransaction);
+
+      
     }
 }
 

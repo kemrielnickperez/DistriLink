@@ -31,36 +31,28 @@ public class DirectPaymentReceiptService {
     EmployeeRepository employeeRepository;
 
     public DirectPaymentReceipt createDirectPaymentReceipt(DirectPaymentReceipt directPaymentReceipt){
-        //Save direct payment receipt pass as parameter
+
         DirectPaymentReceipt newdirectPaymentReceipt = directPaymentReceiptRepository.save(directPaymentReceipt);
 
         PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(newdirectPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
 
-        Order order = orderRepository.findById(newdirectPaymentReceipt.getPaymenttransaction().getOrderid()).get();
-
         Employee cashier = employeeRepository.findById(newdirectPaymentReceipt.getCashier().getEmployeeid()).get();
 
-        paymentTransaction.setPaymentreceiptid(newdirectPaymentReceipt.getPaymentreceiptid());
 
+        paymentTransaction.setPaymentreceiptid(newdirectPaymentReceipt.getPaymentreceiptid());
+        paymentTransactionRepository.save(paymentTransaction);
         paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
 
-        paymentTransaction.setPaid((true));
-
-        for(PaymentTransaction pt : order.getPaymenttransactions()) {
-            if (pt.getPaymenttransactionid().equals(paymentTransaction.getPaymenttransactionid())) {
-                pt.setPaid(paymentTransaction.isPaid());
-            }
-        }
-
-        paymentTransaction.setPaymentreceiptid(newdirectPaymentReceipt.getPaymentreceiptid());
-
         cashier.getPaymentreceiptids().add(newdirectPaymentReceipt.getPaymentreceiptid());
+
+        newdirectPaymentReceipt.setPaymenttransaction(paymentTransaction);
+        newdirectPaymentReceipt.setCashier(cashier);
 
         paymentTransactionRepository.save(paymentTransaction);
 
         employeeRepository.save(cashier);
 
-        orderRepository.save(order);
+        directPaymentReceiptRepository.save(newdirectPaymentReceipt);
 
         return directPaymentReceiptRepository.save(newdirectPaymentReceipt);
     }

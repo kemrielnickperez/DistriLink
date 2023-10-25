@@ -206,10 +206,10 @@ export default function RecordDirectPayment() {
 
     };
 
-
     const handleSaveDirectPayment = () => {
         const uuid = uuidv4();
         const paymentreceiptuuid = uuid.slice(0, 8);
+        console.log(paymentreceiptuuid);
         createDirectPaymentReceipt({
             paymentreceiptid: paymentreceiptuuid,
             remarks: remarksRef.current?.value + "",
@@ -222,30 +222,7 @@ export default function RecordDirectPayment() {
             paymenttransaction: selectedPaymentTransaction!
         })
     }
-    {/** Columns for DataGrid */ }
-    // const columns: GridColDef[] = [
-    //     { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
-    //     { field: 'paymentDueDate', headerName: 'Payment Due Date', width: 180 },
-    //     { field: 'amountDue', headerName: 'Amount Due', width: 160 },
-    //     // { field: 'amountPaid', headerName: 'Amount Paid', width: 180 },
-    //     // { field: 'remarks', headerName: 'Remarks', width: 200 },
-    //     // { field: 'newBalance', headerName: 'New Balance', width: 200 },
-    // ]
-    // {/** Rows for DataGrid */ }
 
-    // let rows = []; 
-
-    // if (order && order!.paymenttransactions!) {
-    //     rows = order.paymenttransactions.map((transaction) => {
-    //         return {
-    //             id: transaction?.paymenttransactionid || '',
-    //             paymentTransactionID: transaction?.paymenttransactionid || '',
-    //             paymentDueDate: transaction?.enddate || '',
-    //             amountDue: transaction?.amountdue || '',
-    //             // remarks: transaction?.remarks || '', // Uncomment if remarks is a property of transaction
-    //         };
-    //     });
-    // }
     const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
 
@@ -255,7 +232,7 @@ export default function RecordDirectPayment() {
             handleFindOrder();
         }
 
-    }, [isOrderFound, order, order?.paymenttransactions]);
+    }, [isOrderFound, order, order?.paymenttransactions, sortedPaymemtTransactions]);
 
 
     return (
