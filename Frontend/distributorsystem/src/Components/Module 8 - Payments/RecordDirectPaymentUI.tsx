@@ -5,7 +5,7 @@ import NavBar from "../../Global Components/NavBar";
 import { useEffect, useRef, useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useRestPaymentReceipt } from "../../RestCalls/PaymentReceiptUseRest";
 import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
@@ -199,6 +199,8 @@ export default function RecordDirectPayment() {
     const amountPaidRef = useRef<TextFieldProps>(null);
     const remarksRef = useRef<TextFieldProps>(null);
 
+    const [minDate, setMinDate] = useState<Dayjs | null>(null);
+
     {/** functions */ }
 
     const handleFindOrder = () => {
@@ -231,6 +233,8 @@ export default function RecordDirectPayment() {
         if (orderIDRef.current?.value+'' !== '') {
             handleFindOrder();
         }
+
+        setMinDate(dayjs() as Dayjs);
 
     }, [isOrderFound, order, order?.paymenttransactions, sortedPaymemtTransactions]);
 
@@ -372,6 +376,7 @@ export default function RecordDirectPayment() {
                                 }
                             }}
                             value={selectedDate}
+                            minDate={minDate}
                             onChange={(date) => setSelectedDate(date as Dayjs | null)} />
                     </LocalizationProvider>
                 </Grid>

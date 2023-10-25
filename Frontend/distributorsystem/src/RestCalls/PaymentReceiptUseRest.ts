@@ -21,6 +21,8 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
              datepaid: directpaymentreceipt.datepaid,
              amountpaid: directpaymentreceipt.amountpaid,
              paymenttype: directpaymentreceipt.paymenttype,
+             daterecorded: directpaymentreceipt.daterecorded,
+             receivedamount: directpaymentreceipt.receivedamount,
              paymenttransaction: directpaymentreceipt.paymenttransaction,
               cashier: {
                 //  employeeid: directpaymentreceipt.cashier!.employeeid,
