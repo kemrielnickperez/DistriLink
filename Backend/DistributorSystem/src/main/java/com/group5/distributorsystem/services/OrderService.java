@@ -94,25 +94,60 @@ public class OrderService {
     }
 
 
-    public ResponseEntity assignCollector(String orderid, Employee collector){
-
+    /*public ResponseEntity assignCollector(String orderid, Employee collector) {
         Order order = orderRepository.findById(orderid).get();
-        Employee prevemployee = order.getCollector();
         Employee employee = employeeRepository.findById(collector.getEmployeeid()).get();
 
-        prevemployee.getOrders().remove(order);
+        if (order.getCollector() == null) {
+            order.setCollector(employee);
+        }else{
+            Employee prevEmployee = order.getCollector();
+            prevEmployee.getOrders().remove(order);
+            employeeRepository.save(prevEmployee);
+            order.setCollector(employee);
+        }
 
-        order.setCollector(employee);
 
         employee.getOrders().add(order);
 
         orderRepository.save(order);
         employeeRepository.save(employee);
-        
-
 
         return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
     }
+*/
+
+    public ResponseEntity assignCollector(Set<String> orderIds, Employee collector) {
+        Employee employee = employeeRepository.findById(collector.getEmployeeid()).orElse(null);
+
+        if (employee == null) {
+            return new ResponseEntity("Collector not found", HttpStatus.NOT_FOUND);
+        }
+
+        for (String orderId : orderIds) {
+            Order order = orderRepository.findById(orderId).orElse(null);
+
+            if (order != null) {
+                if (order.getCollector() != null) {
+                    Employee prevEmployee = order.getCollector();
+                    prevEmployee.getOrderids().remove(order.getOrderid());
+                    employeeRepository.save(prevEmployee);
+                }
+
+
+                order.setCollector(employee);
+                orderRepository.save(order);
+
+
+                employee.getOrderids().add(order.getOrderid());
+            }
+        }
+
+        employeeRepository.save(employee);
+        return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
+    }
+
+
 
 
     public ResponseEntity removeCollector(String orderid) {
@@ -121,7 +156,7 @@ public class OrderService {
 
 
         Employee employee = employeeRepository.findById(order.getCollector().getEmployeeid()).get();
-        employee.getOrders().remove(order);
+        employee.getOrderids().remove(orderid);
         employeeRepository.save(employee);
 
         order.setCollector(null);
