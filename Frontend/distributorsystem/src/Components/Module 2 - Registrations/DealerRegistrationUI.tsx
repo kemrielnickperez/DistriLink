@@ -150,6 +150,7 @@ const SignUpButton = styled(Button)({
     height: '50px',
     marginRight: '-110px',
     marginTop: "30px",
+    marginBottom: 90,
     ':hover': {
         backgroundColor: 'rgba(45, 133, 231, 0.9)',
         transform: 'scale(1.1)'
@@ -177,12 +178,16 @@ export default function DealerRegistration() {
     const [selectedBusinessDocs, setSelectedBusinessDocs] = useState<File | null>();
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
     const firstnameRef = useRef<TextFieldProps>(null)
     const middlenameRef = useRef<TextFieldProps>(null)
     const lastnameRef = useRef<TextFieldProps>(null)
     const emailladdressRef = useRef<TextFieldProps>(null)
     const passwordRef = useRef<TextFieldProps>(null)
+    const confirmpasswordRef = useRef<TextFieldProps>(null)
     const currentaddressRef = useRef<TextFieldProps>(null)
     const permanentAddressRef = useRef<TextFieldProps>(null)
     const contactnumberRef = useRef<TextFieldProps>(null)
@@ -195,8 +200,29 @@ export default function DealerRegistration() {
     const handleSignUp = () => {
         //handleFiles
         handleNewDealer();
-       // navigate(`/dashboard`);
+        // navigate(`/dashboard`);
     };
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+        if (e.target.value !== confirmPassword) {
+            setPasswordError("Passwords do not match");
+        } else {
+            setPasswordError('');
+        }
+    };
+
+    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmPassword(e.target.value);
+        // Automatically check for password match
+    if (e.target.value !== password) {
+        setPasswordError("Passwords do not match");
+      } else {
+        setPasswordError('');
+      }
+    };
+
+  
 
     const handleGender = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedGender(event.target.value);
@@ -289,7 +315,7 @@ export default function DealerRegistration() {
 
         const newDealerDocuments = await handleFiles();
 
-        
+
 
         newDealer({
             dealerid: uuidv4().slice(0, 8),
@@ -353,10 +379,17 @@ export default function DealerRegistration() {
 
                     <GridField container spacing={8}>
                         <Grid item>
-                            <StyledTextField variant="outlined" label="Email Address" size="small" inputRef={emailladdressRef} />
+                            <StyledTextField variant="outlined" label="Email Address" size="small" style={{ width: '795px' }} inputRef={emailladdressRef} />
                         </Grid>
+                    </GridField>
+                    <GridField container spacing={8}>
                         <Grid item>
-                            <StyledTextField variant="outlined" label="Password" size="small" inputRef={passwordRef} />
+                            <StyledTextField type="password" variant="outlined" label="Password" size="small" style={{ width: '795px' }} value={password} onChange={handlePasswordChange} inputRef={passwordRef} />
+                        </Grid>
+                    </GridField>
+                    <GridField container spacing={8}>
+                        <Grid item>
+                            <StyledTextField type="password" variant="outlined" label="Confirm Password" size="small" style={{ width: '795px', marginBottom:60}} value={confirmPassword} onChange={handleConfirmPasswordChange} error={passwordError !== ''} helperText={passwordError} inputRef={confirmpasswordRef} />
                         </Grid>
                     </GridField>
 
@@ -412,59 +445,59 @@ export default function DealerRegistration() {
                     </GridField>
                     <GridField container spacing={8} >
                         <Grid item>
-                        <label htmlFor="validid-input">
-                            <Button variant="contained" component="span" 
-                                sx={{
-                                    backgroundColor: '#2D85E7',
-                                    width: '380px',
-                                    marginBottom: '43px',
-                                    margin: '10px 0 0 80px',
-                                    height: '40px',
-                                    marginRight: '-110px',
-                                    ':hover': {
-                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    transition: 'all 0.4s'
-                                }}>
-                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                    <input hidden type="file"
-                                        accept=".pdf,.jpg, .jpeg, .png"
-                                        onChange={handleValidIDFileChange}
-                                        style={{ display: 'none' }}
-                                        id="validid-input" />
-                                    <UploadIcon />
-                                </Icon>
-                                <TypographyLabelC>Upload Valid ID</TypographyLabelC>
-                            </Button>
+                            <label htmlFor="validid-input">
+                                <Button variant="contained" component="span"
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '380px',
+                                        marginBottom: '43px',
+                                        margin: '10px 0 0 80px',
+                                        height: '40px',
+                                        marginRight: '-110px',
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}>
+                                    <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                        <input hidden type="file"
+                                            accept=".pdf,.jpg, .jpeg, .png"
+                                            onChange={handleValidIDFileChange}
+                                            style={{ display: 'none' }}
+                                            id="validid-input" />
+                                        <UploadIcon />
+                                    </Icon>
+                                    <TypographyLabelC>Upload Valid ID</TypographyLabelC>
+                                </Button>
                             </label>
                         </Grid>
                         <Grid item>
-                        <label htmlFor="profilepicture-input">
+                            <label htmlFor="profilepicture-input">
 
-                            <Button variant="contained" component="span" 
-                                sx={{
-                                    backgroundColor: '#2D85E7',
-                                    width: '380px',
-                                    marginBottom: '43px',
-                                    margin: '10px 0 0 80px',
-                                    height: '40px',
-                                    marginRight: '-110px',
-                                    ':hover': {
-                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    transition: 'all 0.4s'
-                                }}>
-                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                    <input hidden accept=".jpeg,.jpg,.png" type="file"
-                                        onChange={handleProfilePictureFileChange}
-                                        style={{ display: 'none' }}
-                                        id="profilepicture-input" />
-                                    <UploadIcon />
-                                </Icon>
-                                <TypographyLabelC >Upload Profile Picture</TypographyLabelC>
-                            </Button>
+                                <Button variant="contained" component="span"
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '380px',
+                                        marginBottom: '43px',
+                                        margin: '10px 0 0 80px',
+                                        height: '40px',
+                                        marginRight: '-110px',
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}>
+                                    <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                        <input hidden accept=".jpeg,.jpg,.png" type="file"
+                                            onChange={handleProfilePictureFileChange}
+                                            style={{ display: 'none' }}
+                                            id="profilepicture-input" />
+                                        <UploadIcon />
+                                    </Icon>
+                                    <TypographyLabelC >Upload Profile Picture</TypographyLabelC>
+                                </Button>
                             </label>
                         </Grid>
 
@@ -498,53 +531,53 @@ export default function DealerRegistration() {
                     </GridField>
                     <GridField container spacing={8} >
                         <Grid item>
-                        <label htmlFor="contract-input">
-                            <Button variant="contained" disabled={!selectedBusinessOpt}
-                            component="span" 
-                            sx={{
-                                backgroundColor: '#2D85E7',
-                                width: '380px',
-                                marginBottom: '43px',
-                                margin: '10px 0 0 80px',
-                                height: '40px',
-                                marginRight: '-110px',
-                                ':hover': {
-                                    backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                    transform: 'scale(1.1)'
-                                },
-                                transition: 'all 0.4s'
-                            }}> 
-                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                    <input hidden
-                                        type="file"
-                                        accept=".pdf,.jpg, .jpeg, .png"
-                                        onChange={handleContractFileChange}
-                                        style={{ display: 'none' }}
-                                        id="contract-input" />
-                                    <UploadIcon />
-                                </Icon>
-                                <TypographyLabelC>Upload Contract</TypographyLabelC>
-                            </Button>
+                            <label htmlFor="contract-input">
+                                <Button variant="contained" disabled={!selectedBusinessOpt}
+                                    component="span"
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '380px',
+                                        marginBottom: '43px',
+                                        margin: '10px 0 0 80px',
+                                        height: '40px',
+                                        marginRight: '-110px',
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}>
+                                    <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                        <input hidden
+                                            type="file"
+                                            accept=".pdf,.jpg, .jpeg, .png"
+                                            onChange={handleContractFileChange}
+                                            style={{ display: 'none' }}
+                                            id="contract-input" />
+                                        <UploadIcon />
+                                    </Icon>
+                                    <TypographyLabelC>Upload Contract</TypographyLabelC>
+                                </Button>
                             </label>
                         </Grid>
                         <Grid item>
                             <label htmlFor="business-input">
-                                <Button variant='contained' 
-                                disabled={!selectedBusinessOpt} 
-                                component="span" 
-                                sx={{
-                                    backgroundColor: '#2D85E7',
-                                    width: '380px',
-                                    marginBottom: '43px',
-                                    margin: '10px 0 0 80px',
-                                    height: '40px',
-                                    marginRight: '-110px',
-                                    ':hover': {
-                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    transition: 'all 0.4s'
-                                }}
+                                <Button variant='contained'
+                                    disabled={!selectedBusinessOpt}
+                                    component="span"
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '380px',
+                                        marginBottom: '43px',
+                                        margin: '10px 0 0 80px',
+                                        height: '40px',
+                                        marginRight: '-110px',
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}
                                 >
 
                                     <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
@@ -572,7 +605,7 @@ export default function DealerRegistration() {
                 </Grid>
                 {/**Image Grids */}
                 <Grid item>
-                    {/*  <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle> */}
+                    <ImageStyle><img src={dealer1} style={{ width: 'auto', height: '900px' }}></img></ImageStyle>
                 </Grid>
             </GridBody>
         </div>

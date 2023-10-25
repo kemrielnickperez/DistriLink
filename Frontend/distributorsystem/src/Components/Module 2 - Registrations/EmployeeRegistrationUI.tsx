@@ -18,7 +18,7 @@ const ImageStyle = styled(Typography)({
     marginTop: '-30px'
 })
 const ContentNameTypography = styled(Typography)({
-    marginTop: 10,
+    marginTop: -10,
     fontFamily: 'Inter',
     fontWeight: 'bold',
     textAlign: 'center',
@@ -170,6 +170,9 @@ export default function EmployeeRegistration() {
     const [selectedProfilePicture, setSelectedProfilePicture] = useState<File>();
     const [employeeDocuments, setEmployeeDocuments] = useState<IEmployeeDocument[]>([]);
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
 
     const firstnameRef = useRef<TextFieldProps>(null)
@@ -181,6 +184,26 @@ export default function EmployeeRegistration() {
     const permanentaddressRef = useRef<TextFieldProps>(null)
     const contactnumberRef = useRef<TextFieldProps>(null)
     const tinnumberRef = useRef<TextFieldProps>(null)
+
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+        if (e.target.value !== confirmPassword) {
+            setPasswordError("Passwords do not match");
+        } else {
+            setPasswordError('');
+        }
+    };
+
+    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmPassword(e.target.value);
+        // Automatically check for password match
+    if (e.target.value !== password) {
+        setPasswordError("Passwords do not match");
+      } else {
+        setPasswordError('');
+      }
+    };
 
     const handleGender = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedGender1(event.target.value);
@@ -338,10 +361,17 @@ export default function EmployeeRegistration() {
 
                 <GridField container spacing={8}>
                     <Grid item>
-                        <StyledTextField variant="outlined" label="Email Address" size="small" inputRef={emailRef} />
+                        <StyledTextField variant="outlined" label="Email Address" size="small" style={{ width: '795px' }} inputRef={emailRef} />
                     </Grid>
+                </GridField>
+                <GridField container spacing={8}>
                     <Grid item>
-                        <StyledTextField variant="outlined" label="Password" size="small" inputRef={passwordRef} />
+                            <StyledTextField variant="outlined" type="password" label="Password" size="small" style={{ width: '795px' }} value={password} onChange={handlePasswordChange} inputRef={passwordRef} />
+                    </Grid>
+                </GridField>
+                <GridField container spacing={8}>
+                    <Grid item>
+                            <StyledTextField variant="outlined" type="password" label="Confirm Password" size="small" style={{ width: '795px', marginBottom:60 }} value={confirmPassword} onChange={handleConfirmPasswordChange} error={passwordError !== ''} helperText={passwordError}   />
                     </Grid>
                 </GridField>
 
@@ -419,7 +449,7 @@ export default function EmployeeRegistration() {
                         <Grid item>
                             <label htmlFor="profilepicture-input">
 
-                                <Button variant="contained" component="span"
+                                <Button style={{ width: '795px',}} variant="contained" component="span"
                                     sx={{
                                         backgroundColor: '#2D85E7',
                                         width: '380px',
