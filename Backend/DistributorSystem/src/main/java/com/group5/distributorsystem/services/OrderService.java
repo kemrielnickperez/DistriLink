@@ -117,15 +117,12 @@ public class OrderService {
     }
 */
 
-    public ResponseEntity assignCollector(Set<String> orderIds, Employee collector) {
-        Employee employee = employeeRepository.findById(collector.getEmployeeid()).orElse(null);
+    public ResponseEntity assignCollector(String[] orderids, String collectorid) {
+        Employee employee = employeeRepository.findById(collectorid).get();
 
-        if (employee == null) {
-            return new ResponseEntity("Collector not found", HttpStatus.NOT_FOUND);
-        }
 
-        for (String orderId : orderIds) {
-            Order order = orderRepository.findById(orderId).orElse(null);
+        for (String orderId : orderids) {
+            Order order = orderRepository.findById(orderId).get();
 
             if (order != null) {
                 if (order.getCollector() != null) {

@@ -44,11 +44,9 @@ public class OrderController {
         return new ResponseEntity<>(orderService.assignCollector(orderid, collector), HttpStatus.OK);
     }*/
 
-    @PutMapping("/assignCollector")
-    public ResponseEntity<Object> assignCollector(@RequestBody Employee collector) {
-        Set<String> orderIds = collector.getOrderids();
-
-        return orderService.assignCollector(orderIds, collector);
+    @PutMapping("/assignCollector/{collectorid}")
+    public ResponseEntity<Object> assignCollector(@PathVariable String  collectorid, @RequestBody  String[] orderids) {
+        return orderService.assignCollector(orderids, collectorid);
     }
 
     @PutMapping("/removeCollector/{orderid}")
