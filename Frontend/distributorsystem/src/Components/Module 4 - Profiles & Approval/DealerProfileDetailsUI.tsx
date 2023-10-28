@@ -357,10 +357,10 @@ export default function DealerProfileDetails() {
         setOpen(false);
     }
 
-
     const handleFindDealer = () => {
         getDealerByID(objectId!);
     };
+
     function getAllDealerDocuments() {
         axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId!}`)
             .then((response) => {
@@ -397,6 +397,9 @@ export default function DealerProfileDetails() {
             </Grid>
         </>
     ) : (<Typography>Dealer Has No Business Information.</Typography>)
+
+
+
     useEffect(() => {
         if (objectId) {
             handleFindDealer();

@@ -215,14 +215,14 @@ export default function DealerRegistration() {
     const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmPassword(e.target.value);
         // Automatically check for password match
-    if (e.target.value !== password) {
-        setPasswordError("Passwords do not match");
-      } else {
-        setPasswordError('');
-      }
+        if (e.target.value !== password) {
+            setPasswordError("Passwords do not match");
+        } else {
+            setPasswordError('');
+        }
     };
 
-  
+
 
     const handleGender = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedGender(event.target.value);
@@ -232,19 +232,68 @@ export default function DealerRegistration() {
     };
 
     const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedProfilePicture(event.target.files?.[0]);
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            console.log(file.size)
+            if (file.size <= maxSize) {
+                setSelectedProfilePicture(file);
+            } else {
+
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+        
+        
     };
 
     const handleValidIDFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValidID(event.target.files?.[0]);
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB (adjust as needed)
+            console.log(file.size)
+            if (file.size <= maxSize) {
+                setSelectedValidID(file);
+            } else {
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+
     };
 
+
     const handleContractFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedContract(event.target.files?.[0]);
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            console.log(file.size)
+            if (file.size <= maxSize) {
+                setSelectedContract(file);
+            } else {
+
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+
     };
 
     const handleBusinessDocChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedBusinessDocs(event.target.files?.[0]);
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            console.log(file.size)
+            if (file.size <= maxSize) {
+                setSelectedBusinessDocs(file);
+            } else {
+
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+
     };
 
     const handleHasBusinessChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -316,7 +365,7 @@ export default function DealerRegistration() {
         const newDealerDocuments = await handleFiles();
 
 
-
+ 
         newDealer({
             dealerid: uuidv4().slice(0, 8),
             firstname: String(firstnameRef.current?.value),
@@ -341,13 +390,15 @@ export default function DealerRegistration() {
             orderids: [],
             documentids: []
 
-        }, newDealerDocuments!);
+        }, newDealerDocuments!); 
+        console.log(newDealerDocuments)
     };
 
     useEffect(() => {
         const currentDate = dayjs().subtract(18, 'year') as Dayjs;
         setMaxDate(currentDate);
         //setSelectedBDate(currentDate);
+        console.log(selectedValidID?.name)
     }, []);
 
 
@@ -389,7 +440,7 @@ export default function DealerRegistration() {
                     </GridField>
                     <GridField container spacing={8}>
                         <Grid item>
-                            <StyledTextField type="password" variant="outlined" label="Confirm Password" size="small" style={{ width: '795px', marginBottom:60}} value={confirmPassword} onChange={handleConfirmPasswordChange} error={passwordError !== ''} helperText={passwordError} inputRef={confirmpasswordRef} />
+                            <StyledTextField type="password" variant="outlined" label="Confirm Password" size="small" style={{ width: '795px', marginBottom: 60 }} value={confirmPassword} onChange={handleConfirmPasswordChange} error={passwordError !== ''} helperText={passwordError} inputRef={confirmpasswordRef} />
                         </Grid>
                     </GridField>
 
@@ -465,10 +516,13 @@ export default function DealerRegistration() {
                                             accept=".pdf,.jpg, .jpeg, .png"
                                             onChange={handleValidIDFileChange}
                                             style={{ display: 'none' }}
-                                            id="validid-input" />
+                                            id="validid-input"
+                                        />
                                         <UploadIcon />
                                     </Icon>
-                                    <TypographyLabelC>Upload Valid ID</TypographyLabelC>
+                                    <TypographyLabelC> 
+                                        {selectedValidID?.name === undefined ? 'Upload Valid ID' : selectedValidID?.name }
+                                    </TypographyLabelC>
                                 </Button>
                             </label>
                         </Grid>
@@ -496,7 +550,9 @@ export default function DealerRegistration() {
                                             id="profilepicture-input" />
                                         <UploadIcon />
                                     </Icon>
-                                    <TypographyLabelC >Upload Profile Picture</TypographyLabelC>
+                                    <TypographyLabelC >
+                                        {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name }
+                                    </TypographyLabelC>
                                 </Button>
                             </label>
                         </Grid>
@@ -556,7 +612,9 @@ export default function DealerRegistration() {
                                             id="contract-input" />
                                         <UploadIcon />
                                     </Icon>
-                                    <TypographyLabelC>Upload Contract</TypographyLabelC>
+                                    <TypographyLabelC>
+                                        {selectedContract?.name === undefined ? 'Upload Contract' : selectedContract?.name }
+                                    </TypographyLabelC>
                                 </Button>
                             </label>
                         </Grid>
@@ -589,7 +647,9 @@ export default function DealerRegistration() {
                                             id="business-input" />
                                         <UploadIcon />
                                     </Icon>
-                                    <TypographyLabelC >Upload Business Documents</TypographyLabelC>
+                                    <TypographyLabelC >
+                                        {selectedBusinessDocs?.name === undefined ? 'Upload Businedd Document' : selectedBusinessDocs?.name }
+                                    </TypographyLabelC>
                                 </Button>
                             </label>
                         </Grid>
