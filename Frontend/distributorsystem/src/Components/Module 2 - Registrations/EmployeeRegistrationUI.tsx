@@ -239,7 +239,20 @@ export default function EmployeeRegistration() {
     };
 
     const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedProfilePicture(event.target.files?.[0]);
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            console.log(file.size)
+            if (file.size <= maxSize) {
+                setSelectedProfilePicture(file);
+            } else {
+
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+        
+        
     };
 
 
@@ -470,7 +483,9 @@ export default function EmployeeRegistration() {
                                             id="profilepicture-input" />
                                         <UploadIcon />
                                     </Icon>
-                                    <TypographyLabelC >Upload Profile Picture</TypographyLabelC>
+                                    <TypographyLabelC >
+                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name }
+                                    </TypographyLabelC>
                                 </Button>
                             </label>
                         </Grid>
