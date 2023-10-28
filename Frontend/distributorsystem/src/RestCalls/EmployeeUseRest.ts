@@ -8,7 +8,7 @@ import { IEmployee, IEmployeeDocument } from "./Interfaces";
 
 
 
-export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEmployeeDocument[]) => void, (employeid: number) => void , (collectorID: number) => void, IEmployee | undefined] =>  {
+export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEmployeeDocument[]) => void, (employeid: string) => void , (collectorID: string) => void, IEmployee | undefined] =>  {
 
     const [collector, setCollector] = useState<IEmployee>();
     const [employee, setEmployee] = useState<IEmployee>();
@@ -61,29 +61,29 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
 
     
 
-    function getCollectorByID(collectorID:number) {
+    function getCollectorByID(collectorID:string) {
         
-         axios.get(`http://localhost:8080/employee/getCollectorByID?employeeid=${collectorID}`)
+         axios.get(`http://localhost:8080/employee/getCollectorByID/${collectorID}`)
             .then((response) => {
                 setCollector(response.data)
                 
             })
             .catch((error) => {
                 console.error('Error finding collector', error);
-                alert("ErrorError finding collector. Please try again.");
+                alert("Error finding collector. Please try again.");
             }); 
     }
 
-    function getEmployeeByID(employeeid:number) {
+    function getEmployeeByID(employeeid:string) {
         
-        axios.get(`http://localhost:8080/employee/getEmployeeByID?employeeid=${employeeid}`)
+        axios.get(`http://localhost:8080/employee/getEmployeeByID/${employeeid}`)
            .then((response) => {
                setEmployee(response.data)
               
            })
            .catch((error) => {
                console.error('Error finding employee', error);
-               alert("ErrorError finding employee. Please try again.");
+               alert("Error finding employee. Please try again.");
            }); 
    }
    

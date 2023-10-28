@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -110,13 +111,17 @@ const StyleMainLabel = styled(Typography)({
 
 
 export function EmployeeProfileDetails() {
-  const [employee, setEmployee] = useState<IEmployee | null>(null);
+  const [newEmployee, getEmployeeByID, getCollectorByID, employee] = useRestEmployee();
+  //const [employee, setEmployee] = useState<IEmployee | null>(null);
   const [employeeDocuments, setEmployeeDocuments] = useState<IEmployeeDocument[]>([]);
   const [value, setValue] = useState(0);
   // Use useParams to get the employee from the URL
   const { objectId } = useParams();
 
 
+  const handleFindEmployee = () => {
+    getEmployeeByID(objectId!);
+  };
 
   function getAllEmployeeDocuments() {
     axios.get<IEmployeeDocument[]>(`http://localhost:8080/employeeDocument/findAllDocumentsByEmployeeId/${objectId!}`)
@@ -124,9 +129,11 @@ export function EmployeeProfileDetails() {
         setEmployeeDocuments(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving employee documents. Please try again.");
+       // alert("Error retrieving employee documents. Please try again.");
+       console.log(error)
       });
   };
+
   function CustomTabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
     return (
@@ -153,22 +160,15 @@ export function EmployeeProfileDetails() {
   }
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-};
+  };
+
 
   useEffect(() => {
-    // Make an Axios GET request to fetch the employee data using the objectId
-    axios
-      .get<IEmployee>(`http://localhost:8080/employee/getEmployeeByID/${objectId}`)
-      .then((response) => {
-        setEmployee(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching employee data:", error);
-      });
     if (objectId) {
+      handleFindEmployee();
       getAllEmployeeDocuments();
     }
-  }, [objectId, employeeDocuments]);
+  }, [objectId, employee, employeeDocuments]);
 
   const profilePic = employeeDocuments.find(image => image.name === employee?.lastname + '_profilepicture');
   const imageSource = profilePic ? `data:${profilePic?.type} ;base64,${profilePic?.content}`
@@ -208,14 +208,14 @@ export function EmployeeProfileDetails() {
           <Grid container>
             <Grid item>
               <Box sx={{ width: '92%', marginLeft: 10, marginTop: 5 }}>
-                <Tabs value={value} onChange= {handleChange} aria-label="basic tabs example" >
+                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
                   <TabStyle icon={<PermIdentityIcon />} iconPosition="start" label="Basic Information" {...a11yProps(0)} />
                 </Tabs>
               </Box>
               <CustomTabPanel value={value} index={0}>
                 {/* Basic Information */}
                 <Grid container>
-                  <Grid item style={{marginLeft: 80}}>
+                  <Grid item style={{ marginLeft: 80 }}>
                     <StyleLabel>Gender</StyleLabel>
                     <StyleData>{employee?.gender}</StyleData>
                   </Grid>
