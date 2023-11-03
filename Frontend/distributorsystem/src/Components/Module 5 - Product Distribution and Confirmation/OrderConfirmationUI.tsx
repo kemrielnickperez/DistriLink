@@ -360,7 +360,8 @@ export default function OrderConfirmation() {
       dealer: dealer!,
       orderedproducts: orderedProducts,
       paymenttransactions: [],
-      confirmed: true
+      confirmed: true,
+      isclosed: false
     };
     // Call the updateOrder function with the order ID and updated order data
     updateOrder(existingOrderId, updatedOrder);

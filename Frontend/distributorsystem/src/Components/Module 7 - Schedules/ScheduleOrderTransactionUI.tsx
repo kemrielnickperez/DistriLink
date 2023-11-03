@@ -163,7 +163,7 @@ export default function Schedules() {
             setSortedPaymentTransactions(sorted);
             //handleFindOrder();
         }
-
+        console.log(order?.isclosed)
 
         setInitialMinDate(dayjs() as Dayjs);
 
@@ -195,7 +195,7 @@ export default function Schedules() {
 
             const newPaymentTransaction = {
                 paymenttransactionid: paymenttransactionuuid,
-                amountdue: order!.orderamount / order!.paymentterms,
+                amountdue: parseFloat((order!.orderamount / order!.paymentterms).toFixed(2)),
                 startingdate: currentEndDate.format('YYYY-MM-DD') || "",
                 enddate: currentEndDate.add(15, 'day').format('YYYY-MM-DD') || "",
                 installmentnumber: i,
@@ -265,12 +265,15 @@ export default function Schedules() {
         )
 
     };
+    
+    
 
     useEffect(() => {
 
         if (objectId !== 'null') {
             handleFindOrder();
         }
+        
 
     },
         [isOrderFound, order, paymentTransactionsObjects]);
@@ -316,6 +319,7 @@ export default function Schedules() {
                                         <TableHeaderCell align="center"><Label1>Payment Terms</Label1></TableHeaderCell>
                                         <TableHeaderCell align="center"><Label1>Total Ordered Amount</Label1></TableHeaderCell>
                                         <TableHeaderCell align="center"><Label1>Penalty Rate</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"><Label1>Status</Label1></TableHeaderCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -326,6 +330,11 @@ export default function Schedules() {
                                         <TableCell align='center'><Typography1>{order?.paymentterms}</Typography1></TableCell>
                                         <TableCell align='center'><Typography1>Php {order?.orderamount}</Typography1></TableCell>
                                         <TableCell align='center'><Typography1>{order?.penaltyrate}%</Typography1></TableCell>
+                                        <TableCell align="center">
+                                                      <Typography1><span style={{ color: order?.isclosed ? 'red' : 'green' }}>
+                                                            {order?.isclosed ? 'CLOSED' : 'OPEN'}
+                                                        </span></Typography1>  
+                                                    </TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -389,7 +398,8 @@ export default function Schedules() {
                                                                 }}
                                                                 value={dayjs(transaction.enddate)}
                                                                 minDate={dayjs(transaction.enddate)}
-                                                                onChange={(newValue) => handleEndDateUpdate(newValue)} />
+                                                                onChange={(newValue) => handleEndDateUpdate(newValue)} 
+                                                                disabled={transaction.paid}/>
 
                                                         </LocalizationProvider>
                                                     </TableCell>
@@ -402,6 +412,7 @@ export default function Schedules() {
                                                     <TableCell>
                                                         <StyledButton
                                                             onClick={() => handleSaveClick(transaction)}
+                                                            disabled={transaction.paid}
                                                         > Update </StyledButton>
                                                     </TableCell>
 

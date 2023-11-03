@@ -173,6 +173,7 @@ public class OrderService {
             optionalOrder.setOrderedproducts(updatedOrder.getOrderedproducts());
             optionalOrder.setOrderamount(updatedOrder.getOrderamount());
             optionalOrder.setConfirmed(updatedOrder.getConfirmed());
+            optionalOrder.setIsclosed(updatedOrder.isIsclosed());
             for (OrderedProduct op: updatedOrder.getOrderedproducts()){
                 op.setOrderid(updatedOrder.getOrderid());
             }
@@ -184,6 +185,28 @@ public class OrderService {
 
 
             return new ResponseEntity<>("Order updated successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity updateOrderClosedStatus(String orderId) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            boolean allPaymentsPaid = true;
+
+            for (PaymentTransaction transaction : order.getPaymenttransactions()) {
+                if (!transaction.isPaid()) {
+                    allPaymentsPaid = false;
+                    break; // Exit the loop as soon as you find an unpaid transaction
+                }
+            }
+
+            order.setIsclosed(allPaymentsPaid);
+            orderRepository.save(order);
+
+            return new ResponseEntity<>("Order closed status updated successfully", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
         }

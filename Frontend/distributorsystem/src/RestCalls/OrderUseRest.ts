@@ -16,7 +16,9 @@ export const useRestOrder = (): [
     boolean | undefined,
     boolean | undefined,
     boolean | undefined,
-    (orderID: string | undefined, updatedOrder: IOrder) => void] => {
+    (orderID: string | undefined, updatedOrder: IOrder) => void,
+    (orderID: string) => void,
+] => {
 
     const [order, setOrder] = useState<IOrder>();
     const [isOrderFound, setIsOrderFound] = useState<boolean>(true);
@@ -54,7 +56,8 @@ export const useRestOrder = (): [
             },
             collector: null,
             paymenttransactions: [],
-            confirmed: order.confirmed
+            confirmed: order.confirmed,
+            closed: order.isclosed
 
         })
             .then((response) => {
@@ -141,6 +144,16 @@ export const useRestOrder = (): [
             });
     }
 
+    function closedOrder(orderID: string) {
+        axios.put(`http://localhost:8080/order/updateOrderClosedStatus/${orderID}`)
+            .then((response) => {
+                console.log("Order is closed successfully!");
+            })
+            .catch((error) => {
+                console.log("Error closing the order. Please try again.");
+            });
+    }
 
-    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder];
+
+    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder];
 }
