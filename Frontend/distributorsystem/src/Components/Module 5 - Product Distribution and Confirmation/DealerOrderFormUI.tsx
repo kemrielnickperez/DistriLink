@@ -280,7 +280,8 @@ export default function DealerOrderForm() {
         dealer: dealer!,
         orderedproducts: orderedProducts,
         paymenttransactions: [],
-        confirmed: false
+        confirmed: false,
+        isclosed: false
       });
 
       //if possible kay ara na siya mo clear after sa snackbar

@@ -293,7 +293,8 @@ export default function ProductDistributionList() {
         dealer: dealer!,
         orderedproducts: orderedProducts,
         paymenttransactions: [],
-        confirmed: true
+        confirmed: true,
+        isclosed: false
       });
       //if possible kay ara na siya mo clear after sa snackbar
     clearInputValues();
