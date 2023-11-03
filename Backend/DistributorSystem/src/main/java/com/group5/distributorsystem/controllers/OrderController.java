@@ -64,4 +64,9 @@ public class OrderController {
         return new ResponseEntity<>(orderService.updateOrderClosedStatus(orderid), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllUnconfirmedOrders")
+    public ResponseEntity<Object> getAllUnconfirmedOrders(){
+        return new ResponseEntity<>(orderService.getAllUnconfirmedOrders(), HttpStatus.OK);
+    }
+
 }
