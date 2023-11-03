@@ -1,6 +1,7 @@
 package com.group5.distributorsystem.services;
 
 
+import com.group5.distributorsystem.models.CollectionPaymentReceipt;
 import com.group5.distributorsystem.models.Dealer;
 import com.group5.distributorsystem.models.DealerDocument;
 import com.group5.distributorsystem.repositories.DealerDocumentRepository;
@@ -94,6 +95,10 @@ public class DealerService {
             // Save the updated Dealer back to the database
             dealerRepository.save(existingDealer);
         }
+    }
+
+    public List<Dealer> getAllUnconfirmedDealers() {
+        return dealerRepository.findByIsconfirmedFalse();
     }
 
 }

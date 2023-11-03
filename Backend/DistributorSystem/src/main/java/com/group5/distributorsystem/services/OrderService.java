@@ -189,6 +189,10 @@ public class OrderService {
         }
     }
 
+    public List<Order> getAllUnconfirmedOrders() {
+        return orderRepository.findByIsconfirmedFalse();
+    }
+
 }
 
 

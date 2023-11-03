@@ -59,4 +59,9 @@ public class OrderController {
         return new ResponseEntity<>(orderService.updateOrder(orderId, updatedOrder), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllUnconfirmedOrders")
+    public ResponseEntity<Object> getAllUnconfirmedOrders(){
+        return new ResponseEntity<>(orderService.getAllUnconfirmedOrders(), HttpStatus.OK);
+    }
+
 }

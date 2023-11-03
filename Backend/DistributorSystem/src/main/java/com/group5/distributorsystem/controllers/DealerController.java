@@ -67,4 +67,9 @@ public class DealerController {
         }
     }
 
+    @GetMapping("/getAllUnconfirmedDealers")
+    public ResponseEntity<Object> getAllUnconfirmedDealers(){
+        return new ResponseEntity<>(dealerService.getAllUnconfirmedDealers(), HttpStatus.OK);
+    }
+
 }

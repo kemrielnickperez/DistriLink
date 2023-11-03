@@ -121,7 +121,7 @@ public class CollectionPaymentReceiptService {
 
         Employee cashier = employeeRepository.findById(cashierid).get();
 
-        collectionPaymentReceipt.setConfirmed(true);
+        collectionPaymentReceipt.setIsconfirmed(true);
         collectionPaymentReceipt.setCashier(cashier);
         cashier.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
 
@@ -132,7 +132,13 @@ public class CollectionPaymentReceiptService {
         return new ResponseEntity("Collection Payment Receipt Confirmed Successfully!", HttpStatus.OK);
     }
 
-    public List<CollectionPaymentReceipt> findByIsConfirmedFalse() {
-        return collectionPaymentReceiptRepository.findByIsConfirmedFalse();
+
+    public List<CollectionPaymentReceipt> getAllCollectionPaymentReceipts() {
+        return collectionPaymentReceiptRepository.findAll();
+    }
+
+
+    public List<CollectionPaymentReceipt> getAllUnconfirmedCollectionPaymentReceipts() {
+        return collectionPaymentReceiptRepository.findByIsconfirmedFalse();
     }
 }
