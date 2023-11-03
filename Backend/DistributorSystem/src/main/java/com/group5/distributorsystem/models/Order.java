@@ -39,6 +39,8 @@ public class Order {
 
     private boolean isconfirmed;
 
+    private boolean isclosed;
+
 
 
     //private Set<PaymentTransaction> paymentTransactions;
@@ -66,7 +68,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(String orderid, LocalDate orderdate, LocalDate distributiondate, float penaltyrate, int paymentterms, double orderamount, Dealer dealer, Employee collector, Set<OrderedProduct> orderedproducts, Set<PaymentTransaction> paymenttransactions, boolean isconfirmed) {
+    public Order(String orderid, LocalDate orderdate, LocalDate distributiondate, float penaltyrate, int paymentterms, double orderamount, Dealer dealer, Employee collector, Set<OrderedProduct> orderedproducts, Set<PaymentTransaction> paymenttransactions, boolean isconfirmed, boolean isclosed) {
         this.orderid = orderid;
         this.orderdate = orderdate;
         this.distributiondate = distributiondate;
@@ -78,6 +80,7 @@ public class Order {
         this.orderedproducts = orderedproducts;
         this.paymenttransactions = paymenttransactions;
         this.isconfirmed = isconfirmed;
+        this.isclosed = isclosed;
     }
 
     public String getOrderid() {
@@ -166,5 +169,13 @@ public class Order {
 
     public void setConfirmed(boolean confirmed) {
         isconfirmed = confirmed;
+    }
+
+    public boolean isIsclosed() {
+        return isclosed;
+    }
+
+    public void setIsclosed(boolean isclosed) {
+        this.isclosed = isclosed;
     }
 }

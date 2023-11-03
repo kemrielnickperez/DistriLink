@@ -82,7 +82,8 @@ export interface IOrder {
     dealer: IDealer,
     orderedproducts: IOrderedProducts[],
     paymenttransactions: IPaymentTransaction[] | null,
-    confirmed: boolean
+    confirmed: boolean,
+    isclosed: boolean
     
 }
 
