@@ -1,5 +1,23 @@
 //Interfaces for models
 
+export interface IDistributor {
+    distributorid:string,
+    firstname: string,
+    middlename: string,
+    lastname: string,
+    emailaddress :String,
+    password: String,
+    birthdate: string,
+    gender: string,
+    currentaddress: string,
+    permanentaddress: string,
+    contactnumber: string,
+    dealerids: string[],
+    employeeids: string[],
+    orderids: string[],
+}
+
+
 export interface IDealer {
     dealerid:string,
     firstname: string,
@@ -21,6 +39,7 @@ export interface IDealer {
     submissiondate: string,
     confirmed: boolean,
     remarks: string,
+    distributor: IDistributor,
     orderids: string[], // naa ta gihapon ni dapat
     documentids: string[],
 }
@@ -50,6 +69,7 @@ export interface IEmployee {
     is_salesassociate: boolean,
     is_collector: boolean,
     submissiondate: string,
+    distributor: IDistributor,
     orders: IOrder[],
     collectionpaymentids: string[],
     documentids: string[],
@@ -78,6 +98,7 @@ export interface IOrder {
     penaltyrate: number,
     paymentterms: number,
     orderamount:number,
+    distributor: IDistributor,
     collector: IEmployee | null,
     dealer: IDealer,
     orderedproducts: IOrderedProducts[],

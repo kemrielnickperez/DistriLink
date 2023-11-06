@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Button, FormControlLabel, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
+import { Autocomplete, Button, FormControlLabel, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -7,10 +7,13 @@ import UploadIcon from '@mui/icons-material/Upload';
 import dealer1 from '../../Global Components/dealer1.png'
 import { useNavigate } from "react-router-dom";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
-import { IDealer, IDealerDocument } from "../../RestCalls/Interfaces";
+import { IDealer, IDealerDocument, IDistributor, IProduct } from "../../RestCalls/Interfaces";
 import moment from "moment";
 import { v4 as uuidv4 } from 'uuid';
 import dayjs, { Dayjs } from "dayjs";
+import axios from "axios";
+import Autosuggest, { SuggestionSelectedEventData, SuggestionsFetchRequestedParams, } from 'react-autosuggest';
+
 
 const ImageStyle = styled(Typography)({
     display: 'flex',
@@ -157,7 +160,10 @@ const SignUpButton = styled(Button)({
     },
     transition: 'all 0.4s'
 })
+
+
 const GridField = styled(Grid)({
+
 
 })
 
@@ -182,6 +188,9 @@ export default function DealerRegistration() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
+    const [distributors, setDistributors] = useState<IDistributor[]>([]);
+    const [selectedDistributor, setSelectedDistributor] = useState<IDistributor>();
+
     const firstnameRef = useRef<TextFieldProps>(null)
     const middlenameRef = useRef<TextFieldProps>(null)
     const lastnameRef = useRef<TextFieldProps>(null)
@@ -197,11 +206,43 @@ export default function DealerRegistration() {
     const tinnumberRef = useRef<TextFieldProps>(null)
 
 
-    const handleSignUp = () => {
-        //handleFiles
-        handleNewDealer();
-        // navigate(`/dashboard`);
-    };
+    const distributorObject: IDistributor = {
+
+        distributorid: "distributor4",
+        firstname: "Junhui",
+        middlename: "",
+        lastname: "Wen",
+        emailaddress: "wenjunhui@gmail.com",
+        password: "moonmoon",
+        birthdate: "1996-06-10",
+        gender: "Male",
+        currentaddress: "Talisay City",
+        permanentaddress: "Talisay City",
+        contactnumber: "09741258963",
+        dealerids: [],
+        employeeids: [],
+        orderids: []
+    }
+
+
+    function getAllDistributors() {
+        axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
+            .then((response) => {
+                setDistributors(response.data);
+                console.log(response.data)
+
+            })
+            .catch((error) => {
+
+                alert("Error retrieving payment receipts. Please try again.");
+            });
+    }
+
+
+
+
+
+
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
@@ -236,7 +277,6 @@ export default function DealerRegistration() {
 
         if (file) {
             const maxSize = 1024 * 1024 * 5; // 5 MB 
-            console.log(file.size)
             if (file.size <= maxSize) {
                 setSelectedProfilePicture(file);
             } else {
@@ -244,8 +284,8 @@ export default function DealerRegistration() {
                 alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
             }
         }
-        
-        
+
+
     };
 
     const handleValidIDFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,7 +293,7 @@ export default function DealerRegistration() {
 
         if (file) {
             const maxSize = 1024 * 1024 * 5; // 5 MB (adjust as needed)
-            console.log(file.size)
+
             if (file.size <= maxSize) {
                 setSelectedValidID(file);
             } else {
@@ -269,7 +309,7 @@ export default function DealerRegistration() {
 
         if (file) {
             const maxSize = 1024 * 1024 * 5; // 5 MB 
-            console.log(file.size)
+
             if (file.size <= maxSize) {
                 setSelectedContract(file);
             } else {
@@ -285,7 +325,7 @@ export default function DealerRegistration() {
 
         if (file) {
             const maxSize = 1024 * 1024 * 5; // 5 MB 
-            console.log(file.size)
+
             if (file.size <= maxSize) {
                 setSelectedBusinessDocs(file);
             } else {
@@ -354,19 +394,17 @@ export default function DealerRegistration() {
 
         // You can access the updated dealerDocuments state after this update
 
-        console.log(dealerDocuments);
+
         return newDealerDocuments;
     };
 
-
-
     const handleNewDealer = async () => {
+
 
         const newDealerDocuments = await handleFiles();
 
 
- 
-        newDealer({
+         newDealer({
             dealerid: uuidv4().slice(0, 8),
             firstname: String(firstnameRef.current?.value),
             middlename: String(middlenameRef.current?.value),
@@ -387,18 +425,31 @@ export default function DealerRegistration() {
             submissiondate: moment().format('YYYY-MM-DD'),
             confirmed: false,
             remarks: '',
+            distributor: selectedDistributor!,
             orderids: [],
             documentids: []
 
         }, newDealerDocuments!); 
-        console.log(newDealerDocuments)
+       
+        console.log("mao ni gi selecr")
+        console.log(selectedDistributor)
+
     };
+
+    const handleSignUp = () => {
+        handleNewDealer();
+    };
+
+
 
     useEffect(() => {
         const currentDate = dayjs().subtract(18, 'year') as Dayjs;
         setMaxDate(currentDate);
-        //setSelectedBDate(currentDate);
-        console.log(selectedValidID?.name)
+
+        getAllDistributors();
+       
+       // console.log(selectedDistributor)
+
     }, []);
 
 
@@ -494,6 +545,32 @@ export default function DealerRegistration() {
                             <StyledTextField variant="outlined" label="TIN Number" size="small" style={{ width: '795px' }} inputRef={tinnumberRef} />
                         </Grid>
                     </GridField>
+                    <GridField>
+                        <Grid item>
+                            <Autocomplete
+                                disablePortal
+                                id="flat-demo"
+                                options={distributors}
+                                getOptionLabel={(option) => option.firstname +" "+ option.lastname}
+                                isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
+                                value={selectedDistributor}
+                                onChange={(event, newValue) => setSelectedDistributor(newValue!)}
+                                renderInput={(params) => (
+                                    <StyledTextField
+                                        {...params}
+                                        InputProps={{
+                                            ...params.InputProps, disableUnderline: true
+                                        }}
+                                        variant="outlined"
+                                        label="Distributor"
+                                        size="small"
+                                        style={{ width: '795px' }}
+                                        
+                                    />)}
+                                
+                            />
+                        </Grid>
+                    </GridField>
                     <GridField container spacing={8} >
                         <Grid item>
                             <label htmlFor="validid-input">
@@ -520,8 +597,8 @@ export default function DealerRegistration() {
                                         />
                                         <UploadIcon />
                                     </Icon>
-                                    <TypographyLabelC> 
-                                        {selectedValidID?.name === undefined ? 'Upload Valid ID' : selectedValidID?.name }
+                                    <TypographyLabelC>
+                                        {selectedValidID?.name === undefined ? 'Upload Valid ID' : selectedValidID?.name}
                                     </TypographyLabelC>
                                 </Button>
                             </label>
@@ -551,7 +628,7 @@ export default function DealerRegistration() {
                                         <UploadIcon />
                                     </Icon>
                                     <TypographyLabelC >
-                                        {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name }
+                                        {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name}
                                     </TypographyLabelC>
                                 </Button>
                             </label>
@@ -613,7 +690,7 @@ export default function DealerRegistration() {
                                         <UploadIcon />
                                     </Icon>
                                     <TypographyLabelC>
-                                        {selectedContract?.name === undefined ? 'Upload Contract' : selectedContract?.name }
+                                        {selectedContract?.name === undefined ? 'Upload Contract' : selectedContract?.name}
                                     </TypographyLabelC>
                                 </Button>
                             </label>
@@ -648,12 +725,13 @@ export default function DealerRegistration() {
                                         <UploadIcon />
                                     </Icon>
                                     <TypographyLabelC >
-                                        {selectedBusinessDocs?.name === undefined ? 'Upload Businedd Document' : selectedBusinessDocs?.name }
+                                        {selectedBusinessDocs?.name === undefined ? 'Upload Businedd Document' : selectedBusinessDocs?.name}
                                     </TypographyLabelC>
                                 </Button>
                             </label>
                         </Grid>
                     </GridField>
+
                     <GridField container spacing={0} >
                         <Grid item>
                             <SignUpButton variant="contained" onClick={handleSignUp}>

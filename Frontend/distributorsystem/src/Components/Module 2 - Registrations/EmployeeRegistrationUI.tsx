@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
+import { Autocomplete, Button, Checkbox, FormControlLabel, FormGroup, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -8,8 +8,9 @@ import employee1 from '../../Global Components/employee1.png'
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 import dayjs, { Dayjs } from "dayjs";
 import { v4 as uuidv4 } from 'uuid';
-import { IEmployeeDocument } from "../../RestCalls/Interfaces";
+import { IDistributor, IEmployeeDocument } from "../../RestCalls/Interfaces";
 import moment from "moment";
+import axios from "axios";
 
 const ImageStyle = styled(Typography)({
     display: 'flex',
@@ -186,6 +187,43 @@ export default function EmployeeRegistration() {
     const tinnumberRef = useRef<TextFieldProps>(null)
 
 
+    const [selectedDistributor, setSelectedDistributor] = useState<IDistributor>();
+    const [distributors, setDistributors] = useState<IDistributor[]>([]);
+    
+    const distributorObject : IDistributor = {
+
+        distributorid: "distributor1",
+        firstname: "Junhui",
+        middlename: "",
+        lastname: "Wen",
+        emailaddress: "wenjunhui@gmail.com",
+        password: "moonmoon",
+        birthdate: "1996-06-10",
+        gender: "Male",
+        currentaddress: "Talisay City",
+        permanentaddress: "Talisay City",
+        contactnumber: "09741258963",
+        dealerids: [],
+        employeeids: [],
+        orderids: []
+    }
+
+
+    
+    function getAllDistributors() {
+        axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
+            .then((response) => {
+                setDistributors(response.data);
+
+            })
+            .catch((error) => {
+
+                alert("Error retrieving payment receipts. Please try again.");
+            });
+    }
+
+
+
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
         if (e.target.value !== confirmPassword) {
@@ -333,6 +371,7 @@ export default function EmployeeRegistration() {
             is_salesassociate: isSalesAssociateSelected,
             is_collector: isCollectorSelected,
             submissiondate: moment().format('YYYY-MM-DD'),
+            distributor: selectedDistributor!,
             orders: [],
             collectionpaymentids: [],
             documentids: []
@@ -341,10 +380,14 @@ export default function EmployeeRegistration() {
     };
 
 
+ 
+
     useEffect(() => {
         const currentDate = dayjs().subtract(18, 'year') as Dayjs;
         setMaxDate(currentDate);
-        //setSelectedBDate(currentDate);
+
+    
+        getAllDistributors();
     }, []);
 
     return (
@@ -439,6 +482,32 @@ export default function EmployeeRegistration() {
                         <StyledTextField variant="outlined" label="TIN Number" size="small" style={{ width: '795px' }} inputRef={tinnumberRef} />
                     </Grid>
                 </GridField>
+                <GridField>
+                        <Grid item>
+                            <Autocomplete
+                                disablePortal
+                                id="flat-demo"
+                                options={distributors}
+                                getOptionLabel={(option) => option.firstname +" "+ option.lastname}
+                                isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
+                                value={selectedDistributor}
+                                onChange={(event, newValue) => setSelectedDistributor(newValue!)}
+                                renderInput={(params) => (
+                                    <StyledTextField
+                                        {...params}
+                                        InputProps={{
+                                            ...params.InputProps, disableUnderline: true
+                                        }}
+                                        variant="outlined"
+                                        label="Distributor"
+                                        size="small"
+                                        style={{ width: '795px' }}
+                                        
+                                    />)}
+                                
+                            />
+                        </Grid>
+                    </GridField>
                 <GridField container spacing={0}>
                     <Grid item>
                         <TypographyLabelB>Apply As:

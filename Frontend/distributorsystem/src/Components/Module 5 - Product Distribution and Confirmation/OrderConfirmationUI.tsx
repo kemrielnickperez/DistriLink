@@ -356,6 +356,7 @@ export default function OrderConfirmation() {
       penaltyrate: Number(penaltyRateRef.current?.value),
       paymentterms: paymentTerm,
       orderamount: totalAmount,
+      distributor: dealer!.distributor,
       collector: null,
       dealer: dealer!,
       orderedproducts: orderedProducts,
