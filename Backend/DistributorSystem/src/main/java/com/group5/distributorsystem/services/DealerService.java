@@ -1,7 +1,6 @@
 package com.group5.distributorsystem.services;
 
 
-import com.group5.distributorsystem.models.CollectionPaymentReceipt;
 import com.group5.distributorsystem.models.Dealer;
 import com.group5.distributorsystem.models.DealerDocument;
 import com.group5.distributorsystem.models.Distributor;
@@ -9,6 +8,11 @@ import com.group5.distributorsystem.repositories.DealerDocumentRepository;
 import com.group5.distributorsystem.repositories.DealerRepository;
 import com.group5.distributorsystem.repositories.DistributorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +31,9 @@ public class DealerService {
 
     @Autowired
     DistributorRepository distributorRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public Dealer registerDealer(Dealer dealer, List<String> documentIds, List<String> documentNames, List<String> documentTypes, List<MultipartFile> documentContents) {
 
@@ -62,17 +69,45 @@ public class DealerService {
     }
 
     public List<Dealer> getAllDealers(){
-
         return dealerRepository.findAll();
     }
 
-    /*public Optional<Dealer> getDealerByID(int dealerid){
-        return dealerRepository.findById(dealerid);
-    }*/
-    public Optional<Dealer> getDealerByID(String dealerid){
+   /* public List<Dealer> getAllDealers(){
+        // Define a query with projection to exclude the 'password' field
+        *//*Query query = new Query();
+        query.fields().exclude("password", "distributor.dealerids", "distributor.orderids", "distributor.employeeids");
 
-        return dealerRepository.findById(dealerid);
+        // Execute the query and convert the result into a List of Dealer objects
+
+        return mongoTemplate.find(query, Dealer.class);*//*
+
+        Aggregation aggregation = Aggregation.newAggregation(
+
+                Aggregation.project().andExclude("password", "distributor.dealerids", "distributor.orderids", "distributor.employeeids"),// Match the document by ID
+                Aggregation.limit(1) // Limit the result to one document
+        );
+
+       return mongoTemplate.aggregate(aggregation, "Dealers", Dealer.class).getMappedResults();
+
+    }*/
+
+
+
+    public Dealer getDealerByID(String dealerid){
+        return dealerRepository.findById(dealerid).get();
     }
+
+    /*public Dealer getDealerByID(String dealerid){
+
+        // Create a query to find a dealer by ID and exclude the "password" field
+        Query query = new Query(Criteria.where("_id").is(dealerid));
+        query.fields().exclude("password");
+
+        // Use the query to find the dealer in the database
+        return mongoTemplate.findOne(query, Dealer.class);
+
+
+    }*/
 
     public Dealer findByDealeridAndPassword(String dealerid, String password){
         return dealerRepository.findByDealeridAndPassword(dealerid, password);

@@ -1,6 +1,7 @@
 package com.group5.distributorsystem.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
