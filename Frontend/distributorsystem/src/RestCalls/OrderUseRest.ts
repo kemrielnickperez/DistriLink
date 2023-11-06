@@ -35,11 +35,29 @@ export const useRestOrder = (): [
             paymentterms: order.paymentterms,
             orderdate: order.orderdate,
             orderedproducts: order.orderedproducts,
+            distributor: {
+                dealerid: order.distributor.distributorid,
+                firstname: order.distributor.firstname,
+                middlename: order.distributor.middlename,
+                lastname: order.distributor.lastname,
+                emailaddress: order.distributor.emailaddress,
+                password: order.distributor.password,
+                birthdate: order.distributor.birthdate,
+                gender: order.distributor.gender,
+                currentaddress: order.distributor.currentaddress,
+                permanentaddress: order.distributor.permanentaddress,
+                contactnumber: order.distributor.contactnumber,
+                dealerids: order.distributor.dealerids,
+                employeeids: order.distributor.employeeids,
+                orderids: order.distributor.orderids,
+            },
             dealer: {
                 dealerid: order.dealer.dealerid,
                 firstname: order.dealer.firstname,
                 middlename: order.dealer.middlename,
                 lastname: order.dealer.lastname,
+                emailaddress: order.dealer.email,
+                password: order.dealer.password,
                 birthdate: order.dealer.birthdate,
                 gender: order.dealer.gender,
                 currentaddress: order.dealer.currentaddress,
@@ -58,6 +76,8 @@ export const useRestOrder = (): [
             paymenttransactions: [],
             confirmed: order.confirmed,
             closed: order.isclosed
+
+            
 
         })
             .then((response) => {

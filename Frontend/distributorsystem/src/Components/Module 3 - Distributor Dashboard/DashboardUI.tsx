@@ -1,7 +1,7 @@
 import { Grid, Paper, Autocomplete, Typography, styled, Table, TableContainer, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { ICollectionPaymentReceipt, IDealer, IDirectPaymentReceipt, IOrder, IPaymentReceipt } from "../../RestCalls/Interfaces";
+import { ICollectionPaymentReceipt, IDealer, IDirectPaymentReceipt, IDistributor, IOrder, IPaymentReceipt } from "../../RestCalls/Interfaces";
 import { useNavigate } from "react-router-dom";
 
 const ProductName = styled(Typography)({
@@ -209,10 +209,25 @@ export default function Dashboard() {
     }
 
 
+    const [distributorsss, setDistributorsss] = useState<IDistributor[]>([]);
+    function getAllDistributors() {
+        axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
+            .then((response) => {
+                setDistributorsss(response.data);
+
+            })
+            .catch((error) => {
+
+                alert("Error retrieving payment receipts. Please try again.");
+            });
+    } 
+
     useEffect(() => {
         getAllUnconfirmedDealers();
         getAllUnconfirmedOrders();
         getAllUnconfirmedCollectionPaymentReceipts();
+        getAllDistributors();
+        console.log(distributorsss);
 
     }, [unconfirmedDealers, unconfirmedOrders, unconfirmedCollectionPaymentReceipts]);
 

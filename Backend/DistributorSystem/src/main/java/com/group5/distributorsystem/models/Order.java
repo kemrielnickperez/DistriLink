@@ -27,9 +27,9 @@ public class Order {
 
     private double orderamount;
 
+    private Distributor distributor;
 
     private Dealer dealer;
-
 
     private Employee collector;
 
@@ -42,39 +42,17 @@ public class Order {
     private boolean isclosed;
 
 
-
-    //private Set<PaymentTransaction> paymentTransactions;
-
-
-   /* @OneToMany(mappedBy = "order")
-    @JsonManagedReference("order-orderedproducts-reference")
-    private Set<OrderedProduct> orderedProducts;
-
-
-    @OneToMany(mappedBy = "order")
-    @JsonManagedReference("order-paymenttransactions-reference")
-    private Set<PaymentTransaction> paymentTransactions;
-
-
-    @ManyToOne
-    @JoinColumn(name = "dealerid", nullable = false)
-    private Dealer dealer;
-
-    @ManyToOne
-    @JoinColumn(name = "collectorid", nullable = true)
-    //@JsonManagedReference("order-employee-reference")
-    private Employee collector;*/
-
     public Order() {
     }
 
-    public Order(String orderid, LocalDate orderdate, LocalDate distributiondate, float penaltyrate, int paymentterms, double orderamount, Dealer dealer, Employee collector, Set<OrderedProduct> orderedproducts, Set<PaymentTransaction> paymenttransactions, boolean isconfirmed, boolean isclosed) {
+    public Order(String orderid, LocalDate orderdate, LocalDate distributiondate, float penaltyrate, int paymentterms, double orderamount, Distributor distributor, Dealer dealer, Employee collector, Set<OrderedProduct> orderedproducts, Set<PaymentTransaction> paymenttransactions, boolean isconfirmed, boolean isclosed) {
         this.orderid = orderid;
         this.orderdate = orderdate;
         this.distributiondate = distributiondate;
         this.penaltyrate = penaltyrate;
         this.paymentterms = paymentterms;
         this.orderamount = orderamount;
+        this.distributor = distributor;
         this.dealer = dealer;
         this.collector = collector;
         this.orderedproducts = orderedproducts;
@@ -129,6 +107,14 @@ public class Order {
 
     public void setOrderamount(double orderamount) {
         this.orderamount = orderamount;
+    }
+
+    public Distributor getDistributor() {
+        return distributor;
+    }
+
+    public void setDistributor(Distributor distributor) {
+        this.distributor = distributor;
     }
 
     public Dealer getDealer() {

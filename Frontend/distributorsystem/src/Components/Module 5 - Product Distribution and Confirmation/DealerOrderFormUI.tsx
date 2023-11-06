@@ -276,6 +276,7 @@ export default function DealerOrderForm() {
         penaltyrate: Number(penaltyRateRef.current?.value),
         paymentterms: paymentTerm,
         orderamount: orderAmount,
+        distributor: dealer!.distributor,
         collector: null,
         dealer: dealer!,
         orderedproducts: orderedProducts,

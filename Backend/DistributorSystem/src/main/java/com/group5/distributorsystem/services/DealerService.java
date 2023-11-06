@@ -4,8 +4,10 @@ package com.group5.distributorsystem.services;
 import com.group5.distributorsystem.models.CollectionPaymentReceipt;
 import com.group5.distributorsystem.models.Dealer;
 import com.group5.distributorsystem.models.DealerDocument;
+import com.group5.distributorsystem.models.Distributor;
 import com.group5.distributorsystem.repositories.DealerDocumentRepository;
 import com.group5.distributorsystem.repositories.DealerRepository;
+import com.group5.distributorsystem.repositories.DistributorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,8 +25,16 @@ public class DealerService {
     @Autowired
     DealerDocumentRepository dealerDocumentRepository;
 
+    @Autowired
+    DistributorRepository distributorRepository;
+
     public Dealer registerDealer(Dealer dealer, List<String> documentIds, List<String> documentNames, List<String> documentTypes, List<MultipartFile> documentContents) {
+
+
         Dealer updatedDealer = dealerRepository.save(dealer);
+
+        Distributor distributor = distributorRepository.findById(dealer.getDistributor().getDistributorid()).get();
+
         for (int i = 0; i < documentIds.size(); i++) {
             DealerDocument document = new DealerDocument();
             document.setDocumentid(documentIds.get(i));
@@ -43,6 +53,11 @@ public class DealerService {
             dealerDocumentRepository.save(document);
 
         }
+
+        updatedDealer.setDistributor(distributor);
+        distributor.getDealerids().add(updatedDealer.getDealerid());
+        distributorRepository.save(distributor);
+
         return dealerRepository.save(updatedDealer);
     }
 

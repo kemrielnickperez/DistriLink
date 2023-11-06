@@ -29,8 +29,8 @@ public class DealerController {
             @RequestParam("type") List<String> documentTypes,
             @RequestParam("content") List<MultipartFile> documentContents
     )  {
-        dealerService.registerDealer(dealer, documentIds, documentNames, documentTypes, documentContents);
 
+        dealerService.registerDealer(dealer, documentIds, documentNames, documentTypes, documentContents);
         return new ResponseEntity<>("Dealer registered successfully!", HttpStatus.CREATED);
     }
 

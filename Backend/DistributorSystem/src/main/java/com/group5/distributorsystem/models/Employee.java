@@ -47,11 +47,13 @@ public class Employee {
 
     private LocalDate submissiondate;
 
+    private Distributor distributor;
+
     private Set<String> orderids = new HashSet<>();
 
-    private Set<String> paymentreceiptids;
+    private Set<String> paymentreceiptids = new HashSet<>();;
 
-    private Set<String> collectionpaymentids;
+    private Set<String> collectionpaymentids =  new HashSet<>();;
 
     private Set<String> documentids = new HashSet<>();
 
@@ -59,7 +61,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String employeeid, String firstname, String middlename, String lastname, String emailaddress, String password, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, String tinnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, LocalDate submissiondate, Set<String> orderid, Set<String> paymentreceiptids, Set<String> collectionpaymentids, Set<String> documentids) {
+    public Employee(String employeeid, String firstname, String middlename, String lastname, String emailaddress, String password, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, String tinnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, LocalDate submissiondate, Distributor distributor, Set<String> orderids, Set<String> paymentreceiptids, Set<String> collectionpaymentids, Set<String> documentids) {
         this.employeeid = employeeid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -76,7 +78,8 @@ public class Employee {
         this.is_salesassociate = is_salesassociate;
         this.is_collector = is_collector;
         this.submissiondate = submissiondate;
-        this.orderids = orderid;
+        this.distributor = distributor;
+        this.orderids = orderids;
         this.paymentreceiptids = paymentreceiptids;
         this.collectionpaymentids = collectionpaymentids;
         this.documentids = documentids;
@@ -208,6 +211,14 @@ public class Employee {
 
     public void setSubmissiondate(LocalDate submissiondate) {
         this.submissiondate = submissiondate;
+    }
+
+    public Distributor getDistributor() {
+        return distributor;
+    }
+
+    public void setDistributor(Distributor distributor) {
+        this.distributor = distributor;
     }
 
     public Set<String> getOrderids() {

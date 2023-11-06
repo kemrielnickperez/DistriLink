@@ -35,13 +35,20 @@ public class OrderService {
     @Autowired
     DealerRepository dealerRepository;
 
+    @Autowired
+    DistributorRepository distributorRepository;
+
     public Order createOrder(Order order) {
 
         Order newOrder =  orderRepository.save(order);
 
         double orderamount = 0;
 
+
         Dealer dealer = dealerRepository.findById(order.getDealer().getDealerid()).get();
+
+
+        Distributor distributor = distributorRepository.findById(dealer.getDistributor().getDistributorid()).get();
 
         Set<OrderedProduct> newOrderedProducts = order.getOrderedproducts();
         Set<OrderedProduct> savedOrderedProducts = new HashSet<>();
@@ -66,8 +73,10 @@ public class OrderService {
 
                 orderamount += subtotal;
 
+                newOrderedProduct.setProduct(product);
                 product.getOrderedproductids().add(newOrderedProduct.getOrderedproductid());
                 productRepository.save(product);
+                orderedProductRepository.save(newOrderedProduct);
 
 
 
@@ -77,8 +86,13 @@ public class OrderService {
         newOrder.setOrderamount(orderamount);
 
         //connection to dealer
+        //dealer.setDistributor(distributor);
         dealer.getOrderids().add(newOrder.getOrderid());
         dealerRepository.save(dealer);
+
+        newOrder.setDistributor(distributor);
+        distributor.getOrderids().add(newOrder.getOrderid());
+        distributorRepository.save(distributor);
 
         return orderRepository.save(newOrder);
     }
