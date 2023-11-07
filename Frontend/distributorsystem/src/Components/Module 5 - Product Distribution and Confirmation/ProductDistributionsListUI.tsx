@@ -79,9 +79,22 @@ export default function ProductDistributionList() {
         { field: 'dealerName', headerName: 'Dealer Name', width: 250 },
         { field: 'orderId', headerName: 'Order Transaction ID', width: 250 },
         { field: 'orderDate', headerName: 'Order Date', width: 250 },
-        {field: 'confirmed', headerName: 'Status', width: 250},
         {
-            field: 'action', headerName: '', width: 150,
+            field: 'confirmed',
+            headerName: 'Status',
+            width: 200,
+            renderCell: (params: { row: any; }) => {
+                const isConfirmed = params.row.confirmed;
+
+                return (
+                    <div>
+                        {isConfirmed ? <span>Confirmed</span> : <span>Pending</span>}
+                    </div>
+                );
+            }
+        },
+        {
+            field: 'view', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
                 return (
                     <StyledButton

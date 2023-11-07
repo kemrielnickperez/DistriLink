@@ -196,7 +196,7 @@ export default function DealerProfileDetails() {
         </>
     )
 
-    const [getDealerByID, newDealer,updateDealer, isDealerFound, dealer] = useRestDealer();
+    const [getDealerByID, newDealer, updateDealer, confirmDealer, markDealerAsPending, isDealerFound, dealer,] = useRestDealer();
 
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
 
@@ -210,12 +210,7 @@ export default function DealerProfileDetails() {
 
     const [isEditing, setIsEditing] = useState(false);
 
-    const [editedCreditLimit, setEditedCreditLimit] = useState(dealer?.creditlimit);
-
-
-
-
-
+    const [editedCreditLimit, setEditedCreditLimit] = useState<number | undefined>(dealer?.creditlimit);
 
 
     const basicInfoClickHandler = () => {
