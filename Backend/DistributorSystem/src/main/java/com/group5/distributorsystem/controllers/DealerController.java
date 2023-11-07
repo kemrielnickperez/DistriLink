@@ -29,8 +29,8 @@ public class DealerController {
             @RequestParam("type") List<String> documentTypes,
             @RequestParam("content") List<MultipartFile> documentContents
     )  {
-        dealerService.registerDealer(dealer, documentIds, documentNames, documentTypes, documentContents);
 
+        dealerService.registerDealer(dealer, documentIds, documentNames, documentTypes, documentContents);
         return new ResponseEntity<>("Dealer registered successfully!", HttpStatus.CREATED);
     }
 
@@ -65,6 +65,11 @@ public class DealerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to set dealer" + e.getMessage());
         }
+    }
+
+    @GetMapping("/getAllUnconfirmedDealers")
+    public ResponseEntity<Object> getAllUnconfirmedDealers(){
+        return new ResponseEntity<>(dealerService.getAllUnconfirmedDealers(), HttpStatus.OK);
     }
 
 }

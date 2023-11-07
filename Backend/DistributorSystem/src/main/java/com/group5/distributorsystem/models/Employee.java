@@ -6,6 +6,7 @@ import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -44,35 +45,23 @@ public class Employee {
 
     private boolean is_collector;
 
-    private Set<String> orderids;
+    private LocalDate submissiondate;
 
-    private Set<String> paymentreceiptids;
+    private Distributor distributor;
 
+    private Set<String> orderids = new HashSet<>();
 
-    //private Set<Order> orders;
+    private Set<String> paymentreceiptids = new HashSet<>();;
 
-    //private Set<PaymentReceipt> paymentReceipts;
+    private Set<String> collectionpaymentids =  new HashSet<>();;
 
-    //private Set<CollectionPaymentReceipt> collectionPaymentReceipts;
-
-    /*@OneToMany(mappedBy = "collector")
-    //@JsonBackReference("order-employee-reference")
-    private Set<Order> orders;*/
-
-    //comment sani kay murag nagdala og panganib
-    /*@OneToMany(mappedBy = "cashier")
-    @JsonManagedReference("employee-paymentreceipts-reference")
-    private Set<PaymentReceipt> paymentReceipts;*/
-
-    /*@OneToMany(mappedBy = "collector")
-    @JsonManagedReference("employee-collectionpaymenttransactions-reference")
-    private Set<CollectionPaymentReceipt> collectionPaymentReceipts;*/
+    private Set<String> documentids = new HashSet<>();
 
 
     public Employee() {
     }
 
-    public Employee(String employeeid, String firstname, String middlename, String lastname, String emailaddress, String password, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, String tinnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, Set<String> orderids, Set<String> paymentreceiptids, Set<String> collectionpaymentids) {
+    public Employee(String employeeid, String firstname, String middlename, String lastname, String emailaddress, String password, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, String tinnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, LocalDate submissiondate, Distributor distributor, Set<String> orderids, Set<String> paymentreceiptids, Set<String> collectionpaymentids, Set<String> documentids) {
         this.employeeid = employeeid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -88,9 +77,12 @@ public class Employee {
         this.is_cashier = is_cashier;
         this.is_salesassociate = is_salesassociate;
         this.is_collector = is_collector;
+        this.submissiondate = submissiondate;
+        this.distributor = distributor;
         this.orderids = orderids;
         this.paymentreceiptids = paymentreceiptids;
-
+        this.collectionpaymentids = collectionpaymentids;
+        this.documentids = documentids;
     }
 
     public String getEmployeeid() {
@@ -213,6 +205,22 @@ public class Employee {
         this.is_collector = is_collector;
     }
 
+    public LocalDate getSubmissiondate() {
+        return submissiondate;
+    }
+
+    public void setSubmissiondate(LocalDate submissiondate) {
+        this.submissiondate = submissiondate;
+    }
+
+    public Distributor getDistributor() {
+        return distributor;
+    }
+
+    public void setDistributor(Distributor distributor) {
+        this.distributor = distributor;
+    }
+
     public Set<String> getOrderids() {
         return orderids;
     }
@@ -227,6 +235,22 @@ public class Employee {
 
     public void setPaymentreceiptids(Set<String> paymentreceiptids) {
         this.paymentreceiptids = paymentreceiptids;
+    }
+    
+    public Set<String> getCollectionpaymentids() {
+        return collectionpaymentids;
+    }
+
+    public void setCollectionpaymentids(Set<String> collectionpaymentids) {
+        this.collectionpaymentids = collectionpaymentids;
+    }
+
+    public Set<String> getDocumentids() {
+        return documentids;
+    }
+
+    public void setDocumentids(Set<String> documentids) {
+        this.documentids = documentids;
     }
 
 }

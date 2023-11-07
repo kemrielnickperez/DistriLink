@@ -1,16 +1,19 @@
 import styled from "@emotion/styled";
-import { Button, FormControlLabel, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
+import { Autocomplete, Button, FormControlLabel, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
 import dealer1 from '../../Global Components/dealer1.png'
 import { useNavigate } from "react-router-dom";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
-import { IDealer, IDealerDocument } from "../../RestCalls/Interfaces";
+import { IDealer, IDealerDocument, IDistributor, IProduct } from "../../RestCalls/Interfaces";
 import moment from "moment";
 import { v4 as uuidv4 } from 'uuid';
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
+import axios from "axios";
+import Autosuggest, { SuggestionSelectedEventData, SuggestionsFetchRequestedParams, } from 'react-autosuggest';
+
 
 const ImageStyle = styled(Typography)({
     display: 'flex',
@@ -150,13 +153,17 @@ const SignUpButton = styled(Button)({
     height: '50px',
     marginRight: '-110px',
     marginTop: "30px",
+    marginBottom: 90,
     ':hover': {
         backgroundColor: 'rgba(45, 133, 231, 0.9)',
         transform: 'scale(1.1)'
     },
     transition: 'all 0.4s'
 })
+
+
 const GridField = styled(Grid)({
+
 
 })
 
@@ -176,14 +183,20 @@ export default function DealerRegistration() {
     const [selectedContract, setSelectedContract] = useState<File>();
     const [selectedBusinessDocs, setSelectedBusinessDocs] = useState<File | null>();
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
-    
+    const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
 
+    const [distributors, setDistributors] = useState<IDistributor[]>([]);
+    const [selectedDistributor, setSelectedDistributor] = useState<IDistributor>();
 
     const firstnameRef = useRef<TextFieldProps>(null)
     const middlenameRef = useRef<TextFieldProps>(null)
     const lastnameRef = useRef<TextFieldProps>(null)
     const emailladdressRef = useRef<TextFieldProps>(null)
     const passwordRef = useRef<TextFieldProps>(null)
+    const confirmpasswordRef = useRef<TextFieldProps>(null)
     const currentaddressRef = useRef<TextFieldProps>(null)
     const permanentAddressRef = useRef<TextFieldProps>(null)
     const contactnumberRef = useRef<TextFieldProps>(null)
@@ -193,11 +206,64 @@ export default function DealerRegistration() {
     const tinnumberRef = useRef<TextFieldProps>(null)
 
 
-    const handleSignUp = () => {
-        //handleFiles
-        handleNewDealer();
-       // navigate(`/dashboard`);
+    const distributorObject: IDistributor = {
+
+        distributorid: "distributor4",
+        firstname: "Junhui",
+        middlename: "",
+        lastname: "Wen",
+        emailaddress: "wenjunhui@gmail.com",
+        password: "moonmoon",
+        birthdate: "1996-06-10",
+        gender: "Male",
+        currentaddress: "Talisay City",
+        permanentaddress: "Talisay City",
+        contactnumber: "09741258963",
+        dealerids: [],
+        employeeids: [],
+        orderids: []
+    }
+
+
+    function getAllDistributors() {
+        axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
+            .then((response) => {
+                setDistributors(response.data);
+                console.log(response.data)
+
+            })
+            .catch((error) => {
+
+                alert("Error retrieving payment receipts. Please try again.");
+            });
+    }
+
+
+
+
+
+
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+        if (e.target.value !== confirmPassword) {
+            setPasswordError("Passwords do not match");
+        } else {
+            setPasswordError('');
+        }
     };
+
+    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmPassword(e.target.value);
+        // Automatically check for password match
+        if (e.target.value !== password) {
+            setPasswordError("Passwords do not match");
+        } else {
+            setPasswordError('');
+        }
+    };
+
+
 
     const handleGender = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedGender(event.target.value);
@@ -207,24 +273,73 @@ export default function DealerRegistration() {
     };
 
     const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedProfilePicture(event.target.files?.[0]);
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            if (file.size <= maxSize) {
+                setSelectedProfilePicture(file);
+            } else {
+
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+
+
     };
 
     const handleValidIDFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValidID(event.target.files?.[0]);
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB (adjust as needed)
+
+            if (file.size <= maxSize) {
+                setSelectedValidID(file);
+            } else {
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+
     };
 
+
     const handleContractFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedContract(event.target.files?.[0]);
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB 
+
+            if (file.size <= maxSize) {
+                setSelectedContract(file);
+            } else {
+
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+
     };
 
     const handleBusinessDocChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedBusinessDocs(event.target.files?.[0]);
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB 
+
+            if (file.size <= maxSize) {
+                setSelectedBusinessDocs(file);
+            } else {
+
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+
     };
 
     const handleHasBusinessChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedBusinessOpt(event.target.checked);
     };
+
 
 
     // Function to create an IDealerDocument from a selected file
@@ -279,18 +394,17 @@ export default function DealerRegistration() {
 
         // You can access the updated dealerDocuments state after this update
 
-        console.log(dealerDocuments);
+
         return newDealerDocuments;
     };
 
-
     const handleNewDealer = async () => {
+
 
         const newDealerDocuments = await handleFiles();
 
-        
 
-        newDealer({
+         newDealer({
             dealerid: uuidv4().slice(0, 8),
             firstname: String(firstnameRef.current?.value),
             middlename: String(middlenameRef.current?.value),
@@ -311,13 +425,32 @@ export default function DealerRegistration() {
             submissiondate: moment().format('YYYY-MM-DD'),
             confirmed: false,
             remarks: '',
+            distributor: selectedDistributor!,
             orderids: [],
             documentids: []
 
-        }, newDealerDocuments!);
+        }, newDealerDocuments!); 
+       
+        console.log("mao ni gi selecr")
+        console.log(selectedDistributor)
+
+    };
+
+    const handleSignUp = () => {
+        handleNewDealer();
     };
 
 
+
+    useEffect(() => {
+        const currentDate = dayjs().subtract(18, 'year') as Dayjs;
+        setMaxDate(currentDate);
+
+        getAllDistributors();
+       
+       // console.log(selectedDistributor)
+
+    }, []);
 
 
     return (
@@ -348,10 +481,17 @@ export default function DealerRegistration() {
 
                     <GridField container spacing={8}>
                         <Grid item>
-                            <StyledTextField variant="outlined" label="Email Address" size="small" inputRef={emailladdressRef} />
+                            <StyledTextField variant="outlined" label="Email Address" size="small" style={{ width: '795px' }} inputRef={emailladdressRef} />
                         </Grid>
+                    </GridField>
+                    <GridField container spacing={8}>
                         <Grid item>
-                            <StyledTextField variant="outlined" label="Password" size="small" inputRef={passwordRef} />
+                            <StyledTextField type="password" variant="outlined" label="Password" size="small" style={{ width: '795px' }} value={password} onChange={handlePasswordChange} inputRef={passwordRef} />
+                        </Grid>
+                    </GridField>
+                    <GridField container spacing={8}>
+                        <Grid item>
+                            <StyledTextField type="password" variant="outlined" label="Confirm Password" size="small" style={{ width: '795px', marginBottom: 60 }} value={confirmPassword} onChange={handleConfirmPasswordChange} error={passwordError !== ''} helperText={passwordError} inputRef={confirmpasswordRef} />
                         </Grid>
                     </GridField>
 
@@ -368,6 +508,7 @@ export default function DealerRegistration() {
                                         }
                                     }}
                                     value={selectedBDate}
+                                    maxDate={maxDate}
                                     onChange={(date) => setSelectedBDate(date as Dayjs | null)}
                                 />
                             </LocalizationProvider>
@@ -404,61 +545,92 @@ export default function DealerRegistration() {
                             <StyledTextField variant="outlined" label="TIN Number" size="small" style={{ width: '795px' }} inputRef={tinnumberRef} />
                         </Grid>
                     </GridField>
+                    <GridField>
+                        <Grid item>
+                            <Autocomplete
+                                disablePortal
+                                id="flat-demo"
+                                options={distributors}
+                                getOptionLabel={(option) => option.firstname +" "+ option.lastname}
+                                isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
+                                value={selectedDistributor}
+                                onChange={(event, newValue) => setSelectedDistributor(newValue!)}
+                                renderInput={(params) => (
+                                    <StyledTextField
+                                        {...params}
+                                        InputProps={{
+                                            ...params.InputProps, disableUnderline: true
+                                        }}
+                                        variant="outlined"
+                                        label="Distributor"
+                                        size="small"
+                                        style={{ width: '795px' }}
+                                        
+                                    />)}
+                                
+                            />
+                        </Grid>
+                    </GridField>
                     <GridField container spacing={8} >
                         <Grid item>
-                        <label htmlFor="validid-input">
-                            <Button variant="contained" component="span" 
-                                sx={{
-                                    backgroundColor: '#2D85E7',
-                                    width: '380px',
-                                    marginBottom: '43px',
-                                    margin: '10px 0 0 80px',
-                                    height: '40px',
-                                    marginRight: '-110px',
-                                    ':hover': {
-                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    transition: 'all 0.4s'
-                                }}>
-                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                    <input hidden type="file"
-                                        accept=".pdf,.jpg, .jpeg, .png"
-                                        onChange={handleValidIDFileChange}
-                                        style={{ display: 'none' }}
-                                        id="validid-input" />
-                                    <UploadIcon />
-                                </Icon>
-                                <TypographyLabelC>Upload Valid ID</TypographyLabelC>
-                            </Button>
+                            <label htmlFor="validid-input">
+                                <Button variant="contained" component="span"
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '380px',
+                                        marginBottom: '43px',
+                                        margin: '10px 0 0 80px',
+                                        height: '40px',
+                                        marginRight: '-110px',
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}>
+                                    <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                        <input hidden type="file"
+                                            accept=".pdf,.jpg, .jpeg, .png"
+                                            onChange={handleValidIDFileChange}
+                                            style={{ display: 'none' }}
+                                            id="validid-input"
+                                        />
+                                        <UploadIcon />
+                                    </Icon>
+                                    <TypographyLabelC>
+                                        {selectedValidID?.name === undefined ? 'Upload Valid ID' : selectedValidID?.name}
+                                    </TypographyLabelC>
+                                </Button>
                             </label>
                         </Grid>
                         <Grid item>
-                        <label htmlFor="profilepicture-input">
+                            <label htmlFor="profilepicture-input">
 
-                            <Button variant="contained" component="span" 
-                                sx={{
-                                    backgroundColor: '#2D85E7',
-                                    width: '380px',
-                                    marginBottom: '43px',
-                                    margin: '10px 0 0 80px',
-                                    height: '40px',
-                                    marginRight: '-110px',
-                                    ':hover': {
-                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    transition: 'all 0.4s'
-                                }}>
-                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                    <input hidden accept=".jpeg,.jpg,.png" type="file"
-                                        onChange={handleProfilePictureFileChange}
-                                        style={{ display: 'none' }}
-                                        id="profilepicture-input" />
-                                    <UploadIcon />
-                                </Icon>
-                                <TypographyLabelC >Upload Profile Picture</TypographyLabelC>
-                            </Button>
+                                <Button variant="contained" component="span"
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '380px',
+                                        marginBottom: '43px',
+                                        margin: '10px 0 0 80px',
+                                        height: '40px',
+                                        marginRight: '-110px',
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}>
+                                    <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                        <input hidden accept=".jpeg,.jpg,.png" type="file"
+                                            onChange={handleProfilePictureFileChange}
+                                            style={{ display: 'none' }}
+                                            id="profilepicture-input" />
+                                        <UploadIcon />
+                                    </Icon>
+                                    <TypographyLabelC >
+                                        {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name}
+                                    </TypographyLabelC>
+                                </Button>
                             </label>
                         </Grid>
 
@@ -492,53 +664,55 @@ export default function DealerRegistration() {
                     </GridField>
                     <GridField container spacing={8} >
                         <Grid item>
-                        <label htmlFor="contract-input">
-                            <Button variant="contained" disabled={!selectedBusinessOpt}
-                            component="span" 
-                            sx={{
-                                backgroundColor: '#2D85E7',
-                                width: '380px',
-                                marginBottom: '43px',
-                                margin: '10px 0 0 80px',
-                                height: '40px',
-                                marginRight: '-110px',
-                                ':hover': {
-                                    backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                    transform: 'scale(1.1)'
-                                },
-                                transition: 'all 0.4s'
-                            }}> 
-                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                    <input hidden
-                                        type="file"
-                                        accept=".pdf,.jpg, .jpeg, .png"
-                                        onChange={handleContractFileChange}
-                                        style={{ display: 'none' }}
-                                        id="contract-input" />
-                                    <UploadIcon />
-                                </Icon>
-                                <TypographyLabelC>Upload Contract</TypographyLabelC>
-                            </Button>
+                            <label htmlFor="contract-input">
+                                <Button variant="contained" disabled={!selectedBusinessOpt}
+                                    component="span"
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '380px',
+                                        marginBottom: '43px',
+                                        margin: '10px 0 0 80px',
+                                        height: '40px',
+                                        marginRight: '-110px',
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}>
+                                    <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                        <input hidden
+                                            type="file"
+                                            accept=".pdf,.jpg, .jpeg, .png"
+                                            onChange={handleContractFileChange}
+                                            style={{ display: 'none' }}
+                                            id="contract-input" />
+                                        <UploadIcon />
+                                    </Icon>
+                                    <TypographyLabelC>
+                                        {selectedContract?.name === undefined ? 'Upload Contract' : selectedContract?.name}
+                                    </TypographyLabelC>
+                                </Button>
                             </label>
                         </Grid>
                         <Grid item>
                             <label htmlFor="business-input">
-                                <Button variant='contained' 
-                                disabled={!selectedBusinessOpt} 
-                                component="span" 
-                                sx={{
-                                    backgroundColor: '#2D85E7',
-                                    width: '380px',
-                                    marginBottom: '43px',
-                                    margin: '10px 0 0 80px',
-                                    height: '40px',
-                                    marginRight: '-110px',
-                                    ':hover': {
-                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    transition: 'all 0.4s'
-                                }}
+                                <Button variant='contained'
+                                    disabled={!selectedBusinessOpt}
+                                    component="span"
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '380px',
+                                        marginBottom: '43px',
+                                        margin: '10px 0 0 80px',
+                                        height: '40px',
+                                        marginRight: '-110px',
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}
                                 >
 
                                     <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
@@ -550,11 +724,14 @@ export default function DealerRegistration() {
                                             id="business-input" />
                                         <UploadIcon />
                                     </Icon>
-                                    <TypographyLabelC >Upload Business Documents</TypographyLabelC>
+                                    <TypographyLabelC >
+                                        {selectedBusinessDocs?.name === undefined ? 'Upload Businedd Document' : selectedBusinessDocs?.name}
+                                    </TypographyLabelC>
                                 </Button>
                             </label>
                         </Grid>
                     </GridField>
+
                     <GridField container spacing={0} >
                         <Grid item>
                             <SignUpButton variant="contained" onClick={handleSignUp}>
@@ -566,7 +743,7 @@ export default function DealerRegistration() {
                 </Grid>
                 {/**Image Grids */}
                 <Grid item>
-                    <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle>
+                    {/*  <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle> */}
                 </Grid>
             </GridBody>
         </div>

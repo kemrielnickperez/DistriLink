@@ -114,7 +114,7 @@ export default function DealerOrderForm() {
 
   const [newOrder] = useRestOrder();
 
-  const [getDealerByID, newDealer,updateDealer, isDealerFound, dealer] = useRestDealer();
+  const [getDealerByID, newDealer, updateDealer, isDealerFound, dealer] = useRestDealer();
 
   const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
@@ -132,9 +132,9 @@ export default function DealerOrderForm() {
 
   const [quantity, setQuantity] = useState<string>('');
 
-  const quantityRef = useRef<TextFieldProps>(null);
+
   const penaltyRateRef = useRef<TextFieldProps>(null);
-  const dealerIDRef = useRef<TextFieldProps>(null);
+
 
 
   const paymentchoices = [
@@ -179,14 +179,14 @@ export default function DealerOrderForm() {
     setTotalAmount(newTotalAmount);
 
   }, [isDealerFound, products, orderedProducts]);
-/* 
-  function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
-    return {
-      product: product,
-      quantity: quantity,
-      subtotal: product.price * quantity
-    };
-  } */
+  /* 
+    function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
+      return {
+        product: product,
+        quantity: quantity,
+        subtotal: product.price * quantity
+      };
+    } */
 
   function getAllProducts() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
@@ -210,6 +210,8 @@ export default function DealerOrderForm() {
 
       if (existingProductIndex !== -1) {
         alert('Product already added to the cart');
+        setChosenProduct(null);
+        setQuantity('');
       } else {
         const newOrderedProduct: IOrderedProducts = {
           orderedproductid: orderedproductuuid,
@@ -227,26 +229,7 @@ export default function DealerOrderForm() {
   };
 
 
-    const handleAddProduct = () => {
-      const value = quantityRef.current?.value;
-  
-      if (chosenProduct) {
-        const quantity = parseInt(value as string);
-        const productAmount = quantity * chosenProduct.price;
-        const newTableData = [...tableData, {
-          quantity: parseInt(value as string),
-          productName: chosenProduct.name,
-          productPrice: chosenProduct.price,
-          productUnit: chosenProduct.unit,
-          productCommissionRate: chosenProduct.commissionrate,
-          productAmount: productAmount
-        }];
-        const updatedTotalAmount = newTableData.reduce((sum, product) => sum + product.productAmount, 0);
-        setTotalAmount(updatedTotalAmount);
-  
-        setTableData(newTableData);
-      }
-    }; 
+
 
   const handleUpdateQuantity = (product: IOrderedProducts, updatedQuantity: number) => {
     // Update the quantity of a product in the cart
@@ -269,80 +252,51 @@ export default function DealerOrderForm() {
     setOrderedProducts(updatedProducts);
   };
 
-  const handleRemoveLastProduct = () => {
-    const lastProduct = tableData[tableData.length - 1];
-    const lastProductAmount = lastProduct.productAmount;
 
-    setTableData(tableData.slice(0, -1));
-    setTotalAmount(totalAmount - lastProductAmount);
-
-    setOrderedProducts(orderedProducts.slice(0, -1));
-  };
-
-  /* const handleNewOrder = () => {
-    if (isDealerFound) {
-      const uuid = uuidv4();
-      const orderuuid = uuid.slice(0, 8);
-
-      newOrder({
-        orderid: orderuuid,
-        distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-        //moment ang gamit ani para maka generate og date today
-        orderdate: moment().format('YYYY-MM-DD'),
-        penaltyrate: Number(penaltyRateRef.current?.value),
-        paymentterms: paymentTerm,
-        orderamount: totalAmount,
-        collector: null,
-        dealer: dealer!,
-        orderedproducts: orderedProducts,
-        paymenttransactions: [],
-      });
-    }
-  }; */
-
+  const clearInputValues = () => {
+    setOrderedProducts([]);
+    setTotalAmount(0);
+  }
 
   const handleSaveOrder = () => {
     // Calculate the total order amount based on orderedProducts
     const orderAmount = orderedProducts.reduce((total, product) => {
       return total + product.product.price * product.quantity;
     }, 0);
-    
+
 
     // Create an order object with the necessary data
     if (isDealerFound) {
-      const uuid = uuidv4();
-      const orderuuid = uuid.slice(0, 8)
-      console.log(orderedProducts)
 
       newOrder({
-        orderid: orderuuid,
+        orderid: uuidv4().slice(0, 8),
         distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
         //moment ang gamit ani para maka generate og date today
         orderdate: moment().format('YYYY-MM-DD'),
         penaltyrate: Number(penaltyRateRef.current?.value),
         paymentterms: paymentTerm,
         orderamount: orderAmount,
+        distributor: dealer!.distributor,
         collector: null,
         dealer: dealer!,
         orderedproducts: orderedProducts,
         paymenttransactions: [],
-        confirmed: false
+        confirmed: false,
+        isclosed: false
       });
 
-      console.log(orderuuid)
-      alert({orderuuid})
+      //if possible kay ara na siya mo clear after sa snackbar
+      clearInputValues();
     }
-    
+
     // Update your order state or send the order data to your API for saving
   };
 
 
-  const handleFindDealer = () => {
-    getDealerByID("dealer1")
-  };
+
 
   const findDealer = () => {
-    getDealerByID("dealer1")
+    getDealerByID("6d6abfe8")
 
   }
 
@@ -353,7 +307,7 @@ export default function DealerOrderForm() {
         <TitleTypo>Product Distribution Form</TitleTypo>
       </TitleBox>
       <OverallGrid container>
-       
+
         <Grid item container sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
           <Grid item>
             <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "200px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
@@ -365,66 +319,66 @@ export default function DealerOrderForm() {
                 onChange={(event, newValue) => setChosenProduct(newValue!)}
                 renderInput={(params) => (
                   <StyledProductField {...params} variant='outlined' InputProps={{
-                  ...params.InputProps, disableUnderline: true
-                }}
-                />)}
+                    ...params.InputProps, disableUnderline: true
+                  }}
+                  />)}
               />
               <QuantityName>Quantity</QuantityName>
-              <StyledQuantityField variant="outlined" InputProps={{ disableUnderline: true }} value={quantity} onChange={(e) =>setQuantity(e.target.value)} />
-              <AddToCart variant="contained" onClick={() => { handleAddToCart();}}>ADD TO CART</AddToCart>
+              <StyledQuantityField variant="outlined" InputProps={{ disableUnderline: true }} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+              <AddToCart variant="contained" onClick={() => { handleAddToCart(); }}>ADD TO CART</AddToCart>
             </Paper>
           </Grid>
         </Grid>
         <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
           <Grid item >
-          <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>            <TableContainer>
-                <Table aria-label='simple table'>
-                  <TableHead>
-                    <TableRow>
-                      <TableHeaderCell align="center">Quantity</TableHeaderCell>
-                      <TableHeaderCell align="center">Unit</TableHeaderCell>
-                      <TableHeaderCell align="center">Product Name</TableHeaderCell>
-                      <TableHeaderCell align="center">Unit Price</TableHeaderCell>
-                      <TableHeaderCell align="center">Commission Rate</TableHeaderCell>
-                      <TableHeaderCell align="center">Amount</TableHeaderCell>
+            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>            <TableContainer>
+              <Table aria-label='simple table'>
+                <TableHead>
+                  <TableRow>
+                    <TableHeaderCell align="center">Quantity</TableHeaderCell>
+                    <TableHeaderCell align="center">Unit</TableHeaderCell>
+                    <TableHeaderCell align="center">Product Name</TableHeaderCell>
+                    <TableHeaderCell align="center">Unit Price</TableHeaderCell>
+                    <TableHeaderCell align="center">Commission Rate</TableHeaderCell>
+                    <TableHeaderCell align="center">Amount</TableHeaderCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {orderedProducts.map((product) => (
+                    <TableRow key={product.product.productid}>
+                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>
+                        <input
+                          type="number"
+                          value={product.quantity}
+                          onChange={(e) => {
+                            const newValue = Number(e.target.value);
+                            if (newValue < 0) {
+                              handleUpdateQuantity(product, 0);
+                            } else {
+                              handleUpdateQuantity(product, newValue);
+                            }
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.unit}</TableCell>
+                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.name}</TableCell>
+                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price}</TableCell>
+                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.commissionrate}</TableCell>
+                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price * product.quantity}</TableCell>
+                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}><Button onClick={() => handleRemoveFromCart(product)}>REMOVE</Button></TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {orderedProducts.map((product) => (
-                      <TableRow key={product.product.productid}>
-                       <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>
-                          <input
-                            type="number"
-                            value={product.quantity}
-                            onChange={(e) => {
-                              const newValue = Number(e.target.value);
-                              if (newValue < 0) {
-                                handleUpdateQuantity(product, 0);
-                              } else {
-                                handleUpdateQuantity(product, newValue);
-                              }
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.unit}</TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.name}</TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price}</TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.commissionrate}</TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price * product.quantity}</TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}><Button onClick={() => handleRemoveFromCart(product)}>REMOVE</Button></TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
             </Paper>
             <br></br>
-            <Paper sx={{width:'200px',display: 'flex', marginLeft:'auto', alignContent:'center'}}><Typography sx={{fontSize: 15,color: "#000000",fontWeight: "bold"}}>Total Amount:</Typography><Typography>  Php {totalAmount}</Typography></Paper>
+            <Paper sx={{ width: '200px', display: 'flex', marginLeft: 'auto', alignContent: 'center' }}><Typography sx={{ fontSize: 15, color: "#000000", fontWeight: "bold" }}>Total Amount:</Typography><Typography>  Php {totalAmount}</Typography></Paper>
             <br></br>
           </Grid>
         </Grid>
-        
-        <Button variant='contained' sx={{ background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6, paddingRight: 6, fontWeight: 'bold', borderRadius: 5}}
+
+        <Button variant='contained' sx={{ background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6, paddingRight: 6, fontWeight: 'bold', borderRadius: 5 }}
           onClick={handleSaveOrder}>Save</Button>
       </OverallGrid>
     </div>

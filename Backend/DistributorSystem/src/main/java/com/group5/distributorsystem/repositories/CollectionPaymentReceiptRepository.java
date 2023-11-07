@@ -12,5 +12,5 @@ import java.util.List;
 
 @Repository
 public interface CollectionPaymentReceiptRepository extends MongoRepository<CollectionPaymentReceipt, String> {
-    List<CollectionPaymentReceipt> findByIsConfirmedFalse();
+    List<CollectionPaymentReceipt> findByIsconfirmedFalse();
 }

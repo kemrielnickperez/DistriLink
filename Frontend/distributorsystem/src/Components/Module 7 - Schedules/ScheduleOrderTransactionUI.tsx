@@ -153,28 +153,35 @@ export default function Schedules() {
     const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
 
     const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
-    const index = 0;
+
+    const [initialMinDate, setInitialMinDate] = useState<Dayjs | null>(null);
 
     useEffect(() => {
         if (order && order.paymenttransactions) {
             // Clone the array and sort it
             const sorted = [...order.paymenttransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
             setSortedPaymentTransactions(sorted);
+            //handleFindOrder();
         }
+        console.log(order?.isclosed)
+
+        setInitialMinDate(dayjs() as Dayjs);
+
+
     }, [order, paymentTransaction]);
 
 
 
+
     const handleFindOrder = () => {
-        
-        
-        const idToSearch = objectId !== 'null' ? objectId : orderIDRef.current?.value+"";
+
+        const idToSearch = orderIDRef.current?.value+"" || objectId;
+
         getOrderByID(idToSearch!);
-      
+        
+
         if (isOrderFound === false)
             alert("Order not found. Please try again.");
-
-
     };
 
     const handleCreatePaymentTransaction = () => {
@@ -188,7 +195,7 @@ export default function Schedules() {
 
             const newPaymentTransaction = {
                 paymenttransactionid: paymenttransactionuuid,
-                amountdue: order!.orderamount / order!.paymentterms,
+                amountdue: parseFloat((order!.orderamount / order!.paymentterms).toFixed(2)),
                 startingdate: currentEndDate.format('YYYY-MM-DD') || "",
                 enddate: currentEndDate.add(15, 'day').format('YYYY-MM-DD') || "",
                 installmentnumber: i,
@@ -258,12 +265,15 @@ export default function Schedules() {
         )
 
     };
+    
+    
 
     useEffect(() => {
-       
+
         if (objectId !== 'null') {
             handleFindOrder();
         }
+        
 
     },
         [isOrderFound, order, paymentTransactionsObjects]);
@@ -309,6 +319,7 @@ export default function Schedules() {
                                         <TableHeaderCell align="center"><Label1>Payment Terms</Label1></TableHeaderCell>
                                         <TableHeaderCell align="center"><Label1>Total Ordered Amount</Label1></TableHeaderCell>
                                         <TableHeaderCell align="center"><Label1>Penalty Rate</Label1></TableHeaderCell>
+                                        <TableHeaderCell align="center"><Label1>Status</Label1></TableHeaderCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -319,6 +330,11 @@ export default function Schedules() {
                                         <TableCell align='center'><Typography1>{order?.paymentterms}</Typography1></TableCell>
                                         <TableCell align='center'><Typography1>Php {order?.orderamount}</Typography1></TableCell>
                                         <TableCell align='center'><Typography1>{order?.penaltyrate}%</Typography1></TableCell>
+                                        <TableCell align="center">
+                                                      <Typography1><span style={{ color: order?.isclosed ? 'red' : 'green' }}>
+                                                            {order?.isclosed ? 'CLOSED' : 'OPEN'}
+                                                        </span></Typography1>  
+                                                    </TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -381,7 +397,9 @@ export default function Schedules() {
                                                                     }
                                                                 }}
                                                                 value={dayjs(transaction.enddate)}
-                                                                onChange={(newValue) => handleEndDateUpdate(newValue)} />
+                                                                minDate={dayjs(transaction.enddate)}
+                                                                onChange={(newValue) => handleEndDateUpdate(newValue)} 
+                                                                disabled={transaction.paid}/>
 
                                                         </LocalizationProvider>
                                                     </TableCell>
@@ -394,6 +412,7 @@ export default function Schedules() {
                                                     <TableCell>
                                                         <StyledButton
                                                             onClick={() => handleSaveClick(transaction)}
+                                                            disabled={transaction.paid}
                                                         > Update </StyledButton>
                                                     </TableCell>
 
@@ -414,11 +433,11 @@ export default function Schedules() {
             ) : order.collector === null ? (
 
                 <div>
-                    <h2 style={{ color: 'white', marginTop: '50px' }}> No Collector Assigned</h2>
+                    <h2 style={{ color: 'black', marginTop: '50px' }}> No Collector Assigned</h2>
                 </div>
             ) : (
                 <div>
-                    <h2 style={{ color: 'white', marginTop: '50px' }}> no schedules yet</h2>
+                    <h2 style={{ color: 'black', marginTop: '50px' }}> no schedules yet</h2>
 
                     <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
                         <Grid item>
@@ -439,9 +458,10 @@ export default function Schedules() {
                                                         style: { width: '55%', padding: '0 10px 0 10px' }
                                                     }
                                                 }}
-                                                value={dayjs(startDate)}
+                                                
+                                                minDate={initialMinDate}
                                                 onChange={(e) => setStartDate(e)} />
-                                            
+
                                         </LocalizationProvider>
                                     </Grid>
                                     <Grid>
