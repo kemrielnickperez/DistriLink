@@ -1,4 +1,4 @@
-import { Box, Button, Grid, IconButton, InputAdornment, InputLabel, TextField, Typography, styled, Paper, TableContainer, Table, TableHead, TableRow, TableBody, TableCell, TextFieldProps, MenuItem, Autocomplete } from '@mui/material'
+import { Box, Button, Grid, IconButton, InputAdornment, InputLabel, TextField, Typography, styled, Paper, TableContainer, Table, TableHead, TableRow, TableBody, TableCell, TextFieldProps, MenuItem, Autocomplete, Snackbar, Alert, AlertTitle, SlideProps, Slide } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 import { useRestOrder } from '../../RestCalls/OrderUseRest';
@@ -9,11 +9,20 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import { Dayjs } from 'dayjs';
 import moment from 'moment';
 import { IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
-
 import { v4 as uuidv4 } from 'uuid';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useEffect, useRef, useState } from 'react';
 import { BorderAllOutlined } from '@mui/icons-material';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+//Imports for Toastify
+//Please Install npm i react-toastify or if doesn't work, install npm i react-toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+function SlideTransitionDown(props: SlideProps) {
+  return <Slide {...props} direction="down" />;
+}
+
 
 const StyledDatePicker = styled(DatePicker)({
   [`& fieldset`]: {
@@ -132,6 +141,15 @@ export default function DealerOrderForm() {
 
   const [quantity, setQuantity] = useState<string>('');
 
+  const [alerttitle, setTitle] = useState('');
+
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const [alertSeverity, setAlertSeverity] = useState('success');
+
+  const [open, setOpen] = useState(false);
+
+   const [toastShown, setToastShown] = useState(false);
 
   const penaltyRateRef = useRef<TextFieldProps>(null);
 
@@ -188,15 +206,34 @@ export default function DealerOrderForm() {
       };
     } */
 
+  {/**Handler for Alert - Function to define the type of alert*/ }
+  function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+    setTitle(title);
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setOpen(true);
+  }
+  {/**Handler to Close Alert Snackbar*/ }
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+
+
   function getAllProducts() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
       .then((response) => {
         setProducts(response.data);
         //console.log(response.data);
+        // headerHandleAlert('Success', 'Products have been successfully added for distribution.', 'success');
       })
       .catch((error) => {
         console.error('Error retrieving products:', error);
-        alert("Error retrieving products. Please try again.");
+        headerHandleAlert('Error', 'Error retrieving products. Please try again.', 'error');
+        // alert("Error retrieving products. Please try again.");
       });
   }
 
@@ -209,7 +246,18 @@ export default function DealerOrderForm() {
       );
 
       if (existingProductIndex !== -1) {
-        alert('Product already added to the cart');
+        // alert('Product already added to the cart');
+        // toast
+        toast.warning(chosenProduct.name + ' is already been added to the cart', {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        })
         setChosenProduct(null);
         setQuantity('');
       } else {
@@ -223,6 +271,17 @@ export default function DealerOrderForm() {
         setOrderedProducts([...orderedProducts, newOrderedProduct]);
         setChosenProduct(null);
         setQuantity('');
+        // toast
+        toast.success(chosenProduct.name + ' is added to the cart', {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        })
       }
 
     }
@@ -250,6 +309,22 @@ export default function DealerOrderForm() {
       (item) => item.product.productid !== product.product.productid
     );
     setOrderedProducts(updatedProducts);
+    // toast
+    toast(
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <RemoveCircleIcon fontSize='medium' style={{ marginRight: '10px', alignItems: '' }} />
+        {product.product.name + ' has been removed from the cart'}
+      </div>, {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      style: { backgroundColor: '#FA9600', color: '#ffffff' },
+      theme: "colored",
+    })
   };
 
 
@@ -258,18 +333,32 @@ export default function DealerOrderForm() {
     setTotalAmount(0);
   }
 
+  const findDealer = () => {
+
+    getDealerByID("6d6abfe8")
+
+    //Problematic pa siya ngari na part kay on loop sya
+    // isDealerFound ? headerHandleAlert('Dealer located in the System.', "The dealer ID has been found and is ready for product distribution.", 'success')
+    //   : headerHandleAlert('Dealer Not Found in the System.', "The dealer ID you're looking for does not exist in the records.", 'error')
+
+  }
+
   const handleSaveOrder = () => {
     // Calculate the total order amount based on orderedProducts
-    const orderAmount = orderedProducts.reduce((total, product) => {
-      return total + product.product.price * product.quantity;
-    }, 0);
-
+    if (orderedProducts.length === 0) {
+      headerHandleAlert('No Ordered Products', "Please add products to your order before saving.", 'warning')
+    }
 
     // Create an order object with the necessary data
-    if (isDealerFound) {
-
+    else if (orderedProducts.length > 0 && isDealerFound === true) {
+      const orderAmount = orderedProducts.reduce((total, product) => {
+        return total + product.product.price * product.quantity;
+      }, 0);
+      const uuid = uuidv4();
+      const orderuuid = uuid.slice(0, 8)
+      console.log(orderedProducts)
       newOrder({
-        orderid: uuidv4().slice(0, 8),
+        orderid: orderuuid,
         distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
         //moment ang gamit ani para maka generate og date today
         orderdate: moment().format('YYYY-MM-DD'),
@@ -280,12 +369,17 @@ export default function DealerOrderForm() {
         dealer: dealer!,
         orderedproducts: orderedProducts,
         paymenttransactions: [],
-        confirmed: false
+        confirmed: true
       });
-
       //if possible kay ara na siya mo clear after sa snackbar
+      headerHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
       clearInputValues();
     }
+
+    else {
+      headerHandleAlert('Error Saving Order', "Your order hasn't been saved due to an unexpected error.", 'error')
+    }
+
 
     // Update your order state or send the order data to your API for saving
   };
@@ -293,10 +387,6 @@ export default function DealerOrderForm() {
 
 
 
-  const findDealer = () => {
-    getDealerByID("6d6abfe8")
-
-  }
 
 
   return (
@@ -378,6 +468,33 @@ export default function DealerOrderForm() {
 
         <Button variant='contained' sx={{ background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6, paddingRight: 6, fontWeight: 'bold', borderRadius: 5 }}
           onClick={handleSaveOrder}>Save</Button>
+        {/* Alerts */}
+        <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }} TransitionComponent={SlideTransitionDown}>
+          <Alert onClose={handleClose} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+            <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+            {alertMessage}
+          </Alert>
+        </Snackbar>
+
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          limit={3}
+          hideProgressBar
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          style={{ width: 430 }}
+          theme="colored"
+        />
+
+
       </OverallGrid>
     </div>
   )

@@ -17,6 +17,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import moment from "moment";
 import axios from "axios";
 import { error } from "console";
+import { ToastContainer } from "react-toastify";
 
 const StyledTableRow = styled(TableRow)({
     borderBottom: "1px #203949 solid",
@@ -251,7 +252,7 @@ export default function RecordDirectPayment() {
 
     useEffect(() => {
 
-        if (orderIDRef.current?.value+'' !== '') {
+        if (orderIDRef.current?.value + '' !== '') {
             handleFindOrder();
         }
 
@@ -413,7 +414,21 @@ export default function RecordDirectPayment() {
             <StyledButton onClick={handleSaveDirectPayment}>Save Payment Record</StyledButton>
             {/* <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader> */}
             {/* set style left and top manually here in stack */}
-
+            {/* Alerts */}
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                limit={3}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                style={{ width: 450 }}
+                theme="colored"
+            />
 
         </div>
     );

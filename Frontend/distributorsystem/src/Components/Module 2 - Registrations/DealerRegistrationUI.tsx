@@ -1,17 +1,21 @@
 import styled from "@emotion/styled";
-import { Button, FormControlLabel, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
+import { Alert, AlertTitle, Button, FormControlLabel, FormHelperText, Grid, Icon, IconButton, InputAdornment, Radio, RadioGroup, Snackbar, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
-import dealer1 from '../../Global Components/dealer1.png'
+import dealer1 from '../../Global Components/Images/dealer1.png'
 import { useNavigate } from "react-router-dom";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import { IDealer, IDealerDocument } from "../../RestCalls/Interfaces";
 import moment from "moment";
 import { v4 as uuidv4 } from 'uuid';
 import dayjs, { Dayjs } from "dayjs";
-
+import InfoOutlined from '@mui/icons-material/InfoOutlined';
+import { error } from "console";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { es } from "date-fns/locale";
+        {/**Grids Body*/ }
 const ImageStyle = styled(Typography)({
     display: 'flex',
     alignItems: 'center',
@@ -167,21 +171,55 @@ export default function DealerRegistration() {
 
     const navigate = useNavigate();
 
+      {/**UseStates*/ }
     const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
     const [selectedGender, setSelectedGender] = useState('');
-    const [selectedBusinessOpt, setSelectedBusinessOpt] = useState<boolean>(false);
+    const [selectedBusinessOpt, setSelectedBusinessOpt] = useState(false);
     const [selectedBDate, setSelectedBDate] = useState<Dayjs | null>(null);
-
     const [selectedProfilePicture, setSelectedProfilePicture] = useState<File>();
     const [selectedValidID, setSelectedValidID] = useState<File>();
-    const [selectedContract, setSelectedContract] = useState<File>();
+    const [selectedContract, setSelectedContract] = useState<File | null>();
     const [selectedBusinessDocs, setSelectedBusinessDocs] = useState<File | null>();
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [open, setOpen] = useState(false);
+    const [alerttitle, setTitle] = useState('')
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertSeverity, setAlertSeverity] = useState('success');
+    const [value, setValue] = useState('');
+    const [warnText, setWarnText] = useState(false);
+    const [permanentAddress, setPermanentAddress] = useState('');
+    const [currentAddress, setCurrentAddress] = useState('');
+    const [isshowPassword, setisShowPassword] = useState(false);
+    const [isshowConfirmPassword, setisShowConfirmPassword] = useState(false);
+    const [fieldWarning, setFieldWarning] = useState({
+        firstname: '',
+        lastname: '',
+        email: '',
+        password: '',
+        // confirmpass:'',
+        birthdate: '',
+        gender: '',
+        currentadd: '',
+        permanentadd: '',
+        contactnum: '',
+        selectedprofile: '',
+        selectedvalidid: '',
+        tinnum: '',
+    })
+    const [fieldBussinessWarning, setFieldBussinessWarning] = useState({
+        bussinessname: '',
+        bussinessadd: '',
+        bussinessphonnum: '',
+        bussinesscontract: '',
+        bussinessdoc: '',
+    })
+    
 
+ {/**UseRefs*/ }  
     const firstnameRef = useRef<TextFieldProps>(null)
     const middlenameRef = useRef<TextFieldProps>(null)
     const lastnameRef = useRef<TextFieldProps>(null)
@@ -197,12 +235,51 @@ export default function DealerRegistration() {
     const tinnumberRef = useRef<TextFieldProps>(null)
 
 
-    const handleSignUp = () => {
-        //handleFiles
-        handleNewDealer();
-        // navigate(`/dashboard`);
-    };
+              {/**Handlers*/ }  
 
+{/**Handler for Alert - Function to define the type of alert*/ } 
+function handleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+    setTitle(title);
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setOpen(true);
+}
+
+
+{/**Handler to Close Alert Snackbar*/ } 
+const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+    setOpen(false);
+};
+
+const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value;
+    setValue(inputValue);
+    // You can add validation here to determine if the input is required.
+    if (inputValue.trim() === '') {
+        setWarnText(true);
+    } else {
+        setWarnText(false);
+    }
+};
+
+
+{/**Handler for Show Icon Password*/ }  
+    const handleShowPassword = () => {
+        setisShowPassword(!isshowPassword);
+    }
+    const handleShowConfirmPassword = () => {
+        setisShowConfirmPassword(!isshowConfirmPassword);
+    }
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    }
+    const handleMouseConfirmDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    }
+{/**Handler Change for Textfield - Password to track if its match or not*/ } 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
         if (e.target.value !== confirmPassword) {
@@ -210,50 +287,85 @@ export default function DealerRegistration() {
         } else {
             setPasswordError('');
         }
+        handleInputChange('password');
     };
 
+
+{/**Handler Change for Textfield - Confirm Password to track if its match or not*/ } 
     const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmPassword(e.target.value);
         // Automatically check for password match
-    if (e.target.value !== password) {
-        setPasswordError("Passwords do not match");
-      } else {
-        setPasswordError('');
-      }
+        if (e.target.value !== password) {
+            setPasswordError("Passwords do not match");
+        } else {
+            setPasswordError('');
+        }
     };
 
-  
 
+{/**Handler for Copying Current Addres  to Permanent address*/ } 
+    const handleCurrentAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setCurrentAddress(event.currentTarget.value);
+        handleInputChange('currentadd')
+    }
+    const handleCopyAddress = () => {
+        setPermanentAddress(currentAddress)
+        handleInputChange('permanentadd')
+    }
+
+ {/**Handler for Radio Button - Gender*/ } 
     const handleGender = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedGender(event.target.value);
-    };
-    const handleBussinessOpt = (event: ChangeEvent<HTMLInputElement>) => {
-        setSelectedBusinessOpt(event.target.value === 'true');
+        handleInputChange('gender');
     };
 
+
+ {/**Handler Change for Button - Profile Picture File*/ } 
     const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedProfilePicture(event.target.files?.[0]);
+        handleInputChange('selectedprofile')
     };
 
+
+ {/**Handler Change for Button - Valid ID File*/ } 
     const handleValidIDFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedValidID(event.target.files?.[0]);
+        handleInputChange('selectedvalidid')
     };
 
+
+ {/**Handler Change for Switch -  Has Business*/ } 
+ const handleHasBusinessChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!event.target.checked) {
+            businessnameRef.current!.value = null;
+            businessaddressRef.current!.value = null;
+            businessphonenumberRef.current!.value = null;
+            setSelectedContract(null);
+            setSelectedBusinessDocs(null);
+            fieldBussinessWarning.bussinesscontract='';
+            fieldBussinessWarning.bussinessdoc=''
+
+        }
+        setSelectedBusinessOpt(event.target.checked);
+
+};
+
+
+ {/**Handler Change for Button - Business Contract File*/ } 
     const handleContractFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedContract(event.target.files?.[0]);
+        handleBussinessInputChange('bussinesscontract')
     };
 
+
+ {/**Handler Change for Button - Business Documents File*/ } 
     const handleBusinessDocChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedBusinessDocs(event.target.files?.[0]);
-    };
-
-    const handleHasBusinessChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedBusinessOpt(event.target.checked);
+        handleBussinessInputChange('bussinessdoc')
     };
 
 
-
-    // Function to create an IDealerDocument from a selected file
+{/**Function to create an IDealerDocument from a selected file*/ } 
     const createDocument = async (file: File | null, name: string) => {
         if (file) {
             // Create a Promise to read the file as an array buffer
@@ -287,6 +399,8 @@ export default function DealerRegistration() {
         return null;
     };
 
+
+ {/**Handler for files*/ } 
     const handleFiles = async () => {
 
         const profilepictureDocument = await createDocument(selectedProfilePicture!, String(lastnameRef.current?.value) + "_profilepicture");
@@ -310,40 +424,124 @@ export default function DealerRegistration() {
     };
 
 
+ {/**HelperWarning for defining Helper Text*/ } 
+    const helperWarning = {
+        firstname: !firstnameRef.current?.value ? 'First Name is required' : '',
+        lastname: !lastnameRef.current?.value ? 'Last Name is required' : '',
+        email: !emailladdressRef.current?.value ? 'Email Address is required' : '',
+        password: !passwordRef.current?.value ? 'Password is required' : '',
+        birthdate: !selectedBDate ? 'Birthdate is required' : '',
+        gender: !selectedGender ? 'Gender is required' : '',
+        currentadd: !currentaddressRef.current?.value ? 'Current Address is required' : '',
+        permanentadd: !permanentAddressRef.current?.value ? 'Permanent Address is required' : '',
+        contactnum: !contactnumberRef.current?.value ? 'Contact Number is required' : '',
+        selectedprofile: !selectedProfilePicture ? 'Please attach your Profile Picture' : '',
+        selectedvalidid: !selectedValidID ? 'Please attach your Valid ID' : '',
+        tinnum: !tinnumberRef.current?.value ? 'TIN Number is required' : '',
+    }
+    const helperBussinessWarning = {
+        bussinessname: !businessnameRef.current?.value ? 'Bussiness Name is required' : '',
+        bussinessadd: !businessaddressRef.current?.value ? 'Bussiness Address is required' : '',
+        bussinessphonnum: !businessphonenumberRef.current?.value ? 'Bussiness Phone Number is required' : '',
+        bussinesscontract: !selectedContract ? 'Please attach your Business Contract' : '',
+        bussinessdoc: !selectedBusinessDocs ? 'Please attach your Business Documents' : '',
+    }
 
+
+ {/**Handler Change to determine fieldname*/ } 
+    const handleInputChange = (fieldName: string) => {
+        setFieldWarning({ ...fieldWarning, [fieldName]: '' })
+    }
+    const handleBussinessInputChange = (fieldName: string) => {
+        setFieldBussinessWarning({ ...fieldBussinessWarning, [fieldName]: '' })
+    }
+
+
+{/**HandlerNewDealer*/ } 
     const handleNewDealer = async () => {
-
         const newDealerDocuments = await handleFiles();
+        try {
+            
+            if (
+                !firstnameRef.current?.value ||
+                !lastnameRef.current?.value ||
+                !emailladdressRef.current?.value ||
+                !passwordRef.current?.value ||
+                !confirmpasswordRef.current?.value ||
+                !selectedBDate ||
+                !selectedGender ||
+                !currentaddressRef.current?.value ||
+                !permanentAddressRef.current?.value ||
+                !contactnumberRef.current?.value ||
+                !selectedProfilePicture ||
+                !selectedValidID
 
+            ) {
 
+                handleAlert('Warning', 'Please fill in all required fields', 'warning');
+                setFieldWarning(helperWarning);
+                return;
+            }
+            if (selectedBusinessOpt) {
+                if (
+                    !businessnameRef.current?.value ||
+                    !businessaddressRef.current?.value ||
+                    !businessphonenumberRef.current?.value ||
+                    !selectedContract ||
+                    !selectedBusinessDocs) {
+                    handleAlert('Warning', 'Please fill in all required business information', 'warning');
+                    setFieldBussinessWarning(helperBussinessWarning);
+                    return;
+                }
 
-        newDealer({
-            dealerid: uuidv4().slice(0, 8),
-            firstname: String(firstnameRef.current?.value),
-            middlename: String(middlenameRef.current?.value),
-            lastname: String(lastnameRef.current?.value),
-            email: String(emailladdressRef.current?.value),
-            password: String(passwordRef.current?.value),
-            birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
-            gender: selectedGender,
-            currentaddress: String(currentaddressRef.current?.value),
-            permanentaddress: String(permanentAddressRef.current?.value),
-            contactnumber: String(contactnumberRef.current?.value),
-            hasbusiness: selectedBusinessOpt,
-            businessname: String(businessnameRef.current?.value),
-            businessphone: String(businessphonenumberRef.current?.value),
-            businessaddress: String(businessaddressRef.current?.value),
-            businesstin: String(tinnumberRef.current?.value),
-            creditlimit: 0,
-            submissiondate: moment().format('YYYY-MM-DD'),
-            confirmed: false,
-            remarks: '',
-            orderids: [],
-            documentids: []
+            }
+            if (passwordError) {
+                handleAlert('Error', 'Passwords do not match', 'error');
+                return;
+            }
+            newDealer({
+                dealerid: uuidv4().slice(0, 8),
+                firstname: String(firstnameRef.current?.value),
+                middlename: String(middlenameRef.current?.value),
+                lastname: String(lastnameRef.current?.value),
+                email: String(emailladdressRef.current?.value),
+                password: String(passwordRef.current?.value),
+                birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
+                gender: selectedGender,
+                currentaddress: String(currentaddressRef.current?.value),
+                permanentaddress: String(permanentAddressRef.current?.value),
+                contactnumber: String(contactnumberRef.current?.value),
+                hasbusiness: selectedBusinessOpt,
+                businessname: String(businessnameRef.current?.value),
+                businessphone: String(businessphonenumberRef.current?.value),
+                businessaddress: String(businessaddressRef.current?.value),
+                businesstin: String(tinnumberRef.current?.value),
+                creditlimit: 0,
+                submissiondate: moment().format('YYYY-MM-DD'),
+                confirmed: false,
+                remarks: '',
+                orderids: [],
+                documentids: []
+            }, newDealerDocuments!);
+            handleAlert('Success', 'You are Successfully Registered!', 'success');
+        
+        } catch (error) {
+            handleAlert('Error', 'An Error Occured, Please Check your Connection', 'error')
+        }
 
-        }, newDealerDocuments!);
     };
 
+
+{/**Handler Sign Up*/ } 
+    const handleSignUp = () => {
+        //handleFiles
+        handleNewDealer();
+        // navigate(`/dashboard`);
+    };
+
+
+
+{/**UseEffect*/ } 
     useEffect(() => {
         const currentDate = dayjs().subtract(18, 'year') as Dayjs;
         setMaxDate(currentDate);
@@ -351,6 +549,7 @@ export default function DealerRegistration() {
     }, []);
 
 
+{/**Return Statement*/ } 
     return (
         <div>
             <GridBody>
@@ -358,42 +557,125 @@ export default function DealerRegistration() {
                 <Grid item>
                     <ContentNameTypography>Sign Up</ContentNameTypography>
                     <LabelTypography>as Dealer</LabelTypography>
+
+
                     {/**Grids Textfields*/}
                     <GridField container spacing={8}>
+
+                        {/**Textfield For First Name*/ } 
                         <Grid item>
-                            <StyledTextField variant="outlined" label="First Name" size="small" inputRef={firstnameRef} />
+                            <StyledTextField variant="outlined" label="First Name" required size="small" inputRef={firstnameRef} onChange={() => handleInputChange('firstname')} />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.firstname}
+                            </FormHelperText>
                         </Grid>
+
+                         {/**Textfield For Middle Name*/ } 
                         <Grid item>
                             <StyledTextField variant="outlined" label="Middle Name" size="small" inputRef={middlenameRef} />
                         </Grid>
+
                     </GridField>
 
+
                     <GridField container spacing={8}>
+
+                         {/**Textfield For Last Name*/ }
                         <Grid item>
-                            <StyledTextField variant="outlined" label="Last Name" size="small" inputRef={lastnameRef} />
+                            <StyledTextField variant="outlined" label="Last Name" required size="small" inputRef={lastnameRef} onChange={() => handleInputChange('lastname')} />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.lastname}
+                            </FormHelperText>
                         </Grid>
+
+                         {/**Textfield For Contact Number*/ }   
                         <Grid item>
-                            <StyledTextField variant="outlined" label="Contact Number" size="small" inputRef={contactnumberRef} />
+                            <StyledTextField variant="outlined" label="Contact Number" required size="small" inputRef={contactnumberRef} onChange={() => handleInputChange('contactnum')} />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.contactnum}
+                            </FormHelperText>
+                        </Grid>
+
+                    </GridField>
+
+
+                    <GridField container spacing={8}>
+
+                         {/**Textfield For Email Address*/ }
+                        <Grid item>
+                            <StyledTextField variant="outlined" label="Email Address" required size="small" style={{ width: '795px' }} inputRef={emailladdressRef} onChange={() => handleInputChange('email')} />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.email}
+                            </FormHelperText>
+                        </Grid>
+
+                    </GridField>
+
+
+                    <GridField container spacing={8}>
+
+                         {/**Textfield For Password*/ }
+                        <Grid item>
+                            <StyledTextField
+                                type={isshowPassword ? 'text' : 'password'}
+                                variant="outlined"
+                                required
+                                label='Password'
+                                size="small"
+                                style={{ width: '795px' }}
+                                value={password}
+                                onChange={handlePasswordChange}
+                                inputRef={passwordRef}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={handleShowPassword} onMouseDown={handleMouseDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
+                                                {isshowPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.password}
+                            </FormHelperText>
+                        </Grid>
+                                
+                    </GridField>
+
+
+                    <GridField container spacing={8}>
+
+                         {/**Textfield For Password Confirmation*/ }
+                        <Grid item>
+                            <StyledTextField
+                                type={isshowConfirmPassword ? 'text' : 'password'}
+                                variant="outlined"
+                                required label="Confirm Password"
+                                size="small" style={{ width: '795px', marginBottom: 60 }}
+                                value={confirmPassword}
+                                onChange={handleConfirmPasswordChange}
+                                error={passwordError !== ''}
+                                helperText={passwordError}
+                                inputRef={confirmpasswordRef}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={handleShowConfirmPassword} onMouseDown={handleMouseConfirmDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
+                                                {isshowConfirmPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
+
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
                         </Grid>
                     </GridField>
 
-                    <GridField container spacing={8}>
-                        <Grid item>
-                            <StyledTextField variant="outlined" label="Email Address" size="small" style={{ width: '795px' }} inputRef={emailladdressRef} />
-                        </Grid>
-                    </GridField>
-                    <GridField container spacing={8}>
-                        <Grid item>
-                            <StyledTextField type="password" variant="outlined" label="Password" size="small" style={{ width: '795px' }} value={password} onChange={handlePasswordChange} inputRef={passwordRef} />
-                        </Grid>
-                    </GridField>
-                    <GridField container spacing={8}>
-                        <Grid item>
-                            <StyledTextField type="password" variant="outlined" label="Confirm Password" size="small" style={{ width: '795px', marginBottom:60}} value={confirmPassword} onChange={handleConfirmPasswordChange} error={passwordError !== ''} helperText={passwordError} inputRef={confirmpasswordRef} />
-                        </Grid>
-                    </GridField>
 
                     <GridField container spacing={3}>
+
+                         {/**DatePicker For Birthdate*/ }
                         <Grid item>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <StyledDatePicker
@@ -407,46 +689,99 @@ export default function DealerRegistration() {
                                     }}
                                     value={selectedBDate}
                                     maxDate={maxDate}
-                                    onChange={(date) => setSelectedBDate(date as Dayjs | null)}
+                                    onChange={(date) => {
+                                        setSelectedBDate(date as Dayjs | null);
+                                        handleInputChange('birthdate'); 
+                                    }}
+
                                 />
                             </LocalizationProvider>
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.birthdate}
+                            </FormHelperText>
                         </Grid>
                         <Grid item>
 
+                             {/**Radio Group Button For Gender*/ }            
                             <TypographyLabel>Gender:
                                 <div style={{ margin: '-8px 0 0 0px' }}>
                                     <RadioStyle
                                         row
                                         name="genderRadioGroup"
+                                        aria-required
                                         value={selectedGender}
                                         onChange={handleGender}
                                     >
-                                        <FormControlLabel style={{ marginLeft: '30px' }} value='male' control={<Radio />} label={<RadioLabel>Male</RadioLabel>} />
-                                        <FormControlLabel style={{ marginLeft: '40px' }} value='female' control={<Radio />} label={<RadioLabel>Female</RadioLabel>} />
+                                        <FormControlLabel style={{ marginLeft: '30px' }} value='Male' control={<Radio />} label={<RadioLabel>Male</RadioLabel>} />
+                                        <FormControlLabel style={{ marginLeft: '40px' }} value='Female' control={<Radio />} label={<RadioLabel>Female</RadioLabel>} />
                                     </RadioStyle>
                                 </div>
                             </TypographyLabel>
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.gender}
+                            </FormHelperText>
+
                         </Grid>
                     </GridField>
 
+
                     <GridField container spacing={8}>
+
+                         {/**Textfield For Current Addrress*/ }            
                         <Grid item>
-                            <StyledTextField variant="outlined" label="Current Address" size="small"
-                                inputRef={currentaddressRef} />
+                            <StyledTextField variant="outlined" label="Current Address" required size="small" style={{ width: '795px' }} inputRef={currentaddressRef} onChange={handleCurrentAddressChange} />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.currentadd}
+                            </FormHelperText>
                         </Grid>
-                        <Grid item>
-                            <StyledTextField variant="outlined" label="Permanent Address" size="small" inputRef={permanentAddressRef} />
-                        </Grid>
+
+
                     </GridField>
+
+                    <GridField container spacing={8}>
+
+                         {/**Textfield For Permanent Address*/ }
+                        <Grid item>
+                            <StyledTextField variant="outlined" label="Permanent Address"
+                                required size="small"
+                                style={{ width: '795px' }}
+                                inputRef={permanentAddressRef}
+                                value={permanentAddress}
+                                onChange={(e) => { setPermanentAddress(e.target.value); handleInputChange('permanentadd') }}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <Button variant='contained' style={{ height: 40, marginRight: -13 }} onClick={handleCopyAddress}>Permanent = Current Address</Button>
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.permanentadd}
+                            </FormHelperText>
+                        </Grid>
+
+                    </GridField>
+
+
                     <GridField container spacing={0}>
+
+                         {/**Textfield For TIN Number*/ }
                         <Grid item>
-                            <StyledTextField variant="outlined" label="TIN Number" size="small" style={{ width: '795px' }} inputRef={tinnumberRef} />
+                            <StyledTextField variant="outlined" label="TIN Number" size="small" required style={{ width: '795px' }} inputRef={tinnumberRef} onChange={() => handleInputChange('tinnum')} />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.tinnum}
+                            </FormHelperText>
                         </Grid>
                     </GridField>
+
+                        
                     <GridField container spacing={8} >
+
+                         {/**Button For Valid ID File*/ }
                         <Grid item>
                             <label htmlFor="validid-input">
-                                <Button variant="contained" component="span"
+                                <Button variant="contained" component="span" aria-required
                                     sx={{
                                         backgroundColor: '#2D85E7',
                                         width: '380px',
@@ -471,11 +806,16 @@ export default function DealerRegistration() {
                                     <TypographyLabelC>Upload Valid ID</TypographyLabelC>
                                 </Button>
                             </label>
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.selectedvalidid}
+                            </FormHelperText>
                         </Grid>
+
+                         {/**Button For Profile Picture File*/ }
                         <Grid item>
                             <label htmlFor="profilepicture-input">
 
-                                <Button variant="contained" component="span"
+                                <Button variant="contained" component="span" aria-required
                                     sx={{
                                         backgroundColor: '#2D85E7',
                                         width: '380px',
@@ -498,10 +838,16 @@ export default function DealerRegistration() {
                                     </Icon>
                                     <TypographyLabelC >Upload Profile Picture</TypographyLabelC>
                                 </Button>
+
                             </label>
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.selectedprofile}
+                            </FormHelperText>
                         </Grid>
 
                     </GridField>
+
+                     {/**Switch for Business Info*/ }
                     <GridField container spacing={8}>
                         <Grid item>
                             <TypographyLabelB>Do you own a Business?
@@ -515,21 +861,43 @@ export default function DealerRegistration() {
                                 </div>
                             </TypographyLabelB>
                         </Grid>
+
                     </GridField>
+
+                    
                     <GridField container spacing={0}>
+                         {/**Text Field for Business Name*/ }            
                         <Grid item>
-                            <StyledTextField variant="outlined" label="Business Name" size="small" style={{ width: '795px' }} disabled={!selectedBusinessOpt} inputRef={businessnameRef} />
+                            <StyledTextField variant="outlined" label="Business Name" required size="small" style={{ width: '795px' }} disabled={!selectedBusinessOpt} inputRef={businessnameRef} onChange={() => handleBussinessInputChange('bussinessname')} />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {!selectedBusinessOpt ? '' : fieldBussinessWarning.bussinessname}
+                            </FormHelperText>
                         </Grid>
+
                     </GridField>
+
+
                     <GridField container spacing={8}>
+                        {/**Text Field for Business Business Address*/ }   
                         <Grid item>
-                            <StyledTextField variant="outlined" label="Business Address" size="small" disabled={!selectedBusinessOpt} inputRef={businessaddressRef} />
+                            <StyledTextField variant="outlined" label="Business Address" required size="small" disabled={!selectedBusinessOpt} inputRef={businessaddressRef} onChange={() => handleBussinessInputChange('bussinessadd')} />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {!selectedBusinessOpt ? '' : fieldBussinessWarning.bussinessadd}
+                            </FormHelperText>
                         </Grid>
+
+                        {/**Text Field for Business Phone Number*/ }   
                         <Grid item>
-                            <StyledTextField variant="outlined" label="Business Phone Number" size="small" disabled={!selectedBusinessOpt} inputRef={businessphonenumberRef} />
+                            <StyledTextField variant="outlined" label="Business Phone Number" required size="small" disabled={!selectedBusinessOpt} inputRef={businessphonenumberRef} onChange={() => handleBussinessInputChange('bussinessphonnum')} />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {!selectedBusinessOpt ? '' : fieldBussinessWarning.bussinessphonnum}
+                            </FormHelperText>
                         </Grid>
                     </GridField>
+
+
                     <GridField container spacing={8} >
+                        {/**Button for Contract File*/ }   
                         <Grid item>
                             <label htmlFor="contract-input">
                                 <Button variant="contained" disabled={!selectedBusinessOpt}
@@ -559,7 +927,12 @@ export default function DealerRegistration() {
                                     <TypographyLabelC>Upload Contract</TypographyLabelC>
                                 </Button>
                             </label>
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldBussinessWarning.bussinesscontract}
+                            </FormHelperText>
                         </Grid>
+
+                        {/**Text Field for Business Document*/ }   
                         <Grid item>
                             <label htmlFor="business-input">
                                 <Button variant='contained'
@@ -592,17 +965,36 @@ export default function DealerRegistration() {
                                     <TypographyLabelC >Upload Business Documents</TypographyLabelC>
                                 </Button>
                             </label>
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldBussinessWarning.bussinessdoc}
+                            </FormHelperText>
                         </Grid>
+
                     </GridField>
+
+
                     <GridField container spacing={0} >
+                        {/**Button for Signing Up*/ }   
                         <Grid item>
                             <SignUpButton variant="contained" onClick={handleSignUp}>
                                 Sign Up
                             </SignUpButton>
+                            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center'
+                            }}>
+                                <Alert onClose={handleClose} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                                    <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                                    {alertMessage}
+                                </Alert>
+                            </Snackbar>
                         </Grid>
                     </GridField>
 
                 </Grid>
+
+
+                
                 {/**Image Grids */}
                 <Grid item>
                     <ImageStyle><img src={dealer1} style={{ width: 'auto', height: '900px' }}></img></ImageStyle>

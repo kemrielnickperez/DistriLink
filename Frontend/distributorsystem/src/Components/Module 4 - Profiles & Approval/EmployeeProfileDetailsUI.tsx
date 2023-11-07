@@ -1,17 +1,23 @@
-import { Box, Card, Grid, Icon, Stack, Tab, Tabs, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, Grid, Icon, Modal, Slide, SlideProps, Snackbar, Stack, Tab, Tabs, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import PersonIcon from '@mui/icons-material/Person';
-import profilepicture from "../../Global Components/profilepicture.png"
+import profilepicture from "../../Global Components/Images/profilepicture.png"
 import { IEmployee, IEmployeeDocument } from "../../RestCalls/Interfaces";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import CloseIcon from '@mui/icons-material/Close';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
+
+function SlideTransitionDown(props: SlideProps) {
+  return <Slide {...props} direction="down" />;
+}
+
 const ContentNameTypography = styled(Typography)({
   position: "absolute",
   marginTop: 100,
@@ -105,6 +111,29 @@ const StyleMainLabel = styled(Typography)({
   fontFamily: 'Inter',
 })
 
+const ModalCard = styled(Card)({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%,-50%)',
+  width: 750,
+  height: '90%',
+  backgroundColor: 'background.paper',
+  border: '2px',
+  p: 4,
+})
+const ButtonClose = styled(Button)({
+  backgroundColor: '#E77D7D',
+  width: 40,
+  height: 40,
+  ':hover': {
+      backgroundColor: 'red',
+      transform: 'scale(1.1)'
+  },
+  transition: 'all 0.4s'
+})
+
+
 
 
 
@@ -113,10 +142,13 @@ export function EmployeeProfileDetails() {
   const [employee, setEmployee] = useState<IEmployee | null>(null);
   const [employeeDocuments, setEmployeeDocuments] = useState<IEmployeeDocument[]>([]);
   const [value, setValue] = useState(0);
+  const [openProfile, setOpenProfile] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alerttitle, setTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('success');
   // Use useParams to get the employee from the URL
   const { objectId } = useParams();
-
-
 
   function getAllEmployeeDocuments() {
     axios.get<IEmployeeDocument[]>(`http://localhost:8080/employeeDocument/findAllDocumentsByEmployeeId/${objectId!}`)
@@ -126,6 +158,22 @@ export function EmployeeProfileDetails() {
       .catch((error) => {
         alert("Error retrieving employee documents. Please try again.");
       });
+  };
+  {/**Handler for Alert - Function to define the type of alert*/ }
+
+  function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+    setTitle(title);
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setOpenAlert(true);
+  }
+
+  {/**Handler to Close Alert Snackbar*/ }
+  const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
   };
   function CustomTabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
@@ -153,7 +201,7 @@ export function EmployeeProfileDetails() {
   }
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-};
+  };
 
   useEffect(() => {
     // Make an Axios GET request to fetch the employee data using the objectId
@@ -161,9 +209,11 @@ export function EmployeeProfileDetails() {
       .get<IEmployee>(`http://localhost:8080/employee/getEmployeeByID/${objectId}`)
       .then((response) => {
         setEmployee(response.data);
+        // headerHandleAlert('Success', "Employee records retrieved successfully.", 'success');    
       })
       .catch((error) => {
-        console.error("Error fetching employee data:", error);
+        headerHandleAlert('Error', "Failed to retrieve employee information. Please try again.", 'error');
+        // console.error("Error fetching employee data:", error);
       });
     if (objectId) {
       getAllEmployeeDocuments();
@@ -173,18 +223,36 @@ export function EmployeeProfileDetails() {
   const profilePic = employeeDocuments.find(image => image.name === employee?.lastname + '_profilepicture');
   const imageSource = profilePic ? `data:${profilePic?.type} ;base64,${profilePic?.content}`
     : profilepicture
+  const handleOpenProfile = () => {
+    setOpenProfile(true);
+  }
+  const handleCloseDocument = () => {
+    setOpenProfile(false)
+}
   return (
     <div>
       <Grid container spacing={3}>
         <ContentNameTypography>Employee Information</ContentNameTypography>
         <Grid item style={{ marginRight: -70 }}>
           <Grid>
-            <ProfileCard>
+            <ProfileCard onClick={handleOpenProfile} style={{cursor:'pointer'}}>
               <img src={imageSource} style={{ inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%' }}></img>
             </ProfileCard>
           </Grid>
         </Grid>
-
+        <Modal
+          open={openProfile}
+          onClose={handleCloseDocument}
+        >
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: 300, marginTop: 40 }}>
+              <ButtonClose variant='contained' onClick={handleCloseDocument}><CloseIcon /></ButtonClose>
+            </div>
+            <ModalCard>
+              <img src={imageSource} style={{ position: 'absolute', inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%' }}></img>
+            </ModalCard>
+          </div>
+        </Modal>
         <Grid item>
           <Grid container style={{ marginTop: 15 }}>
             <Grid item>
@@ -208,14 +276,14 @@ export function EmployeeProfileDetails() {
           <Grid container>
             <Grid item>
               <Box sx={{ width: '92%', marginLeft: 10, marginTop: 5 }}>
-                <Tabs value={value} onChange= {handleChange} aria-label="basic tabs example" >
+                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
                   <TabStyle icon={<PermIdentityIcon />} iconPosition="start" label="Basic Information" {...a11yProps(0)} />
                 </Tabs>
               </Box>
               <CustomTabPanel value={value} index={0}>
                 {/* Basic Information */}
                 <Grid container>
-                  <Grid item style={{marginLeft: 80}}>
+                  <Grid item style={{ marginLeft: 80 }}>
                     <StyleLabel>Gender</StyleLabel>
                     <StyleData>{employee?.gender}</StyleData>
                   </Grid>
@@ -253,6 +321,16 @@ export function EmployeeProfileDetails() {
           </Grid>
 
         </Grid>
+        {/* Alerts */}
+        <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }} TransitionComponent={SlideTransitionDown}>
+          <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+            <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+            {alertMessage}
+          </Alert>
+        </Snackbar>
       </Grid>
       {/* 
       {employee ? (

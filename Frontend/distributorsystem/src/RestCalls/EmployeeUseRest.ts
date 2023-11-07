@@ -51,11 +51,11 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
         })
             .then((response) => {
             
-                alert("success!");
+                // alert("success!");
             })
             .catch((error) => {
                 
-                alert("Error creating a new record. Please try again.");
+                // alert("Error creating a new record. Please try again.");
             });
     }
 

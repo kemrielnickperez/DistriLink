@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { IDealer } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Box, Button, Card, Grid, Modal, TextField, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, Grid, Modal, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
+
+
+function SlideTransitionDown(props: SlideProps) {
+    return <Slide {...props} direction="down" />;
+}
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -59,18 +64,45 @@ export default function DealerProfileListUI() {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const [getDealerByID, newDealer,updateDealer, isDealerFound, dealer] = useRestDealer();
+    const [getDealerByID, newDealer, updateDealer, isDealerFound, dealer] = useRestDealer();
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alerttitle, setTitle] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertSeverity, setAlertSeverity] = useState('success');
+
+
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
         axios
             .get<IDealer[]>('http://localhost:8080/dealer/getAllDealers')
             .then((response) => {
                 setDealer1(response.data);
+                // headerHandleAlert('Success', "Dealers fetched successfully.", 'success');
+              
             })
             .catch((error) => {
-                console.error('Error fetching dealer:', error);
+                headerHandleAlert('Error', "Failed to fetch dealers. Please check your internet connection.", 'error');
+                // console.error('Error fetching dealer', error);
             });
     }, []);
+
+    {/**Handler for Alert - Function to define the type of alert*/ }
+
+    function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+        setTitle(title);
+        setAlertMessage(message);
+        setAlertSeverity(severity);
+        setOpenAlert(true);
+    }
+
+    {/**Handler to Close Alert Snackbar*/ }
+    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
+
 
     {/** Columns for DataGrid */ }
     const columns: GridColDef[] = [
@@ -95,7 +127,7 @@ export default function DealerProfileListUI() {
         {
             field: 'pending', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
-                const dealer= params.row
+                const dealer = params.row
                 return (
                     <><StyledButton variant='contained'
                         onClick={handleOpen} >
@@ -142,7 +174,6 @@ export default function DealerProfileListUI() {
                 return (
                     <StyledButton
                         onClick={() => handleConfirmButton(dealer.id)}
-                        
                     >
                         Confirm
                     </StyledButton>
@@ -156,7 +187,7 @@ export default function DealerProfileListUI() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                        
+
                         }}
                     >
                         Decline
@@ -173,7 +204,7 @@ export default function DealerProfileListUI() {
     }));
 
     const handleViewButtonClick = (objectId: string) => {
-    
+
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
         navigate(`/dealerProfileDetails/${objectId}`);
     };
@@ -183,7 +214,7 @@ export default function DealerProfileListUI() {
             dealerid: objectId,
             confirmed: true, // Set "confirmed" to true
         };
-    
+
         // If dealer1 is not null
         if (dealer1) {
             // Create a copy of the dealer1 array with updated dealers
@@ -195,17 +226,14 @@ export default function DealerProfileListUI() {
                     return dealerItem;
                 }
             });
-    
+
             // Update the state with the updated array
             setDealer1(updatedDealer1);
         }
-    
+
         // Call the updateDealer function to update the "confirmed" property on the server
         updateDealer(objectId);
     }
-
-
-
     return (
         <div>
             <StyledCard>
@@ -228,6 +256,17 @@ export default function DealerProfileListUI() {
 
                 />
             </StyledCard>
+
+            {/* Alerts */}
+            <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center'
+            }} TransitionComponent={SlideTransitionDown}>
+                <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                    <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                    {alertMessage}
+                </Alert>
+            </Snackbar>
         </div>
     );
 }
