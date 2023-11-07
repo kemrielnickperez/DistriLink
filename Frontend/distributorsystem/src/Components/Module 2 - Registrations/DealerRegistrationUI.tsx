@@ -218,6 +218,7 @@ export default function DealerRegistration() {
         selectedprofile: '',
         selectedvalidid: '',
         tinnum: '',
+        distributor: ''
     })
     const [fieldBussinessWarning, setFieldBussinessWarning] = useState({
         bussinessname: '',
@@ -528,7 +529,9 @@ export default function DealerRegistration() {
         selectedprofile: !selectedProfilePicture ? 'Please attach your Profile Picture' : '',
         selectedvalidid: !selectedValidID ? 'Please attach your Valid ID' : '',
         tinnum: !tinnumberRef.current?.value ? 'TIN Number is required' : '',
+        distributor: !selectedDistributor ? 'Please choose a Distributor' : '',
     }
+
     const helperBussinessWarning = {
         bussinessname: !businessnameRef.current?.value ? 'Bussiness Name is required' : '',
         bussinessadd: !businessaddressRef.current?.value ? 'Bussiness Address is required' : '',
@@ -561,11 +564,13 @@ export default function DealerRegistration() {
                 !confirmpasswordRef.current?.value ||
                 !selectedBDate ||
                 !selectedGender ||
+                !tinnumberRef.current?.value ||
                 !currentaddressRef.current?.value ||
                 !permanentAddressRef.current?.value ||
                 !contactnumberRef.current?.value ||
                 !selectedProfilePicture ||
-                !selectedValidID
+                !selectedValidID ||
+                !selectedDistributor
 
             ) {
 
@@ -595,7 +600,7 @@ export default function DealerRegistration() {
                 firstname: String(firstnameRef.current?.value),
                 middlename: String(middlenameRef.current?.value),
                 lastname: String(lastnameRef.current?.value),
-                email: String(emailladdressRef.current?.value),
+                emailaddress: String(emailladdressRef.current?.value),
                 password: String(passwordRef.current?.value),
                 birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
                 gender: selectedGender,
@@ -881,7 +886,10 @@ return (
                             getOptionLabel={(option) => option.firstname + " " + option.lastname}
                             isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
                             value={selectedDistributor}
-                            onChange={(event, newValue) => setSelectedDistributor(newValue!)}
+                            onChange={
+                                (event, newValue) => {
+                                setSelectedDistributor(newValue!),
+                                handleInputChange('distributor')}}
                             renderInput={(params) => (
                                 <StyledTextField
                                     {...params}
@@ -896,34 +904,12 @@ return (
                                 />)}
 
                         />
+                         <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.distributor}
+                        </FormHelperText>
                     </Grid>
                 </GridField>
-                <GridField>
-                    <Grid item>
-                        <Autocomplete
-                            disablePortal
-                            id="flat-demo"
-                            options={distributors}
-                            getOptionLabel={(option) => option.firstname + " " + option.lastname}
-                            isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
-                            value={selectedDistributor}
-                            onChange={(event, newValue) => setSelectedDistributor(newValue!)}
-                            renderInput={(params) => (
-                                <StyledTextField
-                                    {...params}
-                                    InputProps={{
-                                        ...params.InputProps, disableUnderline: true
-                                    }}
-                                    variant="outlined"
-                                    label="Distributor"
-                                    size="small"
-                                    style={{ width: '795px' }}
-
-                                />)}
-
-                        />
-                    </Grid>
-                </GridField>
+               
                 <GridField container spacing={8} >
 
                     {/**Button For Valid ID File*/}

@@ -140,7 +140,7 @@ const SignUpButton = styled(Button)({
     height: '50px',
     marginRight: '-110px',
     marginTop: "30px",
-    marginBottom:70,
+    marginBottom: 70,
     ':hover': {
         backgroundColor: 'rgba(45, 133, 231, 0.9)',
         transform: 'scale(1.1)'
@@ -197,7 +197,8 @@ export default function EmployeeRegistration() {
         contactnum: '',
         selectedprofile: '',
         tinnum: '',
-        position: ''
+        position: '',
+        distributor: ''
     })
 
 
@@ -215,9 +216,9 @@ export default function EmployeeRegistration() {
 
     const [selectedDistributor, setSelectedDistributor] = useState<IDistributor>();
     const [distributors, setDistributors] = useState<IDistributor[]>([]);
-    
 
-    const distributorObject : IDistributor = {
+
+    const distributorObject: IDistributor = {
         distributorid: "distributor1",
         firstname: "Junhui",
         middlename: "",
@@ -235,7 +236,7 @@ export default function EmployeeRegistration() {
     }
 
 
-    
+
     function getAllDistributors() {
         axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
             .then((response) => {
@@ -369,8 +370,8 @@ export default function EmployeeRegistration() {
                 alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
             }
         }
-        
-        
+
+
         handleInputChange('selectedprofile')
     };
 
@@ -438,7 +439,8 @@ export default function EmployeeRegistration() {
         contactnum: !contactnumberRef.current?.value ? 'Contact Number is required' : '',
         selectedprofile: !selectedProfilePicture ? 'Please attach your Profile Picture' : '',
         tinnum: !tinnumberRef.current?.value ? 'TIN Number is required' : '',
-        position: !isSalesAssociateSelected && !isCashierSelected && !isCashierSelected ? 'Please Choose your Position' : ''
+        position: !isSalesAssociateSelected && !isCashierSelected && !isCashierSelected ? 'Please Choose your Position' : '',
+        distributor: !selectedDistributor ? 'Please Select a Distributor' : ''
     }
     {/**Handler Change to determine fieldname*/ }
     const handleInputChange = (fieldName: string) => {
@@ -449,8 +451,8 @@ export default function EmployeeRegistration() {
         const employeeuuid = uuid.slice(0, 8);
         const newEmployeeDocuments = await handleFiles();
         try {
-            
-           await fetch('http://localhost:8080/employee/registerEmployee');
+
+            //await fetch('http://localhost:8080/employee/registerEmployee');
             if (
                 !firstnameRef.current?.value ||
                 !lastnameRef.current?.value ||
@@ -459,6 +461,8 @@ export default function EmployeeRegistration() {
                 !confirmpasswordRef.current?.value ||
                 !selectedBDate ||
                 !selectedGender1 ||
+                !tinnumberRef.current?.value ||
+                !selectedDistributor ||
                 !currentaddressRef ||
                 !permanentaddressRef.current?.value ||
                 !contactnumberRef.current?.value ||
@@ -466,41 +470,53 @@ export default function EmployeeRegistration() {
                 !selectedPosition
             ) {
 
-      
-        newEmployee({
-            employeeid: employeeuuid,
-            firstname: String(firstnameRef.current?.value),
-            middlename: String(middlenameRef.current?.value),
-            lastname: String(lastnameRef.current?.value),
-            emailaddress: String(emailRef.current?.value),
-            password: String(passwordRef.current?.value),
-            birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
-            gender: gender,
-            currentaddress: String(currentaddressRef.current?.value),
-            permanentaddress: String(permanentaddressRef.current?.value),
-            contactnumber: String(contactnumberRef.current?.value),
-            tinnumber: String(tinnumberRef.current?.value),
-            is_cashier: isCashierSelected,
-            is_salesassociate: isSalesAssociateSelected,
-            is_collector: isCollectorSelected,
-            submissiondate: moment().format('YYYY-MM-DD'),
-            distributor: selectedDistributor!,
-            orderids: [],
-            paymentreceiptids: [],
-            collectionpaymentids: [],
-            documentids: []
-        }, newEmployeeDocuments!);
-        
-    };
+                handleAlert('Warning', 'Please fill in all required fields', 'warning');
+                setFieldWarning(helperWarning);
+                return;
+            }
+            if (passwordError) {
+                handleAlert('Error', 'Passwords do not match', 'error');
+                return;
+            }
+            newEmployee({
+                employeeid: employeeuuid,
+                firstname: String(firstnameRef.current?.value),
+                middlename: String(middlenameRef.current?.value),
+                lastname: String(lastnameRef.current?.value),
+                emailaddress: String(emailRef.current?.value),
+                password: String(passwordRef.current?.value),
+                birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
+                gender: selectedGender1,
+                currentaddress: String(currentaddressRef.current?.value),
+                permanentaddress: String(permanentaddressRef.current?.value),
+                contactnumber: String(contactnumberRef.current?.value),
+                tinnumber: String(tinnumberRef.current?.value),
+                is_cashier: isCashierSelected,
+                is_salesassociate: isSalesAssociateSelected,
+                is_collector: isCollectorSelected,
+                submissiondate: moment().format('YYYY-MM-DD'),
+                distributor: selectedDistributor!,
+                orderids: [],
+                paymentreceiptids: [],
+                collectionpaymentids: [],
+                documentids: []
+            }, newEmployeeDocuments!);
+
+            handleAlert('Success', 'You are Successfully Registered!', 'success');
+        } catch (error) {
+            handleAlert('Error', "Registration failed. Check your internet connection.", 'error');
+            return;
+        }
+    }
 
 
- 
+
 
     useEffect(() => {
         const currentDate = dayjs().subtract(18, 'year') as Dayjs;
         setMaxDate(currentDate);
 
-    
+
         getAllDistributors();
     }, []);
 
@@ -684,37 +700,44 @@ export default function EmployeeRegistration() {
                 <GridField container spacing={0}>
                     <Grid item>
                         <StyledTextField variant="outlined" label="TIN Number" size="small" style={{ width: '795px' }} inputRef={tinnumberRef} onChange={() => handleInputChange('tinnum')} />
-                    </Grid>
-                </GridField>
-                <GridField>
-                        <Grid item>
-                            <Autocomplete
-                                disablePortal
-                                id="flat-demo"
-                                options={distributors}
-                                getOptionLabel={(option) => option.firstname +" "+ option.lastname}
-                                isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
-                                value={selectedDistributor}
-                                onChange={(event, newValue) => setSelectedDistributor(newValue!)}
-                                renderInput={(params) => (
-                                    <StyledTextField
-                                        {...params}
-                                        InputProps={{
-                                            ...params.InputProps, disableUnderline: true
-                                        }}
-                                        variant="outlined"
-                                        label="Distributor"
-                                        size="small"
-                                        style={{ width: '795px' }}
-                                        
-                                    />)}
-                                
-                            />
-                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
                             {fieldWarning.tinnum}
                         </FormHelperText>
                     </Grid>
-                    </GridField>
+                </GridField>
+                <GridField container spacing={0}>
+                    <Grid item>
+                        <Autocomplete
+                            disablePortal
+                            id="flat-demo"
+                            options={distributors}
+                            getOptionLabel={(option) => option.firstname + " " + option.lastname}
+                            isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
+                            value={selectedDistributor}
+                            onChange={
+                                (event, newValue) => {
+                                    setSelectedDistributor(newValue!),
+                                        handleInputChange('distributor')
+                                }}
+                            renderInput={(params) => (
+                                <StyledTextField
+                                    {...params}
+                                    InputProps={{
+                                        ...params.InputProps, disableUnderline: true
+                                    }}
+                                    variant="outlined"
+                                    label="Distributor"
+                                    size="small"
+                                    style={{ width: '795px' }}
+
+                                />)}
+
+                        />
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.distributor}
+                        </FormHelperText>
+                    </Grid>
+                </GridField>
                 <GridField container spacing={0}>
                     <Grid item>
                         <TypographyLabelB>Apply As:
@@ -764,7 +787,7 @@ export default function EmployeeRegistration() {
                                         <UploadIcon />
                                     </Icon>
                                     <TypographyLabelC >
-                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name }
+                                        {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name}
                                     </TypographyLabelC>
                                 </Button>
                             </label>
