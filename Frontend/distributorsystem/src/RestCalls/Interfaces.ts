@@ -70,7 +70,8 @@ export interface IEmployee {
     is_collector: boolean,
     submissiondate: string,
     distributor: IDistributor,
-    orders: IOrder[],
+    orderids: string[],
+    paymentreceiptids: string[],
     collectionpaymentids: string[],
     documentids: string[],
 }
