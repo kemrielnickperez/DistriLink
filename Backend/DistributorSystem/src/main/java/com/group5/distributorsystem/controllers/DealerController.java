@@ -87,23 +87,7 @@ public class DealerController {
             return ResponseEntity.ok("Email sent successfully!");
         }
 
-    @PutMapping("/confirmDealer/{dealerId}")
-    public ResponseEntity<String> confirmDealer(@PathVariable String dealerId,  @RequestBody Dealer updatedDealer ) {
-        // Call the updateDealerConfirmation function to update the "confirmed" property on the server
-        dealerService.updateDealerConfirmation(dealerId, updatedDealer);
 
-
-        return ResponseEntity.ok("Email sent successfully!");
-    }
-
-    @PutMapping("/updateDealerPending/{dealerId}")
-    public ResponseEntity<String> pendingDealer(@PathVariable String dealerId, @RequestBody Dealer updatedDealer) {
-            // Call the updateDealerPending function to update the "pending" property on the server
-            dealerService.updateDealerPending(dealerId, updatedDealer);
-
-
-            return ResponseEntity.ok("Email sent successfully!");
-        }
 
     @GetMapping("/getAllUnconfirmedDealers")
     public ResponseEntity<Object> getAllUnconfirmedDealers(){
