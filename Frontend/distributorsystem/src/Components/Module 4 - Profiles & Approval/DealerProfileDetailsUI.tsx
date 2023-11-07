@@ -247,7 +247,7 @@ export default function DealerProfileDetails() {
 
     const [value, setValue] = useState(0);
 
-    const [getDealerByID, newDealer, updateDealer, isDealerFound, dealer] = useRestDealer();
+    const [getDealerByID, newDealer, updateDealer, confirmDealer, markDealerAsPending, isDealerFound, dealer,] = useRestDealer();
 
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
 
@@ -437,6 +437,8 @@ export default function DealerProfileDetails() {
         } catch (error) {
             headerHandleAlert('Error', "Failed to retrieve dealer information. Please try again.", 'error');
         }
+
+        console.log(dealer)
     }, [objectId, dealer, dealerDocuments]);
 
 
@@ -685,7 +687,7 @@ export default function DealerProfileDetails() {
                                         </Grid>
                                         <Grid item>
                                             <StyleLabel style={{ marginLeft: -20 }}>Email Address</StyleLabel>
-                                            <StyleData style={{ marginLeft: -10 }}>{dealer?.email}</StyleData>
+                                            <StyleData style={{ marginLeft: -10 }}>{dealer?.emailaddress}</StyleData>
                                         </Grid>
                                     </Grid>
                                     <Grid container style={{ marginTop: 25 }}>

@@ -57,7 +57,7 @@ export const useRestOrder = (): [
                 firstname: order.dealer.firstname,
                 middlename: order.dealer.middlename,
                 lastname: order.dealer.lastname,
-                emailaddress: order.dealer.email,
+                emailaddress: order.dealer.emailaddress,
                 password: order.dealer.password,
                 birthdate: order.dealer.birthdate,
                 gender: order.dealer.gender,
