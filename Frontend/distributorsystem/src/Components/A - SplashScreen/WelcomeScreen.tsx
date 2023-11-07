@@ -7,7 +7,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 const Logo=styled(Typography)({
     margin:'5% 10% 0 5% ',
     display: 'flex',
-    fontFamily:'Inter',
+    fontFamily:'Inter, sans-serif',
     fontWeight:'bold',
     fontSize:'25px',
     color:'#203949',
@@ -78,7 +78,7 @@ const SignInButton=styled(Button)({
     height:50,
     color:'#ffffff', 
     fontWeight:'bold',
-    fontFamily:'Inter',
+    fontFamily:'Inter, sans-serif',
     fontSize:'20px',
     left:60,
     textDecorationLine: 'underline',

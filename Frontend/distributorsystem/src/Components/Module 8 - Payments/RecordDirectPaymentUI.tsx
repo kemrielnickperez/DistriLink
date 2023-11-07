@@ -25,7 +25,7 @@ const ContentNameTypography = styled(Typography)({
     marginTop: 60,
     marginBottom: 50,
     marginLeft: '10%',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     textAlign: 'left',
     fontSize: '25px',
@@ -35,7 +35,7 @@ const ContentNameTypography2 = styled(Typography)({
     marginTop: 60,
     marginBottom: 30,
     marginLeft: '5%',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     textAlign: 'left',
     fontSize: '25px',
@@ -57,7 +57,7 @@ const StyleLabel = styled(Typography)({
     color: '#707070',
     fontSize: '15px',
     width: 'max-content',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
 })
 const StyleData = styled(Typography)({
     fontWeight: '550',
@@ -70,7 +70,7 @@ const StyleData = styled(Typography)({
 const LabelTypography = styled(Typography)({
     marginLeft: '30%',
     top: '200px',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: '550',
     textAlign: 'center',
     fontSize: '17px',
@@ -143,7 +143,7 @@ const StyledButton = styled(Button)({
     marginLeft: 20,
     backgroundColor: '#2C85E7',
     color:'#ffffff',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter. sans-serif',
     fontSize: '15px',
     width: '240px',
     height: 50,
@@ -171,7 +171,7 @@ const StyledDatePicker = styled(DatePicker)({
     top: 25,
     input: {
         color: '#707070',
-        fontFamily: 'Inter',
+        fontFamily: 'Inter, sans-serif',
         marginBottom: -5,
         marginTop: -10,
     },

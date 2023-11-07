@@ -1,10 +1,12 @@
 import styled from "@emotion/styled"
-import { Box, Button, Grid, Link, TextField, TextFieldProps, Typography } from "@mui/material"
+import { Alert, Box, Button, Grid, IconButton, Link, Snackbar, TextField, TextFieldProps, Typography } from "@mui/material"
+import CloseIcon from '@mui/icons-material/Close';
 import signin from "../../Global Components/Group 8 (1).png"
 import { useNavigate } from "react-router-dom"
-import { useEffect, useRef, useState } from "react"
+import { Fragment, useEffect, useRef, useState } from "react"
 import axios from "axios"
 import Dashboard from "../Module 3 - Distributor Dashboard/DashboardUI"
+import React from "react"
 
 const HeaderTypo = styled(Typography)({
     position: "relative",
@@ -92,28 +94,29 @@ export default function SignIn() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setOpen(true);
-        axios.get('http://localhost:8080/dealer/getAllDealers', {
-            params: {
-                dealerid: userid,
-                password: password
-            }
+        axios.post('http://localhost:8080/signin', {
+            userId: userid,
+            password: password
         })
             .then(response => {
                 if (response.status === 200) {
-                    const user = response.data.find(
-                        (u: any) => u.dealerid === userid && u.password === password );
-                    if (user) {
-                        console.log(userid, password);
-                        console.log("Login successful!");
-                        sessionStorage.setItem('user', JSON.stringify(user));
-                        setCode(2);
-                        window.location.assign('http://localhost:3000/dashboard');
+                    const result = response.data;
+                    if (result.tableName === 'Dealer') {
+                        console.log('Login successful as Dealer');
+                        sessionStorage.setItem('user', JSON.stringify(result));
+                        // Redirect to the Dealer screen
+                        window.location.assign('Dashboard');
+                    } else if (result.tableName === 'Employee') {
+                        console.log('Login successful as Employee');
+                        sessionStorage.setItem('user', JSON.stringify(result));
+                        // Redirect to the Employee screen
+                        window.location.assign('Dashboard');
                     } else {
                         console.log('Invalid username or password');
                         setCode(1);
                     }
                 } else {
-                    console.log("error");
+                    console.log('Error');
                 }
             })
             .catch(error => {
@@ -121,9 +124,26 @@ export default function SignIn() {
             });
     }
 
+
     useEffect(() => {
 
     }, [code]);
+
+    const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
+    const action = (
+        <Fragment>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="small" />
+            </IconButton>
+        </Fragment>
+    );
 
     return (
         <Box component="form" noValidate onSubmit={handleSubmit}>
@@ -132,8 +152,13 @@ export default function SignIn() {
                     <HeaderTypo>Sign In</HeaderTypo>
                     <SubHeaderTypo>Distributor System</SubHeaderTypo>
                     <EmailTextfield required id="userid" variant="outlined" label="User ID" onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUserid(event.target.value)} />
-                    <PasswordTextfield required id="password" variant="outlined" label="Password" onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)} />
+                    <PasswordTextfield required id="password" variant="outlined" label="Password" type="password" onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)} />
                     <SignInButton type="submit" variant="contained">Sign In</SignInButton>
+                    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                            Signed in successfully!
+                        </Alert>
+                    </Snackbar>
                     <SignUpTypo>Don't have an account? <a href="/SignUpScreen">Sign Up</a></SignUpTypo>
                 </SignInFieldsGrid>
                 <Grid item>

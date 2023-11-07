@@ -15,4 +15,6 @@ public interface DealerRepository extends MongoRepository<Dealer, String> {
     Dealer findByDealeridAndPassword(String dealerid, String password);
     Optional<Dealer> findById(String id);
 
+
+
 }
