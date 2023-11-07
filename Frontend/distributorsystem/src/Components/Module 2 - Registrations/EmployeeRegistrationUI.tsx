@@ -352,8 +352,7 @@ export default function EmployeeRegistration() {
 
         const newEmployeeDocuments = await handleFiles();
 
-
-
+      
         newEmployee({
             employeeid: employeeuuid,
             firstname: String(firstnameRef.current?.value),
@@ -366,13 +365,14 @@ export default function EmployeeRegistration() {
             currentaddress: String(currentaddressRef.current?.value),
             permanentaddress: String(permanentaddressRef.current?.value),
             contactnumber: String(contactnumberRef.current?.value),
-            tinnumber: String(emailRef.current?.value),
+            tinnumber: String(tinnumberRef.current?.value),
             is_cashier: isCashierSelected,
             is_salesassociate: isSalesAssociateSelected,
             is_collector: isCollectorSelected,
             submissiondate: moment().format('YYYY-MM-DD'),
             distributor: selectedDistributor!,
-            orders: [],
+            orderids: [],
+            paymentreceiptids: [],
             collectionpaymentids: [],
             documentids: []
         }, newEmployeeDocuments!);
