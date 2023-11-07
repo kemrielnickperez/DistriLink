@@ -25,19 +25,19 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
              receivedamount: directpaymentreceipt.receivedamount,
              paymenttransaction: directpaymentreceipt.paymenttransaction,
               cashier: {
-                //  employeeid: directpaymentreceipt.cashier!.employeeid,
-                //  firstname: directpaymentreceipt.cashier!.firstname,
-                //  middlename: directpaymentreceipt.cashier!.middlename,
-                //  lastname: directpaymentreceipt.cashier!.lastname,
-                //  birthdate: directpaymentreceipt.cashier!.birthdate,
-                //  gender: directpaymentreceipt.cashier!.gender,
-                //  currentaddress: directpaymentreceipt!.cashier!.currentaddress,
-                //  permanentaddress: directpaymentreceipt!.cashier!.permanentaddress,
-                //  contactnumber: directpaymentreceipt!.cashier!.contactnumber,
-                //  iscashier: directpaymentreceipt.cashier!.is_cashier,
-                //  issalesassociate: directpaymentreceipt!.cashier!.is_salesassociate,
-                //  iscollector: directpaymentreceipt!.cashier!.is_collector
-                    employeeid: "3593cd2f",
+                  employeeid: directpaymentreceipt.cashier!.employeeid,
+                  firstname: directpaymentreceipt.cashier!.firstname,
+                  middlename: directpaymentreceipt.cashier!.middlename,
+                  lastname: directpaymentreceipt.cashier!.lastname,
+                  birthdate: directpaymentreceipt.cashier!.birthdate,
+                  gender: directpaymentreceipt.cashier!.gender,
+                  currentaddress: directpaymentreceipt!.cashier!.currentaddress,
+                  permanentaddress: directpaymentreceipt!.cashier!.permanentaddress,
+                  contactnumber: directpaymentreceipt!.cashier!.contactnumber,
+                  iscashier: directpaymentreceipt.cashier!.is_cashier,
+                  issalesassociate: directpaymentreceipt!.cashier!.is_salesassociate,
+                  iscollector: directpaymentreceipt!.cashier!.is_collector
+                   /*  employeeid: "3593cd2f",
                     firstname: "Victoria",
                     middlename: "Victoria",
                     lastname: "Ramirez",
@@ -60,7 +60,7 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
                     collectionpaymentids: [],
                     documentids: [
                         "04853f62"
-                    ]
+                    ] */
 
              }, 
             

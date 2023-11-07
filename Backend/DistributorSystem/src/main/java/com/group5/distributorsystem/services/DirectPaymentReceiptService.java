@@ -36,6 +36,7 @@ public class DirectPaymentReceiptService {
 
         PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(newdirectPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
 
+        System.out.println(newdirectPaymentReceipt.getCashier().getEmployeeid());
         Employee cashier = employeeRepository.findById(newdirectPaymentReceipt.getCashier().getEmployeeid()).get();
 
 

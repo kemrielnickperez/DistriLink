@@ -466,42 +466,31 @@ export default function EmployeeRegistration() {
                 !selectedPosition
             ) {
 
-                handleAlert('Warning', 'Please fill in all required fields', 'warning');
-                setFieldWarning(helperWarning);
-                return;
-            }
-            if (passwordError) {
-                handleAlert('Error', 'Passwords do not match', 'error');
-                return;
-            }
-            newEmployee({
-                employeeid: employeeuuid,
-                firstname: String(firstnameRef.current?.value),
-                middlename: String(middlenameRef.current?.value),
-                lastname: String(lastnameRef.current?.value),
-                emailaddress: String(emailRef.current?.value),
-                password: String(passwordRef.current?.value),
-                birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
-                gender: selectedGender1,
-                currentaddress: String(currentaddressRef.current?.value),
-                permanentaddress: String(permanentaddressRef.current?.value),
-                contactnumber: String(contactnumberRef.current?.value),
-                tinnumber: String(emailRef.current?.value),
-                is_cashier: isCashierSelected,
-                is_salesassociate: isSalesAssociateSelected,
-                is_collector: isCollectorSelected,
-                submissiondate: moment().format('YYYY-MM-DD'),
-                distributor: selectedDistributor!,
-                orders: [],
-                collectionpaymentids: [],
-                documentids: []
-            }, newEmployeeDocuments!);
-            handleAlert('Success', 'You are Successfully Registered!', 'success');
-        } catch (error) {
-            handleAlert('Error', "Registration failed. Check your internet connection.", 'error');
-            return;
-        }
-
+      
+        newEmployee({
+            employeeid: employeeuuid,
+            firstname: String(firstnameRef.current?.value),
+            middlename: String(middlenameRef.current?.value),
+            lastname: String(lastnameRef.current?.value),
+            emailaddress: String(emailRef.current?.value),
+            password: String(passwordRef.current?.value),
+            birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
+            gender: gender,
+            currentaddress: String(currentaddressRef.current?.value),
+            permanentaddress: String(permanentaddressRef.current?.value),
+            contactnumber: String(contactnumberRef.current?.value),
+            tinnumber: String(tinnumberRef.current?.value),
+            is_cashier: isCashierSelected,
+            is_salesassociate: isSalesAssociateSelected,
+            is_collector: isCollectorSelected,
+            submissiondate: moment().format('YYYY-MM-DD'),
+            distributor: selectedDistributor!,
+            orderids: [],
+            paymentreceiptids: [],
+            collectionpaymentids: [],
+            documentids: []
+        }, newEmployeeDocuments!);
+        
     };
 
 
