@@ -356,11 +356,13 @@ export default function OrderConfirmation() {
       penaltyrate: Number(penaltyRateRef.current?.value),
       paymentterms: paymentTerm,
       orderamount: totalAmount,
+      distributor: dealer!.distributor,
       collector: null,
       dealer: dealer!,
       orderedproducts: orderedProducts,
       paymenttransactions: [],
-      confirmed: true
+      confirmed: true,
+      isclosed: false
     };
     // Call the updateOrder function with the order ID and updated order data
     updateOrder(existingOrderId, updatedOrder);

@@ -1,9 +1,7 @@
 package com.group5.distributorsystem.services;
 
-import com.group5.distributorsystem.models.Dealer;
-import com.group5.distributorsystem.models.DealerDocument;
-import com.group5.distributorsystem.models.Employee;
-import com.group5.distributorsystem.models.EmployeeDocument;
+import com.group5.distributorsystem.models.*;
+import com.group5.distributorsystem.repositories.DistributorRepository;
 import com.group5.distributorsystem.repositories.EmployeeDocumentRepository;
 import com.group5.distributorsystem.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +23,15 @@ public class EmployeeService {
     @Autowired
     EmployeeDocumentRepository employeeDocumentRepository;
 
+    @Autowired
+    DistributorRepository distributorRepository;
+
     public Employee registerEmployee(Employee employee, List<String> documentIds, List<String> documentNames, List<String> documentTypes, List<MultipartFile> documentContents
     ){
 
         Employee updatedEmployee = employeeRepository.save(employee);
+        Distributor distributor = distributorRepository.findById(updatedEmployee.getDistributor().getDistributorid()).get();
+
         for (int i = 0; i < documentIds.size(); i++) {
             EmployeeDocument document = new EmployeeDocument();
             document.setDocumentid(documentIds.get(i));
@@ -45,8 +48,11 @@ public class EmployeeService {
             }
             updatedEmployee.getDocumentids().add(document.getDocumentid());
             employeeDocumentRepository.save(document);
-
         }
+
+        updatedEmployee.setDistributor(distributor);
+        distributor.getEmployeeids().add(updatedEmployee.getEmployeeid());
+        distributorRepository.save(distributor);
 
         return employeeRepository.save(updatedEmployee);
     }

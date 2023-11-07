@@ -13,6 +13,7 @@ public class DealerDocument {
     private String type;
     private byte[] content;
 
+
     private Dealer dealer;
 
     public DealerDocument() {

@@ -1,5 +1,6 @@
 package com.group5.distributorsystem.repositories;
 
+import com.group5.distributorsystem.models.CollectionPaymentReceipt;
 import com.group5.distributorsystem.models.Dealer;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -14,5 +15,7 @@ import java.util.Set;
 public interface DealerRepository extends MongoRepository<Dealer, String> {
     Dealer findByDealeridAndPassword(String dealerid, String password);
     Optional<Dealer> findById(String id);
+
+    List<Dealer> findByIsconfirmedFalse();
 
 }

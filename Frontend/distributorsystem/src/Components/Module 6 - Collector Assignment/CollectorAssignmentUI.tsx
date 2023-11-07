@@ -125,7 +125,7 @@ export default function CollectorAssignment() {
   function getAllOrders() {
     axios.get<IOrder[]>('http://localhost:8080/order/getAllOrders')
       .then((response) => {
-        const confirmedOrders = response.data.filter(order => order.confirmed);
+        const confirmedOrders = response.data.filter(order => order.confirmed && !order.isclosed);
 
         setOrders(confirmedOrders);
 
@@ -155,6 +155,7 @@ export default function CollectorAssignment() {
     { field: 'amountDue', headerName: 'Amount Due', width: 180 },
     { field: 'collectorStatus', headerName: 'Collector Status', width: 200 },
     { field: 'collectorName', headerName: 'Collector Name', width: 200 },
+   
     {
       field: 'unassign', headerName: '', width: 220, renderCell: (params: { row: any; }) => {
         return (
@@ -165,6 +166,7 @@ export default function CollectorAssignment() {
               handleUnassignCollector(params.row, event);
             }}
             disabled={params.row.collectorStatus === 'Not Assigned'}
+          
           >
             Unassign Collector
 
@@ -197,7 +199,7 @@ export default function CollectorAssignment() {
       collectorStatus: order.collector !== null
         ? 'Assigned'
         : 'Not Assigned',
-      collectorName: order.collector ? `${order.collector.firstname} ${order.collector.lastname}` : '',
+      collectorName: order.collector ? `${order.collector.firstname} ${order.collector.lastname}` : ''
     };
   });
 
@@ -273,10 +275,7 @@ export default function CollectorAssignment() {
       // alert("Please select at least one order to assign a collector");
       headerHandleAlert('Order Selection Required', "Please choose an order before assigning a collector.", 'warning');
     } else {
-      assignCollector({
-        ...selectedCollector,
-        orderids: selectedRows
-      });
+      assignCollector(selectedCollector.employeeid!, selectedRows);
       // alert("Collector assigned successfully to all of the selected orders!")
       // toast
       toast.success('Collector successfully assigned to selected orders!', {

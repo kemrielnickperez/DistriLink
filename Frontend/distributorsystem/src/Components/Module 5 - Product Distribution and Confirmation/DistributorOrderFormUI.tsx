@@ -8,7 +8,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; import dayjs, { Dayjs } from 'dayjs';
 import moment from 'moment';
-import { IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
+import { IDistributor, IOrderedProducts, IProduct } from '../../RestCalls/Interfaces';
 
 import { v4 as uuidv4 } from 'uuid';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -158,6 +158,27 @@ export default function ProductDistributionList() {
   const dealerIDRef = useRef<TextFieldProps>(null);
 
 
+
+
+
+  
+  const distributorObject : IDistributor = {
+
+    distributorid: "distributor1",
+    firstname: "Junhui",
+    middlename: "",
+    lastname: "Wen",
+    emailaddress: "wenjunhui@gmail.com",
+    password: "moonmoon",
+    birthdate: "1996-06-10",
+    gender: "Male",
+    currentaddress: "Talisay City",
+    permanentaddress: "Talisay City",
+    contactnumber: "09741258963",
+    dealerids: [],
+    employeeids: [],
+    orderids: []
+}
 
 
   const paymentchoices = [
@@ -349,6 +370,7 @@ export default function ProductDistributionList() {
     setSelectedDate(null);
     setPaymentTerm(0);
     setTotalAmount(0);
+    
 
     if (dealerIDRef.current || penaltyRateRef.current?.value) {
       dealerIDRef.current!.value = '';
@@ -379,11 +401,13 @@ export default function ProductDistributionList() {
         penaltyrate: Number(penaltyRateRef.current?.value),
         paymentterms: paymentTerm,
         orderamount: orderAmount,
+        distributor: dealer!.distributor,
         collector: null,
         dealer: dealer!,
         orderedproducts: orderedProducts,
         paymenttransactions: [], 
-        confirmed: true
+        confirmed: true,
+        isclosed: false
       });
       //if possible kay ara na siya mo clear after sa snackbar
       saveHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')

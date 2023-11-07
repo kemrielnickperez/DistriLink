@@ -44,11 +44,9 @@ public class OrderController {
         return new ResponseEntity<>(orderService.assignCollector(orderid, collector), HttpStatus.OK);
     }*/
 
-    @PutMapping("/assignCollector")
-    public ResponseEntity<Object> assignCollector(@RequestBody Employee collector) {
-        Set<String> orderIds = collector.getOrderids();
-
-        return orderService.assignCollector(orderIds, collector);
+    @PutMapping("/assignCollector/{collectorid}")
+    public ResponseEntity<Object> assignCollector(@PathVariable String  collectorid, @RequestBody  String[] orderids) {
+        return orderService.assignCollector(orderids, collectorid);
     }
 
     @PutMapping("/removeCollector/{orderid}")
@@ -59,6 +57,16 @@ public class OrderController {
     @PutMapping("/updateOrder/{orderId}")
     public ResponseEntity<Object> updateOrder(@PathVariable String orderId, @RequestBody Order updatedOrder) {
         return new ResponseEntity<>(orderService.updateOrder(orderId, updatedOrder), HttpStatus.OK);
+    }
+
+    @PutMapping("/updateOrderClosedStatus/{orderid}")
+    public ResponseEntity<Object> updateOrderClosedStatus(@PathVariable String orderid) {
+        return new ResponseEntity<>(orderService.updateOrderClosedStatus(orderid), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUnconfirmedOrders")
+    public ResponseEntity<Object> getAllUnconfirmedOrders(){
+        return new ResponseEntity<>(orderService.getAllUnconfirmedOrders(), HttpStatus.OK);
     }
 
 }

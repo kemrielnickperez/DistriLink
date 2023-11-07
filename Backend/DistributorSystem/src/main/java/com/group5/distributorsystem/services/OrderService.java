@@ -35,13 +35,20 @@ public class OrderService {
     @Autowired
     DealerRepository dealerRepository;
 
+    @Autowired
+    DistributorRepository distributorRepository;
+
     public Order createOrder(Order order) {
 
         Order newOrder =  orderRepository.save(order);
 
         double orderamount = 0;
 
+
         Dealer dealer = dealerRepository.findById(order.getDealer().getDealerid()).get();
+
+
+        Distributor distributor = distributorRepository.findById(dealer.getDistributor().getDistributorid()).get();
 
         Set<OrderedProduct> newOrderedProducts = order.getOrderedproducts();
         Set<OrderedProduct> savedOrderedProducts = new HashSet<>();
@@ -66,8 +73,10 @@ public class OrderService {
 
                 orderamount += subtotal;
 
+                newOrderedProduct.setProduct(product);
                 product.getOrderedproductids().add(newOrderedProduct.getOrderedproductid());
                 productRepository.save(product);
+                orderedProductRepository.save(newOrderedProduct);
 
 
 
@@ -77,8 +86,13 @@ public class OrderService {
         newOrder.setOrderamount(orderamount);
 
         //connection to dealer
+        //dealer.setDistributor(distributor);
         dealer.getOrderids().add(newOrder.getOrderid());
         dealerRepository.save(dealer);
+
+        newOrder.setDistributor(distributor);
+        distributor.getOrderids().add(newOrder.getOrderid());
+        distributorRepository.save(distributor);
 
         return orderRepository.save(newOrder);
     }
@@ -117,15 +131,12 @@ public class OrderService {
     }
 */
 
-    public ResponseEntity assignCollector(Set<String> orderIds, Employee collector) {
-        Employee employee = employeeRepository.findById(collector.getEmployeeid()).orElse(null);
+    public ResponseEntity assignCollector(String[] orderids, String collectorid) {
+        Employee employee = employeeRepository.findById(collectorid).get();
 
-        if (employee == null) {
-            return new ResponseEntity("Collector not found", HttpStatus.NOT_FOUND);
-        }
 
-        for (String orderId : orderIds) {
-            Order order = orderRepository.findById(orderId).orElse(null);
+        for (String orderId : orderids) {
+            Order order = orderRepository.findById(orderId).get();
 
             if (order != null) {
                 if (order.getCollector() != null) {
@@ -176,6 +187,7 @@ public class OrderService {
             optionalOrder.setOrderedproducts(updatedOrder.getOrderedproducts());
             optionalOrder.setOrderamount(updatedOrder.getOrderamount());
             optionalOrder.setConfirmed(updatedOrder.getConfirmed());
+            optionalOrder.setIsclosed(updatedOrder.isIsclosed());
             for (OrderedProduct op: updatedOrder.getOrderedproducts()){
                 op.setOrderid(updatedOrder.getOrderid());
             }
@@ -190,6 +202,32 @@ public class OrderService {
         } else {
             return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
         }
+    }
+
+    public ResponseEntity updateOrderClosedStatus(String orderId) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            boolean allPaymentsPaid = true;
+
+            for (PaymentTransaction transaction : order.getPaymenttransactions()) {
+                if (!transaction.isPaid()) {
+                    allPaymentsPaid = false;
+                    break; // Exit the loop as soon as you find an unpaid transaction
+                }
+            }
+
+            order.setIsclosed(allPaymentsPaid);
+            orderRepository.save(order);
+
+            return new ResponseEntity<>("Order closed status updated successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public List<Order> getAllUnconfirmedOrders() {
+        return orderRepository.findByIsconfirmedFalse();
     }
 
 }

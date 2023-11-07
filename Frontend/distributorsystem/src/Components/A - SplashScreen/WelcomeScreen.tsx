@@ -4,8 +4,11 @@ import Splash from '../../Global Components/Images/Splash.png'
 import logo4 from '../../Global Components/Images/logo4.png'
 import logo6 from '../../Global Components/Images/logo6.png'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-const Logo = styled(Typography)({
-    margin: '5% 10% 0 5% ',
+import axios from "axios";
+import { IDistributor } from "../../RestCalls/Interfaces";
+import { useEffect, useState } from "react";
+const Logo=styled(Typography)({
+    margin:'5% 10% 0 5% ',
     display: 'flex',
     fontFamily: 'Inter',
     fontWeight: 'bold',
@@ -99,19 +102,40 @@ const ContentFieldGrid = styled(Grid)({
     justifyContent: "center",
 
 })
-export default function WelcomeScreen() {
-    const navigate = useNavigate();
+export default function WelcomeScreen(){
+   const navigate=useNavigate();
+  
+   const signUpHandler=()=>{
+    navigate(`/SignUpScreen`)
+   }
+   const signInHandler=()=>{
+    navigate(`/SignIn`)
+   }
+   
 
-    const signUpHandler = () => {
-        navigate(`/SignUpScreen`)
-    }
-    const signInHandler = () => {
-        navigate(`/SignIn`)
-    }
+   const [distributorsss, setDistributorsss] = useState<IDistributor[]>([]);
+    function getAllDistributors() {
+        axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
+            .then((response) => {
+                setDistributorsss(response.data);
 
+            })
+            .catch((error) => {
 
-    return (
-        <div style={{ backgroundColor: '#2D85E7', width: '100vw', height: '100vh', position: 'fixed' }}>
+                alert("Error retrieving payment receipts. Please try again.");
+            });
+    } 
+    
+
+    useEffect(() => {
+      
+
+        getAllDistributors();
+        console.log(distributorsss);
+    }, []);
+   
+    return(
+        <div style={{backgroundColor:'#2D85E7', width: '100vw', height: '100vh', position: 'fixed'}}>
             {/* <Button variant="contained" onClick={signUpHandler}>Sign up</Button>
             <Button variant="contained" onClick={signInHandler}>Sign in</Button> */}
             {/** Logo*/}

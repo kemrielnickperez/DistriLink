@@ -365,11 +365,13 @@ export default function DealerOrderForm() {
         penaltyrate: Number(penaltyRateRef.current?.value),
         paymentterms: paymentTerm,
         orderamount: orderAmount,
+        distributor: dealer!.distributor,
         collector: null,
         dealer: dealer!,
         orderedproducts: orderedProducts,
         paymenttransactions: [],
-        confirmed: true
+        confirmed: false,
+        isclosed: false
       });
       //if possible kay ara na siya mo clear after sa snackbar
       headerHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')

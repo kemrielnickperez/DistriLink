@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Alert, AlertTitle, Button, Checkbox, FormControlLabel, FormGroup, FormHelperText, Grid, Icon, IconButton, InputAdornment, Radio, RadioGroup, Snackbar, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
+import { Autocomplete, Alert, AlertTitle, Button, Checkbox, FormControlLabel, FormGroup, FormHelperText, Grid, Icon, IconButton, InputAdornment, Radio, RadioGroup, Snackbar, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -8,8 +8,9 @@ import employee1 from '../../Global Components/Images/employee1.png'
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 import dayjs, { Dayjs } from "dayjs";
 import { v4 as uuidv4 } from 'uuid';
-import { IEmployeeDocument } from "../../RestCalls/Interfaces";
+import { IDistributor, IEmployeeDocument } from "../../RestCalls/Interfaces";
 import moment from "moment";
+import axios from "axios";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const ImageStyle = styled(Typography)({
@@ -212,6 +213,43 @@ export default function EmployeeRegistration() {
     const tinnumberRef = useRef<TextFieldProps>(null)
 
 
+    const [selectedDistributor, setSelectedDistributor] = useState<IDistributor>();
+    const [distributors, setDistributors] = useState<IDistributor[]>([]);
+    
+
+    const distributorObject : IDistributor = {
+        distributorid: "distributor1",
+        firstname: "Junhui",
+        middlename: "",
+        lastname: "Wen",
+        emailaddress: "wenjunhui@gmail.com",
+        password: "moonmoon",
+        birthdate: "1996-06-10",
+        gender: "Male",
+        currentaddress: "Talisay City",
+        permanentaddress: "Talisay City",
+        contactnumber: "09741258963",
+        dealerids: [],
+        employeeids: [],
+        orderids: []
+    }
+
+
+    
+    function getAllDistributors() {
+        axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
+            .then((response) => {
+                setDistributors(response.data);
+
+            })
+            .catch((error) => {
+
+                alert("Error retrieving payment receipts. Please try again.");
+            });
+    }
+
+
+
     {/**Handler for Show Icon Password*/ }
     const handleShowPassword = () => {
         setisShowPassword(!isshowPassword);
@@ -319,7 +357,20 @@ export default function EmployeeRegistration() {
     };
 
     const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedProfilePicture(event.target.files?.[0]);
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            console.log(file.size)
+            if (file.size <= maxSize) {
+                setSelectedProfilePicture(file);
+            } else {
+
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+        
+        
         handleInputChange('selectedprofile')
     };
 
@@ -440,6 +491,7 @@ export default function EmployeeRegistration() {
                 is_salesassociate: isSalesAssociateSelected,
                 is_collector: isCollectorSelected,
                 submissiondate: moment().format('YYYY-MM-DD'),
+                distributor: selectedDistributor!,
                 orders: [],
                 collectionpaymentids: [],
                 documentids: []
@@ -453,10 +505,14 @@ export default function EmployeeRegistration() {
     };
 
 
+ 
+
     useEffect(() => {
         const currentDate = dayjs().subtract(18, 'year') as Dayjs;
         setMaxDate(currentDate);
-        //setSelectedBDate(currentDate);
+
+    
+        getAllDistributors();
     }, []);
 
     return (
@@ -639,11 +695,37 @@ export default function EmployeeRegistration() {
                 <GridField container spacing={0}>
                     <Grid item>
                         <StyledTextField variant="outlined" label="TIN Number" size="small" style={{ width: '795px' }} inputRef={tinnumberRef} onChange={() => handleInputChange('tinnum')} />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                    </Grid>
+                </GridField>
+                <GridField>
+                        <Grid item>
+                            <Autocomplete
+                                disablePortal
+                                id="flat-demo"
+                                options={distributors}
+                                getOptionLabel={(option) => option.firstname +" "+ option.lastname}
+                                isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
+                                value={selectedDistributor}
+                                onChange={(event, newValue) => setSelectedDistributor(newValue!)}
+                                renderInput={(params) => (
+                                    <StyledTextField
+                                        {...params}
+                                        InputProps={{
+                                            ...params.InputProps, disableUnderline: true
+                                        }}
+                                        variant="outlined"
+                                        label="Distributor"
+                                        size="small"
+                                        style={{ width: '795px' }}
+                                        
+                                    />)}
+                                
+                            />
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
                             {fieldWarning.tinnum}
                         </FormHelperText>
                     </Grid>
-                </GridField>
+                    </GridField>
                 <GridField container spacing={0}>
                     <Grid item>
                         <TypographyLabelB>Apply As:
@@ -692,7 +774,9 @@ export default function EmployeeRegistration() {
                                             id="profilepicture-input" />
                                         <UploadIcon />
                                     </Icon>
-                                    <TypographyLabelC >Upload Profile Picture</TypographyLabelC>
+                                    <TypographyLabelC >
+                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name }
+                                    </TypographyLabelC>
                                 </Button>
                             </label>
                             <FormHelperText style={{ marginLeft: 400, color: '#BD9F00' }}>

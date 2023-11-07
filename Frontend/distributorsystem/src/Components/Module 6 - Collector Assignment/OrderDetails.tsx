@@ -266,6 +266,7 @@ export function OrderDetails() {
                                                 <TableHeaderCell align="center">Starting Date</TableHeaderCell>
                                                 <TableHeaderCell align="center">Ending Date</TableHeaderCell>
                                                 <TableHeaderCell align="center">Amount Due</TableHeaderCell>
+                                                <TableHeaderCell align="center">Status</TableHeaderCell>
                                                 <TableHeaderCell align="center"></TableHeaderCell>
                                             </TableRow>
                                         </TableHead>
@@ -300,6 +301,13 @@ export function OrderDetails() {
                                                         {transaction.amountdue.toFixed(2)}
 
                                                     </TableCell>
+
+                                                    <TableCell align="center">
+                                                        <span style={{ color: transaction.paid ? 'green' : 'red' }}>
+                                                            {transaction.paid ? 'Paid' : 'Not Paid'}
+                                                        </span>
+                                                    </TableCell>
+                                                    <TableCell></TableCell>
                                                 </TableRow>
 
                                             ))}

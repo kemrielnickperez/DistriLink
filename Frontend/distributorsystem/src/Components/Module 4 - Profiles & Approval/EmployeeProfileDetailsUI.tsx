@@ -8,6 +8,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -139,7 +140,8 @@ const ButtonClose = styled(Button)({
 
 
 export function EmployeeProfileDetails() {
-  const [employee, setEmployee] = useState<IEmployee | null>(null);
+  const [newEmployee, getEmployeeByID, getCollectorByID, employee] = useRestEmployee();
+  //const [employee, setEmployee] = useState<IEmployee | null>(null);
   const [employeeDocuments, setEmployeeDocuments] = useState<IEmployeeDocument[]>([]);
   const [value, setValue] = useState(0);
   const [openProfile, setOpenProfile] = useState(false);
@@ -149,6 +151,9 @@ export function EmployeeProfileDetails() {
   const [alertSeverity, setAlertSeverity] = useState('success');
   // Use useParams to get the employee from the URL
   const { objectId } = useParams();
+  const handleFindEmployee = () => {
+    getEmployeeByID(objectId!);
+  };
 
   function getAllEmployeeDocuments() {
     axios.get<IEmployeeDocument[]>(`http://localhost:8080/employeeDocument/findAllDocumentsByEmployeeId/${objectId!}`)
@@ -156,9 +161,11 @@ export function EmployeeProfileDetails() {
         setEmployeeDocuments(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving employee documents. Please try again.");
+       // alert("Error retrieving employee documents. Please try again.");
+       console.log(error)
       });
   };
+
   {/**Handler for Alert - Function to define the type of alert*/ }
 
   function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
@@ -201,14 +208,15 @@ export function EmployeeProfileDetails() {
   }
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
-  };
+    };
+
 
   useEffect(() => {
     // Make an Axios GET request to fetch the employee data using the objectId
     axios
       .get<IEmployee>(`http://localhost:8080/employee/getEmployeeByID/${objectId}`)
       .then((response) => {
-        setEmployee(response.data);
+        // setEmployee(response.data);
         // headerHandleAlert('Success', "Employee records retrieved successfully.", 'success');    
       })
       .catch((error) => {
@@ -216,9 +224,10 @@ export function EmployeeProfileDetails() {
         // console.error("Error fetching employee data:", error);
       });
     if (objectId) {
+      handleFindEmployee();
       getAllEmployeeDocuments();
     }
-  }, [objectId, employeeDocuments]);
+  }, [objectId, employee, employeeDocuments]);
 
   const profilePic = employeeDocuments.find(image => image.name === employee?.lastname + '_profilepicture');
   const imageSource = profilePic ? `data:${profilePic?.type} ;base64,${profilePic?.content}`
@@ -283,7 +292,7 @@ export function EmployeeProfileDetails() {
               <CustomTabPanel value={value} index={0}>
                 {/* Basic Information */}
                 <Grid container>
-                  <Grid item style={{ marginLeft: 80 }}>
+                  <Grid item style={{  marginLeft: 80  }}>
                     <StyleLabel>Gender</StyleLabel>
                     <StyleData>{employee?.gender}</StyleData>
                   </Grid>

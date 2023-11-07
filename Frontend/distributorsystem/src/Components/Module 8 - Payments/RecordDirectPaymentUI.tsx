@@ -5,11 +5,11 @@ import NavBar from "../../Global Components/NavBar";
 import { useEffect, useRef, useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useRestPaymentReceipt } from "../../RestCalls/PaymentReceiptUseRest";
 import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
-import { IEmployee, IPaymentReceipt, IPaymentTransaction } from "../../RestCalls/Interfaces";
+import { IEmployee, IOrder, IPaymentReceipt, IPaymentTransaction } from "../../RestCalls/Interfaces";
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 import React from "react";
 import { v4 as uuidv4 } from 'uuid';
@@ -189,7 +189,7 @@ const TableCellStyle = styled(TableCell)({
 
 export default function RecordDirectPayment() {
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus,updateOrder, closedOrder] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
 
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
@@ -200,6 +200,8 @@ export default function RecordDirectPayment() {
     const amountPaidRef = useRef<TextFieldProps>(null);
     const remarksRef = useRef<TextFieldProps>(null);
 
+    const [minDate, setMinDate] = useState<Dayjs | null>(null);
+
     {/** functions */ }
 
     const handleFindOrder = () => {
@@ -207,10 +209,24 @@ export default function RecordDirectPayment() {
 
     };
 
+    /* const checkAndCloseOrder = (order: IOrder|undefined) => {
+        // Check if all payment transactions are paid
+        const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
+      
+        if (allPaid) {
+          // Call the orderClosed function
+          closedOrder(order!.orderid);
+        } else {
+          // Handle the case where not all payment transactions are paid
+          // You can display a message or perform other actions here
+          console.log('Not all payment transactions are paid.');
+        }
+      }; */
 
     const handleSaveDirectPayment = () => {
         const uuid = uuidv4();
         const paymentreceiptuuid = uuid.slice(0, 8);
+        console.log(paymentreceiptuuid);
         createDirectPaymentReceipt({
             paymentreceiptid: paymentreceiptuuid,
             remarks: remarksRef.current?.value + "",
@@ -222,31 +238,14 @@ export default function RecordDirectPayment() {
             cashier: null,
             paymenttransaction: selectedPaymentTransaction!
         })
+        const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
+        if (allPaid) {
+            // Call the orderClosed function
+            closedOrder(order!.orderid);
+          } 
+    
     }
-    {/** Columns for DataGrid */ }
-    // const columns: GridColDef[] = [
-    //     { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
-    //     { field: 'paymentDueDate', headerName: 'Payment Due Date', width: 180 },
-    //     { field: 'amountDue', headerName: 'Amount Due', width: 160 },
-    //     // { field: 'amountPaid', headerName: 'Amount Paid', width: 180 },
-    //     // { field: 'remarks', headerName: 'Remarks', width: 200 },
-    //     // { field: 'newBalance', headerName: 'New Balance', width: 200 },
-    // ]
-    // {/** Rows for DataGrid */ }
 
-    // let rows = []; 
-
-    // if (order && order!.paymenttransactions!) {
-    //     rows = order.paymenttransactions.map((transaction) => {
-    //         return {
-    //             id: transaction?.paymenttransactionid || '',
-    //             paymentTransactionID: transaction?.paymenttransactionid || '',
-    //             paymentDueDate: transaction?.enddate || '',
-    //             amountDue: transaction?.amountdue || '',
-    //             // remarks: transaction?.remarks || '', // Uncomment if remarks is a property of transaction
-    //         };
-    //     });
-    // }
     const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
 
@@ -255,8 +254,15 @@ export default function RecordDirectPayment() {
         if (orderIDRef.current?.value + '' !== '') {
             handleFindOrder();
         }
+        const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
+        if (allPaid) {
+            // Call the orderClosed function
+            closedOrder(order!.orderid);
+          } 
 
-    }, [isOrderFound, order, order?.paymenttransactions]);
+        setMinDate(dayjs() as Dayjs);
+
+    }, [isOrderFound, order, order?.paymenttransactions, sortedPaymemtTransactions]);
 
 
     return (
@@ -302,8 +308,12 @@ export default function RecordDirectPayment() {
                                         {/* <TableCell align="center">{transaction.installmentnumber}</TableCell>  */}
                                         {/* <TableCell component="th" scope="row" align="center">{transaction.startingdate}</TableCell> */}
                                         <TableCell align="center">{transaction.enddate}</TableCell>
-                                        <TableCell align="center">{transaction.amountdue}</TableCell>
-                                        <TableCell align="center">{transaction.paid ? 'Paid' : 'Not Paid'}</TableCell>
+                                        <TableCell align="center">{transaction.amountdue.toFixed(2)}</TableCell>
+                                        <TableCell align="center">
+                                            <span style={{ color: transaction.paid ? 'green' : 'red' }}>
+                                                {transaction.paid ? 'Paid' : 'Not Paid'}
+                                            </span>
+                                        </TableCell>
                                         {/* <TableCell align="center">{paymentReceipt?.paymenttype}</TableCell>
                                         <TableCell align="center">{paymentReceipt?.remarks}</TableCell>  */}
                                     </StyledTableRow>
@@ -353,35 +363,36 @@ export default function RecordDirectPayment() {
                         onChange={(event, newValue) => {
                             setSelectedPaymentTransaction(newValue);
                         }}
-                        // Style for the Autocomplete(Combo Box - Separated from global styling due to error )   
+                        filterOptions={(options, state) => {
+                            // Filter out "Paid" transactions from the options
+                            return options.filter((option) => !option.paid);
+                        }}
+                        // Style for the Autocomplete (Combo Box)
                         sx={{
                             marginTop: 2,
-                            marginRight: 15
+                            marginRight: 15,
                         }}
-                        // Style for the TextField(Input - Separated from global styling due to error )  
-                        renderInput={
-                            (params) =>
-                                <TextField {...params}
-                                    InputProps={{
-                                        ...params.InputProps, disableUnderline: true,
-                                        sx: {
-                                            [`& fieldset`]: {
-                                                borderRadius: 15,
-                                                height: 40,
-                                                width: 220,
-                                                top: 4.5,
-                                                right: -250
-
-                                            },
-                                            left: 180
-                                        }
-                                        // style: {
-                                        //     width: 220,
-
-                                        // }
-                                    }}
-                                    variant="outlined"
-                                />}
+                        // Style for the TextField (Input)
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...params.InputProps,
+                                    disableUnderline: true,
+                                    sx: {
+                                        [`& fieldset`]: {
+                                            borderRadius: 15,
+                                            height: 40,
+                                            width: 220,
+                                            top: 4.5,
+                                            right: -250,
+                                        },
+                                        left: 180,
+                                    },
+                                }}
+                                variant="outlined"
+                            />
+                        )}
                     />
 
                     {/* </StyleTextField3> */}
@@ -396,6 +407,7 @@ export default function RecordDirectPayment() {
                                 }
                             }}
                             value={selectedDate}
+                            minDate={minDate}
                             onChange={(date) => setSelectedDate(date as Dayjs | null)} />
                     </LocalizationProvider>
                 </Grid>
