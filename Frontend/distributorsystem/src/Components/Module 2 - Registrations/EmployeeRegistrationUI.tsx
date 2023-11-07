@@ -160,7 +160,7 @@ const TypographyLabelC = styled(Typography)({
     fontFamily: 'inter',
 })
 
-export default function EmployeeRegistration() {
+export default function EmployeeRegistration(){
 
 
     const [newEmployee, getCollectorByID, collector] = useRestEmployee();
@@ -466,7 +466,14 @@ export default function EmployeeRegistration() {
                 !selectedPosition
             ) {
 
-      
+                handleAlert('Warning', 'Please fill in all required fields', 'warning');
+                setFieldWarning(helperWarning);
+                return;
+            }
+            if (passwordError) {
+                handleAlert('Error', 'Passwords do not match', 'error');
+                return;
+            }
         newEmployee({
             employeeid: employeeuuid,
             firstname: String(firstnameRef.current?.value),
@@ -475,7 +482,7 @@ export default function EmployeeRegistration() {
             emailaddress: String(emailRef.current?.value),
             password: String(passwordRef.current?.value),
             birthdate: selectedBDate?.format('YYYY-MM-DD') || '',
-            gender: gender,
+            gender: selectedGender1,
             currentaddress: String(currentaddressRef.current?.value),
             permanentaddress: String(permanentaddressRef.current?.value),
             contactnumber: String(contactnumberRef.current?.value),
@@ -491,7 +498,12 @@ export default function EmployeeRegistration() {
             documentids: []
         }, newEmployeeDocuments!);
         
-    };
+        handleAlert('Success', 'You are Successfully Registered!', 'success');
+    } catch (error) {
+        handleAlert('Error', "Registration failed. Check your internet connection.", 'error');
+        return;
+    }
+}
 
 
  
@@ -684,9 +696,12 @@ export default function EmployeeRegistration() {
                 <GridField container spacing={0}>
                     <Grid item>
                         <StyledTextField variant="outlined" label="TIN Number" size="small" style={{ width: '795px' }} inputRef={tinnumberRef} onChange={() => handleInputChange('tinnum')} />
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.tinnum}
+                        </FormHelperText>
                     </Grid>
                 </GridField>
-                <GridField>
+                <GridField container spacing={0}>
                         <Grid item>
                             <Autocomplete
                                 disablePortal
@@ -709,12 +724,9 @@ export default function EmployeeRegistration() {
                                         
                                     />)}
                                 
-                            />
-                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.tinnum}
-                        </FormHelperText>
+                            />         
                     </Grid>
-                    </GridField>
+                </GridField>
                 <GridField container spacing={0}>
                     <Grid item>
                         <TypographyLabelB>Apply As:

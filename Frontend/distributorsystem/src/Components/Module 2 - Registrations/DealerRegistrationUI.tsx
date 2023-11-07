@@ -527,6 +527,7 @@ export default function DealerRegistration() {
         contactnum: !contactnumberRef.current?.value ? 'Contact Number is required' : '',
         selectedprofile: !selectedProfilePicture ? 'Please attach your Profile Picture' : '',
         selectedvalidid: !selectedValidID ? 'Please attach your Valid ID' : '',
+        
         tinnum: !tinnumberRef.current?.value ? 'TIN Number is required' : '',
     }
     const helperBussinessWarning = {
@@ -896,32 +897,7 @@ return (
                                 />)}
 
                         />
-                    </Grid>
-                </GridField>
-                <GridField>
-                    <Grid item>
-                        <Autocomplete
-                            disablePortal
-                            id="flat-demo"
-                            options={distributors}
-                            getOptionLabel={(option) => option.firstname + " " + option.lastname}
-                            isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
-                            value={selectedDistributor}
-                            onChange={(event, newValue) => setSelectedDistributor(newValue!)}
-                            renderInput={(params) => (
-                                <StyledTextField
-                                    {...params}
-                                    InputProps={{
-                                        ...params.InputProps, disableUnderline: true
-                                    }}
-                                    variant="outlined"
-                                    label="Distributor"
-                                    size="small"
-                                    style={{ width: '795px' }}
-
-                                />)}
-
-                        />
+                        
                     </Grid>
                 </GridField>
                 <GridField container spacing={8} >
@@ -1118,7 +1094,7 @@ return (
                                     <UploadIcon />
                                 </Icon>
                                 <TypographyLabelC >
-                                    {selectedBusinessDocs?.name === undefined ? 'Upload Businedd Document' : selectedBusinessDocs?.name}
+                                    {selectedBusinessDocs?.name === undefined ? 'Upload Business Document' : selectedBusinessDocs?.name}
                                 </TypographyLabelC>
                             </Button>
                         </label>
