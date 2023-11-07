@@ -14,8 +14,6 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
     const [employee, setEmployee] = useState<IEmployee>();
 
     function newEmployee(employee: IEmployee, employeeDocuments: IEmployeeDocument[]) {
-
-
     
         const formData = new FormData();
 
@@ -68,21 +66,20 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
             formData.append(`content`, new Blob([document.content], { type: 'application/octet-stream' }));
           }); 
 
-         
 
-       /*  axios.post('http://localhost:8080/employee/registerEmployee', formData, {
+        axios.post('http://localhost:8080/employee/registerEmployee', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         })
             .then((response) => {
             
-                alert("success!");
+                // alert("success!");
             })
             .catch((error) => {
                 
-                alert("Error creating a new record. Please try again.");
-            }); */
+                // alert("Error creating a new record. Please try again.");
+            });
     }
 
     

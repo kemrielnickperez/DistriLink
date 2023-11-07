@@ -16,6 +16,11 @@ import { useRestOrder } from "../../RestCalls/OrderUseRest";
 import { v4 as uuidv4 } from 'uuid';
 import React from "react";
 import { useParams } from "react-router-dom";
+//Imports for Toastify
+//Please Install npm i react-toastify or if doesn't work, install npm i react-toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Typography1 = styled(Typography)({
     color: "#203949",
@@ -154,6 +159,7 @@ export default function Schedules() {
 
     const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
 
+
     const [initialMinDate, setInitialMinDate] = useState<Dayjs | null>(null);
 
     useEffect(() => {
@@ -168,6 +174,7 @@ export default function Schedules() {
         setInitialMinDate(dayjs() as Dayjs);
 
 
+
     }, [order, paymentTransaction]);
 
 
@@ -175,13 +182,16 @@ export default function Schedules() {
 
     const handleFindOrder = () => {
 
-        const idToSearch = orderIDRef.current?.value+"" || objectId;
 
-        getOrderByID(idToSearch!);
-        
+        const idToSearch = objectId !== 'null' ? objectId : orderIDRef.current?.value + "";
+         getOrderByID(idToSearch!);
 
-        if (isOrderFound === false)
-            alert("Order not found. Please try again.");
+        if (isOrderFound === false) {
+            // alert("Order not found. Please try again.");
+            // toast
+           
+        }
+
     };
 
     const handleCreatePaymentTransaction = () => {
@@ -216,6 +226,17 @@ export default function Schedules() {
 
             // Call createPaymentTransaction with the updated array.
             createPaymentTransaction(updatedPaymentTransactions, order!.orderid);
+            
+            toast.success('Schedules have been created successfully', {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              })
 
             return updatedPaymentTransactions;
         });
@@ -249,7 +270,7 @@ export default function Schedules() {
 
         setStartDateModified(false);
         setEndDateModified(false);
-
+        try{
         updatePaymentTransaction(
             transaction.paymenttransactionid,
             {
@@ -263,12 +284,34 @@ export default function Schedules() {
                 paymentreceiptid: transaction.paymentreceiptid
             }
         )
-
+        toast.success('Installment '+transaction.installmentnumber+" schedule has been updated.", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          })
+    }catch(error){
+        toast.error('Unexpected error updating payment transaction.', {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          })
+    }
     };
     
     
 
     useEffect(() => {
+
 
         if (objectId !== 'null') {
             handleFindOrder();
@@ -475,6 +518,8 @@ export default function Schedules() {
                         handleCreatePaymentTransaction
                     }> Create Schedules </StyledButton>
 
+                    
+
 
 
                 </div>
@@ -482,6 +527,22 @@ export default function Schedules() {
             )
 
             }
+
+            {/* Alerts */}
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                limit={3}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                style={{ width: 430 }}
+                theme="colored"
+            />
         </div>
     );
 }

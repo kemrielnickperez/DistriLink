@@ -1,4 +1,4 @@
-import { Button, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
+import { Alert,AlertTitle,  Button, Grid, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import { IOrder } from "../../RestCalls/Interfaces";
 import { useEffect, useState } from "react";
@@ -7,6 +7,9 @@ import { useParams } from "react-router-dom";
 import OrderTransactionDetailsPrint from "./OrderTransactionDetailsPrint";
 
 
+function SlideTransitionDown(props: SlideProps) {
+  return <Slide {...props} direction="down" />;
+}
 
 const ContentNameTypography = styled(Typography)({
   marginTop: 60,
@@ -142,6 +145,15 @@ const StyledPrintDiv = styled('div')({
 
 export function OrderTransactionDetails() {
   const [order, setOrder] = useState<IOrder | null>(null);
+  
+  const [openAlert, setOpenAlert] = useState(false);
+
+  const [alerttitle, setTitle] = useState('');
+
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const [alertSeverity, setAlertSeverity] = useState('success');
+
 
   // Use useParams to get the orderID from the URL
   const { objectId } = useParams();
@@ -155,8 +167,25 @@ export function OrderTransactionDetails() {
       })
       .catch((error) => {
         console.error("Error fetching order data:", error);
+        headerHandleAlert('Error', "Failed to retrieve order data. Please try again.", 'error');
       });
   }, []);
+
+  {/**Handler for Alert - Function to define the type of alert*/ }
+  function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+    setTitle(title);
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setOpenAlert(true);
+  }
+
+  {/**Handler to Close Alert Snackbar*/ }
+  const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
 
 
   const [printing, setPrinting] = useState(false);
@@ -285,6 +314,18 @@ export function OrderTransactionDetails() {
                     </StackStyle>
                   </Paper>
                 </Grid>
+
+                
+                {/* Alerts */}
+                <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center'
+                }} TransitionComponent={SlideTransitionDown}>
+                    <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                        <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                        {alertMessage}
+                    </Alert>
+                </Snackbar>
               </Grid>
 
             </div>

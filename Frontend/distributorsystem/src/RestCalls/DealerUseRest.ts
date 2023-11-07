@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { IDealer, IDealerDocument } from "./Interfaces";
 import { de } from "date-fns/locale";
+import { toast } from "react-toastify";
 import { error } from "console";
 
 
@@ -10,9 +11,10 @@ import { error } from "console";
 
 export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, (dealerID: string) => void, (dealerID:string, creditlimit: number) => void, (dealerID: string, remarks: string) => void, boolean | undefined, IDealer | undefined] => {
 
+
     const [dealer, setDealer] = useState<IDealer>();
     const [isDealerFound, setIsDealerFound] = useState(false);
-
+    const [toastShown, setToastShown] = useState(false);
     function newDealer(dealer: IDealer, dealerDocuments: IDealerDocument[]) {
 
 
@@ -106,7 +108,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             console.log(key, value);
           });  */
 
-           axios.post('http://localhost:8080/dealer/registerDealer', formData, {
+          axios.post('http://localhost:8080/dealer/registerDealer', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -116,10 +118,11 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
                 
 
                 alert('Success!');
+                //  alert('Success!');
             })
             .catch((error) => {
                 console.log(error)
-                alert('Error creating a new record. Please try again.');
+               // alert('Error creating a new record. Please try again.');
             });   
 
     
@@ -195,9 +198,36 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
                 if (response.data !== null) {
                     setIsDealerFound(true);
 
+                    if (!toastShown) {
+                        // for now lang sah ni Show the toast alert if it hasn't been shown yet and isDealerFound is true
+                        toast.success('Dealer found. Please order product(s)', {
+                            position: "bottom-right",
+                            autoClose: 5000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setToastShown(true)
+                    }
+
+
                 }
                 else {
                     setIsDealerFound(false);
+                        toast.error('Dealer not found. Please try again.', {
+                            position: "bottom-right",
+                            autoClose: 5000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        })
+                   
                 }
             })
             .catch((error) => {

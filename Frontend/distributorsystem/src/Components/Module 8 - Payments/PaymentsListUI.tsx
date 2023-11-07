@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Card, TextField, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Autocomplete, Button, Card, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { IDirectPaymentReceipt, IEmployee, IOrder, IPaymentReceipt } from "../../RestCalls/Interfaces";
 import { auto } from "@popperjs/core";
@@ -6,6 +6,11 @@ import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid";
 import axios from "axios";
 import { useRestPaymentReceipt } from "../../RestCalls/PaymentReceiptUseRest";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+
+function SlideTransitionDown(props: SlideProps) {
+    return <Slide {...props} direction="down" />;
+}
 
 const StyledCard = styled(Card)({
     padding: '10px 10px 10px 2px',
@@ -58,16 +63,20 @@ export default function PaymentList() {
     const [paymentreceipts, setPaymentReceipts] = useState<IPaymentReceipt[]>([]);
 
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alerttitle, setTitle] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertSeverity, setAlertSeverity] = useState('success');
 
     function getAllPaymentReceipts() {
         axios.get<IDirectPaymentReceipt[]>('http://localhost:8080/paymentreceipt/getAllPaymentReceipts')
             .then((response) => {
                 setPaymentReceipts(response.data);
-               
+
             })
             .catch((error) => {
-               
                 alert("Error retrieving payment receipts. Please try again.");
+                headerHandleAlert('Error', "Error retrieving payment receipts. Please try again..", 'error');
             });
     }
 
@@ -75,6 +84,23 @@ export default function PaymentList() {
         getAllPaymentReceipts();
 
     }, [paymentreceipts]);
+    {/**Handler for Alert - Function to define the type of alert*/ }
+
+    function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+        setTitle(title);
+        setAlertMessage(message);
+        setAlertSeverity(severity);
+        setOpenAlert(true);
+    }
+
+    {/**Handler to Close Alert Snackbar*/ }
+    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
+
 
     {/** Columns for DataGrid */ }
     const columns: GridColDef[] = [
@@ -94,12 +120,12 @@ export default function PaymentList() {
                         color="primary"
                         onClick={() => {
                             // Handle button click for this row here
-                           
+
                             handleViewButtonClick(params.row.paymentReceiptid);
                         }}
-                        >
-                            View
-                        </Button>
+                    >
+                        View
+                    </Button>
                 )
             }
         }
@@ -134,19 +160,40 @@ export default function PaymentList() {
         setSelectedRows(selectedRowIds);
     };
     const handleConfirmPaymentsButton = () => {
-       
+        try{
         let count = 0;
-        selectedRows.map((id) => {
-            confirmCollectionPaymentReceipt(id, 'employee1')
-            count++;
-            if (count === selectedRows.length)
-                alert(count + " Payment Receipts Confirmed Successfully!")
-        });
+        if (!selectedRows.length) {
+            headerHandleAlert('Payment Receipt Required', "Please select payment receipt to confirm", 'warning');
+        }
+        else {
+            selectedRows.map((id) => {
+                confirmCollectionPaymentReceipt(id, '3593cd2f')
+                count++;
+
+                if (count === selectedRows.length) {
+                    //  alert(count + " Payment Receipts Confirmed Successfully!")
+                    toast.success(count + ' Payment Receipt(s) Confirmed Successfully!', {
+                        position: "bottom-right",
+                        autoClose: 5000,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    })
+                }
+
+            });
+        }
+    }catch(error){
+        headerHandleAlert('Unexpected Error', "Cannot update Payment Receipt. Please try again.", 'error');
+    }
 
     }
 
     const handleViewButtonClick = (objectId: string) => {
-        
+
         navigate(`/paymentReceiptDetails/${objectId}`);
     };
 
@@ -178,17 +225,45 @@ export default function PaymentList() {
                     checkboxSelection
                     onRowSelectionModelChange={(handleRowSelection)}
                     rowSelectionModel={selectedRows}
-                    
+
                     isRowSelectable={(params) => {
                         // Check the payment type of the row and disable the checkbox for direct payment types
                         return params.row.paymentType !== 'direct';
                     }}
                 />
             </StyledCard>
-            <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{color:'#FFFFFF', marginTop:'20px'}}>
+            <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{ color: '#FFFFFF', marginTop: '20px' }}>
                 Confirm
             </StyledButton>
+
+            {/* Alerts */}
+            <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center'
+            }} TransitionComponent={SlideTransitionDown}>
+                <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                    <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                    {alertMessage}
+                </Alert>
+            </Snackbar>
+
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                limit={3}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                style={{ width: 450 }}
+                theme="colored"
+            />
         </div>
+
+
 
     );
 }

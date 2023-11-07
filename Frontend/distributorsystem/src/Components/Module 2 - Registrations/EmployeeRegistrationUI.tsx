@@ -1,16 +1,17 @@
 import styled from "@emotion/styled";
-import { Autocomplete, Button, Checkbox, FormControlLabel, FormGroup, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
+import { Autocomplete, Alert, AlertTitle, Button, Checkbox, FormControlLabel, FormGroup, FormHelperText, Grid, Icon, IconButton, InputAdornment, Radio, RadioGroup, Snackbar, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
-import employee1 from '../../Global Components/employee1.png'
+import employee1 from '../../Global Components/Images/employee1.png'
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 import dayjs, { Dayjs } from "dayjs";
 import { v4 as uuidv4 } from 'uuid';
 import { IDistributor, IEmployeeDocument } from "../../RestCalls/Interfaces";
 import moment from "moment";
 import axios from "axios";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const ImageStyle = styled(Typography)({
     display: 'flex',
@@ -139,6 +140,7 @@ const SignUpButton = styled(Button)({
     height: '50px',
     marginRight: '-110px',
     marginTop: "30px",
+    marginBottom:70,
     ':hover': {
         backgroundColor: 'rgba(45, 133, 231, 0.9)',
         transform: 'scale(1.1)'
@@ -163,8 +165,8 @@ export default function EmployeeRegistration() {
 
     const [newEmployee, getCollectorByID, collector] = useRestEmployee();
     const [selectedBDate, setSelectedBDate] = useState<Dayjs | null>(null);
-    const [setGender1, setSelectedGender1] = useState('');
-    const [gender, setGender] = useState<string>('');
+    const [selectedGender1, setSelectedGender1] = useState('');
+    const [selectedPosition, setSelectedPosition] = useState('');
     const [isCashierSelected, setIsCashierSelected] = useState<boolean>(false);
     const [isSalesAssociateSelected, setIsSalesAssociateSelected] = useState<boolean>(false);
     const [isCollectorSelected, setIsCollectorSelected] = useState<boolean>(false)
@@ -174,6 +176,29 @@ export default function EmployeeRegistration() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [open, setOpen] = useState(false);
+    const [alerttitle, setTitle] = useState('')
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertSeverity, setAlertSeverity] = useState('success');
+    const [permanentAddress, setPermanentAddress] = useState('');
+    const [currentAddress, setCurrentAddress] = useState('');
+    const [isshowPassword, setisShowPassword] = useState(false);
+    const [isshowConfirmPassword, setisShowConfirmPassword] = useState(false);
+    const [fieldWarning, setFieldWarning] = useState({
+        firstname: '',
+        lastname: '',
+        email: '',
+        password: '',
+        // confirmpass:'',
+        birthdate: '',
+        gender: '',
+        currentadd: '',
+        permanentadd: '',
+        contactnum: '',
+        selectedprofile: '',
+        tinnum: '',
+        position: ''
+    })
 
 
     const firstnameRef = useRef<TextFieldProps>(null)
@@ -181,6 +206,7 @@ export default function EmployeeRegistration() {
     const lastnameRef = useRef<TextFieldProps>(null)
     const emailRef = useRef<TextFieldProps>(null)
     const passwordRef = useRef<TextFieldProps>(null)
+    const confirmpasswordRef = useRef<TextFieldProps>(null)
     const currentaddressRef = useRef<TextFieldProps>(null)
     const permanentaddressRef = useRef<TextFieldProps>(null)
     const contactnumberRef = useRef<TextFieldProps>(null)
@@ -190,8 +216,8 @@ export default function EmployeeRegistration() {
     const [selectedDistributor, setSelectedDistributor] = useState<IDistributor>();
     const [distributors, setDistributors] = useState<IDistributor[]>([]);
     
-    const distributorObject : IDistributor = {
 
+    const distributorObject : IDistributor = {
         distributorid: "distributor1",
         firstname: "Junhui",
         middlename: "",
@@ -224,6 +250,21 @@ export default function EmployeeRegistration() {
 
 
 
+    {/**Handler for Show Icon Password*/ }
+    const handleShowPassword = () => {
+        setisShowPassword(!isshowPassword);
+    }
+    const handleShowConfirmPassword = () => {
+        setisShowConfirmPassword(!isshowConfirmPassword);
+    }
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    }
+    const handleMouseConfirmDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    }
+
+    {/**Handler Change for Textfield - Password to track if its match or not*/ }
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
         if (e.target.value !== confirmPassword) {
@@ -231,26 +272,53 @@ export default function EmployeeRegistration() {
         } else {
             setPasswordError('');
         }
+        handleInputChange('password');
     };
 
     const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmPassword(e.target.value);
         // Automatically check for password match
-    if (e.target.value !== password) {
-        setPasswordError("Passwords do not match");
-      } else {
-        setPasswordError('');
-      }
+        if (e.target.value !== password) {
+            setPasswordError("Passwords do not match");
+        } else {
+            setPasswordError('');
+        }
     };
+
+    {/**Handler for Copying Current Addres  to Permanent address*/ }
+    const handleCurrentAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setCurrentAddress(event.currentTarget.value);
+        handleInputChange('currentadd')
+    }
+    const handleCopyAddress = () => {
+        setPermanentAddress(currentAddress)
+        handleInputChange('permanentadd')
+    }
+
+    {/**Handler for Alert - Function to define the type of alert*/ }
+    function handleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+        setTitle(title);
+        setAlertMessage(message);
+        setAlertSeverity(severity);
+        setOpen(true);
+    }
+
+    {/**Handler to Close Alert Snackbar*/ }
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
+
+
 
     const handleGender = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedGender1(event.target.value);
+        handleInputChange('gender');
     };
 
-    const handleGenderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setGender(event.target.value);
-        console.log(lastnameRef.current?.value);
-    };
+
 
     /*   const handleApplyAs=(event:ChangeEvent<HTMLInputElement>)=>{
         const targetValue = event.target.value;
@@ -259,21 +327,33 @@ export default function EmployeeRegistration() {
         setIsCollectorSelected(targetValue === 'collector');
       }; */
 
-    const handleCashierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
+    const handleCashierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsCashierSelected(event.target.checked);
+
         console.log(event.target.checked);
         console.log(isCashierSelected);
     };
 
     const handleSalesAssociateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsSalesAssociateSelected(event.target.checked);
+
         console.log(event.target.checked);
     };
 
     const handleCollectorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsCollectorSelected(event.target.checked);
+
         console.log(event.target.checked);
+    };
+
+    const handlePositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!isCashierSelected && !isSalesAssociateSelected && !isCollectorSelected) {
+            handleInputChange('position')
+        }
+        setSelectedPosition(event.target.value);
+        console.log(event.target.checked);
+        console.log(isCashierSelected);
     };
 
     const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -291,6 +371,7 @@ export default function EmployeeRegistration() {
         }
         
         
+        handleInputChange('selectedprofile')
     };
 
 
@@ -344,13 +425,46 @@ export default function EmployeeRegistration() {
         return newEmployeeDocuments;
     };
 
-
-
+    {/**HelperWarning for defining Helper Text*/ }
+    const helperWarning = {
+        firstname: !firstnameRef.current?.value ? 'First Name is required' : '',
+        lastname: !lastnameRef.current?.value ? 'Last Name is required' : '',
+        email: !emailRef.current?.value ? 'Email Address is required' : '',
+        password: !passwordRef.current?.value ? 'Password is required' : '',
+        birthdate: !selectedBDate ? 'Birthdate is required' : '',
+        gender: !selectedGender1 ? 'Gender is required' : '',
+        currentadd: !currentaddressRef.current?.value ? 'Current Address is required' : '',
+        permanentadd: !permanentaddressRef.current?.value ? 'Permanent Address is required' : '',
+        contactnum: !contactnumberRef.current?.value ? 'Contact Number is required' : '',
+        selectedprofile: !selectedProfilePicture ? 'Please attach your Profile Picture' : '',
+        tinnum: !tinnumberRef.current?.value ? 'TIN Number is required' : '',
+        position: !isSalesAssociateSelected && !isCashierSelected && !isCashierSelected ? 'Please Choose your Position' : ''
+    }
+    {/**Handler Change to determine fieldname*/ }
+    const handleInputChange = (fieldName: string) => {
+        setFieldWarning({ ...fieldWarning, [fieldName]: '' })
+    }
     const handleNewEmployee = async () => {
         const uuid = uuidv4();
         const employeeuuid = uuid.slice(0, 8);
-
         const newEmployeeDocuments = await handleFiles();
+        try {
+            
+           await fetch('http://localhost:8080/employee/registerEmployee');
+            if (
+                !firstnameRef.current?.value ||
+                !lastnameRef.current?.value ||
+                !emailRef.current?.value ||
+                !passwordRef.current?.value ||
+                !confirmpasswordRef.current?.value ||
+                !selectedBDate ||
+                !selectedGender1 ||
+                !currentaddressRef ||
+                !permanentaddressRef.current?.value ||
+                !contactnumberRef.current?.value ||
+                !selectedProfilePicture ||
+                !selectedPosition
+            ) {
 
       
         newEmployee({
@@ -399,7 +513,10 @@ export default function EmployeeRegistration() {
                 {/**Grids Textfields*/}
                 <GridField container spacing={8}>
                     <Grid item>
-                        <StyledTextField variant="outlined" label="First Name" size="small" inputRef={firstnameRef} />
+                        <StyledTextField variant="outlined" required label="First Name" size="small" inputRef={firstnameRef} onChange={() => handleInputChange('firstname')} />
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.firstname}
+                        </FormHelperText>
                     </Grid>
                     <Grid item>
                         <StyledTextField variant="outlined" label="Middle Name" size="small" inputRef={middlenameRef} />
@@ -408,26 +525,81 @@ export default function EmployeeRegistration() {
 
                 <GridField container spacing={8}>
                     <Grid item>
-                        <StyledTextField variant="outlined" label="Last Name" size="small" inputRef={lastnameRef} />
+                        <StyledTextField variant="outlined" required label="Last Name" size="small" inputRef={lastnameRef} onChange={() => handleInputChange('lastname')} />
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.lastname}
+                        </FormHelperText>
                     </Grid>
                     <Grid item>
-                        <StyledTextField variant="outlined" label="Contact Number" size="small" inputRef={contactnumberRef} />
+                        <StyledTextField variant="outlined" required label="Contact Number" size="small" inputRef={contactnumberRef} onChange={() => handleInputChange('contactnum')} />
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.contactnum}
+                        </FormHelperText>
                     </Grid>
                 </GridField>
 
                 <GridField container spacing={8}>
                     <Grid item>
-                        <StyledTextField variant="outlined" label="Email Address" size="small" style={{ width: '795px' }} inputRef={emailRef} />
+                        <StyledTextField variant="outlined" required label="Email Address" size="small" style={{ width: '795px' }} inputRef={emailRef} onChange={() => handleInputChange('email')} />
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.email}
+                        </FormHelperText>
                     </Grid>
                 </GridField>
                 <GridField container spacing={8}>
                     <Grid item>
-                            <StyledTextField variant="outlined" type="password" label="Password" size="small" style={{ width: '795px' }} value={password} onChange={handlePasswordChange} inputRef={passwordRef} />
+                        <StyledTextField
+                            variant="outlined"
+                            type={isshowPassword ? 'text' : 'password'}
+                            required
+                            label="Password"
+                            size="small"
+                            style={{ width: '795px' }}
+                            value={password}
+                            onChange={handlePasswordChange}
+                            inputRef={passwordRef}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={handleShowPassword} onMouseDown={handleMouseDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
+                                            {isshowPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.password}
+                        </FormHelperText>
                     </Grid>
                 </GridField>
                 <GridField container spacing={8}>
                     <Grid item>
-                            <StyledTextField variant="outlined" type="password" label="Confirm Password" size="small" style={{ width: '795px', marginBottom:60 }} value={confirmPassword} onChange={handleConfirmPasswordChange} error={passwordError !== ''} helperText={passwordError}   />
+                        <StyledTextField
+                            variant="outlined"
+                            type={isshowConfirmPassword ? 'text' : 'password'}
+                            required
+                            label="Confirm Password"
+                            size="small"
+                            style={{
+                                width: '795px',
+                                marginBottom: 60
+                            }}
+                            value={confirmPassword}
+                            onChange={handleConfirmPasswordChange}
+                            error={passwordError !== ''}
+                            helperText={passwordError}
+                            inputRef={confirmpasswordRef}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={handleShowConfirmPassword} onMouseDown={handleMouseConfirmDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
+                                            {isshowConfirmPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
                     </Grid>
                 </GridField>
 
@@ -445,11 +617,15 @@ export default function EmployeeRegistration() {
                                 }}
                                 value={selectedBDate}
                                 maxDate={maxDate}
-                                
-                                onChange={(date) => setSelectedBDate(date as Dayjs | null)}
-
+                                onChange={(date) => {
+                                    setSelectedBDate(date as Dayjs | null);
+                                    handleInputChange('birthdate');
+                                }}
                             />
                         </LocalizationProvider>
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.birthdate}
+                        </FormHelperText>
                     </Grid>
                     <Grid item>
 
@@ -458,28 +634,56 @@ export default function EmployeeRegistration() {
                                 <RadioStyle
                                     row
                                     name="genderRadioGroup"
-                                    value={gender}
-                                    onChange={handleGenderChange}
+                                    aria-required
+                                    value={selectedGender1}
+                                    onChange={handleGender}
                                 >
-                                    <FormControlLabel style={{ marginLeft: '30px' }} value='male' control={<Radio />} label={<RadioLabel>Male</RadioLabel>} />
-                                    <FormControlLabel style={{ marginLeft: '40px' }} value='female' control={<Radio />} label={<RadioLabel>Female</RadioLabel>} />
+                                    <FormControlLabel style={{ marginLeft: '30px' }} value='Male' control={<Radio />} label={<RadioLabel>Male</RadioLabel>} />
+                                    <FormControlLabel style={{ marginLeft: '40px' }} value='Female' control={<Radio />} label={<RadioLabel>Female</RadioLabel>} />
                                 </RadioStyle>
                             </div>
                         </TypographyLabel>
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.gender}
+                        </FormHelperText>
                     </Grid>
                 </GridField>
 
                 <GridField container spacing={8}>
                     <Grid item>
-                        <StyledTextField variant="outlined" label="Current Address" size="small" inputRef={currentaddressRef} />
+                        <StyledTextField variant="outlined" label="Current Address" required size="small" style={{ width: '795px' }} inputRef={currentaddressRef} onChange={handleCurrentAddressChange} />
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.currentadd}
+                        </FormHelperText>
                     </Grid>
+                </GridField>
+                <GridField container spacing={8}>
+
+                    {/**Textfield For Permanent Address*/}
                     <Grid item>
-                        <StyledTextField variant="outlined" label="Permanent Address" size="small" inputRef={permanentaddressRef} />
+                        <StyledTextField variant="outlined" label="Permanent Address"
+                            required size="small"
+                            style={{ width: '795px' }}
+                            inputRef={permanentaddressRef}
+                            value={permanentAddress}
+                            onChange={(e) => { setPermanentAddress(e.target.value); handleInputChange('permanentadd') }}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <Button variant='contained' style={{ height: 40, marginRight: -13 }} onClick={handleCopyAddress}>Permanent = Current Address</Button>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.permanentadd}
+                        </FormHelperText>
                     </Grid>
+
                 </GridField>
                 <GridField container spacing={0}>
                     <Grid item>
-                        <StyledTextField variant="outlined" label="TIN Number" size="small" style={{ width: '795px' }} inputRef={tinnumberRef} />
+                        <StyledTextField variant="outlined" label="TIN Number" size="small" style={{ width: '795px' }} inputRef={tinnumberRef} onChange={() => handleInputChange('tinnum')} />
                     </Grid>
                 </GridField>
                 <GridField>
@@ -506,12 +710,15 @@ export default function EmployeeRegistration() {
                                     />)}
                                 
                             />
-                        </Grid>
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                            {fieldWarning.tinnum}
+                        </FormHelperText>
+                    </Grid>
                     </GridField>
                 <GridField container spacing={0}>
                     <Grid item>
                         <TypographyLabelB>Apply As:
-                            <FormGroup row style={{ marginTop: '-9px' }}>
+                            <FormGroup row style={{ marginTop: '-9px' }} aria-required onChange={handlePositionChange}>
                                 <FormControlLabel style={{ marginLeft: '20px' }} control={<Checkbox checked={isCashierSelected}
                                     onChange={handleCashierChange}
                                     name="isCashier" />} label={<CheckLabel>Cashier</CheckLabel>} />
@@ -523,6 +730,9 @@ export default function EmployeeRegistration() {
                                     name="isCollector" />} label={<CheckLabel>Collector</CheckLabel>} />
                             </FormGroup>
                         </TypographyLabelB>
+                        <FormHelperText style={{ marginLeft: 400, color: '#BD9F00' }}>
+                            {fieldWarning.position}
+                        </FormHelperText>
                     </Grid>
                 </GridField>
                 <GridField container spacing={0} >
@@ -531,7 +741,8 @@ export default function EmployeeRegistration() {
                         <Grid item>
                             <label htmlFor="profilepicture-input">
 
-                                <Button style={{ width: '795px',}} variant="contained" component="span"
+                                <Button style={{ width: '795px', }} variant="contained" component="span"
+                                    aria-required
                                     sx={{
                                         backgroundColor: '#2D85E7',
                                         width: '380px',
@@ -557,6 +768,9 @@ export default function EmployeeRegistration() {
                                     </TypographyLabelC>
                                 </Button>
                             </label>
+                            <FormHelperText style={{ marginLeft: 400, color: '#BD9F00' }}>
+                                {fieldWarning.selectedprofile}
+                            </FormHelperText>
                         </Grid>
 
                     </GridField>
@@ -564,6 +778,15 @@ export default function EmployeeRegistration() {
                         <SignUpButton variant="contained" onClick={handleNewEmployee}>
                             Sign Up
                         </SignUpButton>
+                        <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'center'
+                        }}>
+                            <Alert onClose={handleClose} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                                <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                                {alertMessage}
+                            </Alert>
+                        </Snackbar>
                     </Grid>
                 </GridField>
             </Grid>

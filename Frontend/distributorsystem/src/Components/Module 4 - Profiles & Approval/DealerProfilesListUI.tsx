@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { IDealer } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Box, Button, Card, Grid, Modal, TextField, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, Grid, Modal, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
+
+
+function SlideTransitionDown(props: SlideProps) {
+    return <Slide {...props} direction="down" />;
+}
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -56,6 +61,18 @@ const StyledButton = styled(Button)({
 export default function DealerProfileListUI() {
     const navigate = useNavigate();
     const [dealer1, setDealer1] = useState<IDealer[] | null>(null);
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const [getDealerByID, newDealer, updateDealer, isDealerFound, dealer] = useRestDealer();
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alerttitle, setTitle] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertSeverity, setAlertSeverity] = useState('success');
+
+
+
     const [openPending, setOpenPending] = useState(false);
     const handlePendingOpen = () => setOpenPending(true);
     const handlePendingClose = () => setOpenPending(false);
@@ -65,17 +82,39 @@ export default function DealerProfileListUI() {
     const [remarks, setRemarks] = useState(""); // State to capture remarks
     const [creditlimit, setCreditlimit] = useState(0);
     const [getDealerByID, newDealer, updateDealer, confirmDealer, markDealerAsPending, isDealerFound, dealer,] = useRestDealer();
+
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
         axios
             .get<IDealer[]>('http://localhost:8080/dealer/getAllDealers')
             .then((response) => {
                 setDealer1(response.data);
+                // headerHandleAlert('Success', "Dealers fetched successfully.", 'success');
+              
             })
             .catch((error) => {
-                console.error('Error fetching dealer:', error);
+                headerHandleAlert('Error', "Failed to fetch dealers. Please check your internet connection.", 'error');
+                // console.error('Error fetching dealer', error);
             });
     }, []);
+
+    {/**Handler for Alert - Function to define the type of alert*/ }
+
+    function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+        setTitle(title);
+        setAlertMessage(message);
+        setAlertSeverity(severity);
+        setOpenAlert(true);
+    }
+
+    {/**Handler to Close Alert Snackbar*/ }
+    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
+
 
     {/** Columns for DataGrid */ }
     const columns: GridColDef[] = [
@@ -139,8 +178,14 @@ export default function DealerProfileListUI() {
             renderCell: (params: { row: any; }) => {
                 const dealer = params.row;
                 return (
+
+                    <StyledButton
+                        onClick={() => handleConfirmButton(dealer.id)}
+                    >
+
                     <><StyledButton
                         onClick={handleConfirmOpen} >
+
                         Confirm
                     </StyledButton><Grid item>
                             <Modal
@@ -205,6 +250,21 @@ export default function DealerProfileListUI() {
     };
 
     const handleConfirmButton = (objectId: string) => {
+
+        // Create the updated dealer object with only the "confirmed" property set to true
+        const confirmDealer = {
+            dealerid: objectId,
+            confirmed: true, // Set "confirmed" to true
+        };
+
+        // If dealer1 is not null
+        if (dealer1) {
+            // Create a copy of the dealer1 array with updated dealers
+            const updatedDealer1 = dealer1.map((dealerItem) => {
+                // Check if the dealer's ID matches the objectId
+                if (dealerItem.dealerid === objectId) {
+                    return { ...dealerItem, ...confirmDealer };
+
         // Find the dealer to confirm in the list
         const dealerToConfirm = dealer1?.find((dealerItem) => dealerItem.dealerid === objectId);
     
@@ -222,10 +282,21 @@ export default function DealerProfileListUI() {
                     return prevDealerList.map((dealerItem) =>
                         dealerItem.dealerid === objectId ? updatedDealer : dealerItem
                     );
+
                 } else {
                     return null; // Handle the case when dealer1 is null
                 }
             });
+
+
+            // Update the state with the updated array
+            setDealer1(updatedDealer1);
+        }
+
+        // Call the updateDealer function to update the "confirmed" property on the server
+        updateDealer(objectId);
+    }
+
     
             // Call the confirmDealer function to update the dealer's status and credit limit on the server
             confirmDealer(objectId, creditlimit);
@@ -290,6 +361,17 @@ export default function DealerProfileListUI() {
 
                 />
             </StyledCard>
+
+            {/* Alerts */}
+            <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center'
+            }} TransitionComponent={SlideTransitionDown}>
+                <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                    <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                    {alertMessage}
+                </Alert>
+            </Snackbar>
         </div>
     );
 }

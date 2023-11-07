@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import { IDealer, IDealerDocument, IDealerPaymentProof } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Button, Card, Grid, Icon, Modal, Paper, Stack, Typography, styled, Tab, Box, Tabs } from "@mui/material";
+import { Button, Card, Grid, Icon, Modal, Paper, Stack, Typography, styled, Tab, Box, Tabs, Snackbar, Alert, AlertTitle, SlideProps, Slide } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import profilepic from "./profilepic.png"
-import profilepicture from "../../Global Components/profilepicture.png"
+import profilepicture from "../../Global Components/Images/profilepicture.png"
 import { useParams } from "react-router-dom";
 import { relative } from "path";
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
@@ -16,10 +16,16 @@ import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+
+
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
     value: number;
+}
+
+function SlideTransitionDown(props: SlideProps) {
+    return <Slide {...props} direction="down" />;
 }
 
 const ContentNameTypography = styled(Typography)({
@@ -241,6 +247,36 @@ export default function DealerProfileDetails() {
 
     const [value, setValue] = useState(0);
 
+    const [getDealerByID, newDealer, updateDealer, isDealerFound, dealer] = useRestDealer();
+
+    const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
+
+    // const [setDealer]= useState<>
+
+    const [open, setOpen] = useState(false);
+
+    const [openProfile, setOpenProfile] = useState(false);
+
+    const [selectedDocument, setSelectedDocument] = useState<IDealerDocument | null>(null);
+
+    const [isEditing, setIsEditing] = useState(false);
+
+    const [editedCreditLimit, setEditedCreditLimit] = useState(dealer?.creditlimit);
+
+    const [isEditIcon, setIsEditIcon] = useState(true);
+
+    const [openAlert, setOpenAlert] = useState(false);
+
+    const [alerttitle, setTitle] = useState('');
+
+    const [alertMessage, setAlertMessage] = useState('');
+
+    const [alertSeverity, setAlertSeverity] = useState('success');
+
+
+
+
+
     function CustomTabPanel(props: TabPanelProps) {
         const { children, value, index, ...other } = props;
         return (
@@ -259,6 +295,23 @@ export default function DealerProfileDetails() {
             </div>
         );
     }
+
+    {/**Handler for Alert - Function to define the type of alert*/ }
+    function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+        setTitle(title);
+        setAlertMessage(message);
+        setAlertSeverity(severity);
+        setOpenAlert(true);
+    }
+
+    {/**Handler to Close Alert Snackbar*/ }
+    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
+
     function a11yProps(index: number) {
         return {
             id: `simple-tab-${index}`,
@@ -317,6 +370,7 @@ export default function DealerProfileDetails() {
         </>
     )
 
+
     const [getDealerByID, newDealer,  updateDealer, confirmDealer, markDealerAsPending, isDealerFound, dealer,] = useRestDealer();
 
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
@@ -327,24 +381,7 @@ export default function DealerProfileDetails() {
 
     const [selectedDocument, setSelectedDocument] = useState<IDealerDocument | null>(null);
 
-    const [displayInfo, setDisplayInfo] = useState(<BasicInfo />);
 
-    const [isEditing, setIsEditing] = useState(false);
-
-    const [editedCreditLimit, setEditedCreditLimit] = useState(dealer?.creditlimit);
-
-    const [isEditIcon, setIsEditIcon] = useState(true);
-
-
-
-
-    const basicInfoClickHandler = () => {
-        setDisplayInfo(<BasicInfo />)
-    };
-
-    const businessInfoClickHandler = () => {
-        setDisplayInfo(<BusinessInfo />)
-    }
 
     const handleOpenDocument = (document: IDealerDocument) => {
         if (document) {
@@ -353,8 +390,10 @@ export default function DealerProfileDetails() {
             console.log(document.name, document.type, document.content)
         }
     }
+
     const handleCloseDocument = () => {
         setOpen(false);
+        setOpenProfile(false)
     }
 
     const handleFindDealer = () => {
@@ -364,9 +403,7 @@ export default function DealerProfileDetails() {
     function getAllDealerDocuments() {
         axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId!}`)
             .then((response) => {
-
                 setDealerDocuments(response.data);
-
             })
             .catch((error) => {
                 alert("Error retrieving dealer documents. Please try again.");
@@ -401,9 +438,14 @@ export default function DealerProfileDetails() {
 
 
     useEffect(() => {
-        if (objectId) {
-            handleFindDealer();
-            getAllDealerDocuments();
+        try {
+            if (objectId) {
+                handleFindDealer();
+                getAllDealerDocuments();
+                // headerHandleAlert('Success', "Dealer records retrieved successfully.", 'success');    
+            }
+        } catch (error) {
+            headerHandleAlert('Error', "Failed to retrieve dealer information. Please try again.", 'error');
         }
     }, [objectId, dealer, dealerDocuments]);
 
@@ -427,7 +469,7 @@ export default function DealerProfileDetails() {
                         {docname}
                     </ButtonDocument>
                 );
-            } else if (fileType.startsWith('image')) {
+            } else if (fileType.startsWith('image') && !docname.endsWith('_profilepicture')) {
                 return (
                     <ButtonDocument variant={"contained"} onClick={() => handleOpenDocument({
                         content: base64Content,
@@ -444,11 +486,14 @@ export default function DealerProfileDetails() {
                 );
             } else {
                 // Display a generic download link for other file types
-                return (
-                    <a href={`data:${fileType};base64,${base64Content}`} download={`document.${fileType}`}>
-                        Download Document
-                    </a>
-                );
+                if (!docname.endsWith('_profilepicture')) {
+                    return (
+                        <a href={`data:${fileType};base64,${base64Content}`} download={`document.${fileType}`}>
+                            Download Document
+                        </a>
+                    );
+                }
+
             }
         }
         else {
@@ -462,7 +507,7 @@ export default function DealerProfileDetails() {
     };
 
 
-
+    //needs dealer id in path
     const handleSaveCreditLimit = () => {
         axios.put(`http://localhost:8080/dealer/updateCreditLimit`, {
             dealerId: dealer?.dealerid,
@@ -489,14 +534,17 @@ export default function DealerProfileDetails() {
     const profilePic = dealerDocuments.find(image => image.name === dealer?.lastname + '_profilepicture');
     const imageSource = profilePic ? `data:${profilePic?.type} ;base64,${profilePic?.content}`
         : profilepicture
+    const handleOpenProfile = () => {
+        setOpenProfile(true);
+    }
     return (
         <div>
             <Grid container spacing={3}>
                 <ContentNameTypography>Dealer Information</ContentNameTypography>
                 <Grid item style={{ marginRight: -70 }}>
                     <Grid>
-                        <ProfileCard>
-                            <img src={imageSource} style={{ inset: 0, margin: 'auto', maxHeight:'100%', maxWidth: '100%' }}></img>
+                        <ProfileCard onClick={handleOpenProfile} style={{cursor:'pointer'}}>
+                            <img src={imageSource} style={{ inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%' }}></img>
                         </ProfileCard>
                     </Grid>
                     <Grid>
@@ -514,6 +562,22 @@ export default function DealerProfileDetails() {
                             </div>
                         ))}
                     </Grid>
+                    {/* Profile Picture Modal */}
+                    <Modal
+                        open={openProfile}
+                        onClose={handleCloseDocument}
+                    >
+                        <div>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: 300, marginTop: 40 }}>
+                                <ButtonClose variant='contained' onClick={handleCloseDocument}><CloseIcon /></ButtonClose>
+                            </div>
+                            <ModalCard>
+                                <img src={imageSource} style={{position: 'absolute',  inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%'}}></img>
+                            </ModalCard>
+                        </div>
+                    </Modal>
+
+                    {/* Attachments Modal */}
                     <Modal
                         open={open}
                         onClose={handleCloseDocument}
@@ -591,8 +655,8 @@ export default function DealerProfileDetails() {
                                             onChange={(e) => setEditedCreditLimit(parseInt(e.target.value, 10) || undefined)}
                                         />
                                         <div >
-                                            <ButtonCredit variant="contained" style={{marginTop:10}}>
-                                                <CheckIcon style={{ color: '#2A9221', }}/>
+                                            <ButtonCredit variant="contained" style={{ marginTop: 10 }}>
+                                                <CheckIcon style={{ color: '#2A9221', }} />
                                             </ButtonCredit>
                                         </div>
                                     </div>
@@ -659,6 +723,16 @@ export default function DealerProfileDetails() {
 
                 </Grid>
 
+                {/* Alerts */}
+                <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center'
+                }} TransitionComponent={SlideTransitionDown}>
+                    <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                        <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                        {alertMessage}
+                    </Alert>
+                </Snackbar>
             </Grid>
 
 

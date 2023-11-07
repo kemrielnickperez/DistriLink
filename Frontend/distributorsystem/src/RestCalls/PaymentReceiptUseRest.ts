@@ -106,7 +106,7 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
             })
             .catch((error) => {
                 
-                alert("Cannot update Payment Receipt. Please try again.");
+                // alert("Cannot update Payment Receipt. Please try again.");
             });
 
     }
