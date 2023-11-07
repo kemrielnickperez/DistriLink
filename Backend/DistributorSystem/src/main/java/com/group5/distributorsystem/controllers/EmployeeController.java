@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RequestMapping("/employee")
 public class EmployeeController {
 
@@ -19,8 +22,13 @@ public class EmployeeController {
     EmployeeService employeeService;
 
     @PostMapping("/registerEmployee")
-    public ResponseEntity<Object> registerEmployee(@RequestBody Employee employee){
-        employeeService.registerEmployee(employee);
+    public ResponseEntity<Object> registerEmployee(
+            @ModelAttribute Employee employee,
+            @RequestParam("documentid") List<String> documentIds,
+            @RequestParam("name") List<String> documentNames,
+            @RequestParam("type") List<String> documentTypes,
+            @RequestParam("content") List<MultipartFile> documentContents){
+        employeeService.registerEmployee(employee, documentIds, documentNames, documentTypes, documentContents);
 
         return new ResponseEntity<>("Employee registered successfully!", HttpStatus.CREATED);
     }

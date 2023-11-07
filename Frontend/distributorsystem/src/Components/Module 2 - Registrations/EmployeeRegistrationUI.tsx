@@ -1,13 +1,16 @@
 import styled from "@emotion/styled";
-import { Button, Checkbox, FormControlLabel, FormGroup, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
+import { Autocomplete, Button, Checkbox, FormControlLabel, FormGroup, Grid, Icon, Radio, RadioGroup, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
 import employee1 from '../../Global Components/employee1.png'
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { v4 as uuidv4 } from 'uuid';
+import { IDistributor, IEmployeeDocument } from "../../RestCalls/Interfaces";
+import moment from "moment";
+import axios from "axios";
 
 const ImageStyle = styled(Typography)({
     display: 'flex',
@@ -16,7 +19,7 @@ const ImageStyle = styled(Typography)({
     marginTop: '-30px'
 })
 const ContentNameTypography = styled(Typography)({
-    marginTop: 10,
+    marginTop: -10,
     fontFamily: 'Inter',
     fontWeight: 'bold',
     textAlign: 'center',
@@ -145,6 +148,16 @@ const SignUpButton = styled(Button)({
 const GridField = styled(Grid)({
 
 })
+
+const TypographyLabelC = styled(Typography)({
+    textAlign: 'center',
+    fontSize: 12,
+    color: '#ffffff',
+    display: 'flex',
+    fontWeight: '550',
+    fontFamily: 'inter',
+})
+
 export default function EmployeeRegistration() {
 
 
@@ -155,6 +168,14 @@ export default function EmployeeRegistration() {
     const [isCashierSelected, setIsCashierSelected] = useState<boolean>(false);
     const [isSalesAssociateSelected, setIsSalesAssociateSelected] = useState<boolean>(false);
     const [isCollectorSelected, setIsCollectorSelected] = useState<boolean>(false)
+    const [selectedProfilePicture, setSelectedProfilePicture] = useState<File>();
+    const [employeeDocuments, setEmployeeDocuments] = useState<IEmployeeDocument[]>([]);
+    const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+
+
     const firstnameRef = useRef<TextFieldProps>(null)
     const middlenameRef = useRef<TextFieldProps>(null)
     const lastnameRef = useRef<TextFieldProps>(null)
@@ -164,6 +185,63 @@ export default function EmployeeRegistration() {
     const permanentaddressRef = useRef<TextFieldProps>(null)
     const contactnumberRef = useRef<TextFieldProps>(null)
     const tinnumberRef = useRef<TextFieldProps>(null)
+
+
+    const [selectedDistributor, setSelectedDistributor] = useState<IDistributor>();
+    const [distributors, setDistributors] = useState<IDistributor[]>([]);
+    
+    const distributorObject : IDistributor = {
+
+        distributorid: "distributor1",
+        firstname: "Junhui",
+        middlename: "",
+        lastname: "Wen",
+        emailaddress: "wenjunhui@gmail.com",
+        password: "moonmoon",
+        birthdate: "1996-06-10",
+        gender: "Male",
+        currentaddress: "Talisay City",
+        permanentaddress: "Talisay City",
+        contactnumber: "09741258963",
+        dealerids: [],
+        employeeids: [],
+        orderids: []
+    }
+
+
+    
+    function getAllDistributors() {
+        axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
+            .then((response) => {
+                setDistributors(response.data);
+
+            })
+            .catch((error) => {
+
+                alert("Error retrieving payment receipts. Please try again.");
+            });
+    }
+
+
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+        if (e.target.value !== confirmPassword) {
+            setPasswordError("Passwords do not match");
+        } else {
+            setPasswordError('');
+        }
+    };
+
+    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmPassword(e.target.value);
+        // Automatically check for password match
+    if (e.target.value !== password) {
+        setPasswordError("Passwords do not match");
+      } else {
+        setPasswordError('');
+      }
+    };
 
     const handleGender = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedGender1(event.target.value);
@@ -198,12 +276,83 @@ export default function EmployeeRegistration() {
         console.log(event.target.checked);
     };
 
+    const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            console.log(file.size)
+            if (file.size <= maxSize) {
+                setSelectedProfilePicture(file);
+            } else {
+
+                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+            }
+        }
+        
+        
+    };
 
 
-    const handleNewEmployee = () => {
+    // Function to create an IDealerDocument from a selected file
+    const createDocument = async (file: File | null, name: string) => {
+        if (file) {
+            // Create a Promise to read the file as an array buffer
+            const readFileAsArrayBuffer = (file: File) =>
+                new Promise<ArrayBuffer>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        if (event.target && event.target.result instanceof ArrayBuffer) {
+                            resolve(event.target.result);
+                        } else {
+                            resolve(new ArrayBuffer(0));
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                });
+
+            // Read the file content as an array buffer
+            const fileContentArrayBuffer = await readFileAsArrayBuffer(file);
+
+            // Create a Uint8Array from the array buffer
+            const content = new Uint8Array(fileContentArrayBuffer);
+
+            return {
+                documentid: uuidv4().slice(0, 8),
+                name: name,
+                type: file.type,
+                content,
+                employee: null,
+            };
+        }
+        return null;
+    };
+
+    const handleFiles = async () => {
+
+        const profilepictureDocument = await createDocument(selectedProfilePicture!, String(lastnameRef.current?.value) + "_profilepicture");
+
+
+        // Create an array with the new documents and update the state
+        const newEmployeeDocuments: IEmployeeDocument[] = [];
+        if (profilepictureDocument) newEmployeeDocuments.push(profilepictureDocument);
+
+        setEmployeeDocuments((prevDealerDocuments) => [...prevDealerDocuments, ...newEmployeeDocuments]);
+
+        // You can access the updated dealerDocuments state after this update
+
+        return newEmployeeDocuments;
+    };
+
+
+
+    const handleNewEmployee = async () => {
         const uuid = uuidv4();
         const employeeuuid = uuid.slice(0, 8);
 
+        const newEmployeeDocuments = await handleFiles();
+
+      
         newEmployee({
             employeeid: employeeuuid,
             firstname: String(firstnameRef.current?.value),
@@ -216,14 +365,30 @@ export default function EmployeeRegistration() {
             currentaddress: String(currentaddressRef.current?.value),
             permanentaddress: String(permanentaddressRef.current?.value),
             contactnumber: String(contactnumberRef.current?.value),
-            tinnumber: String(emailRef.current?.value),
+            tinnumber: String(tinnumberRef.current?.value),
             is_cashier: isCashierSelected,
             is_salesassociate: isSalesAssociateSelected,
             is_collector: isCollectorSelected,
+            submissiondate: moment().format('YYYY-MM-DD'),
+            distributor: selectedDistributor!,
             orderids: [],
-            collectionpaymentids: []
-        });
+            paymentreceiptids: [],
+            collectionpaymentids: [],
+            documentids: []
+        }, newEmployeeDocuments!);
+        
     };
+
+
+ 
+
+    useEffect(() => {
+        const currentDate = dayjs().subtract(18, 'year') as Dayjs;
+        setMaxDate(currentDate);
+
+    
+        getAllDistributors();
+    }, []);
 
     return (
         <GridBody>
@@ -252,10 +417,17 @@ export default function EmployeeRegistration() {
 
                 <GridField container spacing={8}>
                     <Grid item>
-                        <StyledTextField variant="outlined" label="Email Address" size="small" inputRef={emailRef} />
+                        <StyledTextField variant="outlined" label="Email Address" size="small" style={{ width: '795px' }} inputRef={emailRef} />
                     </Grid>
+                </GridField>
+                <GridField container spacing={8}>
                     <Grid item>
-                        <StyledTextField variant="outlined" label="Password" size="small" inputRef={passwordRef} />
+                            <StyledTextField variant="outlined" type="password" label="Password" size="small" style={{ width: '795px' }} value={password} onChange={handlePasswordChange} inputRef={passwordRef} />
+                    </Grid>
+                </GridField>
+                <GridField container spacing={8}>
+                    <Grid item>
+                            <StyledTextField variant="outlined" type="password" label="Confirm Password" size="small" style={{ width: '795px', marginBottom:60 }} value={confirmPassword} onChange={handleConfirmPasswordChange} error={passwordError !== ''} helperText={passwordError}   />
                     </Grid>
                 </GridField>
 
@@ -272,7 +444,10 @@ export default function EmployeeRegistration() {
                                     }
                                 }}
                                 value={selectedBDate}
+                                maxDate={maxDate}
+                                
                                 onChange={(date) => setSelectedBDate(date as Dayjs | null)}
+
                             />
                         </LocalizationProvider>
                     </Grid>
@@ -307,6 +482,32 @@ export default function EmployeeRegistration() {
                         <StyledTextField variant="outlined" label="TIN Number" size="small" style={{ width: '795px' }} inputRef={tinnumberRef} />
                     </Grid>
                 </GridField>
+                <GridField>
+                        <Grid item>
+                            <Autocomplete
+                                disablePortal
+                                id="flat-demo"
+                                options={distributors}
+                                getOptionLabel={(option) => option.firstname +" "+ option.lastname}
+                                isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
+                                value={selectedDistributor}
+                                onChange={(event, newValue) => setSelectedDistributor(newValue!)}
+                                renderInput={(params) => (
+                                    <StyledTextField
+                                        {...params}
+                                        InputProps={{
+                                            ...params.InputProps, disableUnderline: true
+                                        }}
+                                        variant="outlined"
+                                        label="Distributor"
+                                        size="small"
+                                        style={{ width: '795px' }}
+                                        
+                                    />)}
+                                
+                            />
+                        </Grid>
+                    </GridField>
                 <GridField container spacing={0}>
                     <Grid item>
                         <TypographyLabelB>Apply As:
@@ -325,6 +526,40 @@ export default function EmployeeRegistration() {
                     </Grid>
                 </GridField>
                 <GridField container spacing={0} >
+                    <GridField container spacing={8} >
+
+                        <Grid item>
+                            <label htmlFor="profilepicture-input">
+
+                                <Button style={{ width: '795px',}} variant="contained" component="span"
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '380px',
+                                        marginBottom: '43px',
+                                        margin: '10px 0 0 80px',
+                                        height: '40px',
+                                        marginRight: '-110px',
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}>
+                                    <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                        <input hidden accept=".jpeg,.jpg,.png" type="file"
+                                            onChange={handleProfilePictureFileChange}
+                                            style={{ display: 'none' }}
+                                            id="profilepicture-input" />
+                                        <UploadIcon />
+                                    </Icon>
+                                    <TypographyLabelC >
+                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name }
+                                    </TypographyLabelC>
+                                </Button>
+                            </label>
+                        </Grid>
+
+                    </GridField>
                     <Grid item>
                         <SignUpButton variant="contained" onClick={handleNewEmployee}>
                             Sign Up

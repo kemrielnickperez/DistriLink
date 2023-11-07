@@ -79,6 +79,7 @@ export default function ProductDistributionList() {
         { field: 'dealerName', headerName: 'Dealer Name', width: 250 },
         { field: 'orderId', headerName: 'Order Transaction ID', width: 250 },
         { field: 'orderDate', headerName: 'Order Date', width: 250 },
+
         {
             field: 'confirmed',
             headerName: 'Status',
@@ -94,19 +95,19 @@ export default function ProductDistributionList() {
             }
         },
         {
-            field: 'view', headerName: '', width: 150,
+            field: 'action', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
                 return (
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
                             console.log('Button clicked for row:', params.row.orderId);
-                            if(params.row.confirmed === false){
+                            if (params.row.confirmed === false) {
 
                                 handleViewButtonFalse(params.row.orderId);
-                            }else{
-                            handleViewButtonClick(params.row.orderId);
-                        }
+                            } else {
+                                handleViewButtonClick(params.row.orderId);
+                            }
                         }}
                     >
                         View
@@ -129,11 +130,11 @@ export default function ProductDistributionList() {
     const handleViewButtonClick = (objectId: string) => {
         console.log(objectId);
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
-        
+
         navigate(`/orderTransactionDetails/${objectId}`);
     };
 
-    const handleViewButtonFalse = (objectId : string) => {
+    const handleViewButtonFalse = (objectId: string) => {
 
         navigate(`/orderConfirmation/${objectId}`);
     }

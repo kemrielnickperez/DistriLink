@@ -33,6 +33,7 @@ import EmployeeProfileListUI from '../Components/Module 4 - Profiles & Approval/
 import DealerProfileListUI from '../Components/Module 4 - Profiles & Approval/DealerProfilesListUI';
 import { EmployeeProfileDetails } from '../Components/Module 4 - Profiles & Approval/EmployeeProfileDetailsUI';
 import OrderConfirmation from '../Components/Module 5 - Product Distribution and Confirmation/OrderConfirmationUI';
+import { OrderTransactionDetails } from '../Components/Module 5 - Product Distribution and Confirmation/OrderTransactionDetails';
 
 export default function MainRoutes() {
     return (
@@ -65,7 +66,7 @@ export default function MainRoutes() {
                         <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
                         <Route path="/orderConfirmation/:objectId" element={<OrderConfirmation />} />
                         <Route path="/productDistributionList" element={<ProductDistributionList />} />
-                        <Route path="/orderTransactionDetails/:objectId" element={<OrderDetails />} />
+                        <Route path="/orderTransactionDetails/:objectId" element={<OrderTransactionDetails />} />
 
                         <Route path="/dealerProfileList" element={<DealerProfileListUI />} />
                         <Route path="/dealerProfileDetails/:objectId" element={<DealerProfileDetails />}></Route>

@@ -60,11 +60,25 @@ export default function CollectorAssignment() {
   const [orders, setOrders] = useState<IOrder[]>([]);
 
   {/** functions */ }
-  function getAllCollectors() {
+ /*  function getAllCollectors() {
     axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
       .then((response) => {
         setCollectors(response.data);
         
+      })
+      .catch((error) => {
+        console.error('Error retrieving collectors:', error);
+        alert("Error retrieving collectors. Please try again.");
+      });
+  } */
+  function getAllCollectors() {
+    axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
+      .then((response) => {
+        const updatedCollectors = response.data.map((collector) => {
+          const assignedOrders = orders.filter((order) => order.collector?.employeeid === collector.employeeid);
+          return { ...collector, orderids: assignedOrders.map((order) => order.orderid) };
+        });
+        setCollectors(updatedCollectors);
       })
       .catch((error) => {
         console.error('Error retrieving collectors:', error);
@@ -75,7 +89,7 @@ export default function CollectorAssignment() {
   function getAllOrders() {
     axios.get<IOrder[]>('http://localhost:8080/order/getAllOrders')
       .then((response) => {
-        const confirmedOrders = response.data.filter(order => order.confirmed);
+        const confirmedOrders = response.data.filter(order => order.confirmed && !order.isclosed);
 
         setOrders(confirmedOrders);
         
@@ -104,6 +118,7 @@ export default function CollectorAssignment() {
     { field: 'amountDue', headerName: 'Amount Due', width: 180 },
     { field: 'collectorStatus', headerName: 'Collector Status', width: 200 },
     { field: 'collectorName', headerName: 'Collector Name', width: 200 },
+   
     {
       field: 'unassign', headerName: '', width: 220, renderCell: (params: { row: any; }) => {
         return (
@@ -114,6 +129,7 @@ export default function CollectorAssignment() {
               handleUnassignCollector(params.row, event);
             }}
             disabled={params.row.collectorStatus === 'Not Assigned'}
+          
           >
             Unassign Collector
 
@@ -146,7 +162,7 @@ export default function CollectorAssignment() {
       collectorStatus: order.collector !== null
         ? 'Assigned'
         : 'Not Assigned',
-      collectorName: order.collector ? `${order.collector.firstname} ${order.collector.lastname}` : '',
+      collectorName: order.collector ? `${order.collector.firstname} ${order.collector.lastname}` : ''
     };
   });
 
@@ -171,7 +187,7 @@ export default function CollectorAssignment() {
 
 
   {/** Handle Assign */ }
-  const handleAssignCollector = () => {
+/*   const handleAssignCollector = () => {
     if (selectedCollector === null) {
       alert("Please choose a collector")
     } else {
@@ -183,7 +199,7 @@ export default function CollectorAssignment() {
         else {
           assignCollector(selectedOrderID, selectedCollector)
           count++;
-        }
+        } 
       }
 
 
@@ -197,6 +213,20 @@ export default function CollectorAssignment() {
       setSelectedRows([]);
       setSelectedCollector(null);
     }
+  }; */
+  const handleAssignCollector = () => {
+    if (selectedCollector === null) {
+      alert("Please choose a collector");
+    } else if (selectedRows.length === 0) {
+      alert("Please select at least one order to assign a collector");
+    } else {
+      
+      assignCollector(selectedCollector.employeeid!, selectedRows);
+      alert("Collector assigned successfully to all of the selected orders!")
+      
+    }
+    setSelectedCollector(null);
+    setSelectedRows([]);
   };
 
   return (

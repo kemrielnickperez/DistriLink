@@ -1,7 +1,8 @@
 import { Grid, Paper, Autocomplete, Typography, styled, Table, TableContainer, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { ICollectionPaymentReceipt, IDirectPaymentReceipt, IPaymentReceipt } from "../../RestCalls/Interfaces";
+import { ICollectionPaymentReceipt, IDealer, IDirectPaymentReceipt, IDistributor, IOrder, IPaymentReceipt } from "../../RestCalls/Interfaces";
+import { useNavigate } from "react-router-dom";
 
 const ProductName = styled(Typography)({
     position: 'relative',
@@ -21,7 +22,7 @@ const PendingOrdersGrid = styled(Grid)({
     marginTop: '10px'
 })
 
-const PendingPaper = styled(Paper)({
+const PendingOrdersPaper = styled(Paper)({
     top: 80,
     left: -280,
     backgroundColor: '#ffffff',
@@ -43,6 +44,19 @@ const PendingOrderTypo = styled(Typography)({
     fontWeight: 'bold',
     fontSize: '25px',
     color: "#203949"
+})
+
+const ViewOrdersTypo = styled(Typography)({
+    position: 'absolute',
+    top: '85%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    fontFamily: 'Inter, sans - serif',
+    fontWeight: 'bold',
+    fontSize: '15px',
+    color: "#203949",
+    textDecoration: 'underline black 2px',
+    fontStyle: 'italic'
 })
 
 const TableHeaderCell = styled(TableCell)({
@@ -77,6 +91,19 @@ const PendingPaymentTypo = styled(Typography)({
     color: "#203949"
 })
 
+const ViewPaymentTypo = styled(Typography)({
+    position: 'absolute',
+    top: '85%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    fontFamily: 'Inter, sans - serif',
+    fontWeight: 'bold',
+    fontSize: '15px',
+    color: "#203949",
+    textDecoration: 'underline black 2px',
+    fontStyle: 'italic'
+})
+
 const PendingPaymentsGrid = styled(Grid)({
     display: "flex",
     justifyContent: "center",
@@ -104,8 +131,24 @@ const PendingDealerTypo = styled(Typography)({
     fontFamily: 'Inter, sans - serif',
     fontWeight: 'bold',
     fontSize: '25px',
-    color: "#203949"
+    color: "#203949",
+
 })
+
+const ViewDealersTypo = styled(Typography)({
+    position: 'absolute',
+    top: '90%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    fontFamily: 'Inter, sans - serif',
+    fontWeight: 'bold',
+    fontSize: '15px',
+    color: "#203949",
+    textDecoration: 'underline black 2px',
+    fontStyle: 'italic'
+})
+
+
 
 const PendingDealerGrid = styled(Grid)({
     display: "flex",
@@ -115,24 +158,83 @@ const PendingDealerGrid = styled(Grid)({
 
 
 export default function Dashboard() {
-    const [paymentReceipts, setPaymentReceipts] = useState<IPaymentReceipt[]>();
-    const [directPaymentReceipt, setDirectPaymentReceipt] = useState<IDirectPaymentReceipt[]>();
-    const [collectionPaymentReceipts, setCollectionPaymentReceipts] = useState<ICollectionPaymentReceipt[]>();
 
-    useEffect(() => {
-        axios.get('http://localhost:8080/collectionPaymentReceipt/unconfirmed')
+    const navigate = useNavigate();
+
+    const [unconfirmedDealers, setUnconfirmedDealers] = useState<IDealer[]>();
+    const [unconfirmedOrders, setUnconfirmedOrders] = useState<IOrder[]>();
+    const [unconfirmedCollectionPaymentReceipts, setUnconfirmedCollectionPaymentReceipts] = useState<ICollectionPaymentReceipt[]>();
+
+
+    const getAllUnconfirmedDealers = () => {
+        axios.get('http://localhost:8080/dealer/getAllUnconfirmedDealers')
             .then((response) => {
-                setCollectionPaymentReceipts(response.data);
+                setUnconfirmedDealers(response.data);
             })
             .catch((error) => {
                 console.error('Error fetching data: ', error);
             });
-    }, []);
+    }
+
+    const getAllUnconfirmedOrders = () => {
+        axios.get('http://localhost:8080/order/getAllUnconfirmedOrders')
+            .then((response) => {
+                setUnconfirmedOrders(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data: ', error);
+            });
+    }
+
+    const getAllUnconfirmedCollectionPaymentReceipts = () => {
+        axios.get('http://localhost:8080/collectionPaymentReceipt/getAllUnconfirmedCollectionPaymentReceipts')
+            .then((response) => {
+                setUnconfirmedCollectionPaymentReceipts(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data: ', error);
+            });
+    }
+
+    const handleDealersListClick = () => {
+        navigate(`/dealerProfileList`);
+    }
+
+    const handlePaymentsListClick = () => {
+        navigate(`/paymentList`);
+    }
+
+    const handleOrdersListClick = () => {
+        navigate(`/productDistributionList`);
+    }
+
+
+    const [distributorsss, setDistributorsss] = useState<IDistributor[]>([]);
+    function getAllDistributors() {
+        axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
+            .then((response) => {
+                setDistributorsss(response.data);
+
+            })
+            .catch((error) => {
+
+                alert("Error retrieving payment receipts. Please try again.");
+            });
+    } 
+
+    useEffect(() => {
+        getAllUnconfirmedDealers();
+        getAllUnconfirmedOrders();
+        getAllUnconfirmedCollectionPaymentReceipts();
+        getAllDistributors();
+        console.log(distributorsss);
+
+    }, [unconfirmedDealers, unconfirmedOrders, unconfirmedCollectionPaymentReceipts]);
 
     return (
         <Grid container>
             <PendingOrdersGrid item container>
-                <PendingPaper>
+                <PendingOrdersPaper>
                     <PendingOrderTypo>Pending Orders</PendingOrderTypo>
                     <TableContainer>
                         <Table aria-label='simple table'>
@@ -145,16 +247,21 @@ export default function Dashboard() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <TableRow>
-                                    <TableCell align='center'>120390</TableCell>
-                                    <TableCell align='center'>10/10/2023</TableCell>
-                                    <TableCell align='center'>16,200</TableCell>
-                                    <TableCell align='center'>John Doe</TableCell>
-                                </TableRow>
+                                {unconfirmedOrders?.map((order) => (
+                                    <TableRow key={order.orderid}>
+                                        <TableCell align="left">{order.orderid}</TableCell>
+                                        <TableCell align="left">{order.orderdate}</TableCell>
+                                        <TableCell align="left">{order.orderamount}</TableCell>
+                                        <TableCell align="left">{order.dealer.firstname + " " + order.dealer.lastname}</TableCell>
+
+                                    </TableRow>
+                                ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </PendingPaper>
+                    <ViewOrdersTypo onClick={() => handleOrdersListClick()}> View all unconfirmed orders </ViewOrdersTypo>
+
+                </PendingOrdersPaper>
             </PendingOrdersGrid>
             <PendingPaymentsGrid item container>
                 <PendingPaymentsPaper>
@@ -169,16 +276,17 @@ export default function Dashboard() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {collectionPaymentReceipts?.map((receipts) => (
-                                    <TableRow key={receipts.paymentreceiptid}>
-                                        <TableCell align="center">{receipts.paymentreceiptid}</TableCell>
-                                        <TableCell align="center">{receipts.remitteddate}</TableCell>
-                                        <TableCell align="center">{receipts.remittedamount}</TableCell>
+                                {unconfirmedCollectionPaymentReceipts?.map((receipt) => (
+                                    <TableRow key={receipt.paymentreceiptid}>
+                                        <TableCell align="center">{receipt.paymentreceiptid}</TableCell>
+                                        <TableCell align="center">{receipt.remitteddate}</TableCell>
+                                        <TableCell align="center">{receipt.remittedamount}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    <ViewPaymentTypo onClick={() => handlePaymentsListClick()}> View all unconfirmed payments </ViewPaymentTypo>
                 </PendingPaymentsPaper>
             </PendingPaymentsGrid>
             <PendingDealerGrid item container>
@@ -188,19 +296,25 @@ export default function Dashboard() {
                         <Table aria-label='simple table'>
                             <TableHead>
                                 <TableRow>
-                                    <TableHeaderCell align='left'>Name</TableHeaderCell>
-                                    <TableHeaderCell align='right'>Submission Date</TableHeaderCell>
+                                    <TableHeaderCell align='left'>Dealer Name</TableHeaderCell>
+                                    <TableHeaderCell align='left'>Submission Date</TableHeaderCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <TableRow>
-                                    <TableCell align='left'>John Doe</TableCell>
-                                    <TableCell align='right'>10/10/2023</TableCell>
-                                </TableRow>
+                                {unconfirmedDealers?.map((dealer) => (
+                                    <TableRow key={dealer.dealerid}>
+                                        <TableCell align="left">{dealer.firstname + " " + dealer.lastname}</TableCell>
+                                        <TableCell align="left">{dealer.submissiondate}</TableCell>
+
+                                    </TableRow>
+                                ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    <ViewDealersTypo onClick={() => handleDealersListClick()}> View all unconfirmed dealers </ViewDealersTypo>
                 </PendingDealerPaper>
+
+
             </PendingDealerGrid>
         </Grid>
     )

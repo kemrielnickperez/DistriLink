@@ -1,9 +1,14 @@
 package com.group5.distributorsystem.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -55,6 +60,10 @@ public class Dealer {
 
     private String remarks;
 
+
+    private Distributor distributor;
+
+
     private Set<String> orderids = new HashSet<>();;
 
     private Set<String> documentids = new HashSet<>();
@@ -62,8 +71,7 @@ public class Dealer {
     public Dealer() {
     }
 
-
-    public Dealer(String dealerid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, Boolean isconfirmed, String remarks, Set<String> orderids, Set<String> documentids) {
+    public Dealer(String dealerid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, Boolean isconfirmed, String remarks, Distributor distributor, Set<String> orderids, Set<String> documentids) {
         this.dealerid = dealerid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -84,6 +92,7 @@ public class Dealer {
         this.submissiondate = submissiondate;
         this.isconfirmed = isconfirmed;
         this.remarks = remarks;
+        this.distributor = distributor;
         this.orderids = orderids;
         this.documentids = documentids;
     }
@@ -246,6 +255,22 @@ public class Dealer {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public Boolean getIsconfirmed() {
+        return isconfirmed;
+    }
+
+    public void setIsconfirmed(Boolean isconfirmed) {
+        this.isconfirmed = isconfirmed;
+    }
+
+    public Distributor getDistributor() {
+        return distributor;
+    }
+
+    public void setDistributor(Distributor distributor) {
+        this.distributor = distributor;
     }
 
     public Set<String> getOrderids() {

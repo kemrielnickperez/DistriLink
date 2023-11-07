@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Set;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/order")
@@ -36,9 +39,14 @@ public class OrderController {
     }
 
 
-    @PutMapping("/assignCollector/{orderid}")
+   /* @PutMapping("/assignCollector/{orderid}")
     public ResponseEntity<Object> assignCollector(@PathVariable String orderid, @RequestBody Employee collector){
         return new ResponseEntity<>(orderService.assignCollector(orderid, collector), HttpStatus.OK);
+    }*/
+
+    @PutMapping("/assignCollector/{collectorid}")
+    public ResponseEntity<Object> assignCollector(@PathVariable String  collectorid, @RequestBody  String[] orderids) {
+        return orderService.assignCollector(orderids, collectorid);
     }
 
     @PutMapping("/removeCollector/{orderid}")
@@ -49,6 +57,16 @@ public class OrderController {
     @PutMapping("/updateOrder/{orderId}")
     public ResponseEntity<Object> updateOrder(@PathVariable String orderId, @RequestBody Order updatedOrder) {
         return new ResponseEntity<>(orderService.updateOrder(orderId, updatedOrder), HttpStatus.OK);
+    }
+
+    @PutMapping("/updateOrderClosedStatus/{orderid}")
+    public ResponseEntity<Object> updateOrderClosedStatus(@PathVariable String orderid) {
+        return new ResponseEntity<>(orderService.updateOrderClosedStatus(orderid), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUnconfirmedOrders")
+    public ResponseEntity<Object> getAllUnconfirmedOrders(){
+        return new ResponseEntity<>(orderService.getAllUnconfirmedOrders(), HttpStatus.OK);
     }
 
 }

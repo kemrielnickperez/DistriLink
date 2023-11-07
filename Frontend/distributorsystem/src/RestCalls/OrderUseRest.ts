@@ -10,13 +10,15 @@ import { IEmployee, IOrder } from "./Interfaces";
 export const useRestOrder = (): [
     (order: IOrder) => void,
     (orderid: string) => void,
-    (orderID: string, collector: IEmployee) => void,
+    (collectorid: string, orderids:string[]) => void,
     (orderID: string) => void,
     IOrder | undefined,
     boolean | undefined,
     boolean | undefined,
     boolean | undefined,
-    (orderID: string | undefined, updatedOrder: IOrder) => void] => {
+    (orderID: string | undefined, updatedOrder: IOrder) => void,
+    (orderID: string) => void,
+] => {
 
     const [order, setOrder] = useState<IOrder>();
     const [isOrderFound, setIsOrderFound] = useState<boolean>(true);
@@ -33,11 +35,29 @@ export const useRestOrder = (): [
             paymentterms: order.paymentterms,
             orderdate: order.orderdate,
             orderedproducts: order.orderedproducts,
+            distributor: {
+                dealerid: order.distributor.distributorid,
+                firstname: order.distributor.firstname,
+                middlename: order.distributor.middlename,
+                lastname: order.distributor.lastname,
+                emailaddress: order.distributor.emailaddress,
+                password: order.distributor.password,
+                birthdate: order.distributor.birthdate,
+                gender: order.distributor.gender,
+                currentaddress: order.distributor.currentaddress,
+                permanentaddress: order.distributor.permanentaddress,
+                contactnumber: order.distributor.contactnumber,
+                dealerids: order.distributor.dealerids,
+                employeeids: order.distributor.employeeids,
+                orderids: order.distributor.orderids,
+            },
             dealer: {
                 dealerid: order.dealer.dealerid,
                 firstname: order.dealer.firstname,
                 middlename: order.dealer.middlename,
                 lastname: order.dealer.lastname,
+                emailaddress: order.dealer.email,
+                password: order.dealer.password,
                 birthdate: order.dealer.birthdate,
                 gender: order.dealer.gender,
                 currentaddress: order.dealer.currentaddress,
@@ -54,7 +74,10 @@ export const useRestOrder = (): [
             },
             collector: null,
             paymenttransactions: [],
-            confirmed: order.confirmed
+            confirmed: order.confirmed,
+            closed: order.isclosed
+
+            
 
         })
             .then((response) => {
@@ -108,7 +131,7 @@ export const useRestOrder = (): [
         }
            
 
-
+/* 
     function assignCollector(orderID: string, collector: IEmployee) {
         axios.put(`http://localhost:8080/order/assignCollector/${orderID}`, collector)
             .then((response) => {
@@ -117,6 +140,16 @@ export const useRestOrder = (): [
             .catch((error) => {
                 setAssignedStatus(false);
                 console.error('Error assigning collector:', error);
+            });
+    } */
+    function assignCollector(collectorid: string, orderids:string[]) {
+        axios.put(`http://localhost:8080/order/assignCollector/${collectorid}`, orderids)
+            .then((response) => {
+                setAssignedStatus(true);
+            })
+            .catch((error) => {
+                setAssignedStatus(false);
+                console.error('Error assigning collector to multiple orders:', error);
             });
     }
 
@@ -131,6 +164,16 @@ export const useRestOrder = (): [
             });
     }
 
+    function closedOrder(orderID: string) {
+        axios.put(`http://localhost:8080/order/updateOrderClosedStatus/${orderID}`)
+            .then((response) => {
+                console.log("Order is closed successfully!");
+            })
+            .catch((error) => {
+                console.log("Error closing the order. Please try again.");
+            });
+    }
 
-    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder];
+
+    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder];
 }

@@ -4,8 +4,8 @@ package com.group5.distributorsystem.models;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("DealerDocuments")
-public class DealerDocument {
+@Document("EmployeeDocuments")
+public class EmployeeDocument {
 
     @Id
     private String documentid;
@@ -13,18 +13,17 @@ public class DealerDocument {
     private String type;
     private byte[] content;
 
+    private Employee employee;
 
-    private Dealer dealer;
-
-    public DealerDocument() {
+    public EmployeeDocument() {
     }
 
-    public DealerDocument(String documentid, String name, String type, byte[] content, Dealer dealer) {
+    public EmployeeDocument(String documentid, String name, String type, byte[] content, Employee employee) {
         this.documentid = documentid;
         this.name = name;
         this.type = type;
         this.content = content;
-        this.dealer = dealer;
+        this.employee = employee;
     }
 
     public String getDocumentid() {
@@ -59,11 +58,11 @@ public class DealerDocument {
         this.content = content;
     }
 
-    public Dealer getDealer() {
-        return dealer;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setDealer(Dealer dealer) {
-        this.dealer = dealer;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }
