@@ -255,10 +255,11 @@ export default function DealerProfileListUI() {
         {
             field: 'decline', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
+                const dealer = params.row;
                 return (
                     <StyledButton
                         onClick={() => {
-                            // Handle button click for this row here
+                            handleDeclineClick(dealer.id)
 
                         }}
                     >
