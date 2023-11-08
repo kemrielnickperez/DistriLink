@@ -247,7 +247,7 @@ export default function DealerProfileDetails() {
 
     const [value, setValue] = useState(0);
 
-    const [getDealerByID, newDealer, updateDealer, confirmDealer, markDealerAsPending, isDealerFound, dealer,] = useRestDealer();
+    const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer] = useRestDealer();
 
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
 

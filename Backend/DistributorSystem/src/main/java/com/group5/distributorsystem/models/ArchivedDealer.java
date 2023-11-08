@@ -1,23 +1,16 @@
 package com.group5.distributorsystem.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.*;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
-@Document("Dealers")
-public class Dealer {
+@Document("Archived_Dealers")
+public class ArchivedDealer {
 
     @Id
     private String dealerid;
@@ -68,10 +61,9 @@ public class Dealer {
 
     private Set<String> documentids = new HashSet<>();
 
-    public Dealer() {
-    }
+    private LocalDate datearchived;
 
-    public Dealer(String dealerid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, Boolean isconfirmed, String remarks, Distributor distributor, Set<String> orderids, Set<String> documentids) {
+    public ArchivedDealer(String dealerid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, boolean hasbusiness, String businessname, String businessaddress, String businessphone, String businesstin, double creditlimit, LocalDate submissiondate, Boolean isconfirmed, String remarks, Distributor distributor, Set<String> orderids, Set<String> documentids, LocalDate datearchived) {
         this.dealerid = dealerid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -95,6 +87,10 @@ public class Dealer {
         this.distributor = distributor;
         this.orderids = orderids;
         this.documentids = documentids;
+        this.datearchived = datearchived;
+    }
+
+    public ArchivedDealer() {
     }
 
     public String getDealerid() {
@@ -241,12 +237,12 @@ public class Dealer {
         this.submissiondate = submissiondate;
     }
 
-    public Boolean getConfirmed() {
+    public Boolean getIsconfirmed() {
         return isconfirmed;
     }
 
-    public void setConfirmed(Boolean confirmed) {
-        isconfirmed = confirmed;
+    public void setIsconfirmed(Boolean isconfirmed) {
+        this.isconfirmed = isconfirmed;
     }
 
     public String getRemarks() {
@@ -255,14 +251,6 @@ public class Dealer {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
-    }
-
-    public Boolean getIsconfirmed() {
-        return isconfirmed;
-    }
-
-    public void setIsconfirmed(Boolean isconfirmed) {
-        this.isconfirmed = isconfirmed;
     }
 
     public Distributor getDistributor() {
@@ -289,5 +277,11 @@ public class Dealer {
         this.documentids = documentids;
     }
 
+    public LocalDate getDatearchived() {
+        return datearchived;
+    }
 
+    public void setDatearchived(LocalDate datearchived) {
+        this.datearchived = datearchived;
+    }
 }

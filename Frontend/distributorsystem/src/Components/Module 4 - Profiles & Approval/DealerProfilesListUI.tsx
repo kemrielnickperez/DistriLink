@@ -6,6 +6,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
+import moment from "moment";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -64,7 +65,7 @@ export default function DealerProfileListUI() {
     const handleConfirmClose = () => setCreditLimitModalOpen(false);
     const [remarks, setRemarks] = useState(""); // State to capture remarks
     const [creditlimit, setCreditlimit] = useState(0);
-    const [getDealerByID, newDealer, updateDealer, confirmDealer, markDealerAsPending, isDealerFound, dealer,] = useRestDealer();
+    const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
         axios
@@ -75,7 +76,7 @@ export default function DealerProfileListUI() {
             .catch((error) => {
                 console.error('Error fetching dealer:', error);
             });
-    }, []);
+    }, [dealer1]);
 
     {/** Columns for DataGrid */ }
     const columns: GridColDef[] = [
@@ -178,10 +179,11 @@ export default function DealerProfileListUI() {
         {
             field: 'decline', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
+                const dealer = params.row;
                 return (
                     <StyledButton
                         onClick={() => {
-                            // Handle button click for this row here
+                            handleDeclineClick(dealer.id)
 
                         }}
                     >
@@ -265,6 +267,21 @@ export default function DealerProfileListUI() {
             handlePendingClose();
         }
     };
+
+
+    const handleDeclineClick = (objectId: string) => {
+        // Find the dealer to mark as pending in the list
+
+        const dateArchive = moment().format('YYYY-MM-DD');
+        
+            
+            // Call the declineDealer function to update the dealer's status on the server
+            declineDealer(objectId, remarks, dateArchive);
+
+        
+    };
+
+
 
 
 
