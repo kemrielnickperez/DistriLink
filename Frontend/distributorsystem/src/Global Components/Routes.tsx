@@ -51,9 +51,7 @@ export default function MainRoutes() {
 
                 {/* <SigninScreen/> */}
                 <Route path="/" element={<SignInContent />}>
-
                     <Route path="/" element={<Navigate replace to="SignIn" />} />
-
                     <Route path="/SignIn" element={<SignIn />} />
                     {/* <Main Routes/> */}
                     <Route path="/" element={<Content />}>
