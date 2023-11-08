@@ -160,7 +160,7 @@ const TypographyLabelC = styled(Typography)({
     fontFamily: 'inter',
 })
 
-export default function EmployeeRegistration() {
+export default function EmployeeRegistration(){
 
 
     const [newEmployee, getCollectorByID, collector] = useRestEmployee();
@@ -716,7 +716,7 @@ export default function EmployeeRegistration() {
                             value={selectedDistributor}
                             onChange={
                                 (event, newValue) => {
-                                    setSelectedDistributor(newValue!),
+                                    setSelectedDistributor(newValue!);
                                         handleInputChange('distributor')
                                 }}
                             renderInput={(params) => (

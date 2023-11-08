@@ -528,6 +528,7 @@ export default function DealerRegistration() {
         contactnum: !contactnumberRef.current?.value ? 'Contact Number is required' : '',
         selectedprofile: !selectedProfilePicture ? 'Please attach your Profile Picture' : '',
         selectedvalidid: !selectedValidID ? 'Please attach your Valid ID' : '',
+        
         tinnum: !tinnumberRef.current?.value ? 'TIN Number is required' : '',
         distributor: !selectedDistributor ? 'Please choose a Distributor' : '',
     }
@@ -888,7 +889,7 @@ return (
                             value={selectedDistributor}
                             onChange={
                                 (event, newValue) => {
-                                setSelectedDistributor(newValue!),
+                                setSelectedDistributor(newValue!);
                                 handleInputChange('distributor')}}
                             renderInput={(params) => (
                                 <StyledTextField
@@ -1104,7 +1105,7 @@ return (
                                     <UploadIcon />
                                 </Icon>
                                 <TypographyLabelC >
-                                    {selectedBusinessDocs?.name === undefined ? 'Upload Businedd Document' : selectedBusinessDocs?.name}
+                                    {selectedBusinessDocs?.name === undefined ? 'Upload Business Document' : selectedBusinessDocs?.name}
                                 </TypographyLabelC>
                             </Button>
                         </label>
