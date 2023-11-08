@@ -23,7 +23,7 @@ export interface IDealer {
     firstname: string,
     middlename: string,
     lastname: string,
-    email :String,
+    emailaddress :String,
     password: String,
     birthdate: string,
     gender: string,
@@ -70,7 +70,8 @@ export interface IEmployee {
     is_collector: boolean,
     submissiondate: string,
     distributor: IDistributor,
-    orders: IOrder[],
+    orderids: string[],
+    paymentreceiptids: string[],
     collectionpaymentids: string[],
     documentids: string[],
 }

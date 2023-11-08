@@ -8,6 +8,7 @@ import com.group5.distributorsystem.repositories.DealerDocumentRepository;
 import com.group5.distributorsystem.repositories.DealerRepository;
 import com.group5.distributorsystem.repositories.DistributorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -29,6 +30,9 @@ public class DealerService {
 
     @Autowired
     DealerDocumentRepository dealerDocumentRepository;
+
+    @Autowired
+    DealerEmailService dealerEmailService;
 
     @Autowired
     DistributorRepository distributorRepository;
@@ -152,4 +156,54 @@ public class DealerService {
         return dealerRepository.findByIsconfirmedFalse();
     }
 
-}
+    public void updateDealerConfirmation(String dealerId, Dealer updatedDealer) {
+        Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
+        // Get the dealer's information
+        if (optionalDealer.isPresent()) {
+            Dealer existingDealer = optionalDealer.get();
+            String subject = "Dealer Information";
+            String content =
+                    "Dealer Name: " + existingDealer.getFirstname() + " " + existingDealer.getMiddlename() + " " + existingDealer.getLastname() + "\n" +
+                            "Dealer ID: " + existingDealer.getDealerid() + "\n" +
+                            "Password: " + existingDealer.getPassword() + "\n" +
+                            "Your Credit Limit: " + updatedDealer.getCreditlimit() + "\n" +
+                            "Your dealer account has been confirmed. Thank you for registering.";
+
+            // Use the EmailService to send the email using the dealer's email address
+            dealerEmailService.sendConfirmEmail(existingDealer, subject, content);
+
+
+            existingDealer.setConfirmed(true);
+            existingDealer.setRemarks("Confirmed");
+            existingDealer.setCreditlimit(updatedDealer.getCreditlimit());
+            // Save the updated "confirmed" property back to the database
+            dealerRepository.save(existingDealer);
+        }
+        }
+
+    public void updateDealerPending(String dealerId,  Dealer updatedDealer) {
+        Dealer optionalDealer = dealerRepository.findById(dealerId).get();
+
+        // Get the dealer's information
+
+        String subject = "Dealer Account Status Update";
+        String content =
+                "Dealer Name: " + optionalDealer.getFirstname() +" "+  optionalDealer.getMiddlename() +" "+ optionalDealer.getLastname() + "\n" +
+                        "Dealer ID: " + optionalDealer.getDealerid()+ "\n" +
+                        "Your dealer account has been marked as pending.\n" +
+                        "Reason for Pending: " + updatedDealer.getRemarks();
+
+        // Use the EmailService to send the email using the dealer's email address
+        dealerEmailService.sendPendingEmail(optionalDealer, subject, content);
+
+
+        optionalDealer.setConfirmed(false);
+        optionalDealer.setRemarks(updatedDealer.getRemarks());
+        // Save the updated "confirmed" property back to the database
+        dealerRepository.save(optionalDealer);
+    }
+
+    }
+
+
+

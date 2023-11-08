@@ -1,7 +1,7 @@
-import logo5 from '../../Global Components/logo5.png'
-import dealer from '../../Global Components/dealer.png'
-import distributor from '../../Global Components/distributor.png'
-import employee from '../../Global Components/employee.png'
+import logo5 from '../../Global Components/Images/logo5.png'
+import dealer from '../../Global Components/Images/dealer.png'
+import distributor from '../../Global Components/Images/distributor.png'
+import employee from '../../Global Components/Images/employee.png'
 
 
 import { Button, Card, Typography, styled } from '@mui/material'
