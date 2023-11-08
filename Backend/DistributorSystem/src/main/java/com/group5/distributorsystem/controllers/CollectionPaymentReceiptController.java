@@ -21,8 +21,13 @@ public class CollectionPaymentReceiptController {
     @Autowired
     CollectionPaymentReceiptService collectionPaymentReceiptService;
 
-    @GetMapping("/unconfirmed")
-    public ResponseEntity<Object> getUnconfirmedReceipts(){
-        return new ResponseEntity<>(collectionPaymentReceiptService.findByIsConfirmedFalse(), HttpStatus.OK);
+    @GetMapping("/getAllCollectionPaymentReceipts")
+    public ResponseEntity<Object> getAllCollectionPaymentReceipts(){
+        return new ResponseEntity<>(collectionPaymentReceiptService.getAllCollectionPaymentReceipts(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUnconfirmedCollectionPaymentReceipts")
+    public ResponseEntity<Object> getAllUnconfirmedCollectionPaymentReceipts(){
+        return new ResponseEntity<>(collectionPaymentReceiptService.getAllUnconfirmedCollectionPaymentReceipts(), HttpStatus.OK);
     }
 }

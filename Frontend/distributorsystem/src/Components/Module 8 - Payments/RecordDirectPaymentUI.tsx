@@ -17,6 +17,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import moment from "moment";
 import axios from "axios";
 import { error } from "console";
+import { ToastContainer } from "react-toastify";
 
 const StyledTableRow = styled(TableRow)({
     borderBottom: "1px #203949 solid",
@@ -222,6 +223,50 @@ export default function RecordDirectPayment() {
         }
       }; */
 
+      const cashierObject : IEmployee = {
+        employeeid: "2386f1b2",
+        firstname: "Victoria",
+        middlename: "I",
+        lastname: "Ramirez",
+        emailaddress: "charmaineramirez05@gmail.com",
+        password: "test",
+        birthdate: "2005-11-05",
+        gender: "female",
+        currentaddress: "2079 Humay-Humay Street",
+        permanentaddress: "Pajo",
+        contactnumber: "+639158523587",
+        tinnumber: '',
+        is_cashier: true,
+        is_salesassociate: true,
+        is_collector: true,
+        submissiondate: "2023-11-07",
+        distributor: {
+            distributorid: "distributor9",
+            firstname: "Min Gyu",
+            middlename: "",
+            lastname: "Kim",
+            emailaddress: "capstone.distrilink@gmail.com",
+            password: "doggo",
+            birthdate: "1997-04-06",
+            gender: "Male",
+            currentaddress: "Mabolo, Cebu",
+            permanentaddress: "Cebu City",
+            contactnumber: "09741258963",
+            dealerids: [],
+            employeeids: [
+                "2386f1b2"
+            ],
+            orderids: []
+        },
+        orderids: [],
+        paymentreceiptids: [],
+        collectionpaymentids: [],
+        documentids: [
+            "54219fa2"
+        ]
+    
+      }
+
     const handleSaveDirectPayment = () => {
         const uuid = uuidv4();
         const paymentreceiptuuid = uuid.slice(0, 8);
@@ -234,7 +279,7 @@ export default function RecordDirectPayment() {
             receivedamount: Number(amountPaidRef.current?.value),
             paymenttype: 'direct',
             daterecorded: moment().format('YYYY-MM-DD'),
-            cashier: null,
+            cashier: cashierObject,
             paymenttransaction: selectedPaymentTransaction!
         })
         const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
@@ -352,7 +397,7 @@ export default function RecordDirectPayment() {
                             {option.paymenttransactionid}
                         </MenuItem>
                      ))} */}
-                    <Autocomplete
+                     <Autocomplete
                         disablePortal
                         id="combo-box-demo"
                         options={order?.paymenttransactions!}
@@ -392,7 +437,8 @@ export default function RecordDirectPayment() {
                                 variant="outlined"
                             />
                         )}
-                    />
+                    /> 
+
 
                     {/* </StyleTextField3> */}
                 </Grid>
@@ -425,7 +471,21 @@ export default function RecordDirectPayment() {
             <StyledButton onClick={handleSaveDirectPayment}>Save Payment Record</StyledButton>
             {/* <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader> */}
             {/* set style left and top manually here in stack */}
-
+            {/* Alerts */}
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                limit={3}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                style={{ width: 450 }}
+                theme="colored"
+            />
 
         </div>
     );

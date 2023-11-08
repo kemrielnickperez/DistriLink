@@ -1,4 +1,4 @@
-import { Button, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Button, Grid, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
@@ -8,6 +8,10 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { OrderDetailsPrint } from "./OrderDetailsPrint";
+
+function SlideTransitionDown(props: SlideProps) {
+    return <Slide {...props} direction="down" />;
+}
 
 const ContentNameTypography = styled(Typography)({
     marginTop: 60,
@@ -108,6 +112,16 @@ const StyledPrintDiv = styled('div')({
 export function OrderDetails() {
     const { objectId } = useParams();
 
+    const [openAlert, setOpenAlert] = useState(false);
+
+    const [alerttitle, setTitle] = useState('');
+
+    const [alertMessage, setAlertMessage] = useState('');
+
+    const [alertSeverity, setAlertSeverity] = useState('success');
+
+
+
     const navigate = useNavigate();
 
     const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
@@ -115,12 +129,32 @@ export function OrderDetails() {
     const [paymentTransactionsObjects, setPaymentTransactionsObjects] = useState<IPaymentTransaction[]>([]);
     const [isMounted, setIsMounted] = useState(false);
 
+    {/**Handler for Alert - Function to define the type of alert*/ }
+    function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+        setTitle(title);
+        setAlertMessage(message);
+        setAlertSeverity(severity);
+        setOpenAlert(true);
+    }
+
+    {/**Handler to Close Alert Snackbar*/ }
+    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
+
     //sorting the payment transactions
     const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
     {/*Handlers*/ }
     const handleFindValue = () => {
-        getOrderByID(objectId!);
+        try {
+            getOrderByID(objectId!);
+        } catch (error) {
+            headerHandleAlert('Error', "Failed to retrieve order data. Please try again.", 'error');
+        }
     };
 
     {/* useEffects*/ }
@@ -134,7 +168,6 @@ export function OrderDetails() {
 
         // Only make the GET request if the component is mounted
         if (isMounted) {
-
             handleFindValue();
         }
         return () => {
@@ -281,6 +314,18 @@ export function OrderDetails() {
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
+
+                                
+                                 {/* Alerts */}              
+                                <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'center'
+                                }} TransitionComponent={SlideTransitionDown}>
+                                    <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                                        <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                                        {alertMessage}
+                                    </Alert>
+                                </Snackbar>
                             </Paper>
 
                             <h2 style={{ color: 'grey', marginTop: '50px', textDecoration: 'underline black 2px', fontStyle: 'italic' }} onClick={() => handleH2Click()}> Edit Payment Transaction in the Scheduling Page. </h2>

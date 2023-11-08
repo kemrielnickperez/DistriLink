@@ -118,7 +118,8 @@ export const useRestPaymentTransaction = (): [(paymenttransactions: IPaymentTran
         axios.put(`http://localhost:8080/paymenttransaction/updatePaymentTransaction/${paymentransactionid}`, paymentransaction)
             .then((response) => {
         
-                alert("successfully updated!")
+                // alert("successfully updated!")
+                
                 
             })
             .catch((error) => {

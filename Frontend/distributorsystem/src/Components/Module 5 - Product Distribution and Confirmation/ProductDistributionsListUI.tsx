@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { IOrder } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Button, Card, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Button, Card, Slide, SlideProps, Snackbar, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
+
+function SlideTransitionDown(props: SlideProps) {
+    return <Slide {...props} direction="down" />;
+}
 
 
 const StyledCard = styled(Card)({
@@ -60,6 +64,11 @@ const StyledAddButton = styled(Button)({
 export default function ProductDistributionList() {
     const navigate = useNavigate();
     const [order, setOrder] = useState<IOrder[] | null>(null);
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alerttitle, setTitle] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertSeverity, setAlertSeverity] = useState('success');
+
 
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
@@ -69,9 +78,27 @@ export default function ProductDistributionList() {
                 setOrder(response.data);
             })
             .catch((error) => {
-                console.error('Error fetching orders:', error);
+                headerHandleAlert('Error', "Failed to fetch orders. Please check your internet connection.", 'error');
             });
     }, []);
+
+    {/**Handler for Alert - Function to define the type of alert*/ }
+
+    function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+        setTitle(title);
+        setAlertMessage(message);
+        setAlertSeverity(severity);
+        setOpenAlert(true);
+    }
+
+    {/**Handler to Close Alert Snackbar*/ }
+    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
+
 
     {/** Columns for DataGrid */ }
     const columns: GridColDef[] = [
@@ -165,6 +192,16 @@ export default function ProductDistributionList() {
 
                 />
             </StyledCard>
+            {/* Alerts */}
+            <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center'
+            }} TransitionComponent={SlideTransitionDown}>
+                <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                    <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                    {alertMessage}
+                </Alert>
+            </Snackbar>
         </div>
     );
 }

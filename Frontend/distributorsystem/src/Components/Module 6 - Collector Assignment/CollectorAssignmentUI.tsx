@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Card, TextField, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Autocomplete, Button, Card, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { IEmployee, IOrder } from "../../RestCalls/Interfaces";
 import { auto } from "@popperjs/core";
@@ -7,6 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
 import axios from "axios";
 import React from "react";
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+//Imports for Toastify
+//Please Install npm i react-toastify or if doesn't work, install npm i react-toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+function SlideTransitionDown(props: SlideProps) {
+  return <Slide {...props} direction="down" />;
+}
 
 const StyledCard = styled(Card)({
   padding: '10px 10px 10px 2px',
@@ -59,18 +68,44 @@ export default function CollectorAssignment() {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [orders, setOrders] = useState<IOrder[]>([]);
 
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alerttitle, setTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('success');
+
+
   {/** functions */ }
- /*  function getAllCollectors() {
-    axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
-      .then((response) => {
-        setCollectors(response.data);
-        
-      })
-      .catch((error) => {
-        console.error('Error retrieving collectors:', error);
-        alert("Error retrieving collectors. Please try again.");
-      });
-  } */
+  /*  function getAllCollectors() {
+     axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
+       .then((response) => {
+         setCollectors(response.data);
+         
+       })
+       .catch((error) => {
+         console.error('Error retrieving collectors:', error);
+         alert("Error retrieving collectors. Please try again.");
+       });
+   } */
+
+
+  {/**Handler for Alert - Function to define the type of alert*/ }
+
+  function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+    setTitle(title);
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setOpenAlert(true);
+  }
+
+  {/**Handler to Close Alert Snackbar*/ }
+  const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
+
+
   function getAllCollectors() {
     axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
       .then((response) => {
@@ -82,7 +117,8 @@ export default function CollectorAssignment() {
       })
       .catch((error) => {
         console.error('Error retrieving collectors:', error);
-        alert("Error retrieving collectors. Please try again.");
+        headerHandleAlert('Error', "Error retrieving collectors. Please try again..", 'error');
+        // alert("Error retrieving collectors. Please try again.");
       });
   }
 
@@ -92,11 +128,12 @@ export default function CollectorAssignment() {
         const confirmedOrders = response.data.filter(order => order.confirmed && !order.isclosed);
 
         setOrders(confirmedOrders);
-        
+
       })
       .catch((error) => {
         console.error('Error retrieving collectors:', error);
-        alert("Error retrieving collectors. Please try again.");
+        headerHandleAlert('Error', "Error retrieving orders. Please try again..", 'error');
+        // alert("Error retrieving collectors. Please try again.");
       });
   }
 
@@ -182,48 +219,76 @@ export default function CollectorAssignment() {
   const handleUnassignCollector = (selectedRow: any, event: React.MouseEvent) => {
     event.stopPropagation(); // Prevent the click event from propagating
     removeCollector(selectedRow.orderID);
-    alert("Collector Unassigned Successfully!");
+    // alert("Collector Unassigned Successfully!");
+    // toast
+    toast(
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <RemoveCircleIcon fontSize='medium' style={{ marginRight: '10px', alignItems: '' }} />
+        {"Collector Unassigned Successfully!"}
+      </div>, {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      style: { backgroundColor: '#FA9600', color: '#ffffff' },
+      theme: "colored",
+    })
   }
 
 
   {/** Handle Assign */ }
-/*   const handleAssignCollector = () => {
-    if (selectedCollector === null) {
-      alert("Please choose a collector")
-    } else {
-      let count = 0;
-      for (const selectedOrderID of selectedRows) {
-        if (assignedStatus === false) {
-          break;
+  /*   const handleAssignCollector = () => {
+      if (selectedCollector === null) {
+        alert("Please choose a collector")
+      } else {
+        let count = 0;
+        for (const selectedOrderID of selectedRows) {
+          if (assignedStatus === false) {
+            break;
+          }
+          else {
+            assignCollector(selectedOrderID, selectedCollector)
+            count++;
+          } 
+        }
+  
+  
+        if (count === selectedRows.length) {
+          alert("Collector assigned successfully to all of the selected orders!")
         }
         else {
-          assignCollector(selectedOrderID, selectedCollector)
-          count++;
-        } 
+          alert(`Only ${count}! number of orders was assigned.`)
+        }
+  
+        setSelectedRows([]);
+        setSelectedCollector(null);
       }
-
-
-      if (count === selectedRows.length) {
-        alert("Collector assigned successfully to all of the selected orders!")
-      }
-      else {
-        alert(`Only ${count}! number of orders was assigned.`)
-      }
-
-      setSelectedRows([]);
-      setSelectedCollector(null);
-    }
-  }; */
+    }; */
   const handleAssignCollector = () => {
     if (selectedCollector === null) {
-      alert("Please choose a collector");
+      // alert("Please choose a collector");
+      headerHandleAlert('Collector Assignment Required', "To proceed, please assign a collector to the order(s).", 'warning');
     } else if (selectedRows.length === 0) {
-      alert("Please select at least one order to assign a collector");
+      // alert("Please select at least one order to assign a collector");
+      headerHandleAlert('Order Selection Required', "Please choose an order before assigning a collector.", 'warning');
     } else {
-      
       assignCollector(selectedCollector.employeeid!, selectedRows);
-      alert("Collector assigned successfully to all of the selected orders!")
-      
+      // alert("Collector assigned successfully to all of the selected orders!")
+      // toast
+      toast.success('Collector successfully assigned to selected orders!', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      })
+
     }
     setSelectedCollector(null);
     setSelectedRows([]);
@@ -300,6 +365,33 @@ export default function CollectorAssignment() {
           rowSelectionModel={selectedRows}
         />
       </StyledCard>
+
+
+      {/* Alerts */}
+      <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'center'
+      }} TransitionComponent={SlideTransitionDown}>
+        <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+          <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        limit={3}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        style={{ width: 450 }}
+        theme="colored"
+      />
     </div>
 
   );

@@ -4,10 +4,10 @@ import { ExpandLess, ExpandMore, Height, StarBorder } from '@mui/icons-material/
 import { useEffect, useState }from "react"
 import { Link, useLocation } from "react-router-dom";
 // import logo from "./logo.png"
-import logo1 from "./logo1.png"
-import logo2 from "./logo2.png"
-import logo3 from "./logo3.png"
-import logo4 from "./logo4.png"
+import logo1 from ".Images/logo1.png"
+import logo2 from ".Images/logo2.png"
+import logo3 from ".Images/logo3.png"
+import logo4 from "./Images/logo4.png"
 
 {/** Functions for page routing */}
 type navProps = {
@@ -99,12 +99,17 @@ export default function NewNavBar(props: navProps){
         setDropDownProfiles(false);
         setDropDownPayments(false);
     }
+    const handleCloseDropDownList=()=>{
+        setDropDownProfiles(false);
+        setDropDownPayments(false);
+        setDropDownProducts(false);
+    }
   
 
     return (
         <div>
             <Drawer open={true} variant="permanent">
-                <ColorBox>
+                <ColorBox onMouseLeave={handleCloseDropDownList}>
                     <AppNameTypography><img src={logo4} style={{height:'230px', width:'410px'}}/></AppNameTypography>
                     <List>
                         {/** Home */}

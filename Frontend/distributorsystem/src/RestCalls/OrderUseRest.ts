@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { IEmployee, IOrder } from "./Interfaces";
+import { toast } from "react-toastify";
 
 
 
@@ -36,11 +37,29 @@ export const useRestOrder = (): [
             paymentterms: order.paymentterms,
             orderdate: order.orderdate,
             orderedproducts: order.orderedproducts,
+            distributor: {
+                dealerid: order.distributor.distributorid,
+                firstname: order.distributor.firstname,
+                middlename: order.distributor.middlename,
+                lastname: order.distributor.lastname,
+                emailaddress: order.distributor.emailaddress,
+                password: order.distributor.password,
+                birthdate: order.distributor.birthdate,
+                gender: order.distributor.gender,
+                currentaddress: order.distributor.currentaddress,
+                permanentaddress: order.distributor.permanentaddress,
+                contactnumber: order.distributor.contactnumber,
+                dealerids: order.distributor.dealerids,
+                employeeids: order.distributor.employeeids,
+                orderids: order.distributor.orderids,
+            },
             dealer: {
                 dealerid: order.dealer.dealerid,
                 firstname: order.dealer.firstname,
                 middlename: order.dealer.middlename,
                 lastname: order.dealer.lastname,
+                emailaddress: order.dealer.emailaddress,
+                password: order.dealer.password,
                 birthdate: order.dealer.birthdate,
                 gender: order.dealer.gender,
                 currentaddress: order.dealer.currentaddress,
@@ -60,14 +79,16 @@ export const useRestOrder = (): [
             confirmed: order.confirmed,
             closed: order.isclosed
 
+            
+
         })
             .then((response) => {
 
-                alert("success!");
+                // alert("success!");
             })
             .catch((error) => {
 
-                alert("Error creating a new record. Please try again.");
+                // alert("Error creating a new record. Please try again.");
             });
     }
 
@@ -96,18 +117,37 @@ export const useRestOrder = (): [
                 if (response.data !== null) {
                     setIsOrderFound(true);
                     //setIsOrderFoundError(false);
+                    toast.success('Order found. Please set or update the schedule.', {
+                        position: "bottom-right",
+                        autoClose: 5000,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    })
 
                 }
                 else {
                     setIsOrderFound(false);
-
+                    toast.error('Order not found. Please try again.', {
+                        position: "bottom-right",
+                        autoClose: 5000,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    })
                     //setIsOrderFoundError(false);
                 }
 
             })
             .catch((error) => {
 
-                alert("Error finding the order. Please try again.");
+                // alert("Error finding the order. Please try again.");
             });
         }
            

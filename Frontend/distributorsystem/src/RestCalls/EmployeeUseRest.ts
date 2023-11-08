@@ -33,6 +33,29 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
         formData.append('is_cashier', employee.is_cashier.toString());
         formData.append('is_salesassociate', employee.is_salesassociate.toString());
         formData.append('is_collector', employee.is_collector.toString());
+        formData.append('distributor.distributorid', employee.distributor.distributorid);
+        formData.append('distributor.firstname', employee.distributor.firstname.toString());
+        formData.append('distributor.middlename', employee.distributor.middlename.toString());
+        formData.append('distributor.lastname', employee.distributor.lastname.toString());
+        formData.append('distributor.emailaddress', employee.distributor.emailaddress.toString());
+        formData.append('distributor.password', employee.distributor.password.toString());
+        formData.append('distributor.birthdate', employee.distributor.birthdate.toString());
+        formData.append('distributor.gender', employee.distributor.gender.toString());
+        formData.append('distributor.currentaddress', employee.distributor.currentaddress);
+        formData.append('distributor.permanentaddress', employee.distributor.permanentaddress);
+        formData.append('distributor.contactnumber', employee.distributor.contactnumber);
+
+        employee.distributor.dealerids.forEach((dealerid) => {
+            formData.append(`distributor.dealer`, dealerid);
+        });
+
+        employee.distributor.employeeids.forEach((employeeid) => {
+            formData.append(`distributor.employees`, employeeid);
+        });
+
+        employee.distributor.dealerids.forEach((orderid) => {
+            formData.append(`distributor.orderids`, orderid);
+        });
 
 
            employeeDocuments.forEach((document, index) => {
@@ -51,11 +74,11 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
         })
             .then((response) => {
             
-                alert("success!");
+                // alert("success!");
             })
             .catch((error) => {
                 
-                alert("Error creating a new record. Please try again.");
+                // alert("Error creating a new record. Please try again.");
             });
     }
 

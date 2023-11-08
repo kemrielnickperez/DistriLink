@@ -2,6 +2,7 @@ package com.group5.distributorsystem.controllers;
 
 
 import com.group5.distributorsystem.models.Dealer;
+import com.group5.distributorsystem.services.DealerEmailService;
 import com.group5.distributorsystem.services.DealerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,8 @@ public class DealerController {
     @Autowired
     DealerService dealerService;
 
-
+    @Autowired
+    DealerEmailService dealerEmailService;
 
     @PostMapping("/registerDealer")
     public ResponseEntity<Object> registerDealer(
@@ -29,8 +31,8 @@ public class DealerController {
             @RequestParam("type") List<String> documentTypes,
             @RequestParam("content") List<MultipartFile> documentContents
     )  {
-        dealerService.registerDealer(dealer, documentIds, documentNames, documentTypes, documentContents);
 
+        dealerService.registerDealer(dealer, documentIds, documentNames, documentTypes, documentContents);
         return new ResponseEntity<>("Dealer registered successfully!", HttpStatus.CREATED);
     }
 
@@ -65,6 +67,31 @@ public class DealerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to set dealer" + e.getMessage());
         }
+    }
+
+    @PutMapping("/confirmDealer/{dealerId}")
+    public ResponseEntity<String> confirmDealer(@PathVariable String dealerId,  @RequestBody Dealer updatedDealer ) {
+        // Call the updateDealerConfirmation function to update the "confirmed" property on the server
+        dealerService.updateDealerConfirmation(dealerId, updatedDealer);
+
+
+        return ResponseEntity.ok("Email sent successfully!");
+    }
+
+    @PutMapping("/updateDealerPending/{dealerId}")
+    public ResponseEntity<String> pendingDealer(@PathVariable String dealerId, @RequestBody Dealer updatedDealer) {
+            // Call the updateDealerPending function to update the "pending" property on the server
+            dealerService.updateDealerPending(dealerId, updatedDealer);
+
+
+            return ResponseEntity.ok("Email sent successfully!");
+        }
+
+
+
+    @GetMapping("/getAllUnconfirmedDealers")
+    public ResponseEntity<Object> getAllUnconfirmedDealers(){
+        return new ResponseEntity<>(dealerService.getAllUnconfirmedDealers(), HttpStatus.OK);
     }
 
 }
