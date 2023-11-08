@@ -57,7 +57,7 @@ const StyleMainInfo = styled(Typography)({
   // left: 565,
   // top: 220,
   color: '#203949',
-  fontSize: '20px',
+  fontSize: '18px',
   fontFamily: 'Inter',
 })
 
@@ -108,7 +108,7 @@ const StyleMainLabel = styled(Typography)({
   marginLeft: 90,
   marginRight: 50,
   color: '#707070',
-  fontSize: '20px',
+  fontSize: '18px',
   fontFamily: 'Inter',
 })
 
@@ -269,12 +269,12 @@ export function EmployeeProfileDetails() {
               <StyleMainInfo style={{ marginTop: 15 }}>{employee?.firstname} {employee?.middlename} {employee?.lastname}</StyleMainInfo>
             </Grid>
             <Grid item>
-              <StyleMainLabel>Employee ID</StyleMainLabel>
-              <StyleMainInfo style={{ marginTop: 15, marginLeft: 110 }}>{employee?.employeeid}</StyleMainInfo>
+              <StyleMainLabel style={{marginLeft:70}}>Employee ID</StyleMainLabel>
+              <StyleMainInfo style={{ marginTop: 15, marginLeft: 90}}>{employee?.employeeid}</StyleMainInfo>
             </Grid>
             <Grid item>
-              <StyleMainLabel>Position</StyleMainLabel>
-              <StyleMainInfo style={{ marginTop: 15 }}>
+              <StyleMainLabel style={{marginLeft:70}}>Position</StyleMainLabel>
+              <StyleMainInfo style={{ marginTop: 15, marginLeft: 90 }}>
                 {employee?.is_cashier && "Cashier"}
                 {employee?.is_collector && (employee!.is_cashier ? ', Collector' : 'Collector')}
                 {employee?.is_salesassociate && (employee?.is_cashier || employee?.is_collector ? ', Sales Associate' : 'Sales Associate')}

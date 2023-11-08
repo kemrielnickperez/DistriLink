@@ -160,7 +160,7 @@ const TypographyLabelC = styled(Typography)({
     fontFamily: 'inter',
 })
 
-export default function EmployeeRegistration() {
+export default function EmployeeRegistration(){
 
 
     const [newEmployee, getCollectorByID, collector] = useRestEmployee();

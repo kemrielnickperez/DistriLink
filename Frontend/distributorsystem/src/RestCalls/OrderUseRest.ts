@@ -19,6 +19,7 @@ export const useRestOrder = (): [
     boolean | undefined,
     (orderID: string | undefined, updatedOrder: IOrder) => void,
     (orderID: string) => void,
+    (orderID: string | undefined) => void,
 ] => {
 
     const [order, setOrder] = useState<IOrder>();
@@ -194,6 +195,16 @@ export const useRestOrder = (): [
             });
     }
 
+    function applyPenalty(orderID: string | undefined) {
+        axios.put(`http://localhost:8080/order/applyPenalty/${orderID}`)
+          .then((response) => {
+            console.log("Penalty applied successfully!");
+          })
+          .catch((error) => {
+            console.log("Error applying penalty. Please try again.");
+          });
+      }
 
-    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder];
+
+    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty];
 }
