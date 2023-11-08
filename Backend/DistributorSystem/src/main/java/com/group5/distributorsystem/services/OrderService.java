@@ -5,9 +5,11 @@ import com.group5.distributorsystem.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,9 @@ public class OrderService {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    PaymentTransactionRepository paymentTransactionRepository;
 
     @Autowired
     OrderedProductRepository orderedProductRepository;
@@ -209,6 +214,67 @@ public class OrderService {
             return new ResponseEntity<>("Order closed status updated successfully", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+  /*  @Scheduled(cron = "0 0 0 * * *") // Run every day at midnight
+    public void applyPenaltyForLatePayments(String orderId) {
+        LocalDate currentDate = LocalDate.of(2023, Month.NOVEMBER, 30);
+
+        // Find the specific order
+        Order order = orderRepository.findById(orderId).orElse(null);
+
+        if (order != null) {
+            Set<PaymentTransaction> paymentTransactions = order.getPaymenttransactions();
+
+            for (PaymentTransaction paymentTransaction : paymentTransactions) {
+                LocalDate endDate = paymentTransaction.getEnddate();
+
+                if (!paymentTransaction.isPaid() && currentDate.isAfter(endDate)) {
+                    double penaltyRate = order.getPenaltyrate();
+
+                    // Calculate the penalty and update the payment transaction
+                    double penaltyAmount = (paymentTransaction.getAmountdue() * penaltyRate) / 100;
+                    double newAmountDue = paymentTransaction.getAmountdue() + penaltyAmount;
+
+                    paymentTransaction.setAmountdue(newAmountDue);
+                    paymentTransactionRepository.save(paymentTransaction);
+                }
+            }
+            order.setPaymenttransactions(paymentTransactions);
+            orderRepository.save(order);
+        }
+    }*/
+
+    @Scheduled(cron = "0 0 0 */15 * ?")
+    public void applyPenaltyForAllLatePayments() {
+        LocalDate currentDate = LocalDate.now();
+
+        // Iterate through all orders
+        List<Order> orders = orderRepository.findAll();
+
+        for (Order order : orders) {
+            // Check if the order is not closed
+            if (!order.isIsclosed()) {
+                Set<PaymentTransaction> paymentTransactions = order.getPaymenttransactions();
+
+                for (PaymentTransaction paymentTransaction : paymentTransactions) {
+                    LocalDate endDate = paymentTransaction.getEnddate();
+
+                    if (!paymentTransaction.isPaid() && currentDate.isAfter(endDate)) {
+                        double penaltyRate = order.getPenaltyrate();
+
+                        // Calculate the penalty and update the payment transaction
+                        double penaltyAmount = (paymentTransaction.getAmountdue() * penaltyRate) / 100;
+                        double newAmountDue = paymentTransaction.getAmountdue() + penaltyAmount;
+
+                        paymentTransaction.setAmountdue(newAmountDue);
+                        paymentTransactionRepository.save(paymentTransaction);
+                    }
+                    order.setPaymenttransactions(paymentTransactions);
+                    orderRepository.save(order);
+                }
+            }
         }
     }
 

@@ -150,11 +150,13 @@ export default function Schedules() {
     const orderIDRef = useRef<TextFieldProps>(null)
 
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
 
     const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
 
     const [initialMinDate, setInitialMinDate] = useState<Dayjs | null>(null);
+
+    const [penaltyApplied, setPenaltyApplied] = useState(false);
 
     useEffect(() => {
         if (order && order.paymenttransactions) {
@@ -163,12 +165,19 @@ export default function Schedules() {
             setSortedPaymentTransactions(sorted);
             //handleFindOrder();
         }
-        console.log(order?.isclosed)
+      /*   console.log(order?.isclosed) */
 
         setInitialMinDate(dayjs() as Dayjs);
+       /*  if (!penaltyApplied) {
+            applyPenalty(order?.orderid);
+            setPenaltyApplied(true); // Mark that the penalty has been applied
+        } */
+    /*     console.log(order?.penaltyrate); */
+ /*    console.log(order?.paymenttransactions);
+ */
 
 
-    }, [order, paymentTransaction]);
+    }, [order, paymentTransaction/* , penaltyApplied */]);
 
 
 
