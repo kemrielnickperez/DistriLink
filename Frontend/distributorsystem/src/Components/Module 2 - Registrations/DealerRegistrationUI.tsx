@@ -888,7 +888,7 @@ return (
                             value={selectedDistributor}
                             onChange={
                                 (event, newValue) => {
-                                setSelectedDistributor(newValue!),
+                                setSelectedDistributor(newValue!)
                                 handleInputChange('distributor')}}
                             renderInput={(params) => (
                                 <StyledTextField
