@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { IDealer } from "../../RestCalls/Interfaces";
+import { IArchivedDealer, IDealer } from "../../RestCalls/Interfaces";
 import axios from "axios";
 import { Alert, AlertTitle, Box, Button, Card, Grid, Modal, Slide, SlideProps, Snackbar, Tab, Tabs, TextField, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
+import moment from "moment";
 
 
 interface TabPanelProps {
@@ -75,15 +76,19 @@ const TabStyle = styled(Tab)({
 export default function DealerProfileListUI() {
     const navigate = useNavigate();
     const [dealer1, setDealer1] = useState<IDealer[] | null>(null);
+    const [archivedDealer, setArchivedDealer] = useState<IArchivedDealer[] | null>(null);
     const [openPending, setOpenPending] = useState(false);
     const handlePendingOpen = () => setOpenPending(true);
     const handlePendingClose = () => setOpenPending(false);
+    const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
+    const handleDeclinedOpen = () => setOpenDeclinedModal(true);
+    const handleDeclinedClose = () => setOpenDeclinedModal(false);
     const [creditLimitModalOpen, setCreditLimitModalOpen] = useState(false);
     const handleConfirmOpen = () => setCreditLimitModalOpen(true);
     const handleConfirmClose = () => setCreditLimitModalOpen(false);
     const [remarks, setRemarks] = useState(""); // State to capture remarks
     const [creditlimit, setCreditlimit] = useState(0);
-    const [getDealerByID, newDealer, updateDealer, confirmDealer, markDealerAsPending, isDealerFound, dealer,] = useRestDealer();
+    const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -93,7 +98,7 @@ export default function DealerProfileListUI() {
     const [alertSeverity, setAlertSeverity] = useState('success');
     const [value, setValue] = useState(0);
     const [filteredDealers, setFilteredDealers] = useState<IDealer[] | null>(null);
-    const [filteredDealersConfirmed, setFilterDealersConfirmed]= useState<IDealer[] | null>(null);
+    const [filteredDealersConfirmed, setFilterDealersConfirmed] = useState<IDealer[] | null>(null);
     {/*Tabs*/ }
     function CustomTabPanel(props: TabPanelProps) {
         const { children, value, index, ...other } = props;
@@ -132,9 +137,19 @@ export default function DealerProfileListUI() {
             .catch((error) => {
                 console.error('Error fetching dealer:', error);
             });
-        filterDealers();
-        filterDealersConfirmed()
-    }, [dealer1]);
+
+        axios
+            .get<IArchivedDealer[]>(`http://localhost:8080/archived/getAllArchivedDealers`)
+            .then((response) => {
+                setArchivedDealer(response.data);
+                // headerHandleAlert('Success', "Archived Dealers fetched successfully.", 'success');
+
+            })
+            .catch((error) => {
+                console.error('Error fetching dealer:', error);
+            });
+
+    }, []);
 
     {/**Handler for Alert - Function to define the type of alert*/ }
 
@@ -257,25 +272,45 @@ export default function DealerProfileListUI() {
             renderCell: (params: { row: any; }) => {
                 const dealer = params.row;
                 return (
-                    <StyledButton
-                        onClick={() => {
-                            handleDeclineClick(dealer.id)
-
-                        }}
-                    >
+                    <><StyledButton
+                        onClick={handleDeclinedOpen} >
                         Decline
-                    </StyledButton>)
+                    </StyledButton><Grid item>
+                            <Modal
+                                open={openDeclinedModal}
+                                onClose={handleDeclinedClose}
+                                aria-labelledby="modal-title"
+                                aria-describedby="Comment"
+                            >
+                                <Box sx={style}>
+                                    <Typography style={{ color: "#2D85E7", fontSize: '20px', fontWeight: 'bold', marginBottom: '20px' }} id="decline-modal-title"> Reasons </Typography>
+                                    <TextField
+                                        label="State the Reason for Decline"
+                                        multiline
+                                        rows={4}
+                                        variant="filled"
+                                        style={{ width: '400px' }}
+                                        value={remarks} // Capture the remarks
+                                        onChange={(e) => setRemarks(e.target.value)} />
+                                    <StyledButton onClick={() => handleDeclineClick(dealer.id)} sx={{ marginTop: '20px', marginLeft: '150px' }}>
+                                        Submit
+                                    </StyledButton>
+                                </Box>
+                            </Modal>
+                        </Grid></>
+                );
             }
         },
 
     ]
     {/** Rows for DataGrid */ }
-    const rows = (filteredDealers || []).map((dealerList) => ({
+    const rows = (dealer1 || []).filter((dealer) => !dealer.confirmed).map((dealerList) => ({
+
         id: dealerList.dealerid,
         dealerName: `${dealerList.firstname} ${dealerList.middlename} ${dealerList.lastname}`,
         submissionDate: dealerList.submissiondate,
-    }));
 
+    }));
 
     {/** Columns for Confirmed */ }
     const columnsConfirmed: GridColDef[] = [
@@ -300,13 +335,29 @@ export default function DealerProfileListUI() {
 
     ]
     {/** Rows for DataGrid */ }
-    const rowsConfirmed = (filteredDealersConfirmed || []).map((dealerList) => ({
+    const rowsConfirmed = (dealer1 || []).filter((dealer) => dealer.confirmed).map((dealerList) => ({
         id: dealerList.dealerid,
         dealerName: `${dealerList.firstname} ${dealerList.middlename} ${dealerList.lastname}`,
         submissionDate: dealerList.submissiondate,
     }));
 
+    {/** Columns for Declined */ }
 
+    const columnsDeclined: GridColDef[] = [
+        { field: 'id', headerName: 'Dealer ID', width: 210 },
+        { field: 'dealerName', headerName: 'Dealer Name', width: 300 },
+        { field: 'submissionDate', headerName: 'Date Submitted', width: 210 },
+        { field: 'archiveDate', headerName: 'Date Declined', width: 210 },
+        { field: 'remarks', headerName: 'Reason', width: 210 },
+    ]
+    {/** Rows for DataGrid */ }
+    const rowsDeclined = (archivedDealer || []).map((archivedDealerList) => ({
+        id: archivedDealerList.dealerid,
+        dealerName: `${archivedDealerList.firstname} ${archivedDealerList.middlename} ${archivedDealerList.lastname}`,
+        submissionDate: archivedDealerList.submissiondate,
+        archiveDate: archivedDealerList.datearchived,
+        remarks: archivedDealerList.remarks,
+    }));
 
 
 
@@ -319,65 +370,35 @@ export default function DealerProfileListUI() {
     };
 
     const handleConfirmButton = (objectId: string) => {
-        // Find the dealer to confirm in the list
-        const dealerToConfirm = dealer1?.find((dealerItem) => dealerItem.dealerid === objectId);
-    
-        if (dealerToConfirm) {
-            // Create the updated dealer object with the new credit limit and confirmed status
-            const updatedDealer = {
-                ...dealerToConfirm,
-                confirmed: true,
-                creditlimit: creditlimit,
-            };
-    
-            // Update the state with the updated dealer
-            setDealer1((prevDealerList) => {
-                if (prevDealerList) {
-                    return prevDealerList.map((dealerItem) =>
-                        dealerItem.dealerid === objectId ? updatedDealer : dealerItem
-                    );
-                } else {
-                    return null; // Handle the case when dealer1 is null
-                }
-            });
-    
+       
             // Call the confirmDealer function to update the dealer's status and credit limit on the server
             confirmDealer(objectId, creditlimit);
-    
+
             // Close the modal after submitting
             handleConfirmClose();
-        }
+        
     };
 
     const handlePendingClick = (objectId: string) => {
-        // Find the dealer to mark as pending in the list
-        const dealerToMarkAsPending = dealer1?.find((dealerItem) => dealerItem.dealerid === objectId);
-
-        if (dealerToMarkAsPending) {
-            // Create the updated dealer object with "confirmed" property set to false and include remarks
-            const updatedDealer = {
-                ...dealerToMarkAsPending,
-                confirmed: false,
-                remarks: remarks,
-            };
-
-            // Update the state with the updated dealer
-            setDealer1((prevDealerList) => {
-                if (prevDealerList) {
-                    return prevDealerList.map((dealerItem) =>
-                        dealerItem.dealerid === objectId ? updatedDealer : dealerItem
-                    );
-                } else {
-                    return null; // Handle the case when dealer1 is null
-                }
-            });
-
+     
             // Call the markDealerAsPending function to update the dealer's status on the server
             markDealerAsPending(objectId, remarks);
 
             // Close the modal after submitting
             handlePendingClose();
-        }
+        
+    };
+
+    const handleDeclineClick = (objectId: string) => {
+        // Find the dealer to mark as pending in the list
+
+        const dateArchive = moment().format('YYYY-MM-DD');
+
+
+        // Call the declineDealer function to update the dealer's status on the server
+        declineDealer(objectId, remarks, dateArchive);
+
+        handleDeclinedClose();
     };
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -445,7 +466,22 @@ export default function DealerProfileListUI() {
                         />
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={2}>
-                        Decline
+                        <DataGrid
+                            rows={rowsDeclined}
+                            sx={{ textAlign: 'center', fontSize: 15, color: '#203949', height: '370px', margin: '30px 10px 0px 17px' }}
+                            columns={columnsDeclined.map((column) => ({
+                                ...column,
+                            }))}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        pageSize: 5,
+                                    },
+                                },
+                            }}
+                            pageSizeOptions={[5]}
+
+                        />
                     </CustomTabPanel>
                 </Box>
 

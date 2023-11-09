@@ -55,18 +55,18 @@ public class DealerController {
     }
 
     @PutMapping("/confirmDealer/{dealerId}")
-    public ResponseEntity<String> confirmDealer(@PathVariable String dealerId,  @RequestBody Double updatedCreditlimit ) {
+    public ResponseEntity<String> confirmDealer(@PathVariable String dealerId,  @RequestParam Double creditlimit ) {
         // Call the updateDealerConfirmation function to update the "confirmed" property on the server
-        dealerService.updateDealerConfirmation(dealerId, updatedCreditlimit);
+        dealerService.updateDealerConfirmation(dealerId, creditlimit);
 
 
         return ResponseEntity.ok("Email sent successfully!");
     }
 
     @PutMapping("/updateDealerPending/{dealerId}")
-    public ResponseEntity<String> pendingDealer(@PathVariable String dealerId, @RequestBody String updatedRemarks) {
+    public ResponseEntity<String> pendingDealer(@PathVariable String dealerId, @RequestParam String remarks) {
             // Call the updateDealerPending function to update the "pending" property on the server
-            dealerService.updateDealerPending(dealerId, updatedRemarks);
+            dealerService.updateDealerPending(dealerId, remarks);
 
 
             return ResponseEntity.ok("Email sent successfully!");

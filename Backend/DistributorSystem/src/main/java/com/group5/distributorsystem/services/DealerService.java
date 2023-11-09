@@ -138,7 +138,7 @@ public class DealerService {
         return dealerRepository.findByIsconfirmedFalse();
     }
 
-    public void updateDealerConfirmation(String dealerId, Double updatedCreditlimit) {
+    public void updateDealerConfirmation(String dealerId, Double creditlimit) {
         Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
         // Get the dealer's information
         if (optionalDealer.isPresent()) {
@@ -148,7 +148,7 @@ public class DealerService {
                     "Dealer Name: " + existingDealer.getFirstname() + " " + existingDealer.getMiddlename() + " " + existingDealer.getLastname() + "\n" +
                             "Dealer ID: " + existingDealer.getDealerid() + "\n" +
                             "Password: " + existingDealer.getPassword() + "\n" +
-                            "Your Credit Limit: " + updatedCreditlimit + "\n" +
+                            "Your Credit Limit: " + creditlimit + "\n" +
                             "Your dealer account has been confirmed. Thank you for registering.";
 
             // Use the EmailService to send the email using the dealer's email address
@@ -157,13 +157,13 @@ public class DealerService {
 
             existingDealer.setConfirmed(true);
             existingDealer.setRemarks("Confirmed");
-            existingDealer.setCreditlimit(updatedCreditlimit);
+            existingDealer.setCreditlimit(creditlimit);
             // Save the updated "confirmed" property back to the database
             dealerRepository.save(existingDealer);
         }
         }
 
-    public void updateDealerPending(String dealerId,  String updatedRemarks) {
+    public void updateDealerPending(String dealerId,  String remarks) {
         Dealer optionalDealer = dealerRepository.findById(dealerId).get();
 
         // Get the dealer's information
@@ -173,14 +173,14 @@ public class DealerService {
                 "Dealer Name: " + optionalDealer.getFirstname() +" "+  optionalDealer.getMiddlename() +" "+ optionalDealer.getLastname() + "\n" +
                         "Dealer ID: " + optionalDealer.getDealerid()+ "\n" +
                         "Your dealer account has been marked as pending.\n" +
-                        "Reason for Pending: " + updatedRemarks;
+                        "Reason for Pending: " + remarks;
 
         // Use the EmailService to send the email using the dealer's email address
         dealerEmailService.sendPendingEmail(optionalDealer, subject, content);
 
 
         optionalDealer.setConfirmed(false);
-        optionalDealer.setRemarks(updatedRemarks);
+        optionalDealer.setRemarks(remarks);
         // Save the updated "confirmed" property back to the database
         dealerRepository.save(optionalDealer);
     }
