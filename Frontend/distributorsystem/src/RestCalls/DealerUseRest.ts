@@ -4,7 +4,6 @@ import { IDealer, IDealerDocument } from "./Interfaces";
 import { de } from "date-fns/locale";
 import { error } from "console";
 import { toast } from "react-toastify";
-import { toast } from "react-toastify";
 
 
 

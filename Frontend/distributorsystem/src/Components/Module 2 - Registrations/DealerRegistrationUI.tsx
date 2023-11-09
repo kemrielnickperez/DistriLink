@@ -649,7 +649,7 @@ useEffect(() => {
 
     // console.log(selectedDistributor)
 
-}, []);
+}, [distributors]);
 
 
 {/**Return Statement*/ }

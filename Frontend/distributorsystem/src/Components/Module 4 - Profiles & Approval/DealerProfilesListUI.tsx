@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { IArchivedDealer, IDealer } from "../../RestCalls/Interfaces";
+import { useEffect, useRef, useState } from "react";
+import { IArchivedDealer, IDealer, IDistributor } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Alert, AlertTitle, Box, Button, Card, Grid, Modal, Slide, SlideProps, Snackbar, Tab, Tabs, TextField, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, Grid, Modal, Slide, SlideProps, Snackbar, Tab, Tabs, TextField, TextFieldProps, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import React from "react";
@@ -76,7 +76,7 @@ const TabStyle = styled(Tab)({
 })
 export default function DealerProfileListUI() {
     const navigate = useNavigate();
-    const [dealer1, setDealer1] = useState<IDealer[] | null>(null);
+    const [dealers, setDealers] = useState<IDealer[] | null>(null);
     const [archivedDealer, setArchivedDealer] = useState<IArchivedDealer[] | null>(null);
     const [openPending, setOpenPending] = useState(false);
     const handlePendingOpen = () => setOpenPending(true);
@@ -85,8 +85,7 @@ export default function DealerProfileListUI() {
     const handleDeclinedOpen = () => setOpenDeclinedModal(true);
     const handleDeclinedClose = () => setOpenDeclinedModal(false);
     const [creditLimitModalOpen, setCreditLimitModalOpen] = useState(false);
-    const handleConfirmOpen = () => setCreditLimitModalOpen(true);
-    const handleConfirmClose = () => setCreditLimitModalOpen(false);
+
     const [remarks, setRemarks] = useState(""); // State to capture remarks
     const [creditlimit, setCreditlimit] = useState(0);
     const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
@@ -100,8 +99,14 @@ export default function DealerProfileListUI() {
     const [value, setValue] = useState(0);
     const [filteredDealers, setFilteredDealers] = useState<IDealer[] | null>(null);
     const [filteredDealersConfirmed, setFilterDealersConfirmed] = useState<IDealer[] | null>(null);
-    const [filteredDealersConfirmed, setFilterDealersConfirmed] = useState<IDealer[] | null>(null);
     {/*Tabs*/ }
+
+
+    const creditLimitRef = useRef<TextFieldProps>(null);
+    const pendingReasonRef = useRef<TextFieldProps>(null);
+    const declineReasonRef = useRef<TextFieldProps>(null);
+
+
     function CustomTabPanel(props: TabPanelProps) {
         const { children, value, index, ...other } = props;
         return (
@@ -127,29 +132,38 @@ export default function DealerProfileListUI() {
         };
     }
 
-    useEffect(() => {
-        // Make an Axios GET request to fetch all orders
-        axios
-            .get<IDealer[]>('http://localhost:8080/dealer/getAllDealers')
+
+    function getAllDealers() {
+        axios.get<IDealer[]>('http://localhost:8080/dealer/getAllDealers')
             .then((response) => {
-                setDealer1(response.data);
-                // headerHandleAlert('Success', "Dealers fetched successfully.", 'success');
+                setDealers(response.data);
 
             })
             .catch((error) => {
-                console.error('Error fetching dealer:', error);
-            });
 
-        axios
-            .get<IArchivedDealer[]>(`http://localhost:8080/archived/getAllArchivedDealers`)
+                alert("Error retrieving payment receipts. Please try again.");
+            });
+    }
+
+    function getAllArchivedDealers() {
+        axios.get<IArchivedDealer[]>('http://localhost:8080/archived/getAllArchivedDealers')
             .then((response) => {
                 setArchivedDealer(response.data);
-                // headerHandleAlert('Success', "Archived Dealers fetched successfully.", 'success');
 
             })
             .catch((error) => {
-                console.error('Error fetching dealer:', error);
+
+                alert("Error retrieving payment receipts. Please try again.");
             });
+    }
+
+    const handleConfirmOpen = () => setCreditLimitModalOpen(true);
+    const handleConfirmClose = () => setCreditLimitModalOpen(false);
+
+    useEffect(() => {
+
+        getAllDealers();
+        getAllArchivedDealers();
 
     }, []);
 
@@ -176,56 +190,21 @@ export default function DealerProfileListUI() {
         { field: 'id', headerName: 'Dealer ID', width: 210 },
         { field: 'dealerName', headerName: 'Dealer Name', width: 300 },
         { field: 'submissionDate', headerName: 'Date Submitted', width: 203 },
+
         {
-            field: 'view', headerName: '', width: 150,
+            field: 'view',
+            headerName: '',
+            width: 150,
             renderCell: (params: { row: any; }) => {
-                const dealer = params.row;
                 return (
                     <StyledButton
                         onClick={() => {
-
-                            handleViewButtonClick(dealer.id);
+                            handleViewButtonClick(params.row.dealerid);
                         }}
                     >
                         View
-                    </StyledButton>)
-            }
-        },
-        {
-            field: 'pending', headerName: '', width: 150,
-            renderCell: (params: { row: any; }) => {
-                const dealer = params.row
-                return (
-                    <><StyledButton variant='contained'
-                        onClick={handlePendingOpen} >
-                        Pending
-                    </StyledButton><Grid item>
-                            <Modal
-                                open={openPending}
-                                onClose={handlePendingClose}
-                                aria-labelledby="modal-title"
-                                aria-describedby="Comment"
-                            >
-                                <Box sx={style}>
-                                    <Typography style={{ color: "#2D85E7", fontSize: '20px', fontWeight: 'bold', marginBottom: '20px' }} id="modal-title"> Reasons </Typography>
-                                    <TextField
-                                        id="filled-multiline-static"
-                                        label="State the Reason for Pending"
-                                        multiline
-                                        rows={4}
-                                        variant="filled"
-                                        style={{ width: '400px' }}
-                                        value={remarks} // Capture the remarks
-                                        onChange={(e) => setRemarks(e.target.value)}
-                                    />
-                                    <StyledButton onClick={() => handlePendingClick(dealer.id)} sx={{ marginTop: '20px', marginLeft: '150px' }}>
-                                        Submit
-                                    </StyledButton>
-                                </Box>
-                            </Modal>
-                        </Grid></>
-
-                )
+                    </StyledButton>
+                    )
             }
         },
         {
@@ -236,7 +215,8 @@ export default function DealerProfileListUI() {
                     <><StyledButton
                         onClick={handleConfirmOpen} >
                         Confirm
-                    </StyledButton><Grid item>
+                    </StyledButton>
+                         <Grid item>
                             <Modal
                                 open={creditLimitModalOpen}
                                 onClose={handleConfirmClose}
@@ -254,8 +234,9 @@ export default function DealerProfileListUI() {
                                         label="Credit Limit"
                                         variant="filled"
                                         style={{ width: '400px' }}
-                                        value={creditlimit}
-                                        onChange={(e) => setCreditlimit(parseFloat(e.target.value))}
+
+                                        inputRef={creditLimitRef}
+
                                     />
                                     <StyledButton
                                         onClick={() => handleConfirmButton(dealer.id)}
@@ -265,19 +246,62 @@ export default function DealerProfileListUI() {
                                     </StyledButton>
                                 </Box>
                             </Modal>
-                        </Grid></>
+                        </Grid> 
+                    </>
                 );
             }
         },
+        {
+            field: 'pending', headerName: '', width: 150,
+            renderCell: (params: { row: any; }) => {
+                const dealer = params.row
+                return (
+                    <>
+                        <StyledButton variant='contained'
+                            onClick={handlePendingOpen} >
+                            Pending
+                        </StyledButton>
+                          <Grid item>
+                            <Modal
+                                open={openPending}
+                                onClose={handlePendingClose}
+                                aria-labelledby="modal-title"
+                                aria-describedby="Comment"
+                            >
+                                <Box sx={style}>
+                                    <Typography style={{ color: "#2D85E7", fontSize: '20px', fontWeight: 'bold', marginBottom: '20px' }} id="modal-title"> Reasons </Typography>
+                                    <TextField
+                                        id="filled-multiline-static"
+                                        label="State the Reason for Pending"
+                                        multiline
+                                        rows={4}
+                                        variant="filled"
+                                        style={{ width: '400px' }}
+                                        inputRef={pendingReasonRef}
+                                    />
+                                    <StyledButton onClick={() => handlePendingClick(dealer.id)} sx={{ marginTop: '20px', marginLeft: '150px' }}>
+                                        Submit
+                                    </StyledButton>
+                                </Box>
+                            </Modal>
+                        </Grid> 
+                    </>
+
+                )
+            }
+        },
+
         {
             field: 'decline', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
                 const dealer = params.row;
                 return (
-                    <><StyledButton
-                        onClick={handleDeclinedOpen} >
-                        Decline
-                    </StyledButton><Grid item>
+                    <>
+                        <StyledButton
+                            onClick={handleDeclinedOpen} >
+                            Decline
+                        </StyledButton>
+                         <Grid item>
                             <Modal
                                 open={openDeclinedModal}
                                 onClose={handleDeclinedClose}
@@ -292,23 +316,23 @@ export default function DealerProfileListUI() {
                                         rows={4}
                                         variant="filled"
                                         style={{ width: '400px' }}
-                                        value={remarks} // Capture the remarks
-                                        onChange={(e) => setRemarks(e.target.value)} />
+                                        inputRef={declineReasonRef}
+                                    />
                                     <StyledButton onClick={() => handleDeclineClick(dealer.id)} sx={{ marginTop: '20px', marginLeft: '150px' }}>
                                         Submit
                                     </StyledButton>
                                 </Box>
                             </Modal>
-                        </Grid></>
+                        </Grid> 
+                    </>
                 );
             }
         },
 
     ]
     {/** Rows for DataGrid */ }
-    const rows = (dealer1 || []).filter((dealer) => !dealer.confirmed).map((dealerList) => ({
 
-    const rows = (dealer1 || []).filter((dealer) => !dealer.confirmed).map((dealerList) => ({
+    const rows = (dealers || []).filter((dealer) => !dealer.confirmed).map((dealerList) => ({
 
         id: dealerList.dealerid,
         dealerName: `${dealerList.firstname} ${dealerList.middlename} ${dealerList.lastname}`,
@@ -340,7 +364,7 @@ export default function DealerProfileListUI() {
 
     ]
     {/** Rows for DataGrid */ }
-    const rowsConfirmed = (dealer1 || []).filter((dealer) => dealer.confirmed).map((dealerList) => ({
+    const rowsConfirmed = (dealers || []).filter((dealer) => dealer.confirmed).map((dealerList) => ({
         id: dealerList.dealerid,
         dealerName: `${dealerList.firstname} ${dealerList.middlename} ${dealerList.lastname}`,
         submissionDate: dealerList.submissiondate,
@@ -374,23 +398,25 @@ export default function DealerProfileListUI() {
     };
 
     const handleConfirmButton = (objectId: string) => {
-       
-            // Call the confirmDealer function to update the dealer's status and credit limit on the server
-            confirmDealer(objectId, creditlimit);
 
-            // Close the modal after submitting
-            handleConfirmClose();
-        
+        // Call the confirmDealer function to update the dealer's status and credit limit on the server
+        confirmDealer(objectId, Number(creditLimitRef.current?.value));
+
+        // Close the modal after submitting
+        handleConfirmClose();
+        getAllDealers();
+
     };
 
     const handlePendingClick = (objectId: string) => {
-     
-            // Call the markDealerAsPending function to update the dealer's status on the server
-           // markDealerAsPending(objectId, remarks);
 
-            // Close the modal after submitting
-            handlePendingClose();
-        
+        // Call the markDealerAsPending function to update the dealer's status on the server
+        markDealerAsPending(objectId, pendingReasonRef.current!.value + "");
+
+        // Close the modal after submitting
+        handlePendingClose();
+
+
     };
 
     const handleDeclineClick = (objectId: string) => {
@@ -400,9 +426,10 @@ export default function DealerProfileListUI() {
 
 
         // Call the declineDealer function to update the dealer's status on the server
-        declineDealer(objectId, remarks, dateArchive);
+        declineDealer(objectId, declineReasonRef.current!.value + "", dateArchive);
 
         handleDeclinedClose();
+        getAllArchivedDealers();
     };
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -415,9 +442,9 @@ export default function DealerProfileListUI() {
                 <Box sx={{ width: '100%', marginTop: 3, marginLeft: 0.5 }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" style={{ marginLeft: 40 }}>
-                            <TabStyle label="Unconfirm" {...a11yProps(0)} />
-                            <TabStyle label="Confirmed" {...a11yProps(1)} />
-                            <TabStyle label="Decline" {...a11yProps(2)} />
+                            <TabStyle label="Unconfirmed Dealers" {...a11yProps(0)} />
+                            <TabStyle label="Confirmed Dealers" {...a11yProps(1)} />
+                            <TabStyle label="Declined Dealers (Archived)" {...a11yProps(2)} />
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
