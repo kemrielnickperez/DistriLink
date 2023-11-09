@@ -44,6 +44,34 @@ export interface IDealer {
     documentids: string[],
 }
 
+export interface IArchivedDealer {
+    dealerid:string,
+    firstname: string,
+    middlename: string,
+    lastname: string,
+    emailaddress :String,
+    password: String,
+    birthdate: string,
+    gender: string,
+    currentaddress: string,
+    permanentaddress: string,
+    contactnumber: string,
+    hasbusiness: boolean,
+    businessname: string,
+    businessphone: string,
+    businessaddress: string,
+    businesstin: string,
+    creditlimit: number,
+    submissiondate: string,
+    confirmed: boolean,
+    remarks: string,
+    distributor: IDistributor,
+    orderids: string[], // naa ta gihapon ni dapat
+    documentids: string[],
+    datearchived: string,
+}
+
+
 export interface IDealerDocument {
     documentid: string;
     name: string;

@@ -64,6 +64,19 @@ public class OrderController {
         return new ResponseEntity<>(orderService.updateOrderClosedStatus(orderid), HttpStatus.OK);
     }
 
+/*    @PutMapping("/applyPenalty/{orderId}")
+    public ResponseEntity<Object> applyPenalty(@PathVariable String orderId) {
+        orderService.applyPenaltyForLatePayments(orderId);
+        return new ResponseEntity<>("Penalty applied successfully for order " + orderId, HttpStatus.OK);
+    }*/
+    @PutMapping("/applyPenaltyForAllLatePayments")
+    public ResponseEntity<String> applyPenaltyForAllLatePayments() {
+            orderService.applyPenaltyForAllLatePayments();
+            return new ResponseEntity<>("Penalties applied successfully", HttpStatus.OK);
+
+    }
+
+
     @GetMapping("/getAllUnconfirmedOrders")
     public ResponseEntity<Object> getAllUnconfirmedOrders(){
         return new ResponseEntity<>(orderService.getAllUnconfirmedOrders(), HttpStatus.OK);

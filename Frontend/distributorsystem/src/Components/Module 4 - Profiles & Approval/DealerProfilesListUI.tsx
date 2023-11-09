@@ -254,10 +254,11 @@ export default function DealerProfileListUI() {
         {
             field: 'decline', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
+                const dealer = params.row;
                 return (
                     <StyledButton
                         onClick={() => {
-                            // Handle button click for this row here
+                          //  handleDeclineClick(dealer.id)
 
                         }}
                     >
@@ -338,7 +339,7 @@ export default function DealerProfileListUI() {
             });
 
             // Call the confirmDealer function to update the dealer's status and credit limit on the server
-            confirmDealer(objectId, creditlimit);
+            //confirmDealer(objectId, creditlimit);
             // Close the modal after submitting
             handleConfirmClose();
         }
@@ -369,7 +370,7 @@ export default function DealerProfileListUI() {
             });
 
             // Call the markDealerAsPending function to update the dealer's status on the server
-            markDealerAsPending(objectId, remarks);
+           // markDealerAsPending(objectId, remarks);
 
             // Close the modal after submitting
             handlePendingClose();

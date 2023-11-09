@@ -31,5 +31,17 @@ public class DealerEmailService {
         javaMailSender.send(mailMessage);
         System.out.println("Pending Email Sent Successfully!");
     }
+
+    public void sendDeclinedEmail(Dealer dealer, String subject, String content) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom("capstone.distrilink@gmail.com");
+        mailMessage.setTo(dealer.getEmailaddress());
+        mailMessage.setSubject(subject);
+        mailMessage.setText(content);
+
+        javaMailSender.send(mailMessage);
+        System.out.println("Declined Email Sent Successfully!");
+    }
+
     }
 

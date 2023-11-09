@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -46,11 +47,6 @@ public class DealerController {
         return new ResponseEntity<>(dealerService.getDealerByID(dealerid), HttpStatus.OK);
     }
 
-    @GetMapping("/getCreditLimit/{dealerId}")
-    public ResponseEntity<Object> getCreditLimit(@PathVariable String dealerId) {
-        double creditLimit = dealerService.getDealerCreditLimit(dealerId);
-        return new ResponseEntity<>(creditLimit, HttpStatus.OK);
-    }
 
     @PutMapping("/updateCreditLimit")
     public ResponseEntity<Object> updateCreditLimit(@RequestParam String dealerId, @RequestParam double newCreditLimit) {
@@ -58,36 +54,30 @@ public class DealerController {
         return new ResponseEntity<>("Dealer credit limit updated successfully!", HttpStatus.OK);
     }
 
-    @PutMapping("/setDealer/{dealerId}")
-    public ResponseEntity<String> updateDealerDetails(@PathVariable String dealerId, @RequestBody Dealer updatedDealer) {
-        try {
-            dealerService.updateDealerDetails(dealerId, updatedDealer);
-            return ResponseEntity.ok("Dealer set");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to set dealer" + e.getMessage());
-        }
-    }
-
     @PutMapping("/confirmDealer/{dealerId}")
-    public ResponseEntity<String> confirmDealer(@PathVariable String dealerId,  @RequestBody Dealer updatedDealer ) {
+    public ResponseEntity<String> confirmDealer(@PathVariable String dealerId,  @RequestBody Double updatedCreditlimit ) {
         // Call the updateDealerConfirmation function to update the "confirmed" property on the server
-        dealerService.updateDealerConfirmation(dealerId, updatedDealer);
+        dealerService.updateDealerConfirmation(dealerId, updatedCreditlimit);
 
 
         return ResponseEntity.ok("Email sent successfully!");
     }
 
     @PutMapping("/updateDealerPending/{dealerId}")
-    public ResponseEntity<String> pendingDealer(@PathVariable String dealerId, @RequestBody Dealer updatedDealer) {
+    public ResponseEntity<String> pendingDealer(@PathVariable String dealerId, @RequestBody String updatedRemarks) {
             // Call the updateDealerPending function to update the "pending" property on the server
-            dealerService.updateDealerPending(dealerId, updatedDealer);
+            dealerService.updateDealerPending(dealerId, updatedRemarks);
 
 
             return ResponseEntity.ok("Email sent successfully!");
         }
 
+    @PutMapping("/updateDealerDecline/{dealerId}")
+    public ResponseEntity<String> declineDealer(@PathVariable String dealerId, @RequestParam String remarks, @RequestParam LocalDate datearchived){
+        dealerService.updateArchivedDealer(dealerId, remarks, datearchived);
 
+        return ResponseEntity.ok("Email sent successfully!");
+    }
 
     @GetMapping("/getAllUnconfirmedDealers")
     public ResponseEntity<Object> getAllUnconfirmedDealers(){
