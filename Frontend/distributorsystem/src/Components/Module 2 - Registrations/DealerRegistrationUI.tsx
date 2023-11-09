@@ -645,7 +645,6 @@ export default function DealerRegistration() {
 useEffect(() => {
     const currentDate = dayjs().subtract(18, 'year') as Dayjs;
     setMaxDate(currentDate);
-
     getAllDistributors();
 
     // console.log(selectedDistributor)

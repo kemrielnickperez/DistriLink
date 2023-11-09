@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import moment from "moment";
+import { ToastContainer, toast } from "react-toastify";
 
 
 interface TabPanelProps {
@@ -98,6 +99,7 @@ export default function DealerProfileListUI() {
     const [alertSeverity, setAlertSeverity] = useState('success');
     const [value, setValue] = useState(0);
     const [filteredDealers, setFilteredDealers] = useState<IDealer[] | null>(null);
+    const [filteredDealersConfirmed, setFilterDealersConfirmed] = useState<IDealer[] | null>(null);
     const [filteredDealersConfirmed, setFilterDealersConfirmed] = useState<IDealer[] | null>(null);
     {/*Tabs*/ }
     function CustomTabPanel(props: TabPanelProps) {
@@ -306,9 +308,12 @@ export default function DealerProfileListUI() {
     {/** Rows for DataGrid */ }
     const rows = (dealer1 || []).filter((dealer) => !dealer.confirmed).map((dealerList) => ({
 
+    const rows = (dealer1 || []).filter((dealer) => !dealer.confirmed).map((dealerList) => ({
+
         id: dealerList.dealerid,
         dealerName: `${dealerList.firstname} ${dealerList.middlename} ${dealerList.lastname}`,
         submissionDate: dealerList.submissiondate,
+
 
     }));
 
@@ -364,7 +369,6 @@ export default function DealerProfileListUI() {
 
     // const filterRows= showConfirmDealers ? rows.filter((dealer1)?.map(dealerList)=>())
     const handleViewButtonClick = (objectId: string) => {
-
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
         navigate(`/dealerProfileDetails/${objectId}`);
     };
@@ -382,7 +386,7 @@ export default function DealerProfileListUI() {
     const handlePendingClick = (objectId: string) => {
      
             // Call the markDealerAsPending function to update the dealer's status on the server
-            markDealerAsPending(objectId, remarks);
+           // markDealerAsPending(objectId, remarks);
 
             // Close the modal after submitting
             handlePendingClose();
@@ -404,19 +408,6 @@ export default function DealerProfileListUI() {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-    const filterDealers = () => {
-        if (dealer1) {
-            const unconfirmedDealers = dealer1.filter((dealer) => !dealer.confirmed);
-            setFilteredDealers(unconfirmedDealers);
-        }
-    };
-    const filterDealersConfirmed = () => {
-        if (dealer1) {
-            const confirmedDealers = dealer1.filter((dealer) => dealer.confirmed);
-            setFilterDealersConfirmed(confirmedDealers);
-        }
-    };
-
     return (
         <div>
             <StyledCard>
@@ -484,8 +475,24 @@ export default function DealerProfileListUI() {
                         />
                     </CustomTabPanel>
                 </Box>
-
             </StyledCard>
+
+            {/* Alerts */}
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                limit={3}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                style={{ width: 450 }}
+                theme="colored"
+            />
         </div>
+
     );
 }
