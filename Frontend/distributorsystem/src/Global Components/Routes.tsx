@@ -34,6 +34,7 @@ import DealerProfileListUI from '../Components/Module 4 - Profiles & Approval/De
 import { EmployeeProfileDetails } from '../Components/Module 4 - Profiles & Approval/EmployeeProfileDetailsUI';
 import OrderConfirmation from '../Components/Module 5 - Product Distribution and Confirmation/OrderConfirmationUI';
 import { OrderTransactionDetails } from '../Components/Module 5 - Product Distribution and Confirmation/OrderTransactionDetails';
+import DistributorRegistration from '../Components/Module 2 - Registrations/DistributorRegistrationUI';
 
 export default function MainRoutes() {
     return (
@@ -47,6 +48,7 @@ export default function MainRoutes() {
                     <Route path="/SignUpScreen" element={<SignupScreen />} />
                     <Route path="/DealerRegistration" element={<DealerRegistration />} />
                     <Route path="/EmployeeRegistration" element={<EmployeeRegistration />} />
+                    <Route path="/DistributorRegistration" element={<DistributorRegistration/>}/>
                 </Route>
 
                 {/* <SigninScreen/> */}

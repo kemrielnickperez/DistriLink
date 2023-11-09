@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { IDealer, IDealerDocument } from "./Interfaces";
 import { de } from "date-fns/locale";
 import { error } from "console";
+import { toast } from "react-toastify";
 
 
 
@@ -41,7 +42,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
         formData.append('confirmed', dealer.confirmed.toString());
         formData.append('remarks', dealer.remarks.toString());
 
-         formData.append('distributor.distributorid', dealer.distributor.distributorid.toString());
+        formData.append('distributor.distributorid', dealer.distributor.distributorid.toString());
         formData.append('distributor.firstname', dealer.distributor.firstname.toString());
         formData.append('distributor.middlename', dealer.distributor.middlename.toString());
         formData.append('distributor.lastname', dealer.distributor.lastname.toString());
@@ -112,9 +113,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             },
         })
             .then((response) => {
-                
-                
-
                 alert('Success!');
             })
             .catch((error) => {
@@ -138,10 +136,30 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
                 }
             })
             .then((response) => {
-                alert('The dealer confirmed successfully!');
+                // alert('The dealer confirmed successfully!');
+                toast.success('Dealer has now been confirmed!', {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             })
             .catch((error) => {
-                alert('Error dealer confirmation. Please try again.');
+                // alert('Error dealer confirmation. Please try again.');
+                toast.error('Unexpected dealer upon confirming dealer. Please try again.', {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             });
         }
 
@@ -158,10 +176,30 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
                 }
             })
             .then((response) => {
-                alert('Dealer status updated to pending successfully!');
+                // alert('Dealer status updated to pending successfully!');
+                toast.success("Dealer's status is on pending!" , {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             })
             .catch((error) => {
-                alert('Error updating dealer status to pending. Please try again.');
+                //alert('Error updating dealer status to pending. Please try again.');
+                toast.error("Unexpected Error pending a dealer. Please try again" , {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             });
         }
 
@@ -177,10 +215,30 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             }
         })
             .then((response) => {
-                alert('Dealer confirmation updated successfully!');
+                // alert('Dealer confirmation updated successfully!');
+                toast.success('Dealer confirmation has now been updated!', {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             })
             .catch((error) => {
-                alert('Error updating dealer confirmation. Please try again.');
+                //alert('Error updating dealer confirmation. Please try again.');
+                toast.error('Error updating dealer confirmation. Please try again.', {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             });
     }
 

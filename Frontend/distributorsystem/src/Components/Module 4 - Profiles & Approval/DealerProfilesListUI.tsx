@@ -6,6 +6,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
+import { ToastContainer, toast } from "react-toastify";
 
 
 interface TabPanelProps {
@@ -93,7 +94,7 @@ export default function DealerProfileListUI() {
     const [alertSeverity, setAlertSeverity] = useState('success');
     const [value, setValue] = useState(0);
     const [filteredDealers, setFilteredDealers] = useState<IDealer[] | null>(null);
-    const [filteredDealersConfirmed, setFilterDealersConfirmed]= useState<IDealer[] | null>(null);
+    const [filteredDealersConfirmed, setFilterDealersConfirmed] = useState<IDealer[] | null>(null);
     {/*Tabs*/ }
     function CustomTabPanel(props: TabPanelProps) {
         const { children, value, index, ...other } = props;
@@ -132,9 +133,7 @@ export default function DealerProfileListUI() {
             .catch((error) => {
                 console.error('Error fetching dealer:', error);
             });
-        filterDealers();
-        filterDealersConfirmed()
-    }, [dealer1]);
+    }, []);
 
     {/**Handler for Alert - Function to define the type of alert*/ }
 
@@ -269,10 +268,12 @@ export default function DealerProfileListUI() {
 
     ]
     {/** Rows for DataGrid */ }
-    const rows = (filteredDealers || []).map((dealerList) => ({
+    const rows = (dealer1 || []).filter((dealer) => !dealer.confirmed).map((dealerList) => ({
+
         id: dealerList.dealerid,
         dealerName: `${dealerList.firstname} ${dealerList.middlename} ${dealerList.lastname}`,
         submissionDate: dealerList.submissiondate,
+
     }));
 
 
@@ -299,7 +300,7 @@ export default function DealerProfileListUI() {
 
     ]
     {/** Rows for DataGrid */ }
-    const rowsConfirmed = (filteredDealersConfirmed || []).map((dealerList) => ({
+    const rowsConfirmed = (dealer1 || []).filter((dealer) => dealer.confirmed).map((dealerList) => ({
         id: dealerList.dealerid,
         dealerName: `${dealerList.firstname} ${dealerList.middlename} ${dealerList.lastname}`,
         submissionDate: dealerList.submissiondate,
@@ -307,12 +308,8 @@ export default function DealerProfileListUI() {
 
 
 
-
-
-
     // const filterRows= showConfirmDealers ? rows.filter((dealer1)?.map(dealerList)=>())
     const handleViewButtonClick = (objectId: string) => {
-
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
         navigate(`/dealerProfileDetails/${objectId}`);
     };
@@ -320,7 +317,7 @@ export default function DealerProfileListUI() {
     const handleConfirmButton = (objectId: string) => {
         // Find the dealer to confirm in the list
         const dealerToConfirm = dealer1?.find((dealerItem) => dealerItem.dealerid === objectId);
-    
+
         if (dealerToConfirm) {
             // Create the updated dealer object with the new credit limit and confirmed status
             const updatedDealer = {
@@ -328,7 +325,7 @@ export default function DealerProfileListUI() {
                 confirmed: true,
                 creditlimit: creditlimit,
             };
-    
+
             // Update the state with the updated dealer
             setDealer1((prevDealerList) => {
                 if (prevDealerList) {
@@ -339,13 +336,13 @@ export default function DealerProfileListUI() {
                     return null; // Handle the case when dealer1 is null
                 }
             });
-    
+
             // Call the confirmDealer function to update the dealer's status and credit limit on the server
             confirmDealer(objectId, creditlimit);
-    
             // Close the modal after submitting
             handleConfirmClose();
         }
+
     };
 
     const handlePendingClick = (objectId: string) => {
@@ -382,19 +379,6 @@ export default function DealerProfileListUI() {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-    const filterDealers = () => {
-        if (dealer1) {
-            const unconfirmedDealers = dealer1.filter((dealer) => !dealer.confirmed);
-            setFilteredDealers(unconfirmedDealers);
-        }
-    };
-    const filterDealersConfirmed = () => {
-        if (dealer1) {
-            const confirmedDealers = dealer1.filter((dealer) => dealer.confirmed);
-            setFilterDealersConfirmed(confirmedDealers);
-        }
-    };
-
     return (
         <div>
             <StyledCard>
@@ -447,8 +431,24 @@ export default function DealerProfileListUI() {
                         Decline
                     </CustomTabPanel>
                 </Box>
-
             </StyledCard>
+
+            {/* Alerts */}
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                limit={3}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                style={{ width: 450 }}
+                theme="colored"
+            />
         </div>
+
     );
 }
