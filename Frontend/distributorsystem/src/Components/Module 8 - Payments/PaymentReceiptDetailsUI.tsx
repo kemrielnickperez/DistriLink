@@ -362,7 +362,7 @@ export function PaymentReceiptDetails() {
                        </StackStyle>
                        <StackStyle sx={{ top: '40%', left: '44%' }}>
                            <StyleLabel>Receiver Name</StyleLabel>
-                           <StyleData>{collectionPaymentReceipt?.confirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
+                           <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
                                : ''} </StyleData>
                        </StackStyle>
                        <StackStyle sx={{ top: '40%', left: '60%' }}>
@@ -396,7 +396,7 @@ export function PaymentReceiptDetails() {
                        </StackStyle>
                        <StackStyle sx={{ top: '60%', left: '12%' }}>
                            <StyleLabel>Payment Status</StyleLabel>
-                           <StyleData>{collectionPaymentReceipt?.confirmed ? "Confirmed" : "Unconfirmed"}</StyleData>
+                           <StyleData>{collectionPaymentReceipt?.isconfirmed ? "Confirmed" : "Unconfirmed"}</StyleData>
                        </StackStyle>
    
                        <StackStyle sx={{ top: '60%', left: '27%' }}>
@@ -406,7 +406,7 @@ export function PaymentReceiptDetails() {
    
                        <StackStyle sx={{ top: '60%', left: '43%' }}>
                            <StyleLabel>Receiver Name</StyleLabel>
-                           <StyleData>{collectionPaymentReceipt?.confirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
+                           <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
                                : ''}</StyleData>
                        </StackStyle>
    

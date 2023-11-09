@@ -181,7 +181,7 @@ export interface ICollectionPaymentReceipt extends IPaymentReceipt{
     remitteddate: string,
     remittedamount: number,  
     confirmationdate: string,
-    confirmed: boolean,  
+    isconfirmed: boolean,  
 }
 
 export interface ICollectorRemittanceProof {

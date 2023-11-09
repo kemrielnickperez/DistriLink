@@ -82,6 +82,8 @@ export default function PaymentList() {
 
     useEffect(() => {
         getAllPaymentReceipts();
+       
+       
 
     }, [paymentreceipts]);
     {/**Handler for Alert - Function to define the type of alert*/ }
@@ -133,12 +135,15 @@ export default function PaymentList() {
     ]
     {/** Rows for DataGrid */ }
     const rows = paymentreceipts.map((paymentreceipt) => {
-        let confirmed = null; // Initialize with null
+       
+        let isconfirmed = null; // Initialize with null
 
         // Check if the payment receipt is of type ICollectionPaymentReceipt
-        if (paymentreceipt.paymenttype === 'collection' && 'confirmed' in paymentreceipt) {
+        if (paymentreceipt.paymenttype === 'collection' && 'isconfirmed' in paymentreceipt) {
             // If it is, set the confirmed value
-            confirmed = paymentreceipt.confirmed;
+           
+            isconfirmed = paymentreceipt.isconfirmed;
+            console.log(paymentreceipt.isconfirmed)
         }
 
         return {
@@ -147,7 +152,7 @@ export default function PaymentList() {
             paymentTransactionid: paymentreceipt.paymenttransaction ? paymentreceipt.paymenttransaction.paymenttransactionid : '',
             paymentType: paymentreceipt.paymenttype,
             paymentStatus: paymentreceipt.paymenttype === 'collection'
-                ? (confirmed ? 'Confirmed' : 'Unconfirmed')
+                ? (isconfirmed ? 'Confirmed' : 'Unconfirmed')
                 : '',
             receiverName: paymentreceipt.cashier ? `${paymentreceipt.cashier.firstname} ${paymentreceipt.cashier.lastname}` : '',
 
@@ -161,13 +166,17 @@ export default function PaymentList() {
     };
     const handleConfirmPaymentsButton = () => {
         try{
+            
+        
         let count = 0;
         if (!selectedRows.length) {
             headerHandleAlert('Payment Receipt Required', "Please select payment receipt to confirm", 'warning');
         }
         else {
+            
             selectedRows.map((id) => {
-                confirmCollectionPaymentReceipt(id, '3593cd2f')
+              
+                confirmCollectionPaymentReceipt(id, 'd5be5e4b')
                 count++;
 
                 if (count === selectedRows.length) {
@@ -189,6 +198,8 @@ export default function PaymentList() {
     }catch(error){
         headerHandleAlert('Unexpected Error', "Cannot update Payment Receipt. Please try again.", 'error');
     }
+
+    setSelectedRows([]);
 
     }
 

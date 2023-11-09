@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -119,6 +120,8 @@ public class CollectionPaymentReceiptService {
 
         CollectionPaymentReceipt collectionPaymentReceipt = collectionPaymentReceiptRepository.findById(collectionpaymentreciptid).get();
 
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
+
         Employee cashier = employeeRepository.findById(cashierid).get();
 
         collectionPaymentReceipt.setIsconfirmed(true);
@@ -126,6 +129,16 @@ public class CollectionPaymentReceiptService {
         cashier.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
 
 
+        paymentTransaction.setPaymentreceiptid(collectionPaymentReceipt.getPaymentreceiptid());
+
+        paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
+
+        collectionPaymentReceipt.setConfirmationdate(LocalDate.now()
+        );
+        collectionPaymentReceipt.setAmountpaid(collectionPaymentReceipt.getRemittedamount());
+        collectionPaymentReceipt.setPaymenttransaction(paymentTransaction);
+
+        paymentTransactionRepository.save(paymentTransaction);
         collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
         employeeRepository.save(cashier);
 
