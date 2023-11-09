@@ -35,4 +35,9 @@ public class DistributorController {
     public ResponseEntity<Object> getAllDistributors(){
         return  new ResponseEntity<>(distributorService.getAllDistributors(), HttpStatus.OK);
     }
+
+    @GetMapping("/getDistributorByID/{distributorid}")
+    public ResponseEntity<Object> getDistributorByID(@PathVariable String distributorid){
+        return new ResponseEntity<>(distributorService.getDistributorByID(distributorid), HttpStatus.OK);
+    }
 }

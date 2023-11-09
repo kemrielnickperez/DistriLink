@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { IDealer, IDealerDocument } from "./Interfaces";
 import { de } from "date-fns/locale";
 import { error } from "console";
+import { toast } from "react-toastify";
 
 
 
@@ -125,53 +126,82 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
 
     }
 
-    function confirmDealer(dealerID: string, creditLimit: number) {
-        const confirmDealer = {
-            dealerid: dealerID,
-            confirmed: true,
-            creditlimit: creditLimit,
-        };
+    function confirmDealer(dealerID: string, creditLimit: number){
+        
 
-        axios.put(`http://localhost:8080/dealer/confirmDealer/${dealerID}`, confirmDealer, {
-            headers: {
-                'Content-Type': 'application/json',
+        axios.put(`http://localhost:8080/dealer/confirmDealer/${dealerID}`, null,{
+            params: {
+                creditlimit: creditLimit,
             }
         })
-            .then((response) => {
-                alert('The dealer confirmed successfully!');
+        .then((response) => {
+            // alert('The dealer confirmed successfully!');
+            toast.success('Dealer has now been confirmed!', {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
             })
-            .catch((error) => {
-                alert('Error dealer confirmation. Please try again.');
-            });
+        })
+        .catch((error) => {
+            // alert('Error dealer confirmation. Please try again.');
+            toast.error('Unexpected dealer upon confirming dealer. Please try again.', {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+        });
     }
 
     function markDealerAsPending(dealerID: string, reason: string) {
-        const pendingDealer = {
-            dealerid: dealerID,
-            confirmed: false,
-            remarks: reason,
-        };
+       
 
-        axios.put(`http://localhost:8080/dealer/updateDealerPending/${dealerID}`, pendingDealer, {
-            headers: {
-                'Content-Type': 'application/json',
+        axios.put(`http://localhost:8080/dealer/updateDealerPending/${dealerID}`, null, {
+            params: {
+                remarks: reason,
             }
         })
-            .then((response) => {
-                alert('Dealer status updated to pending successfully!');
+        .then((response) => {
+            // alert('Dealer status updated to pending successfully!');
+            toast.success("Dealer's status is on pending!" , {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
             })
-            .catch((error) => {
-                alert('Error updating dealer status to pending. Please try again.');
-            });
+        })
+        .catch((error) => {
+            //alert('Error updating dealer status to pending. Please try again.');
+            toast.error("Unexpected Error pending a dealer. Please try again" , {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+        });
     }
 
     function declineDealer(dealerID: string, reason: string, dateArchived: string) {
         console.log(dealerID + dateArchived)
 
-        const declineDealer = {
-            remarks: reason,
-            datearchived: dateArchived,
-        };
+       
 
         axios.put(`http://localhost:8080/dealer/updateDealerDecline/${dealerID}`, null, {
             params: {
@@ -180,11 +210,31 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             }
         })
             .then((response) => {
-                alert('Dealer declined successfully!');
+                //alert('Dealer declined successfully!');
+                toast.success("Dealer declined successfully!" , {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             })
             .catch((error) => {
                 console.log(error)
-                alert('Error declininig dealer. Please try again.');
+                //alert('Error declininig dealer. Please try again.');
+                toast.error("Unexpected Error decline a dealer. Please try again" , {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             });
     }
 
