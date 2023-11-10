@@ -1,8 +1,6 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { useEffect, useState } from "react";
+import axios, {  } from "axios";
+import { useState } from "react";
 import { IDealer, IDealerDocument } from "./Interfaces";
-import { de } from "date-fns/locale";
-import { error } from "console";
 
 
 

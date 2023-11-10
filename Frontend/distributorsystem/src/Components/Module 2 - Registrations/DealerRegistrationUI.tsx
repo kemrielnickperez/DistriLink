@@ -17,7 +17,7 @@ import axios from "axios";
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import { error } from "console";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { es } from "date-fns/locale";
+
 {/**Grids Body*/ }
 const ImageStyle = styled(Typography)({
     display: 'flex',
@@ -888,7 +888,7 @@ return (
                             value={selectedDistributor}
                             onChange={
                                 (event, newValue) => {
-                                setSelectedDistributor(newValue!),
+                                setSelectedDistributor(newValue!);
                                 handleInputChange('distributor')}}
                             renderInput={(params) => (
                                 <StyledTextField

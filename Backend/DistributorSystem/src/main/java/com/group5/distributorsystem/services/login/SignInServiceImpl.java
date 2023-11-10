@@ -65,10 +65,10 @@ public class SignInServiceImpl implements SignInService{
             result.put("userId", distributor.getDistributorid());
             result.put("tableName", "Distributor");
         } else if (employee != null && employee.getPassword().equals(password)) {
-            if (employee.isIs_salesassociate()==true){
+            if (employee.isIs_salesassociate()){
                 result.put("userId", employee.getEmployeeid());
                 result.put("tableName", "Sales Associate");
-            } else if(employee.isIs_cashier()==true){
+            } else if(employee.isIs_cashier()){
                 result.put("userId", employee.getEmployeeid());
                 result.put("tableName", "Cashier");
             }
