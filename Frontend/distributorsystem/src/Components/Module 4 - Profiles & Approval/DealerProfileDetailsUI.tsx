@@ -101,7 +101,7 @@ const StyleMainLabel = styled(Typography)({
     marginLeft: 90,
     marginRight: 50,
     color: '#707070',
-    fontSize: '20px',
+    fontSize: '18px',
     fontFamily: 'Inter',
 })
 const StyleMainInfo = styled(Typography)({
@@ -115,7 +115,7 @@ const StyleMainInfo = styled(Typography)({
     // left: 565,
     // top: 220,
     color: '#203949',
-    fontSize: '20px',
+    fontSize: '18px',
     fontFamily: 'Inter',
 })
 
@@ -247,7 +247,7 @@ export default function DealerProfileDetails() {
 
     const [value, setValue] = useState(0);
 
-    const [getDealerByID, newDealer, updateDealer, confirmDealer, markDealerAsPending, isDealerFound, dealer,] = useRestDealer();
+    const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer] = useRestDealer();
 
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
 
@@ -277,6 +277,7 @@ export default function DealerProfileDetails() {
 
 
 
+    {/*Tabs*/ }
     function CustomTabPanel(props: TabPanelProps) {
         const { children, value, index, ...other } = props;
         return (
@@ -295,7 +296,12 @@ export default function DealerProfileDetails() {
             </div>
         );
     }
-
+    function a11yProps(index: number) {
+        return {
+            id: `simple-tab-${index}`,
+            'aria-controls': `simple-tabpanel-${index}`,
+        };
+    }
     {/**Handler for Alert - Function to define the type of alert*/ }
     function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
         setTitle(title);
@@ -312,12 +318,7 @@ export default function DealerProfileDetails() {
         setOpenAlert(false);
     };
 
-    function a11yProps(index: number) {
-        return {
-            id: `simple-tab-${index}`,
-            'aria-controls': `simple-tabpanel-${index}`,
-        };
-    }
+    
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -618,8 +619,8 @@ export default function DealerProfileDetails() {
                             <StyleMainInfo style={{ marginTop: 15 }}>{dealer?.firstname} {dealer?.middlename} {dealer?.lastname}</StyleMainInfo>
                         </Grid>
                         <Grid item >
-                            <StyleMainLabel style={{ marginLeft: 70 }}>Dealer ID</StyleMainLabel>
-                            <StyleMainInfo style={{ marginTop: 15, marginLeft: 90 }}>{dealer?.dealerid}</StyleMainInfo>
+                            <StyleMainLabel style={{ marginLeft: 91 }}>Dealer ID</StyleMainLabel>
+                            <StyleMainInfo style={{ marginTop: 15, marginLeft: 111 }}>{dealer?.dealerid}</StyleMainInfo>
                         </Grid>
                         <Grid item>
                             <StyleMainLabel>

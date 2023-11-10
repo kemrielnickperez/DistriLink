@@ -1,9 +1,11 @@
 package com.group5.distributorsystem.services;
 
 
+import com.group5.distributorsystem.models.ArchivedDealer;
 import com.group5.distributorsystem.models.Dealer;
 import com.group5.distributorsystem.models.DealerDocument;
 import com.group5.distributorsystem.models.Distributor;
+import com.group5.distributorsystem.repositories.ArchivedDealerRepository;
 import com.group5.distributorsystem.repositories.DealerDocumentRepository;
 import com.group5.distributorsystem.repositories.DealerRepository;
 import com.group5.distributorsystem.repositories.DistributorRepository;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +39,9 @@ public class DealerService {
 
     @Autowired
     DistributorRepository distributorRepository;
+
+    @Autowired
+    ArchivedDealerRepository archivedDealerRepository;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -118,14 +124,6 @@ public class DealerService {
         return dealerRepository.findByDealeridAndPassword(dealerid, password);
     }
 
-    public double getDealerCreditLimit(String dealerId) {
-        Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
-        if (optionalDealer.isPresent()) {
-            return optionalDealer.get().getCreditlimit();
-        }
-        return 0.0; // Return a default value or handle the case where the dealer doesn't exist.
-    }
-
     public void updateDealerCreditLimit(String dealerId, double newCreditLimit) {
         Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
         if (optionalDealer.isPresent()) {
@@ -137,26 +135,11 @@ public class DealerService {
         }
     }
 
-    public void updateDealerDetails(String dealerId, Dealer updatedDealer) {
-        Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
-
-        if (optionalDealer.isPresent()) {
-            Dealer existingDealer = optionalDealer.get();
-
-            // Update the fields you want
-            existingDealer.setRemarks(updatedDealer.getRemarks());
-            existingDealer.setConfirmed(updatedDealer.getConfirmed());
-
-            // Save the updated Dealer back to the database
-            dealerRepository.save(existingDealer);
-        }
-    }
-
     public List<Dealer> getAllUnconfirmedDealers() {
         return dealerRepository.findByIsconfirmedFalse();
     }
 
-    public void updateDealerConfirmation(String dealerId, Dealer updatedDealer) {
+    public void updateDealerConfirmation(String dealerId, Double creditlimit) {
         Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
         // Get the dealer's information
         if (optionalDealer.isPresent()) {
@@ -166,7 +149,7 @@ public class DealerService {
                     "Dealer Name: " + existingDealer.getFirstname() + " " + existingDealer.getMiddlename() + " " + existingDealer.getLastname() + "\n" +
                             "Dealer ID: " + existingDealer.getDealerid() + "\n" +
                             "Password: " + existingDealer.getPassword() + "\n" +
-                            "Your Credit Limit: " + updatedDealer.getCreditlimit() + "\n" +
+                            "Your Credit Limit: " + creditlimit + "\n" +
                             "Your dealer account has been confirmed. Thank you for registering.";
 
             // Use the EmailService to send the email using the dealer's email address
@@ -175,13 +158,13 @@ public class DealerService {
 
             existingDealer.setConfirmed(true);
             existingDealer.setRemarks("Confirmed");
-            existingDealer.setCreditlimit(updatedDealer.getCreditlimit());
+            existingDealer.setCreditlimit(creditlimit);
             // Save the updated "confirmed" property back to the database
             dealerRepository.save(existingDealer);
         }
         }
 
-    public void updateDealerPending(String dealerId,  Dealer updatedDealer) {
+    public void updateDealerPending(String dealerId,  String remarks) {
         Dealer optionalDealer = dealerRepository.findById(dealerId).get();
 
         // Get the dealer's information
@@ -191,17 +174,37 @@ public class DealerService {
                 "Dealer Name: " + optionalDealer.getFirstname() +" "+  optionalDealer.getMiddlename() +" "+ optionalDealer.getLastname() + "\n" +
                         "Dealer ID: " + optionalDealer.getDealerid()+ "\n" +
                         "Your dealer account has been marked as pending.\n" +
-                        "Reason for Pending: " + updatedDealer.getRemarks();
+                        "Reason for Pending: " + remarks;
 
         // Use the EmailService to send the email using the dealer's email address
         dealerEmailService.sendPendingEmail(optionalDealer, subject, content);
 
 
         optionalDealer.setConfirmed(false);
-        optionalDealer.setRemarks(updatedDealer.getRemarks());
+        optionalDealer.setRemarks(remarks);
         // Save the updated "confirmed" property back to the database
         dealerRepository.save(optionalDealer);
     }
+
+    public void updateArchivedDealer(String dealerId, String remarks, LocalDate datearchived){
+        Dealer optionalDealer = dealerRepository.findById(dealerId).get();
+
+        String subject = "Dealer Account Status Update";
+        String content =
+                "Dealer Name: " + optionalDealer.getFirstname() +" "+  optionalDealer.getMiddlename() +" "+ optionalDealer.getLastname() + "\n" +
+                        "Dealer ID: " + optionalDealer.getDealerid()+ "\n" +
+                        "Your dealer account has been declined.\n" +
+                        "Reason for Decline: " + remarks;
+
+        dealerEmailService.sendDeclinedEmail(optionalDealer, subject, content);
+
+        ArchivedDealer archivedDealer = new ArchivedDealer(optionalDealer.getDealerid(), optionalDealer.getFirstname(), optionalDealer.getMiddlename(), optionalDealer.getLastname(), optionalDealer.getEmailaddress(), optionalDealer.getPassword(), optionalDealer.getBirthdate() , optionalDealer.getGender(), optionalDealer.getCurrentaddress(), optionalDealer.getPermanentaddress(), optionalDealer.getContactnumber(), optionalDealer.isHasbusiness(), optionalDealer.getBusinessname(), optionalDealer.getBusinessaddress(), optionalDealer.getBusinessphone(), optionalDealer.getBusinesstin(), optionalDealer.getCreditlimit(), optionalDealer.getSubmissiondate(), optionalDealer.getIsconfirmed(), remarks, optionalDealer.getDistributor(), optionalDealer.getOrderids(), optionalDealer.getDocumentids(), datearchived);
+
+        archivedDealerRepository.save(archivedDealer);
+        dealerRepository.delete(optionalDealer);
+
+    }
+
 
     }
 

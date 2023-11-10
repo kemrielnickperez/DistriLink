@@ -1,12 +1,13 @@
 import axios, {  } from "axios";
 import { useState } from "react";
 import { IDealer, IDealerDocument } from "./Interfaces";
+import { toast } from "react-toastify";
 
 
 
 
 
-export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, (dealerID: string) => void, (dealerID:string, creditlimit: number) => void, (dealerID: string, remarks: string) => void, boolean | undefined, IDealer | undefined] => {
+export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, (dealerID: string, creditlimit: number) => void, (dealerID: string, remarks: string) => void, (dealerID: string, remarks: string, dateArchived: string) => void, boolean | undefined, IDealer | undefined] => {
 
     const [dealer, setDealer] = useState<IDealer>();
     const [isDealerFound, setIsDealerFound] = useState(false);
@@ -39,7 +40,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
         formData.append('confirmed', dealer.confirmed.toString());
         formData.append('remarks', dealer.remarks.toString());
 
-         formData.append('distributor.distributorid', dealer.distributor.distributorid.toString());
+        formData.append('distributor.distributorid', dealer.distributor.distributorid.toString());
         formData.append('distributor.firstname', dealer.distributor.firstname.toString());
         formData.append('distributor.middlename', dealer.distributor.middlename.toString());
         formData.append('distributor.lastname', dealer.distributor.lastname.toString());
@@ -49,12 +50,12 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
         formData.append('distributor.gender', dealer.distributor.gender.toString());
         formData.append('distributor.currentaddress', dealer.distributor.currentaddress.toString());
         formData.append('distributor.permanentaddress', dealer.distributor.permanentaddress.toString());
-        formData.append('distributor.contactnumber', dealer.distributor.contactnumber.toString()); 
+        formData.append('distributor.contactnumber', dealer.distributor.contactnumber.toString());
 
-         dealer.distributor.dealerids.forEach((dealerid) => {
+        dealer.distributor.dealerids.forEach((dealerid) => {
             formData.append(`distributor.dealerids`, dealerid);
-        }); 
-       
+        });
+
 
         dealer.distributor.employeeids.forEach((employeeid) => {
             formData.append(`distributor.employeeids`, employeeid);
@@ -63,8 +64,8 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
         dealer.distributor.orderids.forEach((orderid) => {
             formData.append(`distributor.orderids`, orderid);
         });
- 
-   
+
+
 
         dealerDocuments.forEach((document) => {
 
@@ -99,88 +100,142 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             distributor: dealer.distributor,
             orderids: dealer.orderids, // naa ta gihapon ni dapat
             documentids: [], }; */
-       
-         /* formData.forEach((value, key) => {
-            console.log(key, value);
-          });  */
 
-           axios.post('http://localhost:8080/dealer/registerDealer', formData, {
+        /* formData.forEach((value, key) => {
+           console.log(key, value);
+         });  */
+
+        axios.post('http://localhost:8080/dealer/registerDealer', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         })
             .then((response) => {
-                
-                
+
+
 
                 alert('Success!');
             })
             .catch((error) => {
                 console.log(error)
                 alert('Error creating a new record. Please try again.');
-            });   
+            });
 
-    
+
     }
 
-        function confirmDealer(dealerID: string, creditlimit: number){
-            const confirmDealer ={
-                dealerid: dealerID,
-                confirmed: true,
-                creditlimit: creditlimit,
-            };
+    function confirmDealer(dealerID: string, creditLimit: number){
+        
 
-            axios.put(`http://localhost:8080/dealer/confirmDealer/${dealerID}`, confirmDealer,{
-                headers:{
-                    'Content-Type': 'application/json',
-                }
+        axios.put(`http://localhost:8080/dealer/confirmDealer/${dealerID}`, null,{
+            params: {
+                creditlimit: creditLimit,
+            }
+        })
+        .then((response) => {
+            // alert('The dealer confirmed successfully!');
+            toast.success('Dealer has now been confirmed!', {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
             })
-            .then((response) => {
-                alert('The dealer confirmed successfully!');
+        })
+        .catch((error) => {
+            // alert('Error dealer confirmation. Please try again.');
+            toast.error('Unexpected dealer upon confirming dealer. Please try again.', {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
             })
-            .catch((error) => {
-                alert('Error dealer confirmation. Please try again.');
-            });
-        }
+        });
+    }
 
-        function markDealerAsPending(dealerID: string, remarks: string) {
-            const pendingDealer = {
-              dealerid: dealerID,
-              confirmed: false,
-              remarks: remarks,
-            };
+    function markDealerAsPending(dealerID: string, reason: string) {
+       
 
-            axios.put(`http://localhost:8080/dealer/updateDealerPending/${dealerID}`, pendingDealer, {
-                headers:{
-                    'Content-Type': 'application/json',
-                }
+        axios.put(`http://localhost:8080/dealer/updateDealerPending/${dealerID}`, null, {
+            params: {
+                remarks: reason,
+            }
+        })
+        .then((response) => {
+            // alert('Dealer status updated to pending successfully!');
+            toast.success("Dealer's status is on pending!" , {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
             })
-            .then((response) => {
-                alert('Dealer status updated to pending successfully!');
+        })
+        .catch((error) => {
+            //alert('Error updating dealer status to pending. Please try again.');
+            toast.error("Unexpected Error pending a dealer. Please try again" , {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
             })
-            .catch((error) => {
-                alert('Error updating dealer status to pending. Please try again.');
-            });
-        }
+        });
+    }
 
-    function updateDealer(dealerID: string) {
-        const updatedDealer = {
-            dealerid: dealerID,
-            confirmed: true,
-        };
+    function declineDealer(dealerID: string, reason: string, dateArchived: string) {
+        console.log(dealerID + dateArchived)
 
-        axios.put(`http://localhost:8080/dealer/setDealer/${dealerID}`, updatedDealer, {
-            headers: {
-                'Content-Type': 'application/json',
+       
+
+        axios.put(`http://localhost:8080/dealer/updateDealerDecline/${dealerID}`, null, {
+            params: {
+                remarks: reason,
+                datearchived: dateArchived,
             }
         })
             .then((response) => {
-                alert('Dealer confirmation updated successfully!');
+                //alert('Dealer declined successfully!');
+                toast.success("Dealer declined successfully!" , {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             })
             .catch((error) => {
-                alert('Error updating dealer confirmation. Please try again.');
+                console.log(error)
+                //alert('Error declininig dealer. Please try again.');
+                toast.error("Unexpected Error decline a dealer. Please try again" , {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             });
     }
+
 
     function getDealerByID(dealerID: String) {
         axios.get(`http://localhost:8080/dealer/getDealerByID/${dealerID}`, {
@@ -202,5 +257,5 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
                 console.error('Error retrieving dealer data:', error);
             });
     }
-    return [getDealerByID, newDealer, updateDealer, confirmDealer, markDealerAsPending, isDealerFound, dealer,]
+    return [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,]
 }

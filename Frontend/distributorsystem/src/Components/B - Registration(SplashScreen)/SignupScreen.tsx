@@ -75,6 +75,9 @@ export default function SignupScreen(){
     const handleDealerButtonClick = () => {
         navigate(`/DealerRegistration`)
     };
+    const handleDistributorButtonClieck=()=>{
+        navigate(`/DistributorRegistration`)
+    };
     const signInHandler=()=>{
         navigate(`/SignIn`)
     }
@@ -94,7 +97,7 @@ export default function SignupScreen(){
                  {/** Sign Up as Distributor */}
                 <ButtonCard variant='contained' style={{flexDirection:'column'}}>
                     <CardStyle>
-                        <img src={distributor} style={{height:'215px',width:'415px',margin:'-14px 0 0 -28px'}}/>
+                        <img src={distributor} style={{height:'215px',width:'415px',margin:'-14px 0 0 -28px'}}onClick={handleDistributorButtonClieck}/>
                     </CardStyle>
                     <LabelTypography>
                         Sign Up as Distributor

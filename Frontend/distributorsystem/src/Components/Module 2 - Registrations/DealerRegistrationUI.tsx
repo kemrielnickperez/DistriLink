@@ -528,6 +528,7 @@ export default function DealerRegistration() {
         contactnum: !contactnumberRef.current?.value ? 'Contact Number is required' : '',
         selectedprofile: !selectedProfilePicture ? 'Please attach your Profile Picture' : '',
         selectedvalidid: !selectedValidID ? 'Please attach your Valid ID' : '',
+        
         tinnum: !tinnumberRef.current?.value ? 'TIN Number is required' : '',
         distributor: !selectedDistributor ? 'Please choose a Distributor' : '',
     }
@@ -644,12 +645,11 @@ export default function DealerRegistration() {
 useEffect(() => {
     const currentDate = dayjs().subtract(18, 'year') as Dayjs;
     setMaxDate(currentDate);
-
     getAllDistributors();
 
     // console.log(selectedDistributor)
 
-}, []);
+}, [distributors]);
 
 
 {/**Return Statement*/ }
@@ -1104,7 +1104,7 @@ return (
                                     <UploadIcon />
                                 </Icon>
                                 <TypographyLabelC >
-                                    {selectedBusinessDocs?.name === undefined ? 'Upload Businedd Document' : selectedBusinessDocs?.name}
+                                    {selectedBusinessDocs?.name === undefined ? 'Upload Business Document' : selectedBusinessDocs?.name}
                                 </TypographyLabelC>
                             </Button>
                         </label>
