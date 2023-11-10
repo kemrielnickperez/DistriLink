@@ -12,22 +12,22 @@ import moment from "moment";
 import { v4 as uuidv4 } from 'uuid';
 import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
-// import Autosuggest, { SuggestionSelectedEventData, SuggestionsFetchRequestedParams, } from 'react-autosuggest';
+//// import Autosuggest, { SuggestionSelectedEventData, SuggestionsFetchRequestedParams, } from 'react-autosuggest';
 
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import { error } from "console";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { es } from "date-fns/locale";
+
 {/**Grids Body*/ }
 const ImageStyle = styled(Typography)({
     display: 'flex',
     alignItems: 'center',
-    marginRight: '-50px',
+    marginRight: '-1px',
     marginTop: '-30px'
 })
 const ContentNameTypography = styled(Typography)({
     marginTop: -10,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: '30px',
@@ -38,7 +38,7 @@ const ContentNameTypography = styled(Typography)({
 const LabelTypography = styled(Typography)({
     marginTop: 5,
     marginBottom: 10,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: '500',
     textAlign: 'center',
     fontSize: '20px',
@@ -50,7 +50,7 @@ const TypographyLabel = styled(Typography)({
     marginLeft: '25px',
     marginBottom: '10px',
     marginRight: '-175px',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: '550',
     textAlign: 'left',
     fontSize: 17,
@@ -66,7 +66,7 @@ const TypographyLabelB = styled(Typography)({
     color: '#707070',
     display: 'flex',
     fontWeight: '550',
-    fontFamily: 'inter',
+    fontFamily: 'Inter, sans-serif',
 })
 const TypographyLabelC = styled(Typography)({
     textAlign: 'center',
@@ -74,14 +74,14 @@ const TypographyLabelC = styled(Typography)({
     color: '#ffffff',
     display: 'flex',
     fontWeight: '550',
-    fontFamily: 'inter',
+    fontFamily: 'Inter, sans-serif',
 })
 const RadioLabel = styled(Typography)({
     textAlign: 'left',
     fontSize: '17px',
     fontWeight: '550',
     color: '#707070',
-    fontFamily: 'inter',
+    fontFamily: 'Inter, sans-serif',
 
 });
 const RadioStyle = styled(RadioGroup)({
@@ -104,12 +104,12 @@ const StyledTextField = styled(TextField)({
     marginBottom: '43px',
     input: {
         color: '#707070',
-        fontFamily: 'Inter'
+        fontFamily: 'Inter, sans-serif'
     },
     label: {
         color: '#707070',
         fontWeight: '550',
-        fontFamily: 'Inter',
+        fontFamily: 'Inter, sans-serif',
     },
 });
 
@@ -120,7 +120,7 @@ const StyledDatePicker = styled(DatePicker)({
     // marginBottom:'43px',
     input: {
         color: '#707070',
-        fontFamily: 'Inter'
+        fontFamily: 'Inter, sans-serif'
     },
 });
 
@@ -134,7 +134,7 @@ const GridBody = styled(Grid)({
 const labelStyle: React.CSSProperties = {
     fontWeight: '550',
     color: '#707070',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
 };
 const ButtonStyle = styled(Button)({
     backgroundColor: '#2D85E7',
@@ -1138,7 +1138,7 @@ return (
 
             {/**Image Grids */}
             <Grid item>
-                <ImageStyle><img src={dealer1} style={{ width: 'auto', height: '900px' }}></img></ImageStyle>
+                {/*  <ImageStyle><img src={dealer1} style={{width:'auto',height:'900px'}}></img></ImageStyle> */}
             </Grid>
         </GridBody>
     </div>

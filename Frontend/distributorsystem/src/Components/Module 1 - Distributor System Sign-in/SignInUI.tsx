@@ -1,10 +1,12 @@
 import styled from "@emotion/styled"
-import { Box, Button, Grid, Link, TextField, TextFieldProps, Typography } from "@mui/material"
+import { Alert, AlertColor, Box, Button, Grid, IconButton, Link, Snackbar, TextField, TextFieldProps, Typography } from "@mui/material"
+import CloseIcon from '@mui/icons-material/Close';
 import signin from "../../Global Components/Images/Group 8 (1).png"
 import { useNavigate } from "react-router-dom"
-import { useEffect, useRef, useState } from "react"
+import { Fragment, useEffect, useRef, useState } from "react"
 import axios from "axios"
 import Dashboard from "../Module 3 - Distributor Dashboard/DashboardUI"
+import React from "react"
 
 const HeaderTypo = styled(Typography)({
     position: "relative",
@@ -96,42 +98,92 @@ export default function SignIn() {
     const [password, setPassword] = useState("");
     const [code, setCode] = useState(0);
     const [open, setOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+    const [severity, setSeverity] = useState<AlertColor | undefined>("error");
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setOpen(true);
-        axios.get('http://localhost:8080/dealer/getAllDealers', {
-            params: {
-                dealerid: userid,
-                password: password
-            }
+        if (!userid || !password) {
+            setSnackbarMessage("Please enter both User ID and Password");
+            setSeverity("warning");
+            setOpen(true);
+            return;
+        }
+        axios.post('http://localhost:8080/signin/test', {
+            userId: userid,
+            password: password
         })
             .then(response => {
                 if (response.status === 200) {
-                    const user = response.data.find(
-                        (u: any) => u.dealerid === userid && u.password === password);
-                    if (user) {
-                        console.log(userid, password);
-                        console.log("Login successful!");
-                        sessionStorage.setItem('user', JSON.stringify(user));
-                        setCode(2);
-                        window.location.assign('http://localhost:3000/dashboard');
+                    const result = response.data;
+                    if (result.tableName === 'Dealer') {
+                        console.log('Login successful as Dealer');
+                        sessionStorage.setItem('user', JSON.stringify(result));
+                        // Redirect to the Dealer screen
+                        window.location.assign('Dashboard');
+                        setSuccessMessage("Login successful as Dealer");
+                        setOpen(true);
+                    } else if (result.tableName === 'Distributor') {
+                        console.log('Login successful as Distributor');
+                        sessionStorage.setItem('user', JSON.stringify(result));
+                        // Redirect to the Dealer screen
+                        window.location.assign('Dashboard');
+                        setSuccessMessage("Login successful as Distributor");
+                        setOpen(true);
+                    } else if (result.tableName === 'Sales Associate' || result.tableName === 'Cashier') {
+                        console.log('Login successful as Employee');
+                        sessionStorage.setItem('user', JSON.stringify(result));
+                        // Redirect to the Employee screen
+                        window.location.assign('Dashboard');
+                        setSuccessMessage('Login successful as Employee');
+                        setOpen(true);
+                        const user = response.data.find(
+                            (u: any) => u.dealerid === userid && u.password === password);
+                        if (user) {
+                            console.log(userid, password);
+                            console.log("Login successful!");
+                            sessionStorage.setItem('user', JSON.stringify(user));
+                            setCode(2);
+                            window.location.assign('http://localhost:3000/dashboard');
+                        } else {
+                            console.log('Invalid username or password');
+                            setCode(1);
+                        }
                     } else {
-                        console.log('Invalid username or password');
-                        setCode(1);
+                        console.log('Error');
+                        setSnackbarMessage("Invalid User ID or Password");
+                        setSeverity("error");
+                        setOpen(true);
                     }
-                } else {
-                    console.log("error");
                 }
-            })
-            .catch(error => {
+            }).catch(error => {
                 console.log(error);
             });
+
     }
+
 
     useEffect(() => {
 
     }, [code]);
+
+    const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
+    const action = (
+        <Fragment>
+            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="small" />
+            </IconButton>
+        </Fragment>
+    );
 
     return (
         <Box component="form" noValidate onSubmit={handleSubmit} >
@@ -165,7 +217,7 @@ export default function SignIn() {
                     </SignInFieldsGrid>
                     <SignInFieldsGrid container spacing={8}>
                         <Grid item>
-                            <PasswordTextfield required id="password" variant="outlined" label="Password" onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)} />
+                            <PasswordTextfield required id="password" variant="outlined" label="Password" type="password" onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)} />
                         </Grid>
                     </SignInFieldsGrid>
                     <SignInFieldsGrid container spacing={8}>
@@ -179,6 +231,20 @@ export default function SignIn() {
                         </Grid>
                     </SignInFieldsGrid>
                 </Grid>
+                <Snackbar
+                    open={open}
+                    autoHideDuration={6000}
+                    onClose={handleClose}
+                    action={action}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert
+                        severity={successMessage ? "success" : severity } // Use "success" for success and "error" for invalid input
+                        onClose={handleClose}
+                    >
+                        {successMessage || snackbarMessage}
+                    </Alert>
+                </Snackbar>
             </SignInGrid>
         </Box>
     )

@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 const Logo=styled(Typography)({
     margin:'5% 10% 0 5% ',
     display: 'flex',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
     fontSize: '25px',
     color: '#203949',
@@ -81,7 +81,7 @@ const SignInButton = styled(Button)({
     height: 0,
     color: '#ffffff',
     fontWeight: 'bold',
-    fontFamily: 'Inter',
+    fontFamily: 'Inter, sans-serif',
     fontSize: '20px',
     top:10,
     left: 60,
