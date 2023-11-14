@@ -335,7 +335,7 @@ export default function DealerOrderForm() {
 
   const findDealer = () => {
 
-    getDealerByID("6d6abfe8")
+    getDealerByID("039c63af")
 
     //Problematic pa siya ngari na part kay on loop sya
     // isDealerFound ? headerHandleAlert('Dealer located in the System.', "The dealer ID has been found and is ready for product distribution.", 'success')
@@ -365,7 +365,7 @@ export default function DealerOrderForm() {
         penaltyrate: Number(penaltyRateRef.current?.value),
         paymentterms: paymentTerm,
         orderamount: orderAmount,
-        distributor: dealer!.distributor,
+        distributor: dealer!.distributor!,
         collector: null,
         dealer: dealer!,
         orderedproducts: orderedProducts,
