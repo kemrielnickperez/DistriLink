@@ -346,7 +346,6 @@ export default function OrderConfirmation() {
     const orderAmount = orderedProducts.reduce((total, product) => {
       return total + product.product.price * product.quantity;
     }, 0);
-
     // Create an updated order object with the necessary data
     const savedProduct = [...orderedProducts]
     const updatedOrder: IOrder = {
@@ -356,7 +355,7 @@ export default function OrderConfirmation() {
       penaltyrate: Number(penaltyRateRef.current?.value),
       paymentterms: paymentTerm,
       orderamount: totalAmount,
-      distributor: dealer!.distributor,
+      distributor: dealer?.distributor!,
       collector: null,
       dealer: dealer!,
       orderedproducts: orderedProducts,

@@ -18,6 +18,7 @@ import { useEffect, useRef, useState } from 'react';
 //Please Install npm i react-toastify or if doesn't work, install npm i react-toastify
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router';
 
 
 function SlideTransitionDown(props: SlideProps) {
@@ -121,6 +122,8 @@ const OverallGrid = styled(Grid)({
 })
 
 export default function ProductDistributionList() {
+
+  const navigate = useNavigate();
 
   const [newOrder] = useRestOrder();
 
@@ -415,6 +418,7 @@ export default function ProductDistributionList() {
       //if possible kay ara na siya mo clear after sa snackbar
       saveHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
       clearInputValues();
+      //navigate(`/productDistributionList`);
     }
 
     else {

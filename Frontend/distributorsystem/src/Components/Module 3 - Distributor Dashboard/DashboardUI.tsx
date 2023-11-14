@@ -209,25 +209,12 @@ export default function Dashboard() {
     }
 
 
-    const [distributorsss, setDistributorsss] = useState<IDistributor[]>([]);
-    function getAllDistributors() {
-        axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
-            .then((response) => {
-                setDistributorsss(response.data);
-
-            })
-            .catch((error) => {
-
-                alert("Error retrieving payment receipts. Please try again.");
-            });
-    } 
 
     useEffect(() => {
         getAllUnconfirmedDealers();
         getAllUnconfirmedOrders();
         getAllUnconfirmedCollectionPaymentReceipts();
-        getAllDistributors();
-        console.log(distributorsss);
+   
 
     }, [unconfirmedDealers, unconfirmedOrders, unconfirmedCollectionPaymentReceipts]);
 

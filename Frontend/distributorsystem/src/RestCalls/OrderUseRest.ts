@@ -117,7 +117,7 @@ export const useRestOrder = (): [
                 if (response.data !== null) {
                     setIsOrderFound(true);
                     //setIsOrderFoundError(false);
-                    toast.success('Order found. Please set or update the schedule.', {
+                    /* toast.success('Order found. Please set or update the schedule.', {
                         position: "bottom-right",
                         autoClose: 5000,
                         hideProgressBar: true,
@@ -127,7 +127,7 @@ export const useRestOrder = (): [
                         progress: undefined,
                         theme: "colored",
                     })
-
+ */
                 }
                 else {
                     setIsOrderFound(false);
