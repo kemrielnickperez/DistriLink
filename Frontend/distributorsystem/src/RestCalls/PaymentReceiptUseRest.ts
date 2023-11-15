@@ -1,106 +1,116 @@
 import axios from "axios";
-import { IDirectPaymentReceipt } from "./Interfaces";
+import { ICollectionPaymentReceipt, IDirectPaymentReceipt, IPaymentReceipt } from "./Interfaces";
+import { useState } from "react";
 
 
 
-export const useRestPaymentReceipt = (): [(paymenttransactionid: number, directpaymentreceipt: IDirectPaymentReceipt) => void] => {
+export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentReceipt) => void, (paymentreceiptid: string) => void, (collectionpaymentreceiptid: string, cashierid: string) => void, IPaymentReceipt | undefined, IDirectPaymentReceipt | undefined, ICollectionPaymentReceipt | undefined, boolean | undefined] => {
+
+    const [paymentReceipt, setPaymentReceipt] = useState<IPaymentReceipt>();
+    const [directPaymentReceipt, setDirectPaymentReceipt] = useState<IDirectPaymentReceipt>();
+    const [collectionPaymentReceipt, setCollectionPaymentReceipt] = useState<ICollectionPaymentReceipt>();
+
+    const [isPaymentReceiptFound, setIsPaymentReceiptFound] = useState<boolean>();
 
 
-    function createDirectPaymentReceipt(paymenttransactionid: number, directpaymentreceipt: IDirectPaymentReceipt) {
-       /*  axios.post(`http://localhost:8080/paymentreceipt/createDirectPaymentReceipt?paymenttransactionid=${paymenttransactionid}`, {
-            //paymentreceiptid. directpaymentreceipt.paymentreceiptid,
-            remarks: directpaymentreceipt.remarks,
-            datepaid: directpaymentreceipt.datepaid,
-            amountpaid: directpaymentreceipt.amountpaid,
-            paymenttype: directpaymentreceipt.paymenttype,
-           /*  cashier: {
-                employeeid: directpaymentreceipt.cashier.employeeid,
-                firstname: directpaymentreceipt.cashier.firstname,
-                middlename: directpaymentreceipt.cashier.middlename,
-                lastname: directpaymentreceipt.cashier.lastname,
-                birthdate: directpaymentreceipt.cashier.birthdate,
-                gender: directpaymentreceipt.cashier.gender,
-                currentaddress: directpaymentreceipt.cashier.currentaddress,
-                permanentaddress: directpaymentreceipt.cashier.permanentaddress,
-                contactnumber: directpaymentreceipt.cashier.contactnumber,
-                iscashier: directpaymentreceipt.cashier.iscashier,
-                issalesassociate: directpaymentreceipt.cashier.issalesassociate,
-                iscollector: directpaymentreceipt.cashier.iscollector
-            }, */
-            /* cashier: {
-              employeeid: 1,
-              firstname: "Catherine",
-              middlename: "Damalerio",
-              lastname: "Perez",
-              birthdate: "December 23, 2002",
-              gender: "Female",
-              currentaddress: "Pajo, LLC",
-              permanentaddress: "Basak, LLC",
-              contactnumber: "000000000000",
-              iscashier: true,
-              issalesassociate: true,
-              iscollector: true,
-             
-          }, 
-            paymenttransaction: {
-                paymenttransactionid: directpaymentreceipt.paymenttransaction?.paymenttransactionid,
-                amountdue: directpaymentreceipt.paymenttransaction?.amountdue,
-                startingdate: directpaymentreceipt.paymenttransaction?.startingdate,
-                enddate: directpaymentreceipt.paymenttransaction?.enddate,
-                installmentnumber: directpaymentreceipt.paymenttransaction?.installmentnumber,
-                paid: directpaymentreceipt.paymenttransaction?.paid,
-                order: {
-                    orderid: directpaymentreceipt.paymenttransaction?.order?.orderid,
-                    distributiondate: directpaymentreceipt.paymenttransaction?.order?.distributiondate,
-                    penaltyrate: directpaymentreceipt.paymenttransaction?.order?.penaltyrate,
-                    paymentterms: directpaymentreceipt.paymenttransaction?.order?.paymentterms,
-                    orderdate: directpaymentreceipt.paymenttransaction?.order?.orderdate,
-                    orderedProducts: directpaymentreceipt.paymenttransaction?.order?.orderedproducts,
-                    dealer: {
-                        dealerid: directpaymentreceipt.paymenttransaction?.order?.dealer?.dealerid,
-                        firstname: directpaymentreceipt.paymenttransaction?.order?.dealer?.firstname,
-                        middlename: directpaymentreceipt.paymenttransaction?.order?.dealer?.middlename,
-                        lastname: directpaymentreceipt.paymenttransaction?.order?.dealer?.lastname,
-                        birthdate: directpaymentreceipt.paymenttransaction?.order?.dealer?.birthdate,
-                        gender: directpaymentreceipt.paymenttransaction?.order?.dealer?.gender,
-                        currentaddress: directpaymentreceipt.paymenttransaction.order?.dealer?.currentaddress,
-                        permanentaddress: directpaymentreceipt.paymenttransaction.order?.dealer?.permanentaddress,
-                        contactnumber: directpaymentreceipt.paymenttransaction.order?.dealer?.contactnumber,
-                        hasbusiness: directpaymentreceipt.paymenttransaction.order?.dealer?.hasbusiness,
-                        businessname: directpaymentreceipt.paymenttransaction.order?.dealer?.businessname,
-                        businessphone: directpaymentreceipt.paymenttransaction.order?.dealer?.businessphone,
-                        businessaddress: directpaymentreceipt.paymenttransaction.order?.dealer?.businessaddress,
-                        businesstin: directpaymentreceipt.paymenttransaction.order?.dealer?.businesstin,
-                        creditlimit: directpaymentreceipt.paymenttransaction.order?.dealer?.creditlimit,
-                        submissiondate: directpaymentreceipt.paymenttransaction.order?.dealer?.submissiondate,
-                        attachments: directpaymentreceipt.paymenttransaction.order?.dealer?.attachments,
-                    },
-                    collector: {
-                        employeeid: directpaymentreceipt.paymenttransaction.order?.collector?.employeeid,
-                        firstname: directpaymentreceipt.paymenttransaction.order?.collector?.firstname,
-                        middlename: directpaymentreceipt.paymenttransaction.order?.collector?.middlename,
-                        lastname: directpaymentreceipt.paymenttransaction.order?.collector?.lastname,
-                        birthdate: directpaymentreceipt.paymenttransaction.order?.collector?.birthdate,
-                        gender: directpaymentreceipt.paymenttransaction.order?.collector?.gender,
-                        currentaddress: directpaymentreceipt.paymenttransaction.order?.collector?.currentaddress,
-                        permanentaddress: directpaymentreceipt.paymenttransaction.order?.collector?.permanentaddress,
-                        contactnumber: directpaymentreceipt.paymenttransaction.order?.collector?.contactnumber,
-                        is_cashier: directpaymentreceipt.paymenttransaction.order?.collector?.is_cashier,
-                        is_salesassociate: directpaymentreceipt.paymenttransaction.order?.collector?.is_salesassociate,
-                        is_collector: directpaymentreceipt.paymenttransaction.order?.collector?.is_collector
-                    }
-                }
-            }
+    function createDirectPaymentReceipt(directpaymentreceipt: IDirectPaymentReceipt) {
+        
+        axios.post('http://localhost:8080/paymentreceipt/createDirectPaymentReceipt', {
+             paymentreceiptid: directpaymentreceipt.paymentreceiptid,
+             remarks: directpaymentreceipt.remarks,
+             datepaid: directpaymentreceipt.datepaid,
+             amountpaid: directpaymentreceipt.amountpaid,
+             paymenttype: directpaymentreceipt.paymenttype,
+             daterecorded: directpaymentreceipt.daterecorded,
+             receivedamount: directpaymentreceipt.receivedamount,
+             paymenttransaction: directpaymentreceipt.paymenttransaction,
+              cashier: {
+                  employeeid: directpaymentreceipt.cashier!.employeeid,
+                  firstname: directpaymentreceipt.cashier!.firstname,
+                  middlename: directpaymentreceipt.cashier!.middlename,
+                  lastname: directpaymentreceipt.cashier!.lastname,
+                  birthdate: directpaymentreceipt.cashier!.birthdate,
+                  gender: directpaymentreceipt.cashier!.gender,
+                  currentaddress: directpaymentreceipt!.cashier!.currentaddress,
+                  permanentaddress: directpaymentreceipt!.cashier!.permanentaddress,
+                  contactnumber: directpaymentreceipt!.cashier!.contactnumber,
+                  iscashier: directpaymentreceipt.cashier!.is_cashier,
+                  issalesassociate: directpaymentreceipt!.cashier!.is_salesassociate,
+                  iscollector: directpaymentreceipt!.cashier!.is_collector
+                   /*  employeeid: "3593cd2f",
+                    firstname: "Victoria",
+                    middlename: "Victoria",
+                    lastname: "Ramirez",
+                    emailaddress: "charmaineramirez05@gmail.com",
+                    birthdate:"1997-10-15",
+                    gender:"Female",
+                    password: "test",
+                    currentaddress:"2079 Humay-Humay Street",
+                    permanentaddress:"Pajo",
+                    contactnumber:"09123456789",
+                    tinnumber: null,
+                    is_cashier:true,
+                    is_salesassociate:false,
+                    is_collector:true,
+                    submissiondate: "2023-10-23",
+                    orderids: [
+                        "e60e0410"
+                    ],
+                    paymentreceiptids: [],
+                    collectionpaymentids: [],
+                    documentids: [
+                        "04853f62"
+                    ] */
+
+             }, 
+            
+    })
+        .then((response) => {
+            alert("Success")
+           
         })
-            .then((response) => {
-                alert("yey mogana :>")
-                console.log("hakdog")
-            })
-            .catch((error) => {
-                alert("Please try again.");
-            }); */
+        .catch((error) => {
+            console.log(error)
+            alert("Please try again.");
+        }); 
     }
 
-    return [createDirectPaymentReceipt]
+    function getPaymentReceiptByID(paymentreceiptid: string) {
+        axios.get(`http://localhost:8080/paymentreceipt/getPaymentReceiptByID/${paymentreceiptid}`)
+            .then((response) => {
+                setPaymentReceipt(response.data);
+
+                if (response.data.paymenttype === 'collection')
+                    setCollectionPaymentReceipt(response.data)
+                else
+                    setDirectPaymentReceipt(response.data);
+
+                if (response.data !== null) {
+                    setIsPaymentReceiptFound(true);
+                }
+                else {
+                    setIsPaymentReceiptFound(false);
+                }
+            })
+            .catch((error) => {
+               
+                alert("Cannot find Payment Receipt. Please try again.");
+            });
+    }
+
+    function confirmCollectionPaymentReceipt(collectionpaymentreceiptid: string, cashierid: string) {
+        axios.put(`http://localhost:8080/paymentreceipt/updateCollectionPaymentReceipt/${collectionpaymentreceiptid}/${cashierid}`)
+            .then((response) => {
+
+                
+            })
+            .catch((error) => {
+                
+                // alert("Cannot update Payment Receipt. Please try again.");
+            });
+
+    }
+
+    return [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound]
 
 }

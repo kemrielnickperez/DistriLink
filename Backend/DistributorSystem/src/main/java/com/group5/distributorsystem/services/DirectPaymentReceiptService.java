@@ -5,9 +5,7 @@ import com.group5.distributorsystem.models.DirectPaymentReceipt;
 import com.group5.distributorsystem.models.Employee;
 import com.group5.distributorsystem.models.Order;
 import com.group5.distributorsystem.models.PaymentTransaction;
-import com.group5.distributorsystem.repositories.DirectPaymentReceiptRepository;
-import com.group5.distributorsystem.repositories.PaymentReceiptRepository;
-import com.group5.distributorsystem.repositories.PaymentTransactionRepository;
+import com.group5.distributorsystem.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +23,39 @@ public class DirectPaymentReceiptService {
     @Autowired
     PaymentTransactionRepository paymentTransactionRepository;
 
-    public DirectPaymentReceipt createDirectPaymentReceipt(DirectPaymentReceipt directPaymentReceipt, String paymenttransactionid){
-
-        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(directPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
-
-        paymentTransaction.setPaymentreceiptid(directPaymentReceipt.getPaymentreceiptid());
+    @Autowired
+    OrderRepository orderRepository;
 
 
-        paymentTransactionService.updatePaidPaymentTransaction(paymenttransactionid);
+    @Autowired
+    EmployeeRepository employeeRepository;
+
+    public DirectPaymentReceipt createDirectPaymentReceipt(DirectPaymentReceipt directPaymentReceipt){
+
+        DirectPaymentReceipt newdirectPaymentReceipt = directPaymentReceiptRepository.save(directPaymentReceipt);
+
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(newdirectPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
+
+        System.out.println(newdirectPaymentReceipt.getCashier().getEmployeeid());
+        Employee cashier = employeeRepository.findById(newdirectPaymentReceipt.getCashier().getEmployeeid()).get();
+
+
+        paymentTransaction.setPaymentreceiptid(newdirectPaymentReceipt.getPaymentreceiptid());
+        paymentTransactionRepository.save(paymentTransaction);
+        paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
+
+        cashier.getPaymentreceiptids().add(newdirectPaymentReceipt.getPaymentreceiptid());
+
+        newdirectPaymentReceipt.setPaymenttransaction(paymentTransaction);
+        newdirectPaymentReceipt.setCashier(cashier);
 
         paymentTransactionRepository.save(paymentTransaction);
-        return directPaymentReceiptRepository.save(directPaymentReceipt);
+
+        employeeRepository.save(cashier);
+
+        directPaymentReceiptRepository.save(newdirectPaymentReceipt);
+
+        return directPaymentReceiptRepository.save(newdirectPaymentReceipt);
     }
 
     public List<DirectPaymentReceipt> getAllDirectPaymentReceipts(){

@@ -6,59 +6,52 @@ import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
-
-
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class CollectionPaymentReceipt extends PaymentReceipt {
 
     private LocalDate collectiondate;
 
-    private String collectionamount;
+    private double collectionamount;
 
     private LocalDate remitteddate;
 
-    private String remittedamount;
+    private double remittedamount;
 
     private LocalDate confirmationdate;
 
+    private boolean isconfirmed;
 
-    private boolean isConfirmed;
+    private Set<String> collectorremittanceproofids = new HashSet<>();
 
-    //DBRef
-    private Employee collector;
-
-
-
-   /* @ManyToOne
-    @JoinColumn(name = "collectorid")
-    @JsonBackReference("employee-collectionpaymenttransactions-reference")
-    */
-
+    private Set<String> dealerpaymentproofids = new HashSet<>();
 
     public CollectionPaymentReceipt() {
     }
 
-
-    public CollectionPaymentReceipt(LocalDate collectiondate, String collectionamount, LocalDate remitteddate, String remittedamount, LocalDate confirmationdate, boolean isConfirmed, Employee collector) {
+    public CollectionPaymentReceipt(LocalDate collectiondate, double collectionamount, LocalDate remitteddate, double remittedamount, LocalDate confirmationdate, boolean isconfirmed, Set<String> collectorremittanceproofids, Set<String> dealerpaymentproofids) {
         this.collectiondate = collectiondate;
         this.collectionamount = collectionamount;
         this.remitteddate = remitteddate;
         this.remittedamount = remittedamount;
         this.confirmationdate = confirmationdate;
-        this.isConfirmed = isConfirmed;
-        this.collector = collector;
+        this.isconfirmed = isconfirmed;
+        this.collectorremittanceproofids = collectorremittanceproofids;
+        this.dealerpaymentproofids = dealerpaymentproofids;
     }
 
-    public CollectionPaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, LocalDate collectiondate, String collectionamount, LocalDate remitteddate, String remittedamount, LocalDate confirmationdate, boolean isConfirmed, Employee collector) {
-        super(paymentreceiptid, remarks, paymenttype, paymenttransaction);
+    public CollectionPaymentReceipt(String paymentreceiptid, String remarks, double amountpaid, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier, LocalDate collectiondate, double collectionamount, LocalDate remitteddate, double remittedamount, LocalDate confirmationdate, boolean isconfirmed, Set<String> collectorremittanceproofids, Set<String> dealerpaymentproofids) {
+        super(paymentreceiptid, remarks, amountpaid, paymenttype, paymenttransaction, cashier);
         this.collectiondate = collectiondate;
         this.collectionamount = collectionamount;
         this.remitteddate = remitteddate;
         this.remittedamount = remittedamount;
         this.confirmationdate = confirmationdate;
-        this.isConfirmed = isConfirmed;
-        this.collector = collector;
+        this.isconfirmed = isconfirmed;
+        this.collectorremittanceproofids = collectorremittanceproofids;
+        this.dealerpaymentproofids = dealerpaymentproofids;
     }
 
     public LocalDate getCollectiondate() {
@@ -69,11 +62,11 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
         this.collectiondate = collectiondate;
     }
 
-    public String getCollectionamount() {
+    public double getCollectionamount() {
         return collectionamount;
     }
 
-    public void setCollectionamount(String collectionamount) {
+    public void setCollectionamount(double collectionamount) {
         this.collectionamount = collectionamount;
     }
 
@@ -85,11 +78,11 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
         this.remitteddate = remitteddate;
     }
 
-    public String getRemittedamount() {
+    public double getRemittedamount() {
         return remittedamount;
     }
 
-    public void setRemittedamount(String remittedamount) {
+    public void setRemittedamount(double remittedamount) {
         this.remittedamount = remittedamount;
     }
 
@@ -101,19 +94,27 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
         this.confirmationdate = confirmationdate;
     }
 
-    public boolean isConfirmed() {
-        return isConfirmed;
+    public boolean isIsconfirmed() {
+        return isconfirmed;
     }
 
-    public void setConfirmed(boolean confirmed) {
-        isConfirmed = confirmed;
+    public void setIsconfirmed(boolean isconfirmed) {
+        this.isconfirmed = isconfirmed;
     }
 
-    public Employee getCollector() {
-        return collector;
+    public Set<String> getCollectorremittanceproofids() {
+        return collectorremittanceproofids;
     }
 
-    public void setCollector(Employee collector) {
-        this.collector = collector;
+    public void setCollectorremittanceproofids(Set<String> collectorremittanceproofids) {
+        this.collectorremittanceproofids = collectorremittanceproofids;
+    }
+
+    public Set<String> getDealerpaymentproofids() {
+        return dealerpaymentproofids;
+    }
+
+    public void setDealerpaymentproofids(Set<String> dealerpaymentproofids) {
+        this.dealerpaymentproofids = dealerpaymentproofids;
     }
 }

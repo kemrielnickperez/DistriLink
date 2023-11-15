@@ -16,8 +16,7 @@ export const useRestPaymentTransaction = (): [(paymenttransactions: IPaymentTran
         console.log(paymenttransactions)
           axios.post(`http://localhost:8080/paymenttransaction/createPaymentTransaction/${orderid}`, paymenttransactions )
             .then((response) => {
-                console.log("hoy");
-               
+            
             })
             .catch((error) => {
                 alert("Please try again.");
@@ -118,8 +117,9 @@ export const useRestPaymentTransaction = (): [(paymenttransactions: IPaymentTran
     function updatePaymentTransaction(paymentransactionid: string, paymentransaction: IPaymentTransaction) {
         axios.put(`http://localhost:8080/paymenttransaction/updatePaymentTransaction/${paymentransactionid}`, paymentransaction)
             .then((response) => {
+        
+                // alert("successfully updated!")
                 
-                alert("successfully updated!")
                 
             })
             .catch((error) => {

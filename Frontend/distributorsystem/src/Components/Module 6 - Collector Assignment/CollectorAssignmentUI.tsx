@@ -1,62 +1,139 @@
-import * as React from 'react';
-import { DataGrid, GridColDef, GridRowId, GridValueGetterParams, GridRowParams, GridApi, GridFilterModel } from '@mui/x-data-grid';
-import CardActions from '@mui/material/CardActions';
-import { Autocomplete, Button, Card, TextField, Typography, Box } from '@mui/material';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { useRestOrder } from '../../RestCalls/OrderUseRest';
-import axios from 'axios';
-import { IDealer, IEmployee, IOrder } from '../../RestCalls/Interfaces';
-import { AppContext } from '../../Global Components/AppContext';
-import { useNavigate } from 'react-router-dom';
+import { Alert, AlertTitle, Autocomplete, Button, Card, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
+import { useEffect, useState } from "react";
+import { IEmployee, IOrder } from "../../RestCalls/Interfaces";
+import { auto } from "@popperjs/core";
+import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
+import { useRestOrder } from "../../RestCalls/OrderUseRest";
+import axios from "axios";
+import React from "react";
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+//Imports for Toastify
+//Please Install npm i react-toastify or if doesn't work, install npm i react-toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
+function SlideTransitionDown(props: SlideProps) {
+  return <Slide {...props} direction="down" />;
+}
 
-//DataGrid Function 
+const StyledCard = styled(Card)({
+  padding: '10px 10px 10px 2px',
+  margin: "50px 28% 20px 10%",
+  width: '85%',
+  height: '600px',
+  alignItems: 'center',
+  borderRadius: '25px',
+  justifyContent: 'left'
+})
+const ContentNameTypography = styled(Typography)({
+
+  marginTop: 60,
+  marginBottom: 35,
+  marginLeft: 65,
+  fontFamily: 'Inter, sans-serif',
+  fontWeight: 'bold',
+  textAlign: 'left',
+  fontSize: '25px',
+  color: '#203949'
+})
+const LabelTypography = styled(Typography)({
+  marginLeft: 50,
+  fontFamily: 'Inter, sans-serif',
+  fontWeight: 'bold',
+  textAlign: 'left',
+  fontSize: '15px',
+  color: '#707070'
+})
+const StyledButton = styled(Button)({
+  marginTop: -5,
+  marginLeft: 30,
+  backgroundColor: '#2C85E7',
+  fontFamily: 'Inter, sans-serif',
+  fontSize: '15px',
+  width: auto,
+  height: 40,
+  ':hover': {
+    backgroundColor: '#87BAF3',
+  }
+})
+
 export default function CollectorAssignment() {
-
-  const objectidContext = useContext(AppContext);
+  const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
   const navigate = useNavigate();
 
-  const headerClassName = "custom-header"; // For Header Columns and styling
-
+  {/** useStates */ }
   const [collectors, setCollectors] = useState<IEmployee[]>([]);
+  const [selectedCollector, setSelectedCollector] = useState<any>(null);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [orders, setOrders] = useState<IOrder[]>([]);
 
-  const [selectedCollector, setSelectedCollector] = useState<any>(null); // State for the selected collector
-  const [selectedCollectorId, setSelectedCollectorId] = useState<string | null>(null); // State for the selected collector ID
-  const [selectedRows, setSelectedRows] = useState<string[]>([]); // State for selection of rows 
-  //const [rows, setRows] = React.useState(initialRows); // State for grouping order transaction
-  const [groupByValue, setGroupByValue] = useState(''); // // State for the groupBy input value
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alerttitle, setTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('success');
 
-  const [selectRowOrder, setSelectRowOrder] =useState<number | undefined>(undefined);
 
-  const [objectId, setObjectId] = useState<string | null>(null);
-  //const SelectedOrderContext= createContext<number |undefined>(undefined);
-  
+  {/** functions */ }
+  /*  function getAllCollectors() {
+     axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
+       .then((response) => {
+         setCollectors(response.data);
+         
+       })
+       .catch((error) => {
+         console.error('Error retrieving collectors:', error);
+         alert("Error retrieving collectors. Please try again.");
+       });
+   } */
 
-  const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+
+  {/**Handler for Alert - Function to define the type of alert*/ }
+
+  function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+    setTitle(title);
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setOpenAlert(true);
+  }
+
+  {/**Handler to Close Alert Snackbar*/ }
+  const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
 
 
   function getAllCollectors() {
     axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
       .then((response) => {
-        setCollectors(response.data);
-        //console.log(response.data);
+        const updatedCollectors = response.data.map((collector) => {
+          const assignedOrders = orders.filter((order) => order.collector?.employeeid === collector.employeeid);
+          return { ...collector, orderids: assignedOrders.map((order) => order.orderid) };
+        });
+        setCollectors(updatedCollectors);
       })
       .catch((error) => {
         console.error('Error retrieving collectors:', error);
-        alert("Error retrieving collectors. Please try again.");
+        headerHandleAlert('Error', "Error retrieving collectors. Please try again..", 'error');
+        // alert("Error retrieving collectors. Please try again.");
       });
   }
 
   function getAllOrders() {
     axios.get<IOrder[]>('http://localhost:8080/order/getAllOrders')
       .then((response) => {
-        setOrders(response.data);
-        //console.log(response.data);
+        const confirmedOrders = response.data.filter(order => order.confirmed && !order.isclosed);
+
+        setOrders(confirmedOrders);
+
       })
       .catch((error) => {
         console.error('Error retrieving collectors:', error);
-        alert("Error retrieving collectors. Please try again.");
+        headerHandleAlert('Error', "Error retrieving orders. Please try again..", 'error');
+        // alert("Error retrieving collectors. Please try again.");
       });
   }
 
@@ -78,118 +155,71 @@ export default function CollectorAssignment() {
 
   }, [orders]);
 
+  {/** Columns for DataGrid */ }
 
 
+  {/** Columns for DataGrid */ }
   const columns: GridColDef[] = [
-    //headerAlign to set alignment
-    { field: 'orderID', headerName: 'Order ID', width: 300 },
-    { field: 'dealerName', headerName: 'Dealer Name', width: 300 },
-    { field: 'orderAmount', headerName: 'Order Amount', width: 300 },
-    { field: 'collectorStatus', headerName: 'Collector Status', width: 300 },
-    { field: 'collectorName', headerName: 'Collector Name', width: 400 },
-    {field: '', 
-    headerName:'',
-    width: 150 , 
-    renderCell: (params: { row: any; }) => {
-      return (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            // Handle button click for this row here
-            console.log('Button clicked for row:', params.row.orderID);
-            handleButtonClick(params.row.orderID)
-            //objectid?.setObjectId(params.row.orderID); 
-            //navigate(`/paymenttransactiondetailsss/${objectid?.objectid}`);
-          }}
-        >
-          View
-        </Button>
-      );
-    },
-      /* return( 
-         <SelectedOrderContext.Provider value={selectedRow}>
-           <Link to="/orderTransactionDetails" >   
-            <Button variant="contained" style={{height:'35px', width:'100px',color:'#146C94',backgroundColor:'#AFD3E2',fontWeight:'bold', borderRadius:'20px'}}onClick={handleButtonOrder}>
-              View
-            </Button>
-          </Link> 
-        </SelectedOrderContext.Provider> 
-      );  */
-    },
-  ];
+    { field: 'orderID', headerName: 'Order Transaction ID', width: 200 },
+    { field: 'dealerName', headerName: 'Dealer Name', width: 180 },
+    // { field: 'dueDate', headerName: 'Payment Due Date', width: 160 },
+    { field: 'amountDue', headerName: 'Amount Due', width: 180 },
+    { field: 'collectorStatus', headerName: 'Collector Status', width: 200 },
+    { field: 'collectorName', headerName: 'Collector Name', width: 200 },
+   
+    {
+      field: 'unassign', headerName: '', width: 220, renderCell: (params: { row: any; }) => {
+        return (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={(event) => {
+              handleUnassignCollector(params.row, event);
+            }}
+            disabled={params.row.collectorStatus === 'Not Assigned'}
+          
+          >
+            Unassign Collector
 
+          </Button>
+        )
+      }
+    },
+    {
+      field: 'actionView', headerName: '', width: 180, renderCell: (params: { row: any; }) => {
+        return (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              handleViewButtonClick(params.row.orderID);
+            }}>
+            View
+          </Button>
+        )
+      }
+    }
+  ]
+  {/** Rows for DataGrid */ }
   const rows = orders.map((order) => {
-
     return {
       id: order.orderid,
       orderID: order.orderid,
       dealerName: order.dealer ? `${order.dealer.firstname} ${order.dealer.lastname}` : '',
-      orderAmount: "₱" + order.orderamount,
+      amountDue: "₱" + order.orderamount,
       collectorStatus: order.collector !== null
         ? 'Assigned'
         : 'Not Assigned',
-      collectorName: order.collector ? `${order.collector.firstname} ${order.collector.lastname}` : '',
+      collectorName: order.collector ? `${order.collector.firstname} ${order.collector.lastname}` : ''
     };
   });
 
-
-  // Handler for removing collector Button 
-  const handleRemoveCollector = () => {
-
-    let count = 0;
-    for (const selectedOrderID of selectedRows) {
-      console.log(selectedOrderID)
-      if (removeStatus === false) {
-        break;
-      }
-      else {
-        removeCollector(selectedOrderID);
-        count++;
-      }
-    }
-    if (count === selectedRows.length) {
-      alert("All assigned collector of the selected orders are removed successfully!")
-    }
-    else {
-      alert(`Only ${count}! number of orders was removed successfully.`)
-    }
-  };
-
-  // Handler for Assigning Collector Button 
-  const handleAssignCollector = () => {
-    let count = 0;
-    console.log(assignedStatus)
-    for (const selectedOrderID of selectedRows) {
-      //ngano mogana mani og true diri pero if false kay maguba
-      if (assignedStatus === false) {
-        break;
-      }
-      else {
-        assignCollector(selectedOrderID, selectedCollector)
-        count++;
-      }
-    }
-
-    if (count === selectedRows.length) {
-      alert("Collector assigned successfully to all of the selected orders!")
-    }
-    else {
-      alert(`Only ${count}! number of orders was assigned.`)
-    }
-
+  const handleViewButtonClick = (objectId: string) => {
+    navigate(`/orderDetails/${objectId}`);
   };
 
 
-  // Handler for Group Transaction Button 
-  /* const handleGroupTransaction = () => {
-    const count = parseInt(groupByValue.trim());
-    const selectedRowIds = rows.slice(0, count).map((row) => row.orderID);
-    setSelectedRows(selectedRowIds);
-  }; */
-
-
-  // Handler for data grid in row selection
+  {/** Handle Row Selection */ }
   const handleRowSelection = (selectionModel: GridRowId[]) => {
     const selectedRowIds = selectionModel.map((id) => id + "");
     setSelectedRows(selectedRowIds);
@@ -197,150 +227,183 @@ export default function CollectorAssignment() {
 
 
 
+  const handleUnassignCollector = (selectedRow: any, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent the click event from propagating
+    removeCollector(selectedRow.orderID);
+    // alert("Collector Unassigned Successfully!");
+    // toast
+    toast(
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <RemoveCircleIcon fontSize='medium' style={{ marginRight: '10px', alignItems: '' }} />
+        {"Collector Unassigned Successfully!"}
+      </div>, {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      style: { backgroundColor: '#FA9600', color: '#ffffff' },
+      theme: "colored",
+    })
+  }
 
-  // **Return Statement Here**
+
+  {/** Handle Assign */ }
+  /*   const handleAssignCollector = () => {
+      if (selectedCollector === null) {
+        alert("Please choose a collector")
+      } else {
+        let count = 0;
+        for (const selectedOrderID of selectedRows) {
+          if (assignedStatus === false) {
+            break;
+          }
+          else {
+            assignCollector(selectedOrderID, selectedCollector)
+            count++;
+          } 
+        }
+  
+  
+        if (count === selectedRows.length) {
+          alert("Collector assigned successfully to all of the selected orders!")
+        }
+        else {
+          alert(`Only ${count}! number of orders was assigned.`)
+        }
+  
+        setSelectedRows([]);
+        setSelectedCollector(null);
+      }
+    }; */
+  const handleAssignCollector = () => {
+    if (selectedCollector === null) {
+      // alert("Please choose a collector");
+      headerHandleAlert('Collector Assignment Required', "To proceed, please assign a collector to the order(s).", 'warning');
+    } else if (selectedRows.length === 0) {
+      // alert("Please select at least one order to assign a collector");
+      headerHandleAlert('Order Selection Required', "Please choose an order before assigning a collector.", 'warning');
+    } else {
+      assignCollector(selectedCollector.employeeid!, selectedRows);
+      // alert("Collector assigned successfully to all of the selected orders!")
+      // toast
+      toast.success('Collector successfully assigned to selected orders!', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      })
+
+    }
+    setSelectedCollector(null);
+    setSelectedRows([]);
+  };
+
   return (
     <div>
-      <Box sx={{ height: 400, width: '100%', color: '#146C94' }}>
-        <Card sx={{ height: 550, margin: "10px 0px 20px 0px", borderRadius: "25px" }}>
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            {/* <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-              <Typography gutterBottom variant="h6" style={{ textAlign: 'left', fontWeight: 'bold', margin: '0px 0px 0px 30px', color: '#146C94', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ textAlign: 'left', fontSize: '18px' }}>Group Transactions by</span>
-
-                <TextField
-                  value={groupByValue}
-                  onChange={(e) => setGroupByValue(e.target.value)}
-                  id="standard-basic"
-                  variant="standard"
-                  InputProps={{ disableUnderline: true }}
-                  sx={{
-                    margin: '0px 0px 0px 20px',
-                    width: '100px',
-                    background: "#E9E9E9",
-                    borderRadius: '5px',
-                    input: { padding: "10px", color: '#146C94' }
-                  }} />
-              </Typography>
-
-               <CardActions sx={{ alignItems: 'center', marginLeft: '10px' }}>
-                <Button onClick={handleGroupTransaction} variant="contained"
-                  sx={{
-                    height: '50px',
-                    borderRadius: '15px',
-                    color: '#146C94',
-                    fontWeight: 'bold',
-                    backgroundColor: '#AFD3E2',
-                    '&:hover': { backgroundColor: '#AFD3E2FF' }
-                  }}>
-                  Group Transaction
-                </Button>
-              </CardActions> 
-            </div>*/}
-
-            <div style={{ display: "flex", alignItems: "center", marginTop: '20px' }}>
-
-              <Typography gutterBottom variant="h6" style={{ textAlign: 'left', fontWeight: 'bold', margin: '0px 0px 10px 20px', color: '#146C94', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ textAlign: 'left', fontSize: '18px' }}>Assign to</span>
-              </Typography>
-
-              <CardActions sx={{ alignItems: 'center', marginLeft: '10px' }}>
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  options={collectors}
-                  getOptionLabel={(option) => option.firstname + " " + option.lastname}
-                  isOptionEqualToValue={(option, value) => option.employeeid === value.employeeid}
-                  size="small"
-                  value={selectedCollector}
-                  onChange={(event, newValue) => {
-                    setSelectedCollector(newValue); // update the selected collector
-                    setSelectedCollectorId(newValue?.id || null); // update the selected collector ID
+      <StyledCard>
+        <ContentNameTypography>Collector Assignment</ContentNameTypography>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <LabelTypography>Assign to: </LabelTypography>
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={collectors}
+            getOptionLabel={(option) => option.firstname + " " + option.lastname + " (" + option.orderids.length + "  assigned orders)"}
+            isOptionEqualToValue={(option, value) => option.employeeid === value.employeeid}
+            size="small"
+            value={selectedCollector}
+            onChange={(event, newValue) => {
+              setSelectedCollector(newValue); // update the selected collector
+            }}
+            // Style for the Autocomplete(Combo Box - Separated from global styling due to error )   
+            sx={{
+              width: '35%',
+              maxHeight: '50px',
+              fontSize: '15px',
+              margin: '0px 25px 0px 0px'
+            }}
+            // Style for the TextField(Input - Separated from global styling due to error )  
+            renderInput={
+              (params) =>
+                <TextField {...params}
+                  InputProps={{
+                    ...params.InputProps, disableUnderline: true,
+                    style: {
+                      fontSize: "15px",
+                      backgroundColor: "#F5F7F9",
+                      color: 'black',
+                      borderRadius: '5px',
+                      height: '35px',
+                      padding: '2.5px 0 0 10px',
+                      margin: '-4px 0px 0px 20px'
+                    }
                   }}
-                  // ...
-                  sx={{ width: 150, maxHeight: '200px', fontSize: '30px', margin: '0px 0px 0px 0px' }}
-                  renderInput={
-                    (params) =>
-                      <TextField {...params}
-                        InputProps={{
-                          ...params.InputProps, disableUnderline: true,
-                          style: {
-                            fontSize: "15px", backgroundColor: "#E9E9E9", color: 'black',
-                            borderRadius: '5px', height: '50px', paddingLeft: '5px', margin: '0px 0px 10px 0px'
-                          }
-                        }}
-                        variant="standard"
-                      />}
-                />
+                  variant="standard"
+                />}
+          />
+          {/**Assign / Reassign Button */}
+          <StyledButton variant="contained" onClick={handleAssignCollector} >
+            Assign / Reassign Collector
+          </StyledButton>
 
-                <Button variant="contained" onClick={handleAssignCollector}
-                  sx={{
-                    marginLeft: '20px',
-                    marginBottom: '11px',
-                    height: '50px',
-                    borderRadius: '15px',
-                    fontWeight: 'bold',
-                    color: '#146C94',
-                    backgroundColor: '#AFD3E2',
-                    '&:hover': { backgroundColor: '#AFD3E2FF' }
-                  }}>Assign / Reassign Collector
-                </Button>
-              </CardActions>
-            </div>
+        </div>
 
-            <CardActions sx={{ alignItems: 'center', marginLeft: '10px', marginTop: '20px', marginBottom: '11px' }}>
-              <Button variant="contained"
-                onClick={handleRemoveCollector}
-                sx={{
-                  marginLeft: '20px',
-                  height: '50px',
-                  borderRadius: '15px',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  backgroundColor: '#E77D7D', '&:hover': { backgroundColor: '#E77D7DFF' }
-                }}>
-                Remove Collector
-              </Button>
-            </CardActions>
-          </div>
-
-          <Box sx={{ height: '100%', marginTop: '20px' }}>
-            <DataGrid
-              rows={rows}
-              sx={{ textAlign: 'center', color: '#146C94', height: '300px' }}
-              columns={columns.map((column) => ({
-                ...column,
-                headerClassName,
-              }))
-              }
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 5,
-                  },
-                },
-              }}
-              pageSizeOptions={[5]}
-              checkboxSelection
-              // rowSelectionModel={selectedRows}
-              onRowSelectionModelChange={(handleRowSelection)}
-              rowSelectionModel={selectedRows}
-            // disableRowSelectionOnClick
-            />
-          </Box>
+        {/**DataGrid */}
+        <DataGrid
+          rows={rows}
+          sx={{ textAlign: 'center', color: '#203949', height: '350px', margin: '35px 20px 0 20px', fontWeight: 330 }}
+          columns={columns.map((column) => ({
+            ...column,
+          }))
+          }
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5,
+              },
+            },
+          }}
+          pageSizeOptions={[5]}
+          checkboxSelection
+          onRowSelectionModelChange={(handleRowSelection)}
+          rowSelectionModel={selectedRows}
+        />
+      </StyledCard>
 
 
+      {/* Alerts */}
+      <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'center'
+      }} TransitionComponent={SlideTransitionDown}>
+        <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+          <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
 
-          <style>{`
-                              .${headerClassName} {
-                                background-color: #AFD3E2;
-                                fontWeight: bold;
-                              }
-                          `}</style>
-        </Card>
-      </Box>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        limit={3}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        style={{ width: 450 }}
+        theme="colored"
+      />
     </div>
 
   );
 }
-

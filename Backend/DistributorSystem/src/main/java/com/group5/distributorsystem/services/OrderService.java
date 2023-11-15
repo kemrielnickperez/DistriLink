@@ -5,8 +5,12 @@ import com.group5.distributorsystem.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,6 +29,9 @@ public class OrderService {
     ProductRepository productRepository;
 
     @Autowired
+    PaymentTransactionRepository paymentTransactionRepository;
+
+    @Autowired
     OrderedProductRepository orderedProductRepository;
 
     @Autowired
@@ -33,15 +40,23 @@ public class OrderService {
     @Autowired
     DealerRepository dealerRepository;
 
+    @Autowired
+    DistributorRepository distributorRepository;
+
     public Order createOrder(Order order) {
 
         Order newOrder =  orderRepository.save(order);
 
         double orderamount = 0;
 
+
         Dealer dealer = dealerRepository.findById(order.getDealer().getDealerid()).get();
 
+
+        Distributor distributor = distributorRepository.findById(dealer.getDistributor().getDistributorid()).get();
+
         Set<OrderedProduct> newOrderedProducts = order.getOrderedproducts();
+        Set<OrderedProduct> savedOrderedProducts = new HashSet<>();
 
         for(OrderedProduct op :newOrderedProducts) {
             String productid = op.getProduct().getProductid();
@@ -49,6 +64,7 @@ public class OrderService {
 
 
             Product product = productRepository.findById(productid).get();
+
 
             if(product != null) {
                 float price = product.getPrice();
@@ -58,18 +74,30 @@ public class OrderService {
 
                 newOrderedProduct = orderedProductRepository.save(newOrderedProduct);
 
+                savedOrderedProducts.add(newOrderedProduct);
+
                 orderamount += subtotal;
 
+                newOrderedProduct.setProduct(product);
                 product.getOrderedproductids().add(newOrderedProduct.getOrderedproductid());
                 productRepository.save(product);
+                orderedProductRepository.save(newOrderedProduct);
+
+
 
             }
         }
+        newOrder.setOrderedproducts(savedOrderedProducts);
         newOrder.setOrderamount(orderamount);
 
         //connection to dealer
+        //dealer.setDistributor(distributor);
         dealer.getOrderids().add(newOrder.getOrderid());
         dealerRepository.save(dealer);
+
+        newOrder.setDistributor(distributor);
+        distributor.getOrderids().add(newOrder.getOrderid());
+        distributorRepository.save(distributor);
 
         return orderRepository.save(newOrder);
     }
@@ -85,35 +113,187 @@ public class OrderService {
     }
 
 
-    public ResponseEntity assignCollector(String orderid, Employee collector){
-
+    /*public ResponseEntity assignCollector(String orderid, Employee collector) {
         Order order = orderRepository.findById(orderid).get();
         Employee employee = employeeRepository.findById(collector.getEmployeeid()).get();
 
-        order.setCollector(employee);
+        if (order.getCollector() == null) {
+            order.setCollector(employee);
+        }else{
+            Employee prevEmployee = order.getCollector();
+            prevEmployee.getOrders().remove(order);
+            employeeRepository.save(prevEmployee);
+            order.setCollector(employee);
+        }
 
-        employee.getOrderids().add(order.getOrderid());
+
+        employee.getOrders().add(order);
 
         orderRepository.save(order);
         employeeRepository.save(employee);
 
+        return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
+    }
+*/
 
+    public ResponseEntity assignCollector(String[] orderids, String collectorid) {
+        Employee employee = employeeRepository.findById(collectorid).get();
+
+
+        for (String orderId : orderids) {
+            Order order = orderRepository.findById(orderId).get();
+
+            if (order != null) {
+                if (order.getCollector() != null) {
+                    Employee prevEmployee = order.getCollector();
+                    prevEmployee.getOrderids().remove(order.getOrderid());
+                    employeeRepository.save(prevEmployee);
+                }
+
+
+                order.setCollector(employee);
+                orderRepository.save(order);
+
+
+                employee.getOrderids().add(order.getOrderid());
+            }
+        }
+
+        employeeRepository.save(employee);
         return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
     }
 
 
-    public ResponseEntity removeCollector(String orderid){
+
+
+    public ResponseEntity removeCollector(String orderid) {
 
         Order order = orderRepository.findById(orderid).get();
 
+
         Employee employee = employeeRepository.findById(order.getCollector().getEmployeeid()).get();
-        employee.getOrderids().remove(order.getOrderid());
+        employee.getOrderids().remove(orderid);
         employeeRepository.save(employee);
 
         order.setCollector(null);
         orderRepository.save(order);
 
         return new ResponseEntity("Collector removed successfully", HttpStatus.OK);
+    }
+    public ResponseEntity updateOrder(String orderId, Order updatedOrder) {
+        Order optionalOrder = orderRepository.findById(orderId).get();
+
+        if (optionalOrder != null) {
+
+            // Update order details from the updatedOrder object
+            optionalOrder.setPenaltyrate(updatedOrder.getPenaltyrate());
+            optionalOrder.setDistributiondate(updatedOrder.getDistributiondate());
+            optionalOrder.setPaymentterms(updatedOrder.getPaymentterms());
+            optionalOrder.setOrderedproducts(updatedOrder.getOrderedproducts());
+            optionalOrder.setOrderamount(updatedOrder.getOrderamount());
+            optionalOrder.setConfirmed(updatedOrder.getConfirmed());
+            optionalOrder.setIsclosed(updatedOrder.isIsclosed());
+            for (OrderedProduct op: updatedOrder.getOrderedproducts()){
+                op.setOrderid(updatedOrder.getOrderid());
+            }
+
+            // You can add more fields to update as needed
+
+            // Save the updated order to the repository
+            orderRepository.save(optionalOrder);
+
+
+            return new ResponseEntity<>("Order updated successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity updateOrderClosedStatus(String orderId) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            boolean allPaymentsPaid = true;
+
+            for (PaymentTransaction transaction : order.getPaymenttransactions()) {
+                if (!transaction.isPaid()) {
+                    allPaymentsPaid = false;
+                    break; // Exit the loop as soon as you find an unpaid transaction
+                }
+            }
+
+            order.setIsclosed(allPaymentsPaid);
+            orderRepository.save(order);
+
+            return new ResponseEntity<>("Order closed status updated successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+  /*  @Scheduled(cron = "0 0 0 * * *") // Run every day at midnight
+    public void applyPenaltyForLatePayments(String orderId) {
+        LocalDate currentDate = LocalDate.of(2023, Month.NOVEMBER, 30);
+
+        // Find the specific order
+        Order order = orderRepository.findById(orderId).orElse(null);
+
+        if (order != null) {
+            Set<PaymentTransaction> paymentTransactions = order.getPaymenttransactions();
+
+            for (PaymentTransaction paymentTransaction : paymentTransactions) {
+                LocalDate endDate = paymentTransaction.getEnddate();
+
+                if (!paymentTransaction.isPaid() && currentDate.isAfter(endDate)) {
+                    double penaltyRate = order.getPenaltyrate();
+
+                    // Calculate the penalty and update the payment transaction
+                    double penaltyAmount = (paymentTransaction.getAmountdue() * penaltyRate) / 100;
+                    double newAmountDue = paymentTransaction.getAmountdue() + penaltyAmount;
+
+                    paymentTransaction.setAmountdue(newAmountDue);
+                    paymentTransactionRepository.save(paymentTransaction);
+                }
+            }
+            order.setPaymenttransactions(paymentTransactions);
+            orderRepository.save(order);
+        }
+    }*/
+
+    @Scheduled(cron = "0 0 0 */15 * ?")
+    public void applyPenaltyForAllLatePayments() {
+        LocalDate currentDate = LocalDate.now();
+
+        // Iterate through all orders
+        List<Order> orders = orderRepository.findAll();
+
+        for (Order order : orders) {
+            // Check if the order is not closed
+            if (!order.isIsclosed()) {
+                Set<PaymentTransaction> paymentTransactions = order.getPaymenttransactions();
+
+                for (PaymentTransaction paymentTransaction : paymentTransactions) {
+                    LocalDate endDate = paymentTransaction.getEnddate();
+
+                    if (!paymentTransaction.isPaid() && currentDate.isAfter(endDate)) {
+                        double penaltyRate = order.getPenaltyrate();
+
+                        // Calculate the penalty and update the payment transaction
+                        double penaltyAmount = (paymentTransaction.getAmountdue() * penaltyRate) / 100;
+                        double newAmountDue = paymentTransaction.getAmountdue() + penaltyAmount;
+
+                        paymentTransaction.setAmountdue(newAmountDue);
+                        paymentTransactionRepository.save(paymentTransaction);
+                    }
+                    order.setPaymenttransactions(paymentTransactions);
+                    orderRepository.save(order);
+                }
+            }
+        }
+    }
+
+    public List<Order> getAllUnconfirmedOrders() {
+        return orderRepository.findByIsconfirmedFalse();
     }
 
 }

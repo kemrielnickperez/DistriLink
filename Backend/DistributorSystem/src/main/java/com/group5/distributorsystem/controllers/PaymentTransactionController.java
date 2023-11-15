@@ -43,6 +43,12 @@ public class PaymentTransactionController {
         return new ResponseEntity<>(paymentTransactionService.getPaymentTransactionByID(paymenttransactionid), HttpStatus.OK);
     }
 
+    @PutMapping("/updatePaymentTransaction")
+    public ResponseEntity<Object> updatePaymentTransaction(@RequestBody PaymentTransaction[] paymentTransaction){
+        return new ResponseEntity<>(paymentTransactionService.updatePaymentTransaction(paymentTransaction), HttpStatus.OK);
+
+    }
+
     @PutMapping("/updatePaymentTransaction/{paymenttransactionid}")
     public ResponseEntity<Object> updatePaymentTransaction(@PathVariable String paymenttransactionid, @RequestBody PaymentTransaction paymentTransaction){
         return new ResponseEntity<>(paymentTransactionService.updatePaymentTransaction(paymenttransactionid, paymentTransaction), HttpStatus.OK);

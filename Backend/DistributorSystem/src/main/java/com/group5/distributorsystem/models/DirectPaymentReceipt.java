@@ -12,37 +12,47 @@ public class DirectPaymentReceipt extends PaymentReceipt {
 
     private LocalDate datepaid;
 
-    private double amountpaid;
+    private double receivedamount;
 
-    public DirectPaymentReceipt() {
+    private LocalDate daterecorded;
+
+    public DirectPaymentReceipt(){}
+
+    public DirectPaymentReceipt(LocalDate datepaid, double receivedamount, LocalDate daterecorded) {
+        this.datepaid = datepaid;
+        this.receivedamount = receivedamount;
+        this.daterecorded = daterecorded;
     }
 
-    public DirectPaymentReceipt(LocalDate datepaid, double amountpaid) {
+    public DirectPaymentReceipt(String paymentreceiptid, String remarks, double amountpaid, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier, LocalDate datepaid, double receivedamount, LocalDate daterecorded) {
+        super(paymentreceiptid, remarks, amountpaid, paymenttype, paymenttransaction, cashier);
         this.datepaid = datepaid;
-        this.amountpaid = amountpaid;
-    }
-
-    public DirectPaymentReceipt(String paymentreceiptid, String remarks, String paymenttype, PaymentTransaction paymenttransaction, LocalDate datepaid, double amountpaid) {
-        super(paymentreceiptid, remarks, paymenttype, paymenttransaction);
-        this.datepaid = datepaid;
-        this.amountpaid = amountpaid;
+        this.receivedamount = receivedamount;
+        this.daterecorded = daterecorded;
     }
 
     public LocalDate getDatepaid() {
         return datepaid;
     }
 
+    public double getReceivedamount() {
+        return receivedamount;
+    }
+
+    public LocalDate getDaterecorded() {
+        return daterecorded;
+    }
+
     public void setDatepaid(LocalDate datepaid) {
         this.datepaid = datepaid;
     }
 
-    public double getAmountpaid() {
-        return amountpaid;
+    public void setReceivedamount(double receivedamount) {
+        this.receivedamount = receivedamount;
     }
 
-    public void setAmountpaid(double amountpaid) {
-        this.amountpaid = amountpaid;
+    public void setDaterecorded(LocalDate daterecorded) {
+        this.daterecorded = daterecorded;
     }
-
-
 }
+

@@ -1,10 +1,30 @@
 //Interfaces for models
 
+export interface IDistributor {
+    distributorid:string,
+    firstname: string,
+    middlename: string,
+    lastname: string,
+    emailaddress :String,
+    password: String,
+    birthdate: string,
+    gender: string,
+    currentaddress: string,
+    permanentaddress: string,
+    contactnumber: string,
+    dealerids: string[],
+    employeeids: string[],
+    orderids: string[],
+}
+
+
 export interface IDealer {
     dealerid:string,
     firstname: string,
     middlename: string,
     lastname: string,
+    emailaddress :String,
+    password: String,
     birthdate: string,
     gender: string,
     currentaddress: string,
@@ -17,8 +37,47 @@ export interface IDealer {
     businesstin: string,
     creditlimit: number,
     submissiondate: string,
-    attachments: string,
-    orderids: string[],
+    confirmed: boolean,
+    remarks: string,
+    distributor: IDistributor,
+    orderids: string[], // naa ta gihapon ni dapat
+    documentids: string[],
+}
+
+export interface IArchivedDealer {
+    dealerid:string,
+    firstname: string,
+    middlename: string,
+    lastname: string,
+    emailaddress :String,
+    password: String,
+    birthdate: string,
+    gender: string,
+    currentaddress: string,
+    permanentaddress: string,
+    contactnumber: string,
+    hasbusiness: boolean,
+    businessname: string,
+    businessphone: string,
+    businessaddress: string,
+    businesstin: string,
+    creditlimit: number,
+    submissiondate: string,
+    confirmed: boolean,
+    remarks: string,
+    distributor: IDistributor,
+    orderids: string[], // naa ta gihapon ni dapat
+    documentids: string[],
+    datearchived: string,
+}
+
+
+export interface IDealerDocument {
+    documentid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    dealer: IDealer | null; // You can reference the 'IDealer' interface you've already defined.
 }
 
 export interface IEmployee {
@@ -26,24 +85,39 @@ export interface IEmployee {
     firstname: string,
     middlename: string,
     lastname: string,
+    emailaddress :String,
+    password: String,
     birthdate: string,
     gender: string,
     currentaddress: string,
     permanentaddress: string,
     contactnumber: string,
+    tinnumber: String,
     is_cashier: boolean,
     is_salesassociate: boolean,
     is_collector: boolean,
+    submissiondate: string,
+    distributor: IDistributor,
     orderids: string[],
-    collectionpaymentids: string[] 
+    paymentreceiptids: string[],
+    collectionpaymentids: string[],
+    documentids: string[],
+}
+
+export interface IEmployeeDocument {
+    documentid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    employee: IEmployee | null; // You can reference the 'IDealer' interface you've already defined.
 }
 
 
 export interface IOrderedProducts {
+    orderedproductid: string;
     product: IProduct;
     quantity: number;
     subtotal: number;
-
 }
 
 export interface IOrder {
@@ -53,10 +127,14 @@ export interface IOrder {
     penaltyrate: number,
     paymentterms: number,
     orderamount:number,
+    distributor: IDistributor,
     collector: IEmployee | null,
     dealer: IDealer,
     orderedproducts: IOrderedProducts[],
     paymenttransactions: IPaymentTransaction[] | null,
+    confirmed: boolean,
+    isclosed: boolean
+    
 }
 
 
@@ -81,13 +159,43 @@ export interface IPaymentTransaction {
     paymentreceiptid: string | null;
 }
 
-export interface IDirectPaymentReceipt {
-    receiptid: number,
+export interface IPaymentReceipt {
+    paymentreceiptid: string,
     remarks: string,
-    datepaid: string,
     amountpaid: number,
     paymenttype: string,
-   /*   cashier: IEmployee,  */
     paymenttransaction: IPaymentTransaction, 
-       
+    cashier: IEmployee | null
+}
+
+export interface IDirectPaymentReceipt extends IPaymentReceipt{
+    remarks: string,
+    datepaid: string,  
+    receivedamount: number,
+    daterecorded: string,   
+}
+
+export interface ICollectionPaymentReceipt extends IPaymentReceipt{
+    collectiondate: string,
+    collectionamount: number,     
+    remitteddate: string,
+    remittedamount: number,  
+    confirmationdate: string,
+    isconfirmed: boolean,  
+}
+
+export interface ICollectorRemittanceProof {
+    collectorremittanceproofid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    collectionPaymentReceipt: ICollectionPaymentReceipt | null; // You can reference the 'IDealer' interface you've already defined.
+}
+
+export interface IDealerPaymentProof {
+    dealerpaymentproofid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    collectionPaymentReceipt: ICollectionPaymentReceipt | null; // You can reference the 'IDealer' interface you've already defined.
 }
