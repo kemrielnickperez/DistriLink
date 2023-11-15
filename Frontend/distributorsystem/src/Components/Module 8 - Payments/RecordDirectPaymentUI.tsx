@@ -224,47 +224,51 @@ export default function RecordDirectPayment() {
       }; */
 
       const cashierObject : IEmployee = {
-        employeeid: "2386f1b2",
-        firstname: "Victoria",
-        middlename: "I",
-        lastname: "Ramirez",
-        emailaddress: "charmaineramirez05@gmail.com",
-        password: "test",
-        birthdate: "2005-11-05",
-        gender: "female",
-        currentaddress: "2079 Humay-Humay Street",
-        permanentaddress: "Pajo",
-        contactnumber: "+639158523587",
-        tinnumber: '',
-        is_cashier: true,
-        is_salesassociate: true,
-        is_collector: true,
-        submissiondate: "2023-11-07",
-        distributor: {
-            distributorid: "distributor9",
-            firstname: "Min Gyu",
-            middlename: "",
-            lastname: "Kim",
-            emailaddress: "capstone.distrilink@gmail.com",
-            password: "doggo",
-            birthdate: "1997-04-06",
-            gender: "Male",
-            currentaddress: "Mabolo, Cebu",
-            permanentaddress: "Cebu City",
-            contactnumber: "09741258963",
-            dealerids: [],
-            employeeids: [
-                "2386f1b2"
-            ],
-            orderids: []
-        },
-        orderids: [],
-        paymentreceiptids: [],
-        collectionpaymentids: [],
-        documentids: [
-            "54219fa2"
-        ]
-    
+          employeeid: "2386f1b2",
+          firstname: "Victoria",
+          middlename: "I",
+          lastname: "Ramirez",
+          emailaddress: "charmaineramirez05@gmail.com",
+          password: "test",
+          birthdate: "2005-11-05",
+          gender: "female",
+          currentaddress: "2079 Humay-Humay Street",
+          permanentaddress: "Pajo",
+          contactnumber: "+639158523587",
+          tinnumber: '',
+          is_cashier: true,
+          is_salesassociate: true,
+          is_collector: true,
+          submissiondate: "2023-11-07",
+          distributor: {
+              distributorid: "distributor9",
+              firstname: "Min Gyu",
+              middlename: "",
+              lastname: "Kim",
+              emailaddress: "capstone.distrilink@gmail.com",
+              password: "doggo",
+              birthdate: "1997-04-06",
+              gender: "Male",
+              currentaddress: "Mabolo, Cebu",
+              permanentaddress: "Cebu City",
+              contactnumber: "09741258963",
+              dealerids: [],
+              employeeids: [
+                  "2386f1b2"
+              ],
+              orderids: [],
+              paymentreceiptids: [],
+              id: "distributor9",
+              fullName: `${"Min Gyu"} ${""} ${"Kim"}`.trim(), 
+          },
+          orderids: [],
+          paymentreceiptids: [],
+          collectionpaymentids: [],
+          documentids: [
+              "54219fa2"
+          ],
+          id: "2386f1b2",
+          fullName: `${"Victoria"} ${"I"} ${"Ramirez"}`.trim(), 
       }
 
     const handleSaveDirectPayment = () => {
@@ -279,7 +283,11 @@ export default function RecordDirectPayment() {
             receivedamount: Number(amountPaidRef.current?.value),
             paymenttype: 'direct',
             daterecorded: moment().format('YYYY-MM-DD'),
-            cashier: cashierObject,
+            receiver: {
+                id: cashierObject.id,
+                fullName:cashierObject.fullName,
+
+            },
             paymenttransaction: selectedPaymentTransaction!
         })
         const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);

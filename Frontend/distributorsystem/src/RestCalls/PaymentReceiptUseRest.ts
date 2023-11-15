@@ -24,45 +24,10 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
              daterecorded: directpaymentreceipt.daterecorded,
              receivedamount: directpaymentreceipt.receivedamount,
              paymenttransaction: directpaymentreceipt.paymenttransaction,
-              cashier: {
-                  employeeid: directpaymentreceipt.cashier!.employeeid,
-                  firstname: directpaymentreceipt.cashier!.firstname,
-                  middlename: directpaymentreceipt.cashier!.middlename,
-                  lastname: directpaymentreceipt.cashier!.lastname,
-                  birthdate: directpaymentreceipt.cashier!.birthdate,
-                  gender: directpaymentreceipt.cashier!.gender,
-                  currentaddress: directpaymentreceipt!.cashier!.currentaddress,
-                  permanentaddress: directpaymentreceipt!.cashier!.permanentaddress,
-                  contactnumber: directpaymentreceipt!.cashier!.contactnumber,
-                  iscashier: directpaymentreceipt.cashier!.is_cashier,
-                  issalesassociate: directpaymentreceipt!.cashier!.is_salesassociate,
-                  iscollector: directpaymentreceipt!.cashier!.is_collector
-                   /*  employeeid: "3593cd2f",
-                    firstname: "Victoria",
-                    middlename: "Victoria",
-                    lastname: "Ramirez",
-                    emailaddress: "charmaineramirez05@gmail.com",
-                    birthdate:"1997-10-15",
-                    gender:"Female",
-                    password: "test",
-                    currentaddress:"2079 Humay-Humay Street",
-                    permanentaddress:"Pajo",
-                    contactnumber:"09123456789",
-                    tinnumber: null,
-                    is_cashier:true,
-                    is_salesassociate:false,
-                    is_collector:true,
-                    submissiondate: "2023-10-23",
-                    orderids: [
-                        "e60e0410"
-                    ],
-                    paymentreceiptids: [],
-                    collectionpaymentids: [],
-                    documentids: [
-                        "04853f62"
-                    ] */
-
-             }, 
+             receiver: {
+                id: directpaymentreceipt?.receiver?.id, 
+                fullName: directpaymentreceipt?.receiver?.fullName, 
+            },
             
     })
         .then((response) => {
@@ -98,8 +63,8 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
             });
     }
 
-    function confirmCollectionPaymentReceipt(collectionpaymentreceiptid: string, cashierid: string) {
-        axios.put(`http://localhost:8080/paymentreceipt/updateCollectionPaymentReceipt/${collectionpaymentreceiptid}/${cashierid}`)
+    function confirmCollectionPaymentReceipt(collectionpaymentreceiptid: string, receiverid: string) {
+        axios.put(`http://localhost:8080/paymentreceipt/updateCollectionPaymentReceipt/${collectionpaymentreceiptid}/${receiverid}`)
             .then((response) => {
 
                 

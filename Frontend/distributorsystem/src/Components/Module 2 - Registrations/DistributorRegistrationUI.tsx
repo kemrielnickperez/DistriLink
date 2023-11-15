@@ -310,6 +310,9 @@ export default function DistributorRegistration() {
                 dealerids: [],
                 employeeids: [],
                 orderids: [],
+                paymentreceiptids: [],
+                id: uuidv4().slice(0, 8),
+                fullName: `${String(firstnameRef.current?.value)} ${String(middlenameRef.current?.value)} ${String(lastnameRef.current?.value)}`.trim(),
             })
             handleAlert('Success', 'You are Successfully Registered!', 'success');
         } catch (error) {

@@ -154,7 +154,7 @@ export default function PaymentList() {
             paymentStatus: paymentreceipt.paymenttype === 'collection'
                 ? (isconfirmed ? 'Confirmed' : 'Unconfirmed')
                 : '',
-            receiverName: paymentreceipt.cashier ? `${paymentreceipt.cashier.firstname} ${paymentreceipt.cashier.lastname}` : '',
+            receiverName: paymentreceipt.receiver ? `${paymentreceipt.receiver.fullName}` : '',
 
         }
     });

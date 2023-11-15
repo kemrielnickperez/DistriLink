@@ -169,7 +169,6 @@ export default function ProductDistributionList() {
 
   
   const distributorObject : IDistributor = {
-
     distributorid: "distributor1",
     firstname: "Junhui",
     middlename: "",
@@ -183,8 +182,11 @@ export default function ProductDistributionList() {
     contactnumber: "09741258963",
     dealerids: [],
     employeeids: [],
-    orderids: []
-}
+    orderids: [],
+    paymentreceiptids: [],
+    id: 'distributor1',
+    fullName: `${"Junhui"} ${""} ${"Wen"}`.trim(),
+  }
 
 
   const paymentchoices = [

@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CollectionPaymentReceiptService {
@@ -33,6 +34,9 @@ public class CollectionPaymentReceiptService {
 
     @Autowired
     DealerPaymentProofRepository dealerPaymentProofRepository;
+
+    @Autowired
+    DistributorRepository distributorRepository;
 
 
 
@@ -115,18 +119,36 @@ public class CollectionPaymentReceiptService {
 
         return collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
     }*/
+    public PaymentReceiver findPaymentReceiverById(String receiverId) {
+        Optional<Distributor> distributorOptional = distributorRepository.findById(receiverId);
+        if (distributorOptional.isPresent()) {
+            return distributorOptional.get();
+        }
 
-    public ResponseEntity confirmCollectionPaymentReceipt(String collectionpaymentreciptid, String cashierid) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(receiverId);
+        return employeeOptional.orElse(null);
+    }
+    public ResponseEntity confirmCollectionPaymentReceipt(String collectionpaymentreciptid, String receiverId) {
 
         CollectionPaymentReceipt collectionPaymentReceipt = collectionPaymentReceiptRepository.findById(collectionpaymentreciptid).get();
 
         PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
 
-        Employee cashier = employeeRepository.findById(cashierid).get();
+        PaymentReceiver receiver = findPaymentReceiverById(receiverId);
 
         collectionPaymentReceipt.setIsconfirmed(true);
-        collectionPaymentReceipt.setCashier(cashier);
-        cashier.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
+        collectionPaymentReceipt.setReceiver(receiver);
+
+        if (receiver instanceof Employee) {
+            Employee employeeReceiver = (Employee) receiver;
+            employeeReceiver.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
+            employeeRepository.save(employeeReceiver);
+        } else if (receiver instanceof Distributor) {
+            Distributor distributorReceiver = (Distributor) receiver;
+            distributorReceiver.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
+            distributorRepository.save(distributorReceiver);
+        }
+
 
 
         paymentTransaction.setPaymentreceiptid(collectionPaymentReceipt.getPaymentreceiptid());
@@ -140,7 +162,7 @@ public class CollectionPaymentReceiptService {
 
         paymentTransactionRepository.save(paymentTransaction);
         collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
-        employeeRepository.save(cashier);
+
 
         return new ResponseEntity("Collection Payment Receipt Confirmed Successfully!", HttpStatus.OK);
     }
