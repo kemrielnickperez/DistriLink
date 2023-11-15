@@ -24,7 +24,7 @@ public class PaymentReceipt {
     //@DBRef
     private PaymentTransaction paymenttransaction;
 
-    private Employee cashier;
+    private PaymentReceiver receiver;
 
     //comment sani kay murag nagdala og panganib
    /* @ManyToOne
@@ -32,13 +32,13 @@ public class PaymentReceipt {
     @JsonBackReference("employee-paymentreceipts-reference")
     private Employee cashier;*/
     public PaymentReceipt(){}
-    public PaymentReceipt(String paymentreceiptid, String remarks, double amountpaid, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier) {
+    public PaymentReceipt(String paymentreceiptid, String remarks, double amountpaid, String paymenttype, PaymentTransaction paymenttransaction, PaymentReceiver receiver) {
         this.paymentreceiptid = paymentreceiptid;
         this.remarks = remarks;
         this.amountpaid = amountpaid;
         this.paymenttype = paymenttype;
         this.paymenttransaction = paymenttransaction;
-        this.cashier = cashier;
+        this.receiver = receiver;
     }
 
     public void setPaymentreceiptid(String paymentreceiptid) {
@@ -61,8 +61,8 @@ public class PaymentReceipt {
         this.paymenttransaction = paymenttransaction;
     }
 
-    public void setCashier(Employee cashier) {
-        this.cashier = cashier;
+    public void setReceiver(PaymentReceiver receiver) {
+        this.receiver = receiver;
     }
 
     public String getPaymentreceiptid() {
@@ -85,7 +85,7 @@ public class PaymentReceipt {
         return paymenttransaction;
     }
 
-    public Employee getCashier() {
-        return cashier;
+    public PaymentReceiver getReceiver() {
+        return receiver;
     }
 }

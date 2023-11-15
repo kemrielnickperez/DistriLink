@@ -12,7 +12,7 @@ import java.util.Set;
 
 
 @Document("Employees")
-public class Employee {
+public class Employee implements PaymentReceiver {
 
     @Id
     private String employeeid;
@@ -252,5 +252,16 @@ public class Employee {
     public void setDocumentids(Set<String> documentids) {
         this.documentids = documentids;
     }
+
+    @Override
+    public String getReceiverId(){
+        return employeeid;
+    }
+
+    @Override
+    public String getFullName(){
+        return firstname + " " + middlename + " " + lastname;
+    }
+
 
 }
