@@ -1,14 +1,8 @@
 package com.group5.distributorsystem.services;
 
 
-import com.group5.distributorsystem.models.ArchivedDealer;
-import com.group5.distributorsystem.models.Dealer;
-import com.group5.distributorsystem.models.DealerDocument;
-import com.group5.distributorsystem.models.Distributor;
-import com.group5.distributorsystem.repositories.ArchivedDealerRepository;
-import com.group5.distributorsystem.repositories.DealerDocumentRepository;
-import com.group5.distributorsystem.repositories.DealerRepository;
-import com.group5.distributorsystem.repositories.DistributorRepository;
+import com.group5.distributorsystem.models.*;
+import com.group5.distributorsystem.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -42,6 +36,9 @@ public class DealerService {
 
     @Autowired
     ArchivedDealerRepository archivedDealerRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -206,7 +203,21 @@ public class DealerService {
     }
 
 
+    public double getTotalOrderAmountByDealerID(String dealerid){
+        Dealer dealer = dealerRepository.findById(dealerid).get();
+
+        double  totalOrderAmount = 0;
+
+        for (String orderid: dealer.getOrderids()) {
+            Order order = orderRepository.findById(orderid).get();
+            totalOrderAmount += order.getOrderamount();
+        }
+
+        return totalOrderAmount;
     }
+
+
+}
 
 
 

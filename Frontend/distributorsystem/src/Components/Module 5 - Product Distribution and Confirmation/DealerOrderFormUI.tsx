@@ -123,7 +123,7 @@ export default function DealerOrderForm() {
 
   const [newOrder] = useRestOrder();
 
-  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
+  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer, dealerRemainingCredit] = useRestDealer();
 
   const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
@@ -149,7 +149,7 @@ export default function DealerOrderForm() {
 
   const [open, setOpen] = useState(false);
 
-   const [toastShown, setToastShown] = useState(false);
+  const [toastShown, setToastShown] = useState(false);
 
   const penaltyRateRef = useRef<TextFieldProps>(null);
 
@@ -186,9 +186,19 @@ export default function DealerOrderForm() {
     }
   ];
 
+  const isMounted = useRef(false);
+
   useEffect(() => {
-    findDealer();
+    if (!isMounted.current) {
+      // Your code to be executed once after component mounts
+      findDealer();
+
+      // Set isMounted to true to prevent this block from running again
+      isMounted.current = true;
+    }
+
     getAllProducts();
+
     const newTotalAmount = orderedProducts.reduce((total, product) => {
       return total + product.product.price * product.quantity;
     }, 0);
@@ -196,15 +206,9 @@ export default function DealerOrderForm() {
     // Update the total amount state
     setTotalAmount(newTotalAmount);
 
-  }, [isDealerFound, products, orderedProducts]);
-  /* 
-    function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
-      return {
-        product: product,
-        quantity: quantity,
-        subtotal: product.price * quantity
-      };
-    } */
+
+  }, [orderedProducts, products]); // Include only the dependencies that are used inside the useEffect
+
 
   {/**Handler for Alert - Function to define the type of alert*/ }
   function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
@@ -354,28 +358,30 @@ export default function DealerOrderForm() {
       const orderAmount = orderedProducts.reduce((total, product) => {
         return total + product.product.price * product.quantity;
       }, 0);
-      const uuid = uuidv4();
-      const orderuuid = uuid.slice(0, 8)
-      console.log(orderedProducts)
-      newOrder({
-        orderid: orderuuid,
-        distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-        //moment ang gamit ani para maka generate og date today
-        orderdate: moment().format('YYYY-MM-DD'),
-        penaltyrate: Number(penaltyRateRef.current?.value),
-        paymentterms: paymentTerm,
-        orderamount: orderAmount,
-        distributor: dealer!.distributor!,
-        collector: null,
-        dealer: dealer!,
-        orderedproducts: orderedProducts,
-        paymenttransactions: [],
-        confirmed: false,
-        isclosed: false
-      });
-      //if possible kay ara na siya mo clear after sa snackbar
-      headerHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
-      clearInputValues();
+      if (orderAmount < dealerRemainingCredit!) {
+        newOrder({
+          orderid: uuidv4().slice(0, 8),
+          distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
+          //moment ang gamit ani para maka generate og date today
+          orderdate: moment().format('YYYY-MM-DD'),
+          penaltyrate: Number(penaltyRateRef.current?.value),
+          paymentterms: paymentTerm,
+          orderamount: orderAmount,
+          distributor: dealer!.distributor!,
+          collector: null,
+          dealer: dealer!,
+          orderedproducts: orderedProducts,
+          paymenttransactions: [],
+          confirmed: false,
+          isclosed: false
+        });
+        //if possible kay ara na siya mo clear after sa snackbar
+        headerHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
+        clearInputValues();
+      }
+      else {
+        headerHandleAlert('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust ToT.", 'warning')
+      }
     }
 
     else {
