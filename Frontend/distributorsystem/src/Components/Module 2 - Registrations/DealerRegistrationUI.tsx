@@ -178,7 +178,7 @@ export default function DealerRegistration() {
     const navigate = useNavigate();
 
     {/**UseStates*/ }
-    const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
+    const  [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
     const [selectedGender, setSelectedGender] = useState('');
     const [selectedBusinessOpt, setSelectedBusinessOpt] = useState(false);
     const [selectedBDate, setSelectedBDate] = useState<Dayjs | null>(null);
@@ -244,7 +244,7 @@ export default function DealerRegistration() {
     const businessphonenumberRef = useRef<TextFieldProps>(null)
     const tinnumberRef = useRef<TextFieldProps>(null)
 
-
+/* 
     const distributorObject: IDistributor = {
 
         distributorid: "distributor4",
@@ -260,8 +260,9 @@ export default function DealerRegistration() {
         contactnumber: "09741258963",
         dealerids: [],
         employeeids: [],
-        orderids: []
-    }
+        orderids: [],
+        archiveddealerids:[]
+    } */
 
 
     function getAllDistributors() {

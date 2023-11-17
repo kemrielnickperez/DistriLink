@@ -120,6 +120,31 @@ public class DealerService {
 
     }*/
 
+
+    public Dealer getDealerByDistributor(String dealerid, String distributorid) {
+        Distributor distributor = distributorRepository.findById(distributorid).orElse(null);
+
+        Dealer dealer = dealerRepository.findById(dealerid).orElse(null);
+
+            if (dealer != null) {
+                for (String distributor_dealer : distributor.getDealerids()) {
+                    if (distributor_dealer.equals(dealer.getDealerid())) {
+                        return dealer; // Dealer found, return the dealer
+                    }
+                }
+
+                // Dealer not found in the distributor's list
+                return null;
+            } else {
+                // Dealer with the given ID not found
+                return null;
+            }
+    }
+
+    public List<Dealer> getAllDealersByDistributorID(String distributorid) {
+        return dealerRepository.findAllByDistributor_Distributorid(distributorid);
+    }
+
     public Dealer findByDealeridAndPassword(String dealerid, String password){
         return dealerRepository.findByDealeridAndPassword(dealerid, password);
     }
@@ -137,6 +162,10 @@ public class DealerService {
 
     public List<Dealer> getAllUnconfirmedDealers() {
         return dealerRepository.findByIsconfirmedFalse();
+    }
+
+    public List<Dealer> getAllUnconfirmedDealersByDistributorID(String distributorid) {
+        return dealerRepository.findByDistributor_DistributoridAndIsconfirmedFalse(distributorid);
     }
 
     public void updateDealerConfirmation(String dealerId, Double creditlimit) {
@@ -188,6 +217,7 @@ public class DealerService {
 
     public void updateArchivedDealer(String dealerId, String remarks, LocalDate datearchived){
         Dealer optionalDealer = dealerRepository.findById(dealerId).get();
+        Distributor distributor = distributorRepository.findById(optionalDealer.getDistributor().getDistributorid()).get();
 
         String subject = "Dealer Account Status Update";
         String content =
@@ -203,6 +233,9 @@ public class DealerService {
         archivedDealerRepository.save(archivedDealer);
         dealerRepository.delete(optionalDealer);
 
+        distributor.getDealerids().remove(optionalDealer.getDealerid());
+        distributor.getArchiveddealerids().add(archivedDealer.getDealerid());
+        distributorRepository.save(distributor);
     }
 
 

@@ -7,10 +7,11 @@ import { toast } from "react-toastify";
 
 
 
-export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, (dealerID: string, creditlimit: number) => void, (dealerID: string, remarks: string) => void, (dealerID: string, remarks: string, dateArchived: string) => void, boolean | undefined, IDealer | undefined] => {
+export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String, distributorid: string) => void, (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, (dealerID: string, creditlimit: number) => void, (dealerID: string, remarks: string) => void, (dealerID: string, remarks: string, dateArchived: string) => void, () => void, boolean | undefined, boolean | undefined, IDealer | undefined] => {
 
-    const [dealer, setDealer] = useState<IDealer>();
+    const [dealer, setDealer] = useState<IDealer | null>();
     const [isDealerFound, setIsDealerFound] = useState(false);
+    const [isDealerConfirmed, setIsDealerConfirmed] = useState(false);
 
     function newDealer(dealer: IDealer, dealerDocuments: IDealerDocument[]) {
 
@@ -244,9 +245,17 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             }
         })
             .then((response) => {
-                setDealer(response.data);
+                
+                
                 if (response.data !== null) {
-                    setIsDealerFound(true);
+                    if(response.data.isconfirmed !== false){
+                        alert("naa?")
+                        setDealer(response.data);
+                        setIsDealerFound(true);
+                    }
+                    else{
+                        alert("wala pa ni siya na confirm, use lain dealer please")
+                    }
 
                 }
                 else {
@@ -257,5 +266,42 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
                 console.error('Error retrieving dealer data:', error);
             });
     }
-    return [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,]
+
+    function getDealerByDistributor(dealerID: String, distributorid: string) {
+        axios.get(`http://localhost:8080/dealer/getDealerByDistributor/${dealerID}/${distributorid}`)
+            .then((response) => {
+                setDealer(response.data);
+            
+                
+                if (response.data !== '') {
+                    if(response.data.isconfirmed !== false){
+                        setIsDealerFound(true);
+                        alert("Dealer found! Please proceed.")
+                        setIsDealerFound(true);
+                        setIsDealerConfirmed(true);
+                    }
+                    else{
+                        setIsDealerFound(false);
+                        setIsDealerConfirmed(false);
+                        alert("wala pa ni siya na confirm, use lain dealer please")
+                    }
+                    
+
+                }
+                else {
+                    setIsDealerFound(false);
+                    alert("Dealer not found! Please try again.")
+                }
+            })
+            .catch((error) => {
+                console.error('Error retrieving dealer data:', error);
+            });
+    }
+
+    function resetDealer(){
+        setIsDealerFound(false);
+        setDealer(null);
+    }
+
+    return [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer!,]
 }

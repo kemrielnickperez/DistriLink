@@ -73,6 +73,9 @@ export default function CollectorAssignment() {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('success');
 
+  const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+ 
+
 
   {/** functions */ }
   /*  function getAllCollectors() {
@@ -107,7 +110,7 @@ export default function CollectorAssignment() {
 
 
   function getAllCollectors() {
-    axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
+    axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllCollectorsByDistributorID/${distributorFromStorage.distributorid}`)
       .then((response) => {
         const updatedCollectors = response.data.map((collector) => {
           const assignedOrders = orders.filter((order) => order.collector?.employeeid === collector.employeeid);
@@ -123,7 +126,7 @@ export default function CollectorAssignment() {
   }
 
   function getAllOrders() {
-    axios.get<IOrder[]>('http://localhost:8080/order/getAllOrders')
+    axios.get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${distributorFromStorage.distributorid}`)
       .then((response) => {
         const confirmedOrders = response.data.filter(order => order.confirmed && !order.isclosed);
 
@@ -140,11 +143,7 @@ export default function CollectorAssignment() {
 
   const handleButtonClick = (objectId: string) => {
     // Update the context if needed
-     if (objectidContext) {
-      objectidContext.setObjectId(objectId);
-    } 
 
-   
     navigate(`/paymenttransactiondetailsss/${objectId}`);
   };
 
@@ -215,6 +214,7 @@ export default function CollectorAssignment() {
   });
 
   const handleViewButtonClick = (objectId: string) => {
+    console.log(objectId)
     navigate(`/orderDetails/${objectId}`);
   };
 

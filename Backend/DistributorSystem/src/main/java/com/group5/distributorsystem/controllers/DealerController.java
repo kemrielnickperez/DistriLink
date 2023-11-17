@@ -47,6 +47,15 @@ public class DealerController {
         return new ResponseEntity<>(dealerService.getDealerByID(dealerid), HttpStatus.OK);
     }
 
+    @GetMapping("/getDealerByDistributor/{dealerid}/{distributorid}")
+    public ResponseEntity<Object> getDealerByDistributor(@PathVariable("dealerid") String dealerid, @PathVariable("distributorid") String distributorid){
+        return new ResponseEntity<>(dealerService.getDealerByDistributor(dealerid, distributorid), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllDealersByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllDealersByDistributorID(@PathVariable String distributorid) {
+        return new ResponseEntity<>(dealerService.getAllDealersByDistributorID(distributorid), HttpStatus.OK);
+    }
 
     @PutMapping("/updateCreditLimit")
     public ResponseEntity<Object> updateCreditLimit(@RequestParam String dealerId, @RequestParam double newCreditLimit) {
@@ -82,6 +91,11 @@ public class DealerController {
     @GetMapping("/getAllUnconfirmedDealers")
     public ResponseEntity<Object> getAllUnconfirmedDealers(){
         return new ResponseEntity<>(dealerService.getAllUnconfirmedDealers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUnconfirmedDealersByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllUnconfirmedDealersByDistributorID(@PathVariable String distributorid){
+        return new ResponseEntity<>(dealerService.getAllUnconfirmedDealersByDistributorID(distributorid), HttpStatus.OK);
     }
 
 }

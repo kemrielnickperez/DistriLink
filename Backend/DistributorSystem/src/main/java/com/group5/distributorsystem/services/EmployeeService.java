@@ -66,12 +66,16 @@ public class EmployeeService {
         List<Employee> collectors = new ArrayList<>();
 
         for(Employee e : allEmployees){
-            if(e.isIs_collector()){
+            if(e.isIscollector()){
                 collectors.add(e);
             }
         }
 
         return collectors;
+    }
+
+    public List<Employee> getAllCollectorsByDistributorID(String distributorid){
+        return employeeRepository.findByDistributor_DistributoridAndIscollectorTrue(distributorid);
     }
 
     public Optional<Employee> getEmployeeByID(String employeeid){
@@ -93,6 +97,11 @@ public class EmployeeService {
         }
         return collector;
     }
+
+    public List<Employee> getAllEmployeesByDistributorID(String distributorid) {
+        return employeeRepository.findAllByDistributor_Distributorid(distributorid);
+    }
+
 
     public Employee findByEmployeeidAndPassword(String employeeid, String password){
         return employeeRepository.findByEmployeeidAndPassword(employeeid, password);

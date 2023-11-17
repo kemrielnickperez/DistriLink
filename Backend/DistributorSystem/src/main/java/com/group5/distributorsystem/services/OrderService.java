@@ -136,6 +136,11 @@ public class OrderService {
     }
 */
 
+    public List<Order> getAllOrdersByDistributorID(String distributorid) {
+        return orderRepository.findAllByDistributor_Distributorid(distributorid);
+    }
+
+
     public ResponseEntity assignCollector(String[] orderids, String collectorid) {
         Employee employee = employeeRepository.findById(collectorid).get();
 
@@ -215,7 +220,10 @@ public class OrderService {
             Order order = optionalOrder.get();
             boolean allPaymentsPaid = true;
 
-            for (PaymentTransaction transaction : order.getPaymenttransactions()) {
+            List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionRepository.findByOrder_Orderid(order.getOrderid());
+
+
+            for (PaymentTransaction transaction : paymentTransactionsFromOrder) {
                 if (!transaction.isPaid()) {
                     allPaymentsPaid = false;
                     break; // Exit the loop as soon as you find an unpaid transaction
@@ -267,12 +275,17 @@ public class OrderService {
         // Iterate through all orders
         List<Order> orders = orderRepository.findAll();
 
+
+
         for (Order order : orders) {
             // Check if the order is not closed
             if (!order.isIsclosed()) {
-                Set<PaymentTransaction> paymentTransactions = order.getPaymenttransactions();
+               // Set<PaymentTransaction> paymentTransactions = order.getPaymenttransactions();
 
-                for (PaymentTransaction paymentTransaction : paymentTransactions) {
+                List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionRepository.findByOrder_Orderid(order.getOrderid());
+
+
+                for (PaymentTransaction paymentTransaction : paymentTransactionsFromOrder) {
                     LocalDate endDate = paymentTransaction.getEnddate();
 
                     if (!paymentTransaction.isPaid() && currentDate.isAfter(endDate)) {
@@ -284,8 +297,9 @@ public class OrderService {
 
                         paymentTransaction.setAmountdue(newAmountDue);
                         paymentTransactionRepository.save(paymentTransaction);
+
                     }
-                    order.setPaymenttransactions(paymentTransactions);
+                    order.getPaymenttransactionids().add(paymentTransaction.getPaymenttransactionid());
                     orderRepository.save(order);
                 }
             }
@@ -294,6 +308,10 @@ public class OrderService {
 
     public List<Order> getAllUnconfirmedOrders() {
         return orderRepository.findByIsconfirmedFalse();
+    }
+
+    public List<Order> getAllUnconfirmedOrdersByDistributorID(String distributorid) {
+        return orderRepository.findByDistributor_DistributoridAndIsconfirmedFalse(distributorid);
     }
 
 }

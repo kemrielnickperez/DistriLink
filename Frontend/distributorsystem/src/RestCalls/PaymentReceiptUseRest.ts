@@ -34,9 +34,9 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
                   currentaddress: directpaymentreceipt!.cashier!.currentaddress,
                   permanentaddress: directpaymentreceipt!.cashier!.permanentaddress,
                   contactnumber: directpaymentreceipt!.cashier!.contactnumber,
-                  iscashier: directpaymentreceipt.cashier!.is_cashier,
-                  issalesassociate: directpaymentreceipt!.cashier!.is_salesassociate,
-                  iscollector: directpaymentreceipt!.cashier!.is_collector
+                  iscashier: directpaymentreceipt.cashier!.iscashier,
+                  issalesassociate: directpaymentreceipt!.cashier!.issalesassociate,
+                  iscollector: directpaymentreceipt!.cashier!.iscollector
                    /*  employeeid: "3593cd2f",
                     firstname: "Victoria",
                     middlename: "Victoria",

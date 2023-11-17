@@ -79,10 +79,10 @@ const TableHeaderCell = styled(TableCell)({
 });
 
 
-export function OrderDetailsPrint({order}: { order: IOrder}) {
+export function OrderDetailsPrint({order, paymentTransactions}: { order: IOrder, paymentTransactions:IPaymentTransaction[]}) {
     
-
-    const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+    
+    const sortedPaymemtTransactions = paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
     return (
         <div>

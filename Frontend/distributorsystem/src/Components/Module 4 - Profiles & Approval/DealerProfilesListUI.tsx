@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { IArchivedDealer, IDealer, IDistributor } from "../../RestCalls/Interfaces";
 import axios from "axios";
 import { Alert, AlertTitle, Box, Button, Card, Grid, Modal, Slide, SlideProps, Snackbar, Tab, Tabs, TextField, TextFieldProps, Typography, styled } from "@mui/material";
@@ -8,6 +8,7 @@ import React from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
+
 
 
 interface TabPanelProps {
@@ -88,7 +89,7 @@ export default function DealerProfileListUI() {
 
     const [remarks, setRemarks] = useState(""); // State to capture remarks
     const [creditlimit, setCreditlimit] = useState(0);
-    const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
+    const  [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -102,9 +103,12 @@ export default function DealerProfileListUI() {
     {/*Tabs*/ }
 
 
+
     const creditLimitRef = useRef<TextFieldProps>(null);
     const pendingReasonRef = useRef<TextFieldProps>(null);
     const declineReasonRef = useRef<TextFieldProps>(null);
+
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
 
 
     function CustomTabPanel(props: TabPanelProps) {
@@ -134,7 +138,7 @@ export default function DealerProfileListUI() {
 
 
     function getAllDealers() {
-        axios.get<IDealer[]>('http://localhost:8080/dealer/getAllDealers')
+        axios.get<IDealer[]>(`http://localhost:8080/dealer/getAllDealersByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setDealers(response.data);
 
@@ -146,7 +150,7 @@ export default function DealerProfileListUI() {
     }
 
     function getAllArchivedDealers() {
-        axios.get<IArchivedDealer[]>('http://localhost:8080/archived/getAllArchivedDealers')
+        axios.get<IArchivedDealer[]>(`http://localhost:8080/archived/getAllArchivedDealersByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setArchivedDealer(response.data);
 
@@ -164,6 +168,7 @@ export default function DealerProfileListUI() {
 
         getAllDealers();
         getAllArchivedDealers();
+      
 
     }, []);
 

@@ -123,7 +123,7 @@ export default function DealerOrderForm() {
 
   const [newOrder] = useRestOrder();
 
-  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
 
   const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
@@ -335,7 +335,7 @@ export default function DealerOrderForm() {
 
   const findDealer = () => {
 
-    getDealerByID("039c63af")
+    getDealerByID("343317e8")
 
     //Problematic pa siya ngari na part kay on loop sya
     // isDealerFound ? headerHandleAlert('Dealer located in the System.', "The dealer ID has been found and is ready for product distribution.", 'success')
@@ -369,7 +369,7 @@ export default function DealerOrderForm() {
         collector: null,
         dealer: dealer!,
         orderedproducts: orderedProducts,
-        paymenttransactions: [],
+        paymenttransactionids: [],
         confirmed: false,
         isclosed: false
       });

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import { IDealer, IDealerDocument, IDealerPaymentProof } from "../../RestCalls/Interfaces";
 import axios from "axios";
@@ -16,6 +16,8 @@ import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+
+
 
 
 interface TabPanelProps {
@@ -247,7 +249,7 @@ export default function DealerProfileDetails() {
 
     const [value, setValue] = useState(0);
 
-    const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer] = useRestDealer();
+    const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
 
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
 
@@ -274,6 +276,7 @@ export default function DealerProfileDetails() {
     const [alertSeverity, setAlertSeverity] = useState('success');
 
 
+   
 
 
 
@@ -438,8 +441,8 @@ export default function DealerProfileDetails() {
         } catch (error) {
             headerHandleAlert('Error', "Failed to retrieve dealer information. Please try again.", 'error');
         }
-
-        console.log(dealer)
+        
+      
     }, [objectId, dealer, dealerDocuments]);
 
 
@@ -533,7 +536,7 @@ export default function DealerProfileDetails() {
     return (
         <div>
             <Grid container spacing={3}>
-                <ContentNameTypography>Dealer Information</ContentNameTypography>
+                <ContentNameTypography>Dealer Information </ContentNameTypography>
                 <Grid item style={{ marginRight: -70 }}>
                     <Grid>
                         <ProfileCard onClick={handleOpenProfile} style={{cursor:'pointer'}}>

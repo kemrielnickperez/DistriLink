@@ -58,19 +58,30 @@ public class SignInServiceImpl implements SignInService{
         Dealer dealer = dealerRepository.findById(userId).orElse(null);
         Employee employee = employeeRepository.findById(userId).orElse(null);
 
+
+
         if (dealer != null && dealer.getPassword().equals(password) && dealer.getConfirmed().equals(true)) {
             result.put("userId", dealer.getDealerid());
             result.put("tableName", "Dealer");
+            result.put("dealer", dealer);
         } else if (distributor != null && distributor.getPassword().equals(password)) {
             result.put("userId", distributor.getDistributorid());
             result.put("tableName", "Distributor");
+            result.put("distributor", distributor);
         } else if (employee != null && employee.getPassword().equals(password)) {
-            if (employee.isIs_salesassociate()){
+            if(employee.isIssalesassociate() && employee.isIscashier()){
+                result.put("userId", employee.getEmployeeid());
+                result.put("tableName", "Sales Associate and Cashier");
+                result.put("salesAssociateAndCashier", employee);
+            }
+            else if (employee.isIssalesassociate()){
                 result.put("userId", employee.getEmployeeid());
                 result.put("tableName", "Sales Associate");
-            } else if(employee.isIs_cashier()){
+                result.put("salesAssociate", employee);
+            } else if(employee.isIscashier()){
                 result.put("userId", employee.getEmployeeid());
                 result.put("tableName", "Cashier");
+                result.put("cashier", employee);
             }
         } else {
             result.put("userId", null);

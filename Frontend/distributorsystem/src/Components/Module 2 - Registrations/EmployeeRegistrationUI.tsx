@@ -218,7 +218,7 @@ export default function EmployeeRegistration(){
     const [distributors, setDistributors] = useState<IDistributor[]>([]);
 
 
-    const distributorObject: IDistributor = {
+    /* const distributorObject: IDistributor = {
         distributorid: "distributor1",
         firstname: "Junhui",
         middlename: "",
@@ -232,8 +232,9 @@ export default function EmployeeRegistration(){
         contactnumber: "09741258963",
         dealerids: [],
         employeeids: [],
-        orderids: []
-    }
+        orderids: [],
+        archiveddealerids: []
+    } */
 
 
 
@@ -491,9 +492,9 @@ export default function EmployeeRegistration(){
                 permanentaddress: String(permanentaddressRef.current?.value),
                 contactnumber: String(contactnumberRef.current?.value),
                 tinnumber: String(tinnumberRef.current?.value),
-                is_cashier: isCashierSelected,
-                is_salesassociate: isSalesAssociateSelected,
-                is_collector: isCollectorSelected,
+                iscashier: isCashierSelected,
+                issalesassociate: isSalesAssociateSelected,
+                iscollector: isCollectorSelected,
                 submissiondate: moment().format('YYYY-MM-DD'),
                 distributor: selectedDistributor!,
                 orderids: [],

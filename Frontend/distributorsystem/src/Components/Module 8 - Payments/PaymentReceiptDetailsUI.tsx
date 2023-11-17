@@ -173,7 +173,7 @@ export function PaymentReceiptDetails() {
 
 
     const handleFindOrder = () => {
-        getOrderByID(paymentReceipt?.paymenttransaction.orderid!)
+        getOrderByID(paymentReceipt?.paymenttransaction?.order?.orderid!)
     };
 
 

@@ -38,6 +38,12 @@ public class PaymentTransactionController {
         return new ResponseEntity<>(paymentTransactionService.getAllPaymentTransactions(), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllPaymentTransactionsByOrderID/{orderid}")
+    public ResponseEntity<Object> getAllPaymentTransactionsByOrderID(@PathVariable String orderid){
+        return new ResponseEntity<>(paymentTransactionService.getAllPaymentTransactionsByOrderID(orderid), HttpStatus.OK);
+    }
+
+
     @GetMapping("/getPaymentTransactionByID/{paymenttransactionid}")
     public ResponseEntity<Object> getPaymentTransactionByID(@PathVariable String paymenttransactionid){
         return new ResponseEntity<>(paymentTransactionService.getPaymentTransactionByID(paymenttransactionid), HttpStatus.OK);
@@ -45,7 +51,8 @@ public class PaymentTransactionController {
 
     @PutMapping("/updatePaymentTransaction")
     public ResponseEntity<Object> updatePaymentTransaction(@RequestBody PaymentTransaction[] paymentTransaction){
-        return new ResponseEntity<>(paymentTransactionService.updatePaymentTransaction(paymentTransaction), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
+        //return new ResponseEntity<>(paymentTransactionService.updatePaymentTransaction(paymentTransaction), HttpStatus.OK);
 
     }
 

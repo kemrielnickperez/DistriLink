@@ -310,6 +310,7 @@ export default function DistributorRegistration() {
                 dealerids: [],
                 employeeids: [],
                 orderids: [],
+                archiveddealerids: []
             })
             handleAlert('Success', 'You are Successfully Registered!', 'success');
         } catch (error) {

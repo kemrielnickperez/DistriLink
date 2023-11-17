@@ -15,6 +15,7 @@ import { useParams } from "react-router-dom";
 //Please Install npm i react-toastify or if doesn't work, install npm i react-toastify
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 
 const Typography1 = styled(Typography)({
@@ -154,34 +155,50 @@ export default function Schedules() {
 
     const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
 
+    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
+
 
     const [initialMinDate, setInitialMinDate] = useState<Dayjs | null>(null);
 
     const [penaltyApplied, setPenaltyApplied] = useState(false);
 
+    const getAllPaymentTransactionsByOrderID = (idToSearch: string) => {
+        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${idToSearch}`)
+            .then((response) => {
+                setPaymentTransactions(response.data);
+                
+            })
+            .catch((error) => {
+                console.error('Error fetching data: ', error);
+            });
+    }
+
+
     useEffect(() => {
-        if (order && order.paymenttransactions) {
+        if (order && paymentTransactions) {
             // Clone the array and sort it
-            const sorted = [...order.paymenttransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
+            const sorted = [...paymentTransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
             setSortedPaymentTransactions(sorted);
             //handleFindOrder();
         }
-      /*   console.log(order?.isclosed) */
+     
 
         setInitialMinDate(dayjs() as Dayjs);
 
 
 
-    }, [order, paymentTransaction/* , penaltyApplied */]);
+
+    }, [order, paymentTransactions]);
 
 
 
 
     const handleFindOrder = () => {
 
-
+        
         const idToSearch = objectId !== 'null' ? objectId : orderIDRef.current?.value + "";
          getOrderByID(idToSearch!);
+         getAllPaymentTransactionsByOrderID(idToSearch!)
 
         if (isOrderFound === false) {
             // alert("Order not found. Please try again.");
@@ -207,7 +224,7 @@ export default function Schedules() {
                 enddate: currentEndDate.add(15, 'day').format('YYYY-MM-DD') || "",
                 installmentnumber: i,
                 paid: false,
-                orderid: order!.orderid,
+                order: order!,
                 paymentreceiptid: null,
             };
             currentEndDate = currentEndDate.add(15, 'day');
@@ -277,7 +294,7 @@ export default function Schedules() {
                 enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
                 installmentnumber: transaction.installmentnumber,
                 paid: transaction.paid,
-                orderid: transaction.orderid,
+                order: transaction.order,
                 paymentreceiptid: transaction.paymentreceiptid
             }
         )
@@ -383,7 +400,7 @@ export default function Schedules() {
                 </Grid>
             </Grid>
 
-            {order?.paymenttransactions?.length !== 0 && order?.collector !== null ? (
+            {order?.paymenttransactionids?.length !== 0 && order?.collector !== null ? (
                 <>
 
 
@@ -407,7 +424,7 @@ export default function Schedules() {
                                         </TableHead>
                                         <TableBody>
 
-                                            {order?.paymenttransactions?.map((transaction, index) => (
+                                            {paymentTransactions?.map((transaction, index) => (
                                                 <TableRow key={transaction.paymenttransactionid}>
                                                     <TableCell align="center">
                                                         {transaction.paymenttransactionid}
@@ -470,7 +487,7 @@ export default function Schedules() {
                             </Grid>
                         </Grid>
                     </Grid></>
-            ) : order.collector === null ? (
+            ) : order!.collector === null ? (
 
                 <div>
                     <h2 style={{ color: 'black', marginTop: '50px' }}> No Collector Assigned</h2>

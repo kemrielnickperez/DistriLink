@@ -1,8 +1,9 @@
 import { Grid, Paper, Autocomplete, Typography, styled, Table, TableContainer, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ICollectionPaymentReceipt, IDealer, IDirectPaymentReceipt, IDistributor, IOrder, IPaymentReceipt } from "../../RestCalls/Interfaces";
 import { useNavigate } from "react-router-dom";
+
 
 const ProductName = styled(Typography)({
     position: 'relative',
@@ -166,8 +167,11 @@ export default function Dashboard() {
     const [unconfirmedCollectionPaymentReceipts, setUnconfirmedCollectionPaymentReceipts] = useState<ICollectionPaymentReceipt[]>();
 
 
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+ 
+
     const getAllUnconfirmedDealers = () => {
-        axios.get('http://localhost:8080/dealer/getAllUnconfirmedDealers')
+        axios.get(`http://localhost:8080/dealer/getAllUnconfirmedDealersByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setUnconfirmedDealers(response.data);
             })
@@ -177,7 +181,7 @@ export default function Dashboard() {
     }
 
     const getAllUnconfirmedOrders = () => {
-        axios.get('http://localhost:8080/order/getAllUnconfirmedOrders')
+        axios.get(`http://localhost:8080/order/getAllUnconfirmedOrdersByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setUnconfirmedOrders(response.data);
             })
@@ -187,7 +191,7 @@ export default function Dashboard() {
     }
 
     const getAllUnconfirmedCollectionPaymentReceipts = () => {
-        axios.get('http://localhost:8080/collectionPaymentReceipt/getAllUnconfirmedCollectionPaymentReceipts')
+        axios.get(`http://localhost:8080/paymentreceipt/collectionpaymentreceipt/getAllUnconfirmedCollectionPaymentReceiptsByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setUnconfirmedCollectionPaymentReceipts(response.data);
             })
@@ -205,7 +209,11 @@ export default function Dashboard() {
     }
 
     const handleOrdersListClick = () => {
-        navigate(`/productDistributionList`);
+        //console.log(localStorage.getItem("salesAssociate"));
+        //console.log(JSON.parse(localStorage.getItem("salesAssociateAndCashier")!));
+        console.log(localStorage.getItem("salesAssociate"));
+        console.log(JSON.parse(localStorage.getItem("distributor")!));
+        // navigate(`/productDistributionList`);
     }
 
 
@@ -214,9 +222,9 @@ export default function Dashboard() {
         getAllUnconfirmedDealers();
         getAllUnconfirmedOrders();
         getAllUnconfirmedCollectionPaymentReceipts();
-   
+    }, []);
 
-    }, [unconfirmedDealers, unconfirmedOrders, unconfirmedCollectionPaymentReceipts]);
+    //unconfirmedDealers, unconfirmedOrders, unconfirmedCollectionPaymentReceipts
 
     return (
         <Grid container>

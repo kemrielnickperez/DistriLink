@@ -75,7 +75,7 @@ export const useRestOrder = (): [
 
             },
             collector: null,
-            paymenttransactions: [],
+            paymenttransactionids: [],
             confirmed: order.confirmed,
             closed: order.isclosed
 
@@ -112,7 +112,6 @@ export const useRestOrder = (): [
     
         axios.get(`http://localhost:8080/order/getOrderByID/${orderid}`)
             .then((response) => {
-
                 setOrder(response.data)
                 if (response.data !== null) {
                     setIsOrderFound(true);

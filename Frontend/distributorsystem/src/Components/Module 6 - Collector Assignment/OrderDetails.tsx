@@ -8,6 +8,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { OrderDetailsPrint } from "./OrderDetailsPrint";
+import axios from "axios";
 
 function SlideTransitionDown(props: SlideProps) {
     return <Slide {...props} direction="down" />;
@@ -112,6 +113,9 @@ const StyledPrintDiv = styled('div')({
 export function OrderDetails() {
     const { objectId } = useParams();
 
+    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
+
+
     const [openAlert, setOpenAlert] = useState(false);
 
     const [alerttitle, setTitle] = useState('');
@@ -145,40 +149,57 @@ export function OrderDetails() {
         setOpenAlert(false);
     };
 
-    //sorting the payment transactions
-    const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+    const getAllPaymentTransactionsByOrderID = () => {
+        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${objectId}`)
+            .then((response) => {
+             
+                setPaymentTransactions(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data: ', error);
+            });
+    }
 
+    //sorting the payment transactions
+    const sortedPaymemtTransactions = paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+
+
+    
     {/*Handlers*/ }
     const handleFindValue = () => {
         try {
             getOrderByID(objectId!);
+            getAllPaymentTransactionsByOrderID();
         } catch (error) {
             headerHandleAlert('Error', "Failed to retrieve order data. Please try again.", 'error');
         }
     };
 
-    {/* useEffects*/ }
-    useEffect(() => {
+    
+
+
+
+     useEffect(() => {
+
+         
         handleFindValue();
-    },
-        [order]
-    );
-    useEffect(() => {
+       
         setIsMounted(true); // Set the component as mounted when it renders
 
-        // Only make the GET request if the component is mounted
+      /*   // Only make the GET request if the component is mounted
         if (isMounted) {
-            handleFindValue();
+         
         }
         return () => {
             setIsMounted(false);
-        };
+        }; */
 
     },
         [isOrderFound, order, paymentTransactionsObjects]);
 
 
     const handleH2Click = () => {
+        console.log(order?.orderid)
         navigate(`/schedules/${order?.orderid}`);
     }
 
@@ -254,7 +275,7 @@ export function OrderDetails() {
 
                     {/* Payment Transaction Information */}
                     <StyldeInfoHeader>Payment Transaction Information</StyldeInfoHeader>
-                    {order?.paymenttransactions?.length !== 0 ? (
+                    {paymentTransactions?.length !== 0 ? (
                         <div>
                             <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '-5% 0px 50px 12%' }}>
                                 <TableContainer >
@@ -345,7 +366,7 @@ export function OrderDetails() {
 
                 </div>
             ) : (
-                <OrderDetailsPrint order={order!} />
+                <OrderDetailsPrint order={order!} paymentTransactions={paymentTransactions!} />
             )}
         </div>
 

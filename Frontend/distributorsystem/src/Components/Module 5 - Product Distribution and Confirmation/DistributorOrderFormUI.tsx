@@ -13,12 +13,14 @@ import { IDistributor, IOrderedProducts, IProduct } from '../../RestCalls/Interf
 import { v4 as uuidv4 } from 'uuid';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 //Imports for Toastify
 //Please Install npm i react-toastify or if doesn't work, install npm i react-toastify
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router';
+
+
 
 
 function SlideTransitionDown(props: SlideProps) {
@@ -129,7 +131,7 @@ export default function ProductDistributionList() {
 
 
 
-  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
 
 
   const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
@@ -158,17 +160,20 @@ export default function ProductDistributionList() {
 
   const [open, setOpen] = useState(false);
 
+  /* const [isDealerConfirmed, setIsDealerConfirmed] = useState(false); */
+
 
 
   const penaltyRateRef = useRef<TextFieldProps>(null);
   const dealerIDRef = useRef<TextFieldProps>(null);
 
 
-
+  const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+ 
 
 
   
-  const distributorObject : IDistributor = {
+  /* const distributorObject : IDistributor = {
 
     distributorid: "distributor1",
     firstname: "Junhui",
@@ -183,8 +188,9 @@ export default function ProductDistributionList() {
     contactnumber: "09741258963",
     dealerids: [],
     employeeids: [],
-    orderids: []
-}
+    orderids: [],
+    archiveddealerids:[]
+} */
 
 
   const paymentchoices = [
@@ -376,6 +382,7 @@ export default function ProductDistributionList() {
     setSelectedDate(null);
     setPaymentTerm(0);
     setTotalAmount(0);
+    resetDealer();
     
 
     if (dealerIDRef.current || penaltyRateRef.current?.value) {
@@ -411,7 +418,7 @@ export default function ProductDistributionList() {
         collector: null,
         dealer: dealer!,
         orderedproducts: orderedProducts,
-        paymenttransactions: [], 
+        paymenttransactionids: [], 
         confirmed: true,
         isclosed: false
       });
@@ -429,12 +436,9 @@ export default function ProductDistributionList() {
 
 
 
-  const handleFindDealer = () => {
-    getDealerByID(dealerIDRef.current?.value + "")
-    // //Problematic pa siya ngari na part kay kaduha pa ka dapat mo click aron ma sakto iya i display nga snackbar
-    // isDealerFound ? saveHandleAlert('Dealer located in the System.', "The dealer ID has been found and is ready for product distribution.", 'success')
-    //   : saveHandleAlert('Dealer Not Found in the System.', "The dealer ID you're looking for does not exist in the records.", 'error')
-
+  const handleFindDealer = ()  => {
+    getDealerByDistributor(dealerIDRef.current?.value + "", distributorFromStorage.distributorid!)
+    
   };
 
 

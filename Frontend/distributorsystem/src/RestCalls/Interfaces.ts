@@ -15,6 +15,7 @@ export interface IDistributor {
     dealerids: string[],
     employeeids: string[],
     orderids: string[],
+    archiveddealerids: string[]
 }
 
 
@@ -93,9 +94,9 @@ export interface IEmployee {
     permanentaddress: string,
     contactnumber: string,
     tinnumber: String,
-    is_cashier: boolean,
-    is_salesassociate: boolean,
-    is_collector: boolean,
+    iscashier: boolean,
+    issalesassociate: boolean,
+    iscollector: boolean,
     submissiondate: string,
     distributor: IDistributor,
     orderids: string[],
@@ -131,7 +132,7 @@ export interface IOrder {
     collector: IEmployee | null,
     dealer: IDealer,
     orderedproducts: IOrderedProducts[],
-    paymenttransactions: IPaymentTransaction[] | null,
+    paymenttransactionids: string[] ,
     confirmed: boolean,
     isclosed: boolean
     
@@ -155,7 +156,7 @@ export interface IPaymentTransaction {
     enddate: string;
     installmentnumber: number;
     paid: boolean;
-    orderid: string;
+    order: IOrder;
     paymentreceiptid: string | null;
 }
 

@@ -41,13 +41,15 @@ public class Distributor {
 
     private Set<String> employeeids = new HashSet<>();
 
-
     private Set<String> orderids = new HashSet<>();
+
+    private Set<String> archiveddealerids = new HashSet<>();
 
     public Distributor() {
     }
 
-    public Distributor(String distributorid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, Set<String> dealerids, Set<String> employeeids, Set<String> orderids) {
+
+    public Distributor(String distributorid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, Set<String> dealerids, Set<String> employeeids, Set<String> orderids, Set<String> archiveddealerids) {
         this.distributorid = distributorid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -62,8 +64,8 @@ public class Distributor {
         this.dealerids = dealerids;
         this.employeeids = employeeids;
         this.orderids = orderids;
+        this.archiveddealerids = archiveddealerids;
     }
-
 
     public String getDistributorid() {
         return distributorid;
@@ -175,5 +177,13 @@ public class Distributor {
 
     public void setOrderids(Set<String> orderids) {
         this.orderids = orderids;
+    }
+
+    public Set<String> getArchiveddealerids() {
+        return archiveddealerids;
+    }
+
+    public void setArchiveddealerids(Set<String> archiveddealerids) {
+        this.archiveddealerids = archiveddealerids;
     }
 }

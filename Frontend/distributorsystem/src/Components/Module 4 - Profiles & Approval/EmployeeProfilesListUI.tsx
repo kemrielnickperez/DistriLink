@@ -52,9 +52,13 @@ export default function EmployeeProfileListUI() {
     const [alertMessage, setAlertMessage] = useState('');
     const [alertSeverity, setAlertSeverity] = useState('success');
     
+
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+
+
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
-        axios.get<IEmployee[]>('http://localhost:8080/employee/getAllEmployees')
+        axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllEmployeesByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setEmployee(response.data);
                  // headerHandleAlert('Success', "Employees fetched successfully.", 'success');
@@ -108,9 +112,9 @@ export default function EmployeeProfileListUI() {
         id: employeeList.employeeid,
         employeeName: `${employeeList.firstname} ${employeeList.middlename} ${employeeList.lastname}`,
         position: [
-            employeeList.is_cashier && "Cashier",
-            employeeList.is_collector && (employeeList.is_cashier ? 'Collector' : 'Collector'),
-            employeeList.is_salesassociate && (employeeList.is_cashier || employeeList.is_collector ? 'Sales Associate' : 'Sales Associate')
+            employeeList.iscashier && "Cashier",
+            employeeList.iscollector && (employeeList.iscashier ? 'Collector' : 'Collector'),
+            employeeList.issalesassociate && (employeeList.iscashier || employeeList.iscollector ? 'Sales Associate' : 'Sales Associate')
         ].filter(Boolean).join(', ')
     }));
 

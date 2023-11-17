@@ -275,9 +275,9 @@ export function EmployeeProfileDetails() {
             <Grid item>
               <StyleMainLabel style={{marginLeft:70}}>Position</StyleMainLabel>
               <StyleMainInfo style={{ marginTop: 15, marginLeft: 90 }}>
-                {employee?.is_cashier && "Cashier"}
-                {employee?.is_collector && (employee!.is_cashier ? ', Collector' : 'Collector')}
-                {employee?.is_salesassociate && (employee?.is_cashier || employee?.is_collector ? ', Sales Associate' : 'Sales Associate')}
+                {employee?.iscashier && "Cashier"}
+                {employee?.iscollector && (employee!.iscashier ? ', Collector' : 'Collector')}
+                {employee?.issalesassociate && (employee?.iscashier || employee?.iscollector ? ', Sales Associate' : 'Sales Associate')}
               </StyleMainInfo>
             </Grid>
           </Grid>

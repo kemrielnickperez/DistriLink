@@ -15,4 +15,8 @@ public interface PaymentTransactionRepository extends MongoRepository<PaymentTra
 
     @Query("{ 'endDate': { $lt: ?0 }, 'isPaid': false }")
     List<PaymentTransaction> findLatePayments(LocalDate currentDate);
+
+
+    List<PaymentTransaction> findByOrder_Orderid(String orderid);
+
 }

@@ -38,6 +38,10 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getOrderByID(orderid), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllOrdersByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllOrdersByDistributorID(@PathVariable String distributorid) {
+        return new ResponseEntity<>(orderService.getAllOrdersByDistributorID(distributorid), HttpStatus.OK);
+    }
 
    /* @PutMapping("/assignCollector/{orderid}")
     public ResponseEntity<Object> assignCollector(@PathVariable String orderid, @RequestBody Employee collector){
@@ -80,6 +84,11 @@ public class OrderController {
     @GetMapping("/getAllUnconfirmedOrders")
     public ResponseEntity<Object> getAllUnconfirmedOrders(){
         return new ResponseEntity<>(orderService.getAllUnconfirmedOrders(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUnconfirmedOrdersByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllUnconfirmedOrdersByDistributorID(@PathVariable String distributorid){
+        return new ResponseEntity<>(orderService.getAllUnconfirmedOrdersByDistributorID(distributorid), HttpStatus.OK);
     }
 
 }

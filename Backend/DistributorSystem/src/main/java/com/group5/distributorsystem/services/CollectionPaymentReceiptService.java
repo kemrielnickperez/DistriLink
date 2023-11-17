@@ -154,4 +154,8 @@ public class CollectionPaymentReceiptService {
     public List<CollectionPaymentReceipt> getAllUnconfirmedCollectionPaymentReceipts() {
         return collectionPaymentReceiptRepository.findByIsconfirmedFalse();
     }
+
+    public List<CollectionPaymentReceipt> getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(String distributorid) {
+        return collectionPaymentReceiptRepository.findByPaymenttransaction_Order_Distributor_DistributoridAndIsconfirmedFalse(distributorid);
+    }
 }

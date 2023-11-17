@@ -30,9 +30,9 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
         formData.append('permanentaddress', employee.permanentaddress);
         formData.append('contactnumber', employee.contactnumber);
         formData.append('submissiondate', employee.submissiondate);
-        formData.append('is_cashier', employee.is_cashier.toString());
-        formData.append('is_salesassociate', employee.is_salesassociate.toString());
-        formData.append('is_collector', employee.is_collector.toString());
+        formData.append('iscashier', employee.iscashier.toString());
+        formData.append('issalesassociate', employee.issalesassociate.toString());
+        formData.append('iscollector', employee.iscollector.toString());
         formData.append('distributor.distributorid', employee.distributor.distributorid);
         formData.append('distributor.firstname', employee.distributor.firstname.toString());
         formData.append('distributor.middlename', employee.distributor.middlename.toString());

@@ -36,8 +36,10 @@ import OrderConfirmation from '../Components/Module 5 - Product Distribution and
 import { OrderTransactionDetails } from '../Components/Module 5 - Product Distribution and Confirmation/OrderTransactionDetails';
 import DistributorRegistration from '../Components/Module 2 - Registrations/DistributorRegistrationUI';
 
+
 export default function MainRoutes() {
     return (
+
         <Routes>
             <Route path="/" element={<SplashscreenContent />}>
                 <Route path="/" element={<Navigate replace to="WelcomeScreen" />} />
@@ -48,7 +50,7 @@ export default function MainRoutes() {
                     <Route path="/SignUpScreen" element={<SignupScreen />} />
                     <Route path="/DealerRegistration" element={<DealerRegistration />} />
                     <Route path="/EmployeeRegistration" element={<EmployeeRegistration />} />
-                    <Route path="/DistributorRegistration" element={<DistributorRegistration/>}/>
+                    <Route path="/DistributorRegistration" element={<DistributorRegistration />} />
                 </Route>
 
                 {/* <SigninScreen/> */}
@@ -92,6 +94,8 @@ export default function MainRoutes() {
                 </Route>
             </Route>
         </Routes>
+
+
 
     );
 }

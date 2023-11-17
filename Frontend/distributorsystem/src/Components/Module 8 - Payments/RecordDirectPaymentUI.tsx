@@ -2,7 +2,7 @@ import { Button, Divider, Input, Paper, Stack, Table, TableRow, TableBody, Table
 import SearchIcon from '@mui/icons-material/Search';
 import NavBar from "../../Global Components/NavBar";
 //import { useRestSchedule } from "../../RestCalls/ScheduleUseRest";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
@@ -18,6 +18,7 @@ import moment from "moment";
 import axios from "axios";
 import { error } from "console";
 import { ToastContainer } from "react-toastify";
+
 
 const StyledTableRow = styled(TableRow)({
     borderBottom: "1px #203949 solid",
@@ -189,12 +190,14 @@ const TableCellStyle = styled(TableCell)({
 
 export default function RecordDirectPayment() {
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus,updateOrder, closedOrder] = useRestOrder();
+    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
 
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
     const [selectedPaymentTransaction, setSelectedPaymentTransaction] = useState<IPaymentTransaction | null>();
     const [selectedpaymentTransactionID, setPaymentTransactionID] = useState('')
+    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
+
     const orderIDRef = useRef<TextFieldProps>(null);
     const paymentTransactionIDRef = useRef<TextFieldProps>(null)
     const amountPaidRef = useRef<TextFieldProps>(null);
@@ -202,12 +205,10 @@ export default function RecordDirectPayment() {
 
     const [minDate, setMinDate] = useState<Dayjs | null>(null);
 
+
     {/** functions */ }
 
-    const handleFindOrder = () => {
-        getOrderByID(orderIDRef.current?.value + '');
 
-    };
 
     /* const checkAndCloseOrder = (order: IOrder|undefined) => {
         // Check if all payment transactions are paid
@@ -223,51 +224,74 @@ export default function RecordDirectPayment() {
         }
       }; */
 
-      const cashierObject : IEmployee = {
-        employeeid: "2386f1b2",
-        firstname: "Victoria",
-        middlename: "I",
-        lastname: "Ramirez",
-        emailaddress: "charmaineramirez05@gmail.com",
-        password: "test",
-        birthdate: "2005-11-05",
-        gender: "female",
-        currentaddress: "2079 Humay-Humay Street",
-        permanentaddress: "Pajo",
-        contactnumber: "+639158523587",
-        tinnumber: '',
-        is_cashier: true,
-        is_salesassociate: true,
-        is_collector: true,
-        submissiondate: "2023-11-07",
-        distributor: {
-            distributorid: "distributor9",
-            firstname: "Min Gyu",
-            middlename: "",
-            lastname: "Kim",
-            emailaddress: "capstone.distrilink@gmail.com",
-            password: "doggo",
-            birthdate: "1997-04-06",
-            gender: "Male",
-            currentaddress: "Mabolo, Cebu",
-            permanentaddress: "Cebu City",
-            contactnumber: "09741258963",
-            dealerids: [],
-            employeeids: [
-                "2386f1b2"
-            ],
-            orderids: []
-        },
-        orderids: [],
-        paymentreceiptids: [],
-        collectionpaymentids: [],
-        documentids: [
-            "54219fa2"
-        ]
-    
-      }
+    /*    const cashierObject : IEmployee = {
+         employeeid: "2386f1b2",
+         firstname: "Victoria",
+         middlename: "I",
+         lastname: "Ramirez",
+         emailaddress: "charmaineramirez05@gmail.com",
+         password: "test",
+         birthdate: "2005-11-05",
+         gender: "female",
+         currentaddress: "2079 Humay-Humay Street",
+         permanentaddress: "Pajo",
+         contactnumber: "+639158523587",
+         tinnumber: '',
+         is_cashier: true,
+         is_salesassociate: true,
+         is_collector: true,
+         submissiondate: "2023-11-07",
+         distributor: {
+             distributorid: "distributor9",
+             firstname: "Min Gyu",
+             middlename: "",
+             lastname: "Kim",
+             emailaddress: "capstone.distrilink@gmail.com",
+             password: "doggo",
+             birthdate: "1997-04-06",
+             gender: "Male",
+             currentaddress: "Mabolo, Cebu",
+             permanentaddress: "Cebu City",
+             contactnumber: "09741258963",
+             dealerids: [],
+             employeeids: [
+                 "2386f1b2"
+             ],
+             orderids: [],
+             archiveddealerids:[]
+         },
+         orderids: [],
+         paymentreceiptids: [],
+         collectionpaymentids: [],
+         documentids: [
+             "54219fa2"
+         ]
+     
+       } */
+
+
+    const getAllPaymentTransactionsByOrderID = () => {
+        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${orderIDRef.current?.value + ''}`)
+            .then((response) => {
+                setPaymentTransactions(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data: ', error);
+            });
+    }
+
+
+    const handleFindOrder = () => {
+        getOrderByID(orderIDRef.current?.value + '');
+        getAllPaymentTransactionsByOrderID();
+
+    };
+
 
     const handleSaveDirectPayment = () => {
+        console.log(JSON.parse(localStorage.getItem("cashier")!))
+        const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
+
         const uuid = uuidv4();
         const paymentreceiptuuid = uuid.slice(0, 8);
         console.log(paymentreceiptuuid);
@@ -279,18 +303,18 @@ export default function RecordDirectPayment() {
             receivedamount: Number(amountPaidRef.current?.value),
             paymenttype: 'direct',
             daterecorded: moment().format('YYYY-MM-DD'),
-            cashier: cashierObject,
+            cashier: cashierFromStorage,
             paymenttransaction: selectedPaymentTransaction!
         })
-        const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
+        const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
         if (allPaid) {
             // Call the orderClosed function
             closedOrder(order!.orderid);
-          } 
-    
+        }
+
     }
 
-    const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+    const sortedPaymemtTransactions = paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
 
     useEffect(() => {
@@ -298,15 +322,15 @@ export default function RecordDirectPayment() {
         if (orderIDRef.current?.value + '' !== '') {
             handleFindOrder();
         }
-        const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
+        const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
         if (allPaid) {
             // Call the orderClosed function
             closedOrder(order!.orderid);
-          } 
+        }
 
         setMinDate(dayjs() as Dayjs);
 
-    }, [isOrderFound, order, order?.paymenttransactions, sortedPaymemtTransactions]);
+    }, [isOrderFound, order, paymentTransactions, sortedPaymemtTransactions]);
 
 
     return (
@@ -326,7 +350,7 @@ export default function RecordDirectPayment() {
                 </SearchButton>
 
             </div>
-            {order?.paymenttransactions?.length !== 0 ? (
+            {paymentTransactions?.length !== 0 ? (
 
                 <StyledPaymentTransactionCard>
                     <TableContainer sx={{ borderRadius: '22px' }}>
@@ -397,10 +421,10 @@ export default function RecordDirectPayment() {
                             {option.paymenttransactionid}
                         </MenuItem>
                      ))} */}
-                     <Autocomplete
+                    <Autocomplete
                         disablePortal
                         id="combo-box-demo"
-                        options={order?.paymenttransactions!}
+                        options={paymentTransactions!}
                         getOptionLabel={(option) => option.paymenttransactionid}
                         isOptionEqualToValue={(option, value) => option.paymenttransactionid === value.paymenttransactionid}
                         value={selectedPaymentTransaction}
@@ -437,7 +461,7 @@ export default function RecordDirectPayment() {
                                 variant="outlined"
                             />
                         )}
-                    /> 
+                    />
 
 
                     {/* </StyleTextField3> */}

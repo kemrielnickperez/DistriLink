@@ -116,7 +116,7 @@ export default function OrderConfirmation() {
   
   const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder] = useRestOrder();
 
-  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
 
   const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
@@ -359,7 +359,7 @@ export default function OrderConfirmation() {
       collector: null,
       dealer: dealer!,
       orderedproducts: orderedProducts,
-      paymenttransactions: [],
+      paymenttransactionids: [],
       confirmed: true,
       isclosed: false
     };
