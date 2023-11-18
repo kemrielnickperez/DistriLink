@@ -82,6 +82,7 @@ export default function PaymentList() {
 
     useEffect(() => {
         getAllPaymentReceipts();
+        console.log(paymentReceipt)
        
        
 
@@ -154,7 +155,7 @@ export default function PaymentList() {
             paymentStatus: paymentreceipt.paymenttype === 'collection'
                 ? (isconfirmed ? 'Confirmed' : 'Unconfirmed')
                 : '',
-            receiverName: paymentreceipt.receiver ? `${paymentreceipt.receiver.fullName}` : '',
+            receiverName: paymentreceipt.receivername ? `${paymentreceipt.receivername}` : '',
 
         }
     });

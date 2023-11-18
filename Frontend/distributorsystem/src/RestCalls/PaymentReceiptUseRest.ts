@@ -4,7 +4,7 @@ import { useState } from "react";
 
 
 
-export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentReceipt) => void, (paymentreceiptid: string) => void, (collectionpaymentreceiptid: string, cashierid: string) => void, IPaymentReceipt | undefined, IDirectPaymentReceipt | undefined, ICollectionPaymentReceipt | undefined, boolean | undefined] => {
+export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentReceipt, receiverID: string) => void, (paymentreceiptid: string) => void, (collectionpaymentreceiptid: string, cashierid: string) => void, IPaymentReceipt | undefined, IDirectPaymentReceipt | undefined, ICollectionPaymentReceipt | undefined, boolean | undefined] => {
 
     const [paymentReceipt, setPaymentReceipt] = useState<IPaymentReceipt>();
     const [directPaymentReceipt, setDirectPaymentReceipt] = useState<IDirectPaymentReceipt>();
@@ -13,9 +13,9 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
     const [isPaymentReceiptFound, setIsPaymentReceiptFound] = useState<boolean>();
 
 
-    function createDirectPaymentReceipt(directpaymentreceipt: IDirectPaymentReceipt) {
+     function createDirectPaymentReceipt(directpaymentreceipt: IDirectPaymentReceipt, receiverID: string) {
         
-        axios.post('http://localhost:8080/paymentreceipt/createDirectPaymentReceipt', {
+        axios.post(`http://localhost:8080/paymentreceipt/createDirectPaymentReceipt/${receiverID}`, {
              paymentreceiptid: directpaymentreceipt.paymentreceiptid,
              remarks: directpaymentreceipt.remarks,
              datepaid: directpaymentreceipt.datepaid,
@@ -24,11 +24,9 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
              daterecorded: directpaymentreceipt.daterecorded,
              receivedamount: directpaymentreceipt.receivedamount,
              paymenttransaction: directpaymentreceipt.paymenttransaction,
-             receiver: {
-                id: directpaymentreceipt?.receiver?.id, 
-                fullName: directpaymentreceipt?.receiver?.fullName, 
-            },
-           /*  hello world okay pa ni? */
+             receiverID:"",
+             receivername: ""
+        
     })
         .then((response) => {
             alert("Success")
@@ -38,7 +36,9 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
             console.log(error)
             alert("Please try again.");
         }); 
-    }
+    } 
+
+    
 
     function getPaymentReceiptByID(paymentreceiptid: string) {
         axios.get(`http://localhost:8080/paymentreceipt/getPaymentReceiptByID/${paymentreceiptid}`)
@@ -63,8 +63,8 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
             });
     }
 
-    function confirmCollectionPaymentReceipt(collectionpaymentreceiptid: string, receiverid: string) {
-        axios.put(`http://localhost:8080/paymentreceipt/updateCollectionPaymentReceipt/${collectionpaymentreceiptid}/${receiverid}`)
+    function confirmCollectionPaymentReceipt(collectionpaymentreceiptid: string, receiverID: string) {
+        axios.put(`http://localhost:8080/paymentreceipt/updateCollectionPaymentReceipt/${collectionpaymentreceiptid}/${receiverID}`)
             .then((response) => {
 
                 

@@ -186,6 +186,7 @@ export default function ProductDistributionList() {
     paymentreceiptids: [],
     id: 'distributor1',
     fullName: `${"Junhui"} ${""} ${"Wen"}`.trim(),
+    type: "distributor"
   }
 
 

@@ -38,6 +38,9 @@ public class CollectionPaymentReceiptService {
     @Autowired
     DistributorRepository distributorRepository;
 
+    @Autowired
+    PaymentReceiptRepository paymentReceiptRepository;
+
 
 
     public CollectionPaymentReceipt createCollectionPaymentReceipt(
@@ -94,78 +97,58 @@ public class CollectionPaymentReceiptService {
 
         paymentTransaction.setPaymentreceiptid(savedCollectionPaymentReceipt.getPaymentreceiptid());
 
+        paymentReceiptRepository.save(savedCollectionPaymentReceipt);
         paymentTransactionRepository.save(paymentTransaction);
 
         return collectionPaymentReceiptRepository.save(savedCollectionPaymentReceipt);
     }
 
-    /*public CollectionPaymentReceipt createCollectionPaymentReceipt(CollectionPaymentReceipt collectionPaymentReceipt){
 
-        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
 
-        Employee collector = employeeRepository.findById(collectionPaymentReceipt.getCollector().getEmployeeid()).get();
-
-        paymentTransaction.setPaymentreceiptid(collectionPaymentReceipt.getPaymentreceiptid());
-
-        collector.getCollectionpaymentids().add(collectionPaymentReceipt.getPaymentreceiptid());
-
-        paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
-
-        paymentTransactionRepository.save(paymentTransaction);
-
-        employeeRepository.save(collector);
-
-        paymentTransactionRepository.save(paymentTransaction);
-
-        return collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
-    }*/
-    public PaymentReceiver findPaymentReceiverById(String receiverId) {
-        Optional<Distributor> distributorOptional = distributorRepository.findById(receiverId);
-        if (distributorOptional.isPresent()) {
-            return distributorOptional.get();
-        }
-
-        Optional<Employee> employeeOptional = employeeRepository.findById(receiverId);
-        return employeeOptional.orElse(null);
-    }
-    public ResponseEntity confirmCollectionPaymentReceipt(String collectionpaymentreciptid, String receiverId) {
+   public ResponseEntity confirmCollectionPaymentReceipt(String collectionpaymentreciptid, String receiverID) {
 
         CollectionPaymentReceipt collectionPaymentReceipt = collectionPaymentReceiptRepository.findById(collectionpaymentreciptid).get();
 
+        System.out.println(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid());
         PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
 
-        PaymentReceiver receiver = findPaymentReceiverById(receiverId);
 
-        collectionPaymentReceipt.setIsconfirmed(true);
-        collectionPaymentReceipt.setReceiver(receiver);
+        if (receiverID != null) {
+            Distributor distributor = distributorRepository.findById(receiverID).orElse(null);
+            Employee employee = employeeRepository.findById(receiverID).orElse(null);
 
-        if (receiver instanceof Employee) {
-            Employee employeeReceiver = (Employee) receiver;
-            employeeReceiver.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
-            employeeRepository.save(employeeReceiver);
-        } else if (receiver instanceof Distributor) {
-            Distributor distributorReceiver = (Distributor) receiver;
-            distributorReceiver.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
-            distributorRepository.save(distributorReceiver);
+            if (distributor != null) {
+                collectionPaymentReceipt.setReceiverID(distributor.getDistributorid());
+                collectionPaymentReceipt.setReceivername(distributor.getFullName());
+                distributor.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
+                distributorRepository.save(distributor);
+            } else if (employee != null) {
+                collectionPaymentReceipt.setReceiverID(employee.getEmployeeid());
+                collectionPaymentReceipt.setReceivername(employee.getFullName());
+                employee.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
+                employeeRepository.save(employee);
+            }
+            collectionPaymentReceipt.setIsconfirmed(true);
         }
 
 
-
         paymentTransaction.setPaymentreceiptid(collectionPaymentReceipt.getPaymentreceiptid());
-
+        System.out.println(paymentTransaction.getPaymenttransactionid());
         paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
 
         collectionPaymentReceipt.setConfirmationdate(LocalDate.now()
         );
         collectionPaymentReceipt.setAmountpaid(collectionPaymentReceipt.getRemittedamount());
+        paymentTransaction.setPaid(true);
         collectionPaymentReceipt.setPaymenttransaction(paymentTransaction);
 
         paymentTransactionRepository.save(paymentTransaction);
-        collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
-
+        paymentReceiptRepository.save(collectionPaymentReceipt);
 
         return new ResponseEntity("Collection Payment Receipt Confirmed Successfully!", HttpStatus.OK);
     }
+
+
 
 
     public List<CollectionPaymentReceipt> getAllCollectionPaymentReceipts() {

@@ -206,6 +206,8 @@ export function PaymentReceiptDetails() {
         getAllCollectorRemittanceProofDocuments();
         getAllDealerPaymentProofDocuments();
 
+        console.log(paymentReceipt?.receivername)
+
     }, [paymentReceipt]);
 
     const displayCollectorRemittanceProofs = (base64Content: Uint8Array | null, fileType: string, docname: string, collectorproofid: string, collectionpaymentreceiptparam: ICollectionPaymentReceipt) => {
@@ -362,8 +364,8 @@ export function PaymentReceiptDetails() {
                        </StackStyle>
                        <StackStyle sx={{ top: '40%', left: '44%' }}>
                            <StyleLabel>Receiver Name</StyleLabel>
-                           <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.receiver?.fullName
-                               : ''} </StyleData>
+                           <StyleData>{ paymentReceipt?.receivername
+                               } </StyleData>
                        </StackStyle>
                        <StackStyle sx={{ top: '40%', left: '60%' }}>
                            <StyleLabel>Remarks</StyleLabel>
@@ -406,8 +408,7 @@ export function PaymentReceiptDetails() {
    
                        <StackStyle sx={{ top: '60%', left: '43%' }}>
                            <StyleLabel>Receiver Name</StyleLabel>
-                           <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.receiver?.fullName
-                               : ''}</StyleData>
+                           <StyleData>{paymentReceipt?.receivername}</StyleData>
                        </StackStyle>
    
                        <StackStyle sx={{ top: '60%', left: '60%' }}>

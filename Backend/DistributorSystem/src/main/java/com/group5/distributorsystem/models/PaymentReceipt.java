@@ -1,13 +1,13 @@
 package com.group5.distributorsystem.models;
 
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
-
-
 
 @Document("PaymentReceipts")
 public class PaymentReceipt {
@@ -24,7 +24,10 @@ public class PaymentReceipt {
     //@DBRef
     private PaymentTransaction paymenttransaction;
 
-    private PaymentReceiver paymentReceiver;
+   /* private PaymentReceiver paymentReceiver;*/
+
+    private String receiverID; // Generic identifier for either Distributor or Employee
+    private String receivername;
 
     //comment sani kay murag nagdala og panganib
    /* @ManyToOne
@@ -32,13 +35,14 @@ public class PaymentReceipt {
     @JsonBackReference("employee-paymentreceipts-reference")
     private Employee cashier;*/
     public PaymentReceipt(){}
-    public PaymentReceipt(String paymentreceiptid, String remarks, double amountpaid, String paymenttype, PaymentTransaction paymenttransaction, PaymentReceiver paymentReceiver) {
+    public PaymentReceipt(String paymentreceiptid, String remarks, double amountpaid, String paymenttype, PaymentTransaction paymenttransaction, String receiverID, String receivername) {
         this.paymentreceiptid = paymentreceiptid;
         this.remarks = remarks;
         this.amountpaid = amountpaid;
         this.paymenttype = paymenttype;
         this.paymenttransaction = paymenttransaction;
-        this.paymentReceiver = paymentReceiver;
+        this.receiverID = receiverID;
+        this.receivername = receivername;
     }
 
     public void setPaymentreceiptid(String paymentreceiptid) {
@@ -61,9 +65,9 @@ public class PaymentReceipt {
         this.paymenttransaction = paymenttransaction;
     }
 
-    public void setReceiver(PaymentReceiver paymentReceiver) {
+    /*public void setReceiver(PaymentReceiver paymentReceiver) {
         this.paymentReceiver = paymentReceiver;
-    }
+    }*/
 
     public String getPaymentreceiptid() {
         return paymentreceiptid;
@@ -85,7 +89,23 @@ public class PaymentReceipt {
         return paymenttransaction;
     }
 
-    public PaymentReceiver getReceiver() {
+  /*  public PaymentReceiver getReceiver() {
         return paymentReceiver;
+    }*/
+
+    public String getReceiverID() {
+        return receiverID;
+    }
+
+    public void setReceiverID(String receiverID) {
+        this.receiverID = receiverID;
+    }
+
+    public String getReceivername() {
+        return receivername;
+    }
+
+    public void setReceivername(String receivername) {
+        this.receivername = receivername;
     }
 }

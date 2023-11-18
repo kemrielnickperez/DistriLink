@@ -141,6 +141,7 @@ export interface IOrder {
 export interface IPaymentReceiver {
     id: string;
     fullName: string;
+    type: string;
 }
 
 
@@ -171,14 +172,16 @@ export interface IPaymentReceipt {
     amountpaid: number,
     paymenttype: string,
     paymenttransaction: IPaymentTransaction, 
-    receiver: IPaymentReceiver | null
+    receiverID: string,
+    receivername: string
 }
 
 export interface IDirectPaymentReceipt extends IPaymentReceipt{
     remarks: string,
     datepaid: string,  
     receivedamount: number,
-    daterecorded: string,   
+    daterecorded: string, 
+      
 }
 
 export interface ICollectionPaymentReceipt extends IPaymentReceipt{

@@ -263,6 +263,7 @@ export default function DealerRegistration() {
         paymentreceiptids: [],
         id: "distributor4",
         fullName: `${"Junhui"} ${""} ${"Wen"}`.trim(),
+        type: "distributor"
     }
 
 

@@ -259,7 +259,8 @@ export default function RecordDirectPayment() {
               orderids: [],
               paymentreceiptids: [],
               id: "distributor9",
-              fullName: `${"Min Gyu"} ${""} ${"Kim"}`.trim(), 
+              fullName: `${"Min Gyu"} ${""} ${"Kim"}`.trim(),
+              type: "distributor"
           },
           orderids: [],
           paymentreceiptids: [],
@@ -268,7 +269,8 @@ export default function RecordDirectPayment() {
               "54219fa2"
           ],
           id: "2386f1b2",
-          fullName: `${"Victoria"} ${"I"} ${"Ramirez"}`.trim(), 
+          fullName: `${"Victoria"} ${"I"} ${"Ramirez"}`.trim(),
+          type: "employee"
       }
 
     const handleSaveDirectPayment = () => {
@@ -283,13 +285,10 @@ export default function RecordDirectPayment() {
             receivedamount: Number(amountPaidRef.current?.value),
             paymenttype: 'direct',
             daterecorded: moment().format('YYYY-MM-DD'),
-            receiver: {
-                id: cashierObject.id,
-                fullName:cashierObject.fullName,
-
-            },
-            paymenttransaction: selectedPaymentTransaction!
-        })
+            paymenttransaction: selectedPaymentTransaction!,
+            receiverID: "",
+            receivername: ""
+        }, cashierObject.employeeid)
         const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
         if (allPaid) {
             // Call the orderClosed function

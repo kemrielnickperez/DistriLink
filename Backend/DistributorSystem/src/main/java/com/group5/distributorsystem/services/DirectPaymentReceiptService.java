@@ -31,51 +31,48 @@ public class DirectPaymentReceiptService {
     @Autowired
     EmployeeRepository employeeRepository;
 
+    @Autowired
+    PaymentReceiptRepository paymentReceiptRepository;
 
-    public PaymentReceiver findPaymentReceiverById(String receiverId) {
-        Optional<Distributor> distributorOptional = distributorRepository.findById(receiverId);
-        if (distributorOptional.isPresent()) {
-            return distributorOptional.get();
-        }
 
-        Optional<Employee> employeeOptional = employeeRepository.findById(receiverId);
-        return employeeOptional.orElse(null);
-    }
-    public DirectPaymentReceipt createDirectPaymentReceipt(DirectPaymentReceipt directPaymentReceipt){
+
+    public DirectPaymentReceipt createDirectPaymentReceipt(DirectPaymentReceipt directPaymentReceipt, String receiverID) {
 
         DirectPaymentReceipt newdirectPaymentReceipt = directPaymentReceiptRepository.save(directPaymentReceipt);
 
-        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(newdirectPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
-
-        /*System.out.println(newdirectPaymentReceipt.getCashier().getEmployeeid());*/
-        PaymentReceiver receiver = findPaymentReceiverById(newdirectPaymentReceipt.getReceiver().getReceiverId());
-
+        PaymentTransaction paymentTransaction = paymentTransactionRepository
+                .findById(newdirectPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
 
         paymentTransaction.setPaymentreceiptid(newdirectPaymentReceipt.getPaymentreceiptid());
         paymentTransactionRepository.save(paymentTransaction);
         paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
 
-        if (receiver instanceof Employee) {
-            Employee employeeReceiver = (Employee) receiver;
-            employeeReceiver.getPaymentreceiptids().add(newdirectPaymentReceipt.getPaymentreceiptid());
-            employeeRepository.save(employeeReceiver);
-        } else if (receiver instanceof Distributor) {
-            Distributor distributorReceiver = (Distributor) receiver;
-            distributorReceiver.getPaymentreceiptids().add(newdirectPaymentReceipt.getPaymentreceiptid());
-            distributorRepository.save(distributorReceiver);
+        if (receiverID != null) {
+            Distributor distributor = distributorRepository.findById(receiverID).orElse(null);
+            Employee employee = employeeRepository.findById(receiverID).orElse(null);
+
+            if (distributor != null) {
+                newdirectPaymentReceipt.setReceiverID(distributor.getDistributorid());
+                newdirectPaymentReceipt.setReceivername(distributor.getFullName());
+                distributor.getPaymentreceiptids().add(newdirectPaymentReceipt.getPaymentreceiptid());
+                distributorRepository.save(distributor);
+            } else if (employee != null) {
+                newdirectPaymentReceipt.setReceiverID(employee.getEmployeeid());
+                newdirectPaymentReceipt.setReceivername(employee.getFullName());
+                employee.getPaymentreceiptids().add(newdirectPaymentReceipt.getPaymentreceiptid());
+                employeeRepository.save(employee);
+            }
         }
+        paymentReceiptRepository.save(newdirectPaymentReceipt);
 
-        newdirectPaymentReceipt.setPaymenttransaction(paymentTransaction);
-        newdirectPaymentReceipt.setReceiver(receiver);
-
-        paymentTransactionRepository.save(paymentTransaction);
-
-
-
-        directPaymentReceiptRepository.save(newdirectPaymentReceipt);
 
         return directPaymentReceiptRepository.save(newdirectPaymentReceipt);
     }
+
+
+
+
+
 
     public List<DirectPaymentReceipt> getAllDirectPaymentReceipts(){
         return directPaymentReceiptRepository.findAll();

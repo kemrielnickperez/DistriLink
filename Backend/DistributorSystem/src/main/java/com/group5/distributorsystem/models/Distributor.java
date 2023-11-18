@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Document("Distributors")
-public class Distributor implements PaymentReceiver {
+public class Distributor {
 
     @Id
     private String distributorid;
@@ -179,15 +179,13 @@ public class Distributor implements PaymentReceiver {
     public void setOrderids(Set<String> orderids) {
         this.orderids = orderids;
     }
-    @Override
-    public String getReceiverId(){
-        return distributorid;
-    }
 
-    @Override
+
     public String getFullName(){
         return firstname + " " + middlename + " " + lastname;
     }
+
+
 
     public Set<String> getPaymentreceiptids() {
         return paymentreceiptids;
