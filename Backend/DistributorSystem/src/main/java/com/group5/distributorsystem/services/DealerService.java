@@ -210,7 +210,12 @@ public class DealerService {
 
         for (String orderid: dealer.getOrderids()) {
             Order order = orderRepository.findById(orderid).get();
-            totalOrderAmount += order.getOrderamount();
+            if(order.isIsclosed()){
+                continue;
+            }
+            else {
+                totalOrderAmount += order.getOrderamount();
+            }
         }
 
         return totalOrderAmount;
