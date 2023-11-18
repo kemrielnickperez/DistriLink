@@ -232,7 +232,11 @@ export default function EmployeeRegistration(){
         contactnumber: "09741258963",
         dealerids: [],
         employeeids: [],
-        orderids: []
+        orderids: [],
+        paymentreceiptids: [],
+        id: "distributor1",
+        fullName: `${"Junhui"} ${""} ${"Wen"}`.trim(), 
+        type: "distributor"
     }
 
 
@@ -499,7 +503,10 @@ export default function EmployeeRegistration(){
                 orderids: [],
                 paymentreceiptids: [],
                 collectionpaymentids: [],
-                documentids: []
+                documentids: [],
+                id: employeeuuid,
+                fullName: `${String(firstnameRef.current?.value)} ${String(middlenameRef.current?.value)} ${String(lastnameRef.current?.value)}`.trim(),
+                type:"employee"
             }, newEmployeeDocuments!);
 
             handleAlert('Success', 'You are Successfully Registered!', 'success');

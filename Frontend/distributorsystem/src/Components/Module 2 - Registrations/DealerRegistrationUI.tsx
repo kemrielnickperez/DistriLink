@@ -246,7 +246,6 @@ export default function DealerRegistration() {
 
 
     const distributorObject: IDistributor = {
-
         distributorid: "distributor4",
         firstname: "Junhui",
         middlename: "",
@@ -260,7 +259,11 @@ export default function DealerRegistration() {
         contactnumber: "09741258963",
         dealerids: [],
         employeeids: [],
-        orderids: []
+        orderids: [],
+        paymentreceiptids: [],
+        id: "distributor4",
+        fullName: `${"Junhui"} ${""} ${"Wen"}`.trim(),
+        type: "distributor"
     }
 
 

@@ -44,10 +44,12 @@ public class Distributor {
 
     private Set<String> orderids = new HashSet<>();
 
+    private Set<String> paymentreceiptids = new HashSet<>();;
+
     public Distributor() {
     }
 
-    public Distributor(String distributorid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, Set<String> dealerids, Set<String> employeeids, Set<String> orderids) {
+    public Distributor(String distributorid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, Set<String> dealerids, Set<String> employeeids, Set<String> orderids, Set<String> paymentreceiptids) {
         this.distributorid = distributorid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -62,6 +64,7 @@ public class Distributor {
         this.dealerids = dealerids;
         this.employeeids = employeeids;
         this.orderids = orderids;
+        this.paymentreceiptids = paymentreceiptids;
     }
 
 
@@ -175,5 +178,20 @@ public class Distributor {
 
     public void setOrderids(Set<String> orderids) {
         this.orderids = orderids;
+    }
+
+
+    public String getFullName(){
+        return firstname + " " + middlename + " " + lastname;
+    }
+
+
+
+    public Set<String> getPaymentreceiptids() {
+        return paymentreceiptids;
+    }
+
+    public void setPaymentreceiptids(Set<String> paymentreceiptids) {
+        this.paymentreceiptids = paymentreceiptids;
     }
 }
