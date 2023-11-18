@@ -168,26 +168,6 @@ export default function ProductDistributionList() {
 
 
 
-  const distributorObject: IDistributor = {
-    distributorid: "distributor1",
-    firstname: "Junhui",
-    middlename: "",
-    lastname: "Wen",
-    emailaddress: "wenjunhui@gmail.com",
-    password: "moonmoon",
-    birthdate: "1996-06-10",
-    gender: "Male",
-    currentaddress: "Talisay City",
-    permanentaddress: "Talisay City",
-    contactnumber: "09741258963",
-    dealerids: [],
-    employeeids: [],
-    orderids: [],
-    paymentreceiptids: [],
-    id: 'distributor1',
-    fullName: `${"Junhui"} ${""} ${"Wen"}`.trim(),
-    type: "distributor"
-  }
 
 
   const paymentchoices = [

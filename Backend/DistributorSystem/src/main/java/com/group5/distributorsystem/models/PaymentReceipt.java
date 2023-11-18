@@ -21,7 +21,7 @@ public class PaymentReceipt {
 
     private String paymenttype;
 
-    //@DBRef
+
     private PaymentTransaction paymenttransaction;
 
    /* private PaymentReceiver paymentReceiver;*/

@@ -180,13 +180,6 @@ public class Distributor {
         this.orderids = orderids;
     }
 
-
-    public String getFullName(){
-        return firstname + " " + middlename + " " + lastname;
-    }
-
-
-
     public Set<String> getPaymentreceiptids() {
         return paymentreceiptids;
     }
@@ -194,4 +187,10 @@ public class Distributor {
     public void setPaymentreceiptids(Set<String> paymentreceiptids) {
         this.paymentreceiptids = paymentreceiptids;
     }
+
+    public String getFullName(){
+        return firstname + " " + middlename + " " + lastname;
+    }
+
+
 }

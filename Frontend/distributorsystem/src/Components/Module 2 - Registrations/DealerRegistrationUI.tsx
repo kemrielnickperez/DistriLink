@@ -245,26 +245,7 @@ export default function DealerRegistration() {
     const tinnumberRef = useRef<TextFieldProps>(null)
 
 
-    const distributorObject: IDistributor = {
-        distributorid: "distributor4",
-        firstname: "Junhui",
-        middlename: "",
-        lastname: "Wen",
-        emailaddress: "wenjunhui@gmail.com",
-        password: "moonmoon",
-        birthdate: "1996-06-10",
-        gender: "Male",
-        currentaddress: "Talisay City",
-        permanentaddress: "Talisay City",
-        contactnumber: "09741258963",
-        dealerids: [],
-        employeeids: [],
-        orderids: [],
-        paymentreceiptids: [],
-        id: "distributor4",
-        fullName: `${"Junhui"} ${""} ${"Wen"}`.trim(),
-        type: "distributor"
-    }
+
 
 
     function getAllDistributors() {

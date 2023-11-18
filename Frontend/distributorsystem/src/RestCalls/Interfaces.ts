@@ -1,6 +1,6 @@
 //Interfaces for models
 
-export interface IDistributor extends IPaymentReceiver{
+export interface IDistributor{
     distributorid:string,
     firstname: string,
     middlename: string,
@@ -81,7 +81,7 @@ export interface IDealerDocument {
     dealer: IDealer | null; // You can reference the 'IDealer' interface you've already defined.
 }
 
-export interface IEmployee extends IPaymentReceiver{
+export interface IEmployee{
     employeeid:string,
     firstname: string,
     middlename: string,
@@ -136,12 +136,6 @@ export interface IOrder {
     confirmed: boolean,
     isclosed: boolean
     
-}
-
-export interface IPaymentReceiver {
-    id: string;
-    fullName: string;
-    type: string;
 }
 
 

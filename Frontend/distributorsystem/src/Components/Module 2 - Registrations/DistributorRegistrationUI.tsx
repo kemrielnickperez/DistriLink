@@ -272,7 +272,7 @@ export default function DistributorRegistration() {
     }
 
     {/**HandlerNewDealer*/ }
-    const handleNewDistributor = async () => {
+    const handleNewDistributor = () => {
 
         try {
             if (
@@ -311,10 +311,7 @@ export default function DistributorRegistration() {
                 employeeids: [],
                 orderids: [],
                 paymentreceiptids: [],
-                id: uuidv4().slice(0, 8),
-                fullName: `${String(firstnameRef.current?.value)} ${String(middlenameRef.current?.value)} ${String(lastnameRef.current?.value)}`.trim(),
-                type:"distributor"
-            })
+            });
             handleAlert('Success', 'You are Successfully Registered!', 'success');
         } catch (error) {
             handleAlert('Error', 'An Error Occured, Please Check your Connection', 'error')

@@ -258,19 +258,13 @@ export default function RecordDirectPayment() {
               ],
               orderids: [],
               paymentreceiptids: [],
-              id: "distributor9",
-              fullName: `${"Min Gyu"} ${""} ${"Kim"}`.trim(),
-              type: "distributor"
           },
           orderids: [],
           paymentreceiptids: [],
           collectionpaymentids: [],
           documentids: [
               "54219fa2"
-          ],
-          id: "2386f1b2",
-          fullName: `${"Victoria"} ${"I"} ${"Ramirez"}`.trim(),
-          type: "employee"
+          ]
       }
 
     const handleSaveDirectPayment = () => {
