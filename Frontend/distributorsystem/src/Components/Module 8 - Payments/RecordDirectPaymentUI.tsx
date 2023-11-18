@@ -9,7 +9,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useRestPaymentReceipt } from "../../RestCalls/PaymentReceiptUseRest";
 import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
-import { IEmployee, IOrder, IPaymentReceipt, IPaymentTransaction } from "../../RestCalls/Interfaces";
+import { IDirectPaymentReceipt, IEmployee, IOrder, IPaymentReceipt, IPaymentTransaction } from "../../RestCalls/Interfaces";
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 import React from "react";
 import { v4 as uuidv4 } from 'uuid';
@@ -166,6 +166,20 @@ const StyledPaymentTransactionCard = styled(Card)({
     alignItems: 'center',
     color: 'black',
 });
+
+const StyledPaymentTransactionCard1 = styled(Card)({
+    borderRadius: "22px",
+    borderColor: 'black',
+    border: '20px',
+    width: '85%',
+    padding: '10px 10px 10px 0px',
+    margin: '28px 28% 20px 10%',
+    backgroundColor: '#ffffff',
+
+    flexDirection: 'column',
+    alignItems: 'center',
+    color: 'black',
+});
 const StyledDatePicker = styled(DatePicker)({
     // marginBottom:'43px',
     width: '75%',
@@ -196,98 +210,119 @@ export default function RecordDirectPayment() {
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
     const [selectedPaymentTransaction, setSelectedPaymentTransaction] = useState<IPaymentTransaction | null>();
     const [selectedpaymentTransactionID, setPaymentTransactionID] = useState('')
-    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
+
+
+    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>([]);
+    const [paymentreceipts, setPaymentReceipts] = useState<IPaymentReceipt[]>([]);
+
+
 
     const orderIDRef = useRef<TextFieldProps>(null);
     const paymentTransactionIDRef = useRef<TextFieldProps>(null)
     const amountPaidRef = useRef<TextFieldProps>(null);
     const remarksRef = useRef<TextFieldProps>(null);
 
-    const [minDate, setMinDate] = useState<Dayjs | null>(null);
+
+    const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
+
+    //const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
 
-    {/** functions */ }
 
 
-
-    /* const checkAndCloseOrder = (order: IOrder|undefined) => {
-        // Check if all payment transactions are paid
-        const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
-      
-        if (allPaid) {
-          // Call the orderClosed function
-          closedOrder(order!.orderid);
-        } else {
-          // Handle the case where not all payment transactions are paid
-          // You can display a message or perform other actions here
-          console.log('Not all payment transactions are paid.');
-        }
-      }; */
-
-    /*    const cashierObject : IEmployee = {
-         employeeid: "2386f1b2",
-         firstname: "Victoria",
-         middlename: "I",
-         lastname: "Ramirez",
-         emailaddress: "charmaineramirez05@gmail.com",
-         password: "test",
-         birthdate: "2005-11-05",
-         gender: "female",
-         currentaddress: "2079 Humay-Humay Street",
-         permanentaddress: "Pajo",
-         contactnumber: "+639158523587",
-         tinnumber: '',
-         is_cashier: true,
-         is_salesassociate: true,
-         is_collector: true,
-         submissiondate: "2023-11-07",
-         distributor: {
-             distributorid: "distributor9",
-             firstname: "Min Gyu",
-             middlename: "",
-             lastname: "Kim",
-             emailaddress: "capstone.distrilink@gmail.com",
-             password: "doggo",
-             birthdate: "1997-04-06",
-             gender: "Male",
-             currentaddress: "Mabolo, Cebu",
-             permanentaddress: "Cebu City",
-             contactnumber: "09741258963",
-             dealerids: [],
-             employeeids: [
-                 "2386f1b2"
-             ],
-             orderids: [],
-             archiveddealerids:[]
-         },
-         orderids: [],
-         paymentreceiptids: [],
-         collectionpaymentids: [],
-         documentids: [
-             "54219fa2"
-         ]
-     
-       } */
-
-
-    const getAllPaymentTransactionsByOrderID = () => {
-        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${orderIDRef.current?.value + ''}`)
+    function getAllPaymentTransactionsByOrderID(orderid: string) {
+        axios.get<IPaymentTransaction[]>(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${orderIDRef.current?.value + ''}`)
             .then((response) => {
                 setPaymentTransactions(response.data);
+
             })
             .catch((error) => {
-                console.error('Error fetching data: ', error);
+                alert("Error retrieving payment transactions. Please try again.");
+                console.log(error)
+
+            });
+    }
+
+
+    function getAllPaymentReceipts() {
+        axios.get<IDirectPaymentReceipt[]>('http://localhost:8080/paymentreceipt/getAllPaymentReceipts')
+            .then((response) => {
+                setPaymentReceipts(response.data);
+
+            })
+            .catch((error) => {
+                alert("Error retrieving payment receipts. Please try again.");
+                //console.log(error);
             });
     }
 
 
     const handleFindOrder = () => {
-        getOrderByID(orderIDRef.current?.value + '');
-        getAllPaymentTransactionsByOrderID();
+        //getOrderByID(orderIDRef.current?.value + '');
+        getAllPaymentTransactionsByOrderID(orderIDRef.current?.value + '');
 
     };
 
 
+
+
+    const cashierObject: IEmployee = {
+        employeeid: "2386f1b2",
+        firstname: "Victoria",
+        middlename: "I",
+        lastname: "Ramirez",
+        emailaddress: "charmaineramirez05@gmail.com",
+        password: "test",
+        birthdate: "2005-11-05",
+        gender: "female",
+        currentaddress: "2079 Humay-Humay Street",
+        permanentaddress: "Pajo",
+        contactnumber: "+639158523587",
+        tinnumber: '',
+        is_cashier: true,
+        is_salesassociate: true,
+        is_collector: true,
+        submissiondate: "2023-11-07",
+        distributor: {
+            distributorid: "distributor9",
+            firstname: "Min Gyu",
+            middlename: "",
+            lastname: "Kim",
+            emailaddress: "capstone.distrilink@gmail.com",
+            password: "doggo",
+            birthdate: "1997-04-06",
+            gender: "Male",
+            currentaddress: "Mabolo, Cebu",
+            permanentaddress: "Cebu City",
+            contactnumber: "09741258963",
+            dealerids: [],
+            employeeids: [
+                "2386f1b2"
+            ],
+            orderids: [],
+            //paymentreceiptids: [],
+        },
+        orderids: [],
+        paymentreceiptids: [],
+        collectionpaymentids: [],
+        documentids: [
+            "54219fa2"
+        ]
+    }
+
+
+    const clearInputValues = () => {
+        setSelectedDate(null);
+        setSelectedPaymentTransaction(null);
+
+        if (remarksRef.current || amountPaidRef.current?.value) {
+            remarksRef.current!.value = '';
+            amountPaidRef.current!.value = '';
+
+        }
+
+
+    }
     const handleSaveDirectPayment = () => {
         console.log(JSON.parse(localStorage.getItem("cashier")!))
         const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
@@ -303,45 +338,103 @@ export default function RecordDirectPayment() {
             receivedamount: Number(amountPaidRef.current?.value),
             paymenttype: 'direct',
             daterecorded: moment().format('YYYY-MM-DD'),
-            cashier: cashierFromStorage,
-            paymenttransaction: selectedPaymentTransaction!
+            paymenttransaction: selectedPaymentTransaction!,
+            cashier: null
         })
-        const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
-        if (allPaid) {
-            // Call the orderClosed function
-            closedOrder(order!.orderid);
-        }
+        //cashierObject.employeeid)
+
+
+        clearInputValues();
 
     }
 
-    const sortedPaymemtTransactions = paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+    const columns: GridColDef[] = [
+        { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
+        { field: 'installmentNumber', headerName: 'Installment Number', width: 180 },
+        { field: 'paymentDueDate', headerName: 'Payment Due Date', width: 160 },
+        { field: 'amountDue', headerName: 'Amount Due', width: 180 },
+        { field: 'status', headerName: 'Collector Status', width: 200 }
+
+    ]
+
+
+    const rows = paymentTransactions.map((pt) => {
+        return {
+            id: pt!.paymenttransactionid!,
+            paymentTransactionID: pt!.paymenttransactionid!,
+            installmentNumber: pt!.installmentnumber!,
+            paymentDueDate: pt!.enddate!,
+            amountDue: pt!.amountdue!,
+            status: pt!.paid + "",
+
+        }
+    });
+
+
+    const columns1: GridColDef[] = [
+        { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 200 },
+        { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 200 },
+        { field: 'paymentType', headerName: 'Payment Type', width: 200 },
+        { field: 'paymentStatus', headerName: 'Payment Status', width: 200 },
+        { field: 'receiverName', headerName: 'Receiver Name', width: 200 },
+    ]
+
+
+    {/** Rows for DataGrid */ }
+    const rows1 = paymentreceipts.map((paymentreceipt) => {
+
+        let isconfirmed = null; // Initialize with null
+
+        // Check if the payment receipt is of type ICollectionPaymentReceipt
+        if (paymentreceipt.paymenttype === 'collection' && 'isconfirmed' in paymentreceipt) {
+            // If it is, set the confirmed value
+
+            isconfirmed = paymentreceipt.isconfirmed;
+            console.log(paymentreceipt.isconfirmed)
+        }
+
+        return {
+            id: paymentreceipt.paymentreceiptid,
+            paymentReceiptid: paymentreceipt.paymentreceiptid,
+            paymentTransactionid: paymentreceipt.paymenttransaction ? paymentreceipt.paymenttransaction.paymenttransactionid : '',
+            paymentType: paymentreceipt.paymenttype,
+            paymentStatus: paymentreceipt.paymenttype === 'collection'
+                ? (isconfirmed ? 'Confirmed' : 'Unconfirmed')
+                : '',
+           
+
+        }
+    });
+
+
+
 
 
     useEffect(() => {
+        //const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
+
+
 
         if (orderIDRef.current?.value + '' !== '') {
             handleFindOrder();
+
         }
         const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
+ 
         if (allPaid) {
             // Call the orderClosed function
             closedOrder(order!.orderid);
         }
 
-        setMinDate(dayjs() as Dayjs);
+        setMaxDate(dayjs() as Dayjs);
 
-    }, [isOrderFound, order, paymentTransactions, sortedPaymemtTransactions]);
+    }, [isOrderFound, order, paymentTransactions]);
 
 
     return (
         <div>
             <ContentNameTypography>Record Direct Payment</ContentNameTypography>
-            {/* <StyldeInfoHeader>Dealer Contact Information</StyldeInfoHeader> */}
-            {/* set style left manually here in stack */}
-            {/* <StackStyle sx={{left:'12%'}}>
-                <StyleLabel>Receipt ID</StyleLabel>
-                <StyleData>hjasg77</StyleData>
-            </StackStyle> */}
+
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <LabelTypography>Enter Order Transaction ID</LabelTypography>
                 <StyleTextField inputRef={orderIDRef} />
@@ -350,46 +443,100 @@ export default function RecordDirectPayment() {
                 </SearchButton>
 
             </div>
-            {paymentTransactions?.length !== 0 ? (
+            {paymentTransactions.length !== 0 ? (
+                <div>
 
-                <StyledPaymentTransactionCard>
-                    <TableContainer sx={{ borderRadius: '22px' }}>
+                    <StyledPaymentTransactionCard1>
                         <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
-                        <Table>
-                            <TableHead >
-                                <TableRow>
-                                    <TableCellStyle align="center">Payment Transaction ID</TableCellStyle>
-                                    <TableCellStyle align="center">Installment Number</TableCellStyle>
-                                    <TableCellStyle align="center">Payment Due Date</TableCellStyle>
-                                    <TableCellStyle align="center"> Amount Due</TableCellStyle>
-                                    <TableCellStyle align="center"> Status</TableCellStyle>
-                                    {/* <TableCellStyle align="center">Payment Type</TableCellStyle>
-                                    <TableCellStyle align="center">Remarks</TableCellStyle> */}
-                                    {/* <TableCellStyle align="center">New Balance</TableCellStyle>  */}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {sortedPaymemtTransactions?.map((transaction) => (
-                                    <StyledTableRow key={transaction.paymenttransactionid}>
-                                        <TableCell component="th" scope="row" align="center">{transaction.paymenttransactionid}</TableCell>
-                                        <TableCell component="th" scope="row" align="center">{transaction.installmentnumber}</TableCell>
-                                        {/* <TableCell align="center">{transaction.installmentnumber}</TableCell>  */}
-                                        {/* <TableCell component="th" scope="row" align="center">{transaction.startingdate}</TableCell> */}
-                                        <TableCell align="center">{transaction.enddate}</TableCell>
-                                        <TableCell align="center">{transaction.amountdue.toFixed(2)}</TableCell>
-                                        <TableCell align="center">
-                                            <span style={{ color: transaction.paid ? 'green' : 'red' }}>
-                                                {transaction.paid ? 'Paid' : 'Not Paid'}
-                                            </span>
-                                        </TableCell>
-                                        {/* <TableCell align="center">{paymentReceipt?.paymenttype}</TableCell>
-                                        <TableCell align="center">{paymentReceipt?.remarks}</TableCell>  */}
-                                    </StyledTableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </StyledPaymentTransactionCard>
+                        <DataGrid
+                            rows={rows}
+                            sx={{ textAlign: 'center', color: '#203949', height: '350px', fontWeight: 330 }}
+                            columns={columns}
+
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        pageSize: 5,
+                                    },
+                                },
+                            }}
+                            pageSizeOptions={[5]}
+
+
+
+                        />
+                    </StyledPaymentTransactionCard1>
+
+
+
+                    <ContentNameTypography>Payment Receipts</ContentNameTypography>
+
+
+                    {/**DataGrid */}
+                    {/*  <DataGrid
+                            rows={rows1}
+                            sx={{ textAlign: 'center', color: '#146C94', height: '350px', margin: '35px 20px 0 20px' }}
+                            columns={columns1.map((column) => ({
+                                ...column,
+                            }))
+                            }
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        pageSize: 5,
+                                    },
+                                },
+                            }}
+                            pageSizeOptions={[5]}
+                            checkboxSelection
+
+
+                            isRowSelectable={(params) => {
+                                // Check the payment type of the row and disable the checkbox for direct payment types
+                                return params.row.paymentType !== 'direct';
+                            }}
+                        /> */}
+
+
+                    <StyledPaymentTransactionCard>
+                        <TableContainer sx={{ borderRadius: '22px' }}>
+                            <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
+                            <Table>
+                                <TableHead >
+                                    <TableRow>
+                                        <TableCellStyle align="center">Payment Transaction ID</TableCellStyle>
+                                        <TableCellStyle align="center">Installment Number</TableCellStyle>
+                                        <TableCellStyle align="center">Payment Due Date</TableCellStyle>
+                                        <TableCellStyle align="center"> Amount Due</TableCellStyle>
+                                        <TableCellStyle align="center"> Status</TableCellStyle>
+                                        <TableCellStyle align="center">Payment Type</TableCellStyle>
+                                        <TableCellStyle align="center">Remarks</TableCellStyle>
+
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {paymentTransactions?.map((transaction) => (
+                                        <StyledTableRow key={transaction.paymenttransactionid}>
+                                            <TableCell component="th" scope="row" align="center">{transaction.paymenttransactionid}</TableCell>
+                                            <TableCell component="th" scope="row" align="center">{transaction.installmentnumber}</TableCell>
+
+                                            <TableCell align="center">{transaction.enddate}</TableCell>
+                                            <TableCell align="center">{transaction.amountdue.toFixed(2)}</TableCell>
+                                            <TableCell align="center">
+                                                <span style={{ color: transaction.paid ? 'green' : 'red' }}>
+                                                    {transaction.paid ? 'Paid' : 'Not Paid'}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell align="center">{paymentReceipt?.paymenttype}</TableCell>
+                                            <TableCell align="center">{paymentReceipt?.remarks}</TableCell>
+                                        </StyledTableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </StyledPaymentTransactionCard>
+                </div>
+
             ) : (
                 <div>
                     <h2 style={{ color: '#707070', marginTop: '50px' }}> no schedules yet</h2>
@@ -476,7 +623,7 @@ export default function RecordDirectPayment() {
                                 }
                             }}
                             value={selectedDate}
-                            minDate={minDate}
+                            maxDate={maxDate}
                             onChange={(date) => setSelectedDate(date as Dayjs | null)} />
                     </LocalizationProvider>
                 </Grid>
