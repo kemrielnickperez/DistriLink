@@ -2,30 +2,27 @@ import { useState } from "react";
 import { IDistributor } from "./Interfaces";
 import axios from "axios";
 
-export const useRestDistributor=():[(distributorID:string)=>void, (distributor:IDistributor)=>void, IDistributor | undefined]=>{
-    const [distributor, setDistributor]=useState<IDistributor>();
+export const useRestDistributor=():[(distributorID:string) => void, (distributor:IDistributor) => void, IDistributor | undefined]=>{
+    const [distributor, setDistributor] = useState<IDistributor>();
     
-    function newDistributor(distributor:IDistributor){
-        
-       
-        // Add distributor object properties to formData
-      
-        
+    function newDistributor(distributor: IDistributor){
+    
         axios.post('http://localhost:8080/distributor/registerDistributor', {
-                distributorid: distributor.distributorid.toString(),
-                firstname: distributor.firstname.toString(),
-                middlename: distributor.middlename.toString(),
-                lastname: distributor.lastname.toString(),
-                emailaddress: distributor.emailaddress.toString(),
-                password: distributor.password.toString(),
-                birthdate: distributor.birthdate.toString(),
-                gender: distributor.gender.toString(),
-                currentaddress: distributor.currentaddress.toString(),
-                permanentaddress: distributor.permanentaddress.toString(),
-                contactnumber: distributor.contactnumber.toString(),
+                distributorid: distributor.distributorid,
+                firstname: distributor.firstname,
+                middlename: distributor.middlename,
+                lastname: distributor.lastname,
+                emailaddress: distributor.emailaddress,
+                password: distributor.password,
+                birthdate: distributor.birthdate,
+                gender: distributor.gender,
+                currentaddress: distributor.currentaddress,
+                permanentaddress: distributor.permanentaddress,
+                contactnumber: distributor.contactnumber,
                 dealerids:[],
                 employeeids:[],
-                orderids:[]
+                orderids:[],
+                paymentreceiptids:[]
         })
             .then((response) => {
              
@@ -36,6 +33,9 @@ export const useRestDistributor=():[(distributorID:string)=>void, (distributor:I
                  alert('Error creating a new record. Please try again.');
             });  
     }
+
+
+
     function getDistributorByID(distributorID:String){
         axios.get(`http://localhost:8080/distributor/getDistributorByID/${distributorID}`)
         .then((response)=>{

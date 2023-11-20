@@ -204,12 +204,11 @@ const TableCellStyle = styled(TableCell)({
 
 export default function RecordDirectPayment() {
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder] = useRestOrder();
+    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus,  updateOrder, closedOrder, applyPenalty] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
-
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-    const [selectedPaymentTransaction, setSelectedPaymentTransaction] = useState<IPaymentTransaction | null>();
-    const [selectedpaymentTransactionID, setPaymentTransactionID] = useState('')
+    const [selectedPaymentTransaction, setSelectedPaymentTransaction] = useState<IPaymentTransaction | null>(null);
+
 
 
     const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>([]);
@@ -218,12 +217,15 @@ export default function RecordDirectPayment() {
 
 
     const orderIDRef = useRef<TextFieldProps>(null);
-    const paymentTransactionIDRef = useRef<TextFieldProps>(null)
+
     const amountPaidRef = useRef<TextFieldProps>(null);
     const remarksRef = useRef<TextFieldProps>(null);
 
 
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
+
+    const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+
 
     //const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
@@ -258,13 +260,23 @@ export default function RecordDirectPayment() {
 
 
     const handleFindOrder = () => {
-        //getOrderByID(orderIDRef.current?.value + '');
-        getAllPaymentTransactionsByOrderID(orderIDRef.current?.value + '');
+        getOrderByID(orderIDRef.current?.value + '');
 
     };
 
-
-
+    /* const checkAndCloseOrder = (order: IOrder|undefined) => {
+        // Check if all payment transactions are paid
+        const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
+      
+        if (allPaid) {
+          // Call the orderClosed function
+          closedOrder(order!.orderid);
+        } else {
+          // Handle the case where not all payment transactions are paid
+          // You can display a message or perform other actions here
+          console.log('Not all payment transactions are paid.');
+        }
+      }; */
 
     const cashierObject: IEmployee = {
         employeeid: "2386f1b2",
@@ -300,7 +312,7 @@ export default function RecordDirectPayment() {
                 "2386f1b2"
             ],
             orderids: [],
-            //paymentreceiptids: [],
+            paymentreceiptids: [],
         },
         orderids: [],
         paymentreceiptids: [],
@@ -321,7 +333,7 @@ export default function RecordDirectPayment() {
 
         }
 
-
+       
     }
     const handleSaveDirectPayment = () => {
         console.log(JSON.parse(localStorage.getItem("cashier")!))
@@ -339,99 +351,41 @@ export default function RecordDirectPayment() {
             paymenttype: 'direct',
             daterecorded: moment().format('YYYY-MM-DD'),
             paymenttransaction: selectedPaymentTransaction!,
-            cashier: null
-        })
-        //cashierObject.employeeid)
-
+            receiverID: "",
+            receivername: ""
+        }, cashierObject.employeeid)
+        
 
         clearInputValues();
 
     }
-
-    const columns: GridColDef[] = [
-        { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
-        { field: 'installmentNumber', headerName: 'Installment Number', width: 180 },
-        { field: 'paymentDueDate', headerName: 'Payment Due Date', width: 160 },
-        { field: 'amountDue', headerName: 'Amount Due', width: 180 },
-        { field: 'status', headerName: 'Collector Status', width: 200 }
-
-    ]
-
-
-    const rows = paymentTransactions.map((pt) => {
-        return {
-            id: pt!.paymenttransactionid!,
-            paymentTransactionID: pt!.paymenttransactionid!,
-            installmentNumber: pt!.installmentnumber!,
-            paymentDueDate: pt!.enddate!,
-            amountDue: pt!.amountdue!,
-            status: pt!.paid + "",
-
-        }
-    });
-
-
-    const columns1: GridColDef[] = [
-        { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 200 },
-        { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 200 },
-        { field: 'paymentType', headerName: 'Payment Type', width: 200 },
-        { field: 'paymentStatus', headerName: 'Payment Status', width: 200 },
-        { field: 'receiverName', headerName: 'Receiver Name', width: 200 },
-    ]
-
-
-    {/** Rows for DataGrid */ }
-    const rows1 = paymentreceipts.map((paymentreceipt) => {
-
-        let isconfirmed = null; // Initialize with null
-
-        // Check if the payment receipt is of type ICollectionPaymentReceipt
-        if (paymentreceipt.paymenttype === 'collection' && 'isconfirmed' in paymentreceipt) {
-            // If it is, set the confirmed value
-
-            isconfirmed = paymentreceipt.isconfirmed;
-            console.log(paymentreceipt.isconfirmed)
-        }
-
-        return {
-            id: paymentreceipt.paymentreceiptid,
-            paymentReceiptid: paymentreceipt.paymentreceiptid,
-            paymentTransactionid: paymentreceipt.paymenttransaction ? paymentreceipt.paymenttransaction.paymenttransactionid : '',
-            paymentType: paymentreceipt.paymenttype,
-            paymentStatus: paymentreceipt.paymenttype === 'collection'
-                ? (isconfirmed ? 'Confirmed' : 'Unconfirmed')
-                : '',
-           
-
-        }
-    });
 
 
 
 
 
     useEffect(() => {
-        //const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
+        const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
 
-
+       
 
         if (orderIDRef.current?.value + '' !== '') {
             handleFindOrder();
 
         }
-        const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
- 
-        if (allPaid) {
+
+       if (allPaid) {
             // Call the orderClosed function
             closedOrder(order!.orderid);
         }
 
         setMaxDate(dayjs() as Dayjs);
 
-    }, [isOrderFound, order, paymentTransactions]);
+    }, [isOrderFound, order, order?.isclosed, paymentTransactions]);
 
 
     return (
+
         <div>
             <ContentNameTypography>Record Direct Payment</ContentNameTypography>
 
@@ -545,10 +499,16 @@ export default function RecordDirectPayment() {
 
             )
             }
-
-            <Grid container>
-                <Grid item><StyleLabel>Payment Transaction ID</StyleLabel>
-                    {/* <StyleTextField3
+            {order?.isclosed ? (
+                <div>
+                    <h1>
+                        All payment transactions have been paid. Order is now closed.
+                    </h1>
+                </div>
+            ) : (<div>
+                <Grid container>
+                    <Grid item><StyleLabel>Payment Transaction ID</StyleLabel>
+                        {/* <StyleTextField3
                      variant="outlined"
                      select
                      value={selectedPaymentTransaction}
@@ -611,52 +571,55 @@ export default function RecordDirectPayment() {
                     />
 
 
-                    {/* </StyleTextField3> */}
+                        {/* </StyleTextField3> */}
+                    </Grid>
+                    <Grid item>
+                        <StyleLabel top={1}>Date Paid</StyleLabel>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <StyledDatePicker
+                                slotProps={{
+                                    textField: {
+                                        variant: 'outlined',
+                                    }
+                                }}
+                                value={selectedDate}
+                                maxDate={maxDate}
+                                onChange={(date) => setSelectedDate(date as Dayjs | null)} />
+                        </LocalizationProvider>
+                    </Grid>
+                    <Grid item>
+                        <StyleLabel>Amount Paid</StyleLabel>
+                        <StyleTextField2 style={{ marginLeft: 63 }} inputRef={amountPaidRef} />
+                    </Grid>
+                    <Grid item><StyleLabel>Remarks</StyleLabel>
+                        <StyleTextField2 style={{ marginLeft: 63 }} inputRef={remarksRef} />
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <StyleLabel top={1}>Date Paid</StyleLabel>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <StyledDatePicker
-                            slotProps={{
-                                textField: {
-                                    variant: 'outlined',
-                                }
-                            }}
-                            value={selectedDate}
-                            maxDate={maxDate}
-                            onChange={(date) => setSelectedDate(date as Dayjs | null)} />
-                    </LocalizationProvider>
+                <Grid container>
+                    <Grid item>
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <StyleLabel>Amount Paid</StyleLabel>
-                    <StyleTextField2 style={{ marginLeft: 63 }} inputRef={amountPaidRef} />
-                </Grid>
-                <Grid item><StyleLabel>Remarks</StyleLabel>
-                    <StyleTextField2 style={{ marginLeft: 63 }} inputRef={remarksRef} />
-                </Grid>
-            </Grid>
-            <Grid container>
-                <Grid item>
-                </Grid>
-            </Grid>
-            <StyledButton onClick={handleSaveDirectPayment}>Save Payment Record</StyledButton>
-            {/* <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader> */}
-            {/* set style left and top manually here in stack */}
-            {/* Alerts */}
-            <ToastContainer
-                position="bottom-right"
-                autoClose={5000}
-                limit={3}
-                hideProgressBar
-                newestOnTop
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                style={{ width: 450 }}
-                theme="colored"
-            />
+                <StyledButton onClick={handleSaveDirectPayment}>Save Payment Record</StyledButton>
+                {/* <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader> */}
+                {/* set style left and top manually here in stack */}
+                {/* Alerts */}
+                <ToastContainer
+                    position="bottom-right"
+                    autoClose={5000}
+                    limit={3}
+                    hideProgressBar
+                    newestOnTop
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    style={{ width: 450 }}
+                    theme="colored"
+                />
+            </div>)}
+
+
 
         </div>
     );

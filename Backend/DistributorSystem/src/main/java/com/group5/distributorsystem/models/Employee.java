@@ -253,4 +253,12 @@ public class Employee {
         this.documentids = documentids;
     }
 
+
+
+    public String getFullName(){
+        return firstname + " " + middlename + " " + lastname;
+    }
+
+
+
 }

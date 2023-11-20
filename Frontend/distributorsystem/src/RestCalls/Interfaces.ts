@@ -1,6 +1,6 @@
 //Interfaces for models
 
-export interface IDistributor {
+export interface IDistributor{
     distributorid:string,
     firstname: string,
     middlename: string,
@@ -15,6 +15,7 @@ export interface IDistributor {
     dealerids: string[],
     employeeids: string[],
     orderids: string[],
+    paymentreceiptids: string[],
     archiveddealerids: string[]
 }
 
@@ -81,7 +82,7 @@ export interface IDealerDocument {
     dealer: IDealer | null; // You can reference the 'IDealer' interface you've already defined.
 }
 
-export interface IEmployee {
+export interface IEmployee{
     employeeid:string,
     firstname: string,
     middlename: string,
@@ -166,14 +167,16 @@ export interface IPaymentReceipt {
     amountpaid: number,
     paymenttype: string,
     paymenttransaction: IPaymentTransaction, 
-    cashier: IEmployee | null
+    receiverID: string,
+    receivername: string
 }
 
 export interface IDirectPaymentReceipt extends IPaymentReceipt{
     remarks: string,
     datepaid: string,  
     receivedamount: number,
-    daterecorded: string,   
+    daterecorded: string, 
+      
 }
 
 export interface ICollectionPaymentReceipt extends IPaymentReceipt{

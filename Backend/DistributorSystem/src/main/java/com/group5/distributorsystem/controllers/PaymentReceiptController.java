@@ -44,9 +44,9 @@ public class PaymentReceiptController {
 
 
 
-    @PostMapping("directpaymentreceipt/createDirectPaymentReceipt")
-    public ResponseEntity<Object> createDirectPaymentReceipt(@RequestBody DirectPaymentReceipt directPaymentReceipt){
-        directPaymentReceiptService.createDirectPaymentReceipt(directPaymentReceipt);
+    @PostMapping("directpaymentreceipt/createDirectPaymentReceipt/{receiverid}")
+    public ResponseEntity<Object> createDirectPaymentReceipt(@RequestBody DirectPaymentReceipt directPaymentReceipt, @PathVariable String receiverid){
+        directPaymentReceiptService.createDirectPaymentReceipt(directPaymentReceipt, receiverid);
         return new ResponseEntity<>("Direct Payment Receipt created successfully!", HttpStatus.CREATED);
 
     }
@@ -72,9 +72,9 @@ public class PaymentReceiptController {
 
     }
 
-    @PutMapping("collectionpaymentreceipt/updateCollectionPaymentReceipt/{collectionpaymentreciptid}/{cashierid}")
-    public ResponseEntity<Object> confirmCollectionPaymentReceipt(@PathVariable String collectionpaymentreciptid, @PathVariable String cashierid){
-        return new ResponseEntity<>(collectionPaymentReceiptService.confirmCollectionPaymentReceipt(collectionpaymentreciptid, cashierid), HttpStatus.OK);
+    @PutMapping("collectionpaymentreceipt/updateCollectionPaymentReceipt/{collectionpaymentreciptid}/{receiverid}")
+    public ResponseEntity<Object> confirmCollectionPaymentReceipt(@PathVariable String collectionpaymentreciptid, @PathVariable String receiverid){
+        return new ResponseEntity<>(collectionPaymentReceiptService.confirmCollectionPaymentReceipt(collectionpaymentreciptid, receiverid), HttpStatus.OK);
     }
 
 

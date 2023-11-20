@@ -20,10 +20,12 @@ export const useRestOrder = (): [
     (orderID: string | undefined, updatedOrder: IOrder) => void,
     (orderID: string) => void,
     (orderID: string | undefined) => void,
+   
 ] => {
 
     const [order, setOrder] = useState<IOrder>();
     const [isOrderFound, setIsOrderFound] = useState<boolean>(true);
+   
     const [assignedStatus, setAssignedStatus] = useState<boolean>(true);
     const [removeStatus, setRemoveStatus] = useState<boolean>(true);
 
@@ -187,6 +189,7 @@ export const useRestOrder = (): [
     function closedOrder(orderID: string) {
         axios.put(`http://localhost:8080/order/updateOrderClosedStatus/${orderID}`)
             .then((response) => {
+               
                 console.log("Order is closed successfully!");
             })
             .catch((error) => {

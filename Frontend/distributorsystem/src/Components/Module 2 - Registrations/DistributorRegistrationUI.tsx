@@ -272,7 +272,7 @@ export default function DistributorRegistration() {
     }
 
     {/**HandlerNewDealer*/ }
-    const handleNewDistributor = async () => {
+    const handleNewDistributor = () => {
 
         try {
             if (
@@ -310,8 +310,9 @@ export default function DistributorRegistration() {
                 dealerids: [],
                 employeeids: [],
                 orderids: [],
+                paymentreceiptids: [],
                 archiveddealerids: []
-            })
+            });
             handleAlert('Success', 'You are Successfully Registered!', 'success');
         } catch (error) {
             handleAlert('Error', 'An Error Occured, Please Check your Connection', 'error')

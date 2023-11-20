@@ -43,13 +43,15 @@ public class Distributor {
 
     private Set<String> orderids = new HashSet<>();
 
+    private Set<String> paymentreceiptids = new HashSet<>();;
+
     private Set<String> archiveddealerids = new HashSet<>();
 
     public Distributor() {
     }
 
 
-    public Distributor(String distributorid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, Set<String> dealerids, Set<String> employeeids, Set<String> orderids, Set<String> archiveddealerids) {
+    public Distributor(String distributorid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, Set<String> dealerids, Set<String> employeeids, Set<String> orderids, Set<String> paymentreceiptids, Set<String> archiveddealerids) {
         this.distributorid = distributorid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -64,6 +66,7 @@ public class Distributor {
         this.dealerids = dealerids;
         this.employeeids = employeeids;
         this.orderids = orderids;
+        this.paymentreceiptids = paymentreceiptids;
         this.archiveddealerids = archiveddealerids;
     }
 
@@ -178,6 +181,20 @@ public class Distributor {
     public void setOrderids(Set<String> orderids) {
         this.orderids = orderids;
     }
+
+    public Set<String> getPaymentreceiptids() {
+        return paymentreceiptids;
+    }
+
+    public void setPaymentreceiptids(Set<String> paymentreceiptids) {
+        this.paymentreceiptids = paymentreceiptids;
+    }
+
+    public String getFullName(){
+        return firstname + " " + middlename + " " + lastname;
+    }
+
+
 
     public Set<String> getArchiveddealerids() {
         return archiveddealerids;

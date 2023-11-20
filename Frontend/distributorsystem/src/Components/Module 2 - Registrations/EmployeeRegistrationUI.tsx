@@ -218,23 +218,7 @@ export default function EmployeeRegistration(){
     const [distributors, setDistributors] = useState<IDistributor[]>([]);
 
 
-    /* const distributorObject: IDistributor = {
-        distributorid: "distributor1",
-        firstname: "Junhui",
-        middlename: "",
-        lastname: "Wen",
-        emailaddress: "wenjunhui@gmail.com",
-        password: "moonmoon",
-        birthdate: "1996-06-10",
-        gender: "Male",
-        currentaddress: "Talisay City",
-        permanentaddress: "Talisay City",
-        contactnumber: "09741258963",
-        dealerids: [],
-        employeeids: [],
-        orderids: [],
-        archiveddealerids: []
-    } */
+
 
 
 
@@ -500,7 +484,7 @@ export default function EmployeeRegistration(){
                 orderids: [],
                 paymentreceiptids: [],
                 collectionpaymentids: [],
-                documentids: []
+                documentids: [],
             }, newEmployeeDocuments!);
 
             handleAlert('Success', 'You are Successfully Registered!', 'success');
