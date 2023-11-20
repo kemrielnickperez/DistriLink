@@ -131,7 +131,7 @@ export default function ProductDistributionList() {
 
 
 
-  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit] = useRestDealer();
 
 
   const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
@@ -172,8 +172,8 @@ export default function ProductDistributionList() {
  
 
 
-  
-  /* const distributorObject : IDistributor = {
+
+  /* const distributorObject: IDistributor = {
 
     distributorid: "distributor1",
     firstname: "Junhui",
@@ -361,10 +361,10 @@ export default function ProductDistributionList() {
     // handleRemoveCartAlert(product.product.name + ' has been removed to the cart', 'success');
     // toast
     toast(
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <RemoveCircleIcon fontSize='medium' style={{ marginRight: '10px', alignItems: '' }} />
-      {product.product.name + ' has been removed from the cart'}
-    </div>, {
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <RemoveCircleIcon fontSize='medium' style={{ marginRight: '10px', alignItems: '' }} />
+        {product.product.name + ' has been removed from the cart'}
+      </div>, {
       position: "bottom-right",
       autoClose: 5000,
       hideProgressBar: true,
@@ -383,7 +383,7 @@ export default function ProductDistributionList() {
     setPaymentTerm(0);
     setTotalAmount(0);
     resetDealer();
-    
+
 
     if (dealerIDRef.current || penaltyRateRef.current?.value) {
       dealerIDRef.current!.value = '';
@@ -394,38 +394,41 @@ export default function ProductDistributionList() {
 
   const handleSaveOrder = () => {
     // Calculate the total order amount based on orderedProducts
-    if(orderedProducts.length===0){
-        saveHandleAlert('No Ordered Products', "Please add products to your order before saving.", 'warning')
+    if (orderedProducts.length === 0) {
+      saveHandleAlert('No Ordered Products', "Please add products to your order before saving.", 'warning')
     }
-   
+
     // Create an order object with the necessary data
-    else if (orderedProducts.length>0 && isDealerFound) {
+    else if (orderedProducts.length > 0 && isDealerFound) {
       const orderAmount = orderedProducts.reduce((total, product) => {
         return total + product.product.price * product.quantity;
-      }, 0);  
-      const uuid = uuidv4();
-      const orderuuid = uuid.slice(0, 8)
-      console.log(orderedProducts)
-      newOrder({
-        orderid: orderuuid,
-        distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-        //moment ang gamit ani para maka generate og date today
-        orderdate: moment().format('YYYY-MM-DD'),
-        penaltyrate: Number(penaltyRateRef.current?.value),
-        paymentterms: paymentTerm,
-        orderamount: orderAmount,
-        distributor: dealer!.distributor,
-        collector: null,
-        dealer: dealer!,
-        orderedproducts: orderedProducts,
-        paymenttransactionids: [], 
-        confirmed: true,
-        isclosed: false
-      });
-      //if possible kay ara na siya mo clear after sa snackbar
-      saveHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
-      clearInputValues();
-      //navigate(`/productDistributionList`);
+      }, 0);
+
+      if (orderAmount < dealerRemainingCredit!) {
+        newOrder({
+          orderid: uuidv4().slice(0, 8),
+          distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
+          //moment ang gamit ani para maka generate og date today
+          orderdate: moment().format('YYYY-MM-DD'),
+          penaltyrate: Number(penaltyRateRef.current?.value),
+          paymentterms: paymentTerm,
+          orderamount: orderAmount,
+          distributor: dealer!.distributor,
+          collector: null,
+          dealer: dealer!,
+          orderedproducts: orderedProducts,
+          paymenttransactionids: [],
+          confirmed: true,
+          isclosed: false
+        });
+        //if possible kay ara na siya mo clear after sa snackbar
+        saveHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
+        clearInputValues();
+
+      }
+      else {
+        saveHandleAlert('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust ToT.", 'warning')
+      }
     }
 
     else {
@@ -440,6 +443,7 @@ export default function ProductDistributionList() {
     getDealerByDistributor(dealerIDRef.current?.value + "", distributorFromStorage.distributorid!)
     
   };
+
 
 
   return (
@@ -587,7 +591,7 @@ export default function ProductDistributionList() {
             {alertMessage}
           </Alert>
         </Snackbar>
-      
+
         <ToastContainer
           position="bottom-right"
           autoClose={5000}

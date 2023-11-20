@@ -98,4 +98,10 @@ public class DealerController {
         return new ResponseEntity<>(dealerService.getAllUnconfirmedDealersByDistributorID(distributorid), HttpStatus.OK);
     }
 
+
+    @GetMapping("/getTotalOrderAmountByDealerID/{dealerid}")
+    public ResponseEntity<Double> getTotalOrderAmountByDealerID(@PathVariable String dealerid){
+        return new ResponseEntity<>(dealerService.getTotalOrderAmountByDealerID(dealerid), HttpStatus.OK);
+    }
+
 }

@@ -1,17 +1,20 @@
-import axios, {  } from "axios";
+import axios, { } from "axios";
 import { useState } from "react";
 import { IDealer, IDealerDocument } from "./Interfaces";
 import { toast } from "react-toastify";
+import { response } from "express";
 
 
 
 
 
-export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String, distributorid: string) => void, (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, (dealerID: string, creditlimit: number) => void, (dealerID: string, remarks: string) => void, (dealerID: string, remarks: string, dateArchived: string) => void, () => void, boolean | undefined, boolean | undefined, IDealer | undefined] => {
+export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String, distributorid: string) => void, (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, (dealerID: string, creditlimit: number) => void, (dealerID: string, remarks: string) => void, (dealerID: string, remarks: string, dateArchived: string) => void, () => void, boolean | undefined, boolean | undefined, IDealer | undefined, number | undefined] => {
 
     const [dealer, setDealer] = useState<IDealer | null>();
     const [isDealerFound, setIsDealerFound] = useState(false);
     const [isDealerConfirmed, setIsDealerConfirmed] = useState(false);
+    const [dealerCreditLimit, setDealerCreditLimit] = useState(0);
+    const [dealerRemainingCredit, setDealerRemainingCredit] = useState(0);
 
     function newDealer(dealer: IDealer, dealerDocuments: IDealerDocument[]) {
 
@@ -125,82 +128,82 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
 
     }
 
-    function confirmDealer(dealerID: string, creditLimit: number){
-        
+    function confirmDealer(dealerID: string, creditLimit: number) {
 
-        axios.put(`http://localhost:8080/dealer/confirmDealer/${dealerID}`, null,{
+
+        axios.put(`http://localhost:8080/dealer/confirmDealer/${dealerID}`, null, {
             params: {
                 creditlimit: creditLimit,
             }
         })
-        .then((response) => {
-            // alert('The dealer confirmed successfully!');
-            toast.success('Dealer has now been confirmed!', {
-                position: "bottom-right",
-                autoClose: 5000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
+            .then((response) => {
+                // alert('The dealer confirmed successfully!');
+                toast.success('Dealer has now been confirmed!', {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             })
-        })
-        .catch((error) => {
-            // alert('Error dealer confirmation. Please try again.');
-            toast.error('Unexpected dealer upon confirming dealer. Please try again.', {
-                position: "bottom-right",
-                autoClose: 5000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            })
-        });
+            .catch((error) => {
+                // alert('Error dealer confirmation. Please try again.');
+                toast.error('Unexpected dealer upon confirming dealer. Please try again.', {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+            });
     }
 
     function markDealerAsPending(dealerID: string, reason: string) {
-       
+
 
         axios.put(`http://localhost:8080/dealer/updateDealerPending/${dealerID}`, null, {
             params: {
                 remarks: reason,
             }
         })
-        .then((response) => {
-            // alert('Dealer status updated to pending successfully!');
-            toast.success("Dealer's status is on pending!" , {
-                position: "bottom-right",
-                autoClose: 5000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
+            .then((response) => {
+                // alert('Dealer status updated to pending successfully!');
+                toast.success("Dealer's status is on pending!", {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             })
-        })
-        .catch((error) => {
-            //alert('Error updating dealer status to pending. Please try again.');
-            toast.error("Unexpected Error pending a dealer. Please try again" , {
-                position: "bottom-right",
-                autoClose: 5000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            })
-        });
+            .catch((error) => {
+                //alert('Error updating dealer status to pending. Please try again.');
+                toast.error("Unexpected Error pending a dealer. Please try again", {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+            });
     }
 
     function declineDealer(dealerID: string, reason: string, dateArchived: string) {
         console.log(dealerID + dateArchived)
 
-       
+
 
         axios.put(`http://localhost:8080/dealer/updateDealerDecline/${dealerID}`, null, {
             params: {
@@ -210,7 +213,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
         })
             .then((response) => {
                 //alert('Dealer declined successfully!');
-                toast.success("Dealer declined successfully!" , {
+                toast.success("Dealer declined successfully!", {
                     position: "bottom-right",
                     autoClose: 5000,
                     hideProgressBar: true,
@@ -224,7 +227,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
             .catch((error) => {
                 console.log(error)
                 //alert('Error declininig dealer. Please try again.');
-                toast.error("Unexpected Error decline a dealer. Please try again" , {
+                toast.error("Unexpected Error decline a dealer. Please try again", {
                     position: "bottom-right",
                     autoClose: 5000,
                     hideProgressBar: true,
@@ -239,11 +242,9 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
 
 
     function getDealerByID(dealerID: String) {
-        axios.get(`http://localhost:8080/dealer/getDealerByID/${dealerID}`, {
-            params: {
-                dealerid: dealerID
-            }
-        })
+        let creditLimit = 0;
+        let remainingCredit =0;
+        axios.get(`http://localhost:8080/dealer/getDealerByID/${dealerID}`)
             .then((response) => {
                 
                 
@@ -256,6 +257,18 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
                     else{
                         alert("wala pa ni siya na confirm, use lain dealer please")
                     }
+                    creditLimit = response.data.creditlimit;
+                    setDealerCreditLimit(creditLimit)
+                    toast.success("Dealer found successfully! Dealer Credit Limit: ₱" + response.data.creditlimit, {
+                        position: "bottom-right",
+                        autoClose: 5000,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    })
 
                 }
                 else {
@@ -266,42 +279,5 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
                 console.error('Error retrieving dealer data:', error);
             });
     }
-
-    function getDealerByDistributor(dealerID: String, distributorid: string) {
-        axios.get(`http://localhost:8080/dealer/getDealerByDistributor/${dealerID}/${distributorid}`)
-            .then((response) => {
-                setDealer(response.data);
-            
-                
-                if (response.data !== '') {
-                    if(response.data.isconfirmed !== false){
-                        setIsDealerFound(true);
-                        alert("Dealer found! Please proceed.")
-                        setIsDealerFound(true);
-                        setIsDealerConfirmed(true);
-                    }
-                    else{
-                        setIsDealerFound(false);
-                        setIsDealerConfirmed(false);
-                        alert("wala pa ni siya na confirm, use lain dealer please")
-                    }
-                    
-
-                }
-                else {
-                    setIsDealerFound(false);
-                    alert("Dealer not found! Please try again.")
-                }
-            })
-            .catch((error) => {
-                console.error('Error retrieving dealer data:', error);
-            });
-    }
-
-    function resetDealer(){
-        setIsDealerFound(false);
-        setDealer(null);
-    }
-
-    return [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer!,]
+    return [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,]
 }
