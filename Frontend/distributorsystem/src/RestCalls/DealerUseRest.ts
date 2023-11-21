@@ -16,6 +16,9 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
     const [dealerCreditLimit, setDealerCreditLimit] = useState(0);
     const [dealerRemainingCredit, setDealerRemainingCredit] = useState(0);
 
+    let creditLimit = 0;
+
+
     function newDealer(dealer: IDealer, dealerDocuments: IDealerDocument[]) {
 
 
@@ -243,18 +246,18 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
 
     function getDealerByID(dealerID: String) {
         let creditLimit = 0;
-        let remainingCredit =0;
+        let remainingCredit = 0;
         axios.get(`http://localhost:8080/dealer/getDealerByID/${dealerID}`)
             .then((response) => {
-                
-                
+
+
                 if (response.data !== null) {
-                    if(response.data.isconfirmed !== false){
+                    if (response.data.isconfirmed !== false) {
                         alert("naa?")
                         setDealer(response.data);
                         setIsDealerFound(true);
                     }
-                    else{
+                    else {
                         alert("wala pa ni siya na confirm, use lain dealer please")
                     }
                     creditLimit = response.data.creditlimit;
@@ -278,6 +281,133 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
             .catch((error) => {
                 console.error('Error retrieving dealer data:', error);
             });
+
+        axios.get(`http://localhost:8080/dealer/getTotalOrderAmountByDealerID/${dealerID}`)
+            .then((response) => {
+                setDealerCreditLimit(response.data);
+                remainingCredit = creditLimit - response.data;
+                console.log("remaining credit" + remainingCredit);
+                setDealerRemainingCredit(remainingCredit);
+                toast.success("Total Ordered Amount: ₱" + response.data + ". Remaining Credit: ₱" + remainingCredit, {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+            })
+            .catch((error) => {
+                console.error('Error retrieving dealer credit limit:', error);
+            });
+
     }
-    return [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,]
+
+    function getDealerByDistributor(dealerID: String, distributorid: string) {
+
+
+        axios.get(`http://localhost:8080/dealer/getDealerByDistributor/${dealerID}/${distributorid}`)
+            .then((response) => {
+                if (response.data !== '') {
+                    if (response.data.isconfirmed !== false) {
+                        setDealer(response.data);
+                        setIsDealerFound(true);
+                        setIsDealerConfirmed(true);
+                        setDealerCreditLimit(response.data.creditlimit)
+                        creditLimit = response.data.creditlimit;
+                        toast.success("Dealer found successfully! Dealer Credit Limit: ₱" + response.data.creditlimit, {
+                            position: "bottom-right",
+                            autoClose: 5000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        })
+                        setDealerRemainingCredit(getRemainingDealerCredit(response.data.dealerid));
+                    }
+                    else {
+                        //setIsDealerFound(true);
+                        setIsDealerConfirmed(false);
+                        toast.warning("Dealer not yet confirmed. Please confirm in the Dealer Profiles List.", {
+                            position: "bottom-right",
+                            autoClose: 5000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        })
+
+                    }
+
+                }
+                else {
+                    setIsDealerFound(false);
+                    setIsDealerConfirmed(false);
+                    toast.error("Dealer not found! Please try again.", {
+                        position: "bottom-right",
+                        autoClose: 5000,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    })
+
+                }
+            })
+            .catch((error) => {
+                console.error('Error retrieving dealer data:', error);
+            });
+
+
+
+
+    }
+
+    function getRemainingDealerCredit(dealerID: string) {
+
+        let remainingCredit = 0;
+        axios.get(`http://localhost:8080/dealer/getTotalOrderAmountByDealerID/${dealerID}`)
+            .then((response) => {
+
+                remainingCredit = creditLimit - response.data;
+                setDealerRemainingCredit(remainingCredit);
+                toast.success("Total Ordered Amount: ₱" + response.data + ". Remaining Credit: ₱" + remainingCredit, {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+
+            })
+            .catch((error) => {
+                console.error('Error retrieving dealer credit limit:', error);
+            });
+
+            return remainingCredit;
+    }
+
+
+    function resetDealer() {
+        setIsDealerFound(false);
+        setDealer(null);
+    }
+
+
+    return [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, isDealerFound, isDealerConfirmed, dealer!, dealerRemainingCredit]
 }
+/* [(dealerID: string) => void, 
+     (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, 
+     (dealerID: string, creditlimit: number) => void, 
+     (dealerID: string, remarks: string) => void, (dealerID: string, remarks: string, dateArchived: string) => void, boolean | undefined, boolean | undefined, IDealer | undefined, number | undefined] */

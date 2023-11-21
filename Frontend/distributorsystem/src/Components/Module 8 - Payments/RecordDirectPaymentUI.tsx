@@ -204,8 +204,9 @@ const TableCellStyle = styled(TableCell)({
 
 export default function RecordDirectPayment() {
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus,  updateOrder, closedOrder, applyPenalty] = useRestOrder();
+    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
+
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
     const [selectedPaymentTransaction, setSelectedPaymentTransaction] = useState<IPaymentTransaction | null>(null);
 
@@ -224,7 +225,7 @@ export default function RecordDirectPayment() {
 
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
 
-    const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+    const sortedPaymemtTransactions = paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
 
     //const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
@@ -261,6 +262,7 @@ export default function RecordDirectPayment() {
 
     const handleFindOrder = () => {
         getOrderByID(orderIDRef.current?.value + '');
+        getAllPaymentTransactionsByOrderID(orderIDRef.current?.value + '');
 
     };
 
@@ -278,49 +280,50 @@ export default function RecordDirectPayment() {
         }
       }; */
 
-    const cashierObject: IEmployee = {
-        employeeid: "2386f1b2",
-        firstname: "Victoria",
-        middlename: "I",
-        lastname: "Ramirez",
-        emailaddress: "charmaineramirez05@gmail.com",
-        password: "test",
-        birthdate: "2005-11-05",
-        gender: "female",
-        currentaddress: "2079 Humay-Humay Street",
-        permanentaddress: "Pajo",
-        contactnumber: "+639158523587",
-        tinnumber: '',
-        is_cashier: true,
-        is_salesassociate: true,
-        is_collector: true,
-        submissiondate: "2023-11-07",
-        distributor: {
-            distributorid: "distributor9",
-            firstname: "Min Gyu",
-            middlename: "",
-            lastname: "Kim",
-            emailaddress: "capstone.distrilink@gmail.com",
-            password: "doggo",
-            birthdate: "1997-04-06",
-            gender: "Male",
-            currentaddress: "Mabolo, Cebu",
-            permanentaddress: "Cebu City",
-            contactnumber: "09741258963",
-            dealerids: [],
-            employeeids: [
-                "2386f1b2"
-            ],
-            orderids: [],
-            paymentreceiptids: [],
-        },
-        orderids: [],
-        paymentreceiptids: [],
-        collectionpaymentids: [],
-        documentids: [
-            "54219fa2"
-        ]
-    }
+      const cashierObject : IEmployee = {
+          employeeid: "2386f1b2",
+          firstname: "Victoria",
+          middlename: "I",
+          lastname: "Ramirez",
+          emailaddress: "charmaineramirez05@gmail.com",
+          password: "test",
+          birthdate: "2005-11-05",
+          gender: "female",
+          currentaddress: "2079 Humay-Humay Street",
+          permanentaddress: "Pajo",
+          contactnumber: "+639158523587",
+          tinnumber: '',
+          iscashier: true,
+          issalesassociate: true,
+          iscollector: true,
+          submissiondate: "2023-11-07",
+          distributor: {
+              distributorid: "distributor9",
+              firstname: "Min Gyu",
+              middlename: "",
+              lastname: "Kim",
+              emailaddress: "capstone.distrilink@gmail.com",
+              password: "doggo",
+              birthdate: "1997-04-06",
+              gender: "Male",
+              currentaddress: "Mabolo, Cebu",
+              permanentaddress: "Cebu City",
+              contactnumber: "09741258963",
+              dealerids: [],
+              employeeids: [
+                  "2386f1b2"
+              ],
+              orderids: [],
+              archiveddealerids: [],
+              paymentreceiptids: []
+          },
+          orderids: [],
+          paymentreceiptids: [],
+          collectionpaymentids: [],
+          documentids: [
+              "54219fa2"
+          ]
+      }
 
 
     const clearInputValues = () => {
@@ -360,24 +363,48 @@ export default function RecordDirectPayment() {
 
     }
 
+    const columns: GridColDef[] = [
+        { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
+        { field: 'installmentNumber', headerName: 'Installment Number', width: 180 },
+        { field: 'paymentDueDate', headerName: 'Payment Due Date', width: 160 },
+        { field: 'amountDue', headerName: 'Amount Due', width: 180 },
+        { field: 'status', headerName: 'Collector Status', width: 200 }
+
+    ]
+
+
+    const rows = paymentTransactions.map((pt) => {
+        return {
+            id: pt!.paymenttransactionid!,
+            paymentTransactionID: pt!.paymenttransactionid!,
+            installmentNumber: pt!.installmentnumber!,
+            paymentDueDate: pt!.enddate!,
+            amountDue: pt!.amountdue!,
+            status: pt!.paid + "",
+
+        }
+    });
+
+
+
 
 
 
 
     useEffect(() => {
-        const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
-
-       
+        const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
+ 
 
         if (orderIDRef.current?.value + '' !== '') {
             handleFindOrder();
 
         }
 
-       if (allPaid) {
+        /*
+        if (allPaid) {
             // Call the orderClosed function
             closedOrder(order!.orderid);
-        }
+        } */
 
         setMaxDate(dayjs() as Dayjs);
 

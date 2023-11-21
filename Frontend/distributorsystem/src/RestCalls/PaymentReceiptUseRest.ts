@@ -15,7 +15,7 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
 
      function createDirectPaymentReceipt(directpaymentreceipt: IDirectPaymentReceipt, receiverID: string) {
         
-        axios.post(`http://localhost:8080/paymentreceipt/createDirectPaymentReceipt/${receiverID}`, {
+        axios.post(`http://localhost:8080/paymentreceipt/directpaymentreceipt/createDirectPaymentReceipt/${receiverID}`, {
              paymentreceiptid: directpaymentreceipt.paymentreceiptid,
              remarks: directpaymentreceipt.remarks,
              datepaid: directpaymentreceipt.datepaid,

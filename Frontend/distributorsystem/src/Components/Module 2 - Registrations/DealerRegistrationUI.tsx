@@ -178,7 +178,7 @@ export default function DealerRegistration() {
     const navigate = useNavigate();
 
     {/**UseStates*/ }
-    const  [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
+    const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer] = useRestDealer();
     const [selectedGender, setSelectedGender] = useState('');
     const [selectedBusinessOpt, setSelectedBusinessOpt] = useState(false);
     const [selectedBDate, setSelectedBDate] = useState<Dayjs | null>(null);
@@ -252,7 +252,7 @@ export default function DealerRegistration() {
         axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
             .then((response) => {
                 setDistributors(response.data);
-                console.log(response.data)
+            
 
             })
             .catch((error) => {
@@ -606,8 +606,7 @@ export default function DealerRegistration() {
                 documentids: []
             }, newDealerDocuments!);
 
-            console.log("mao ni gi selecr")
-            console.log(selectedDistributor)
+          
             handleAlert('Success', 'You are Successfully Registered!', 'success');
 
         } catch (error) {
