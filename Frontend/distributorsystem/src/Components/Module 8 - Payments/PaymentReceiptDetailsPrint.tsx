@@ -114,7 +114,7 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
             </StackStyle>
             <StackStyle sx={{ left: '24%' }}>
                 <StyleLabel>Payment Transaction ID</StyleLabel>
-                <StyleData>{paymentReceipt?.paymenttransaction.paymenttransactionid}</StyleData>
+                <StyleData>{paymentReceipt?.paymenttransactionid}</StyleData>
             </StackStyle>
             <StackStyle sx={{ left: '42%' }}>
                 <StyleLabel>Dealer ID</StyleLabel>

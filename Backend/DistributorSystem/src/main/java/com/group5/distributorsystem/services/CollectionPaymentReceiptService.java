@@ -52,7 +52,7 @@ public class CollectionPaymentReceiptService {
     ) {
         CollectionPaymentReceipt savedCollectionPaymentReceipt = collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
 
-        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransactionid()).get();
 
         for (int i = 0; i < collectorproofid.size(); i++) {
             CollectorRemittanceProof collectorProof = new CollectorRemittanceProof();
@@ -92,10 +92,7 @@ public class CollectionPaymentReceiptService {
             savedCollectionPaymentReceipt.getDealerpaymentproofids().add(dealerProof.getDealerpaymentproofid());
         }
 
-        //dili paman ta ni mo isPaid diri, adto na sa confirm
-        //paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
-
-        paymentTransaction.setPaymentreceiptid(savedCollectionPaymentReceipt.getPaymentreceiptid());
+        paymentTransaction.getPaymentreceipts().add(savedCollectionPaymentReceipt);
 
         paymentReceiptRepository.save(savedCollectionPaymentReceipt);
         paymentTransactionRepository.save(paymentTransaction);
@@ -109,8 +106,7 @@ public class CollectionPaymentReceiptService {
 
         CollectionPaymentReceipt collectionPaymentReceipt = collectionPaymentReceiptRepository.findById(collectionpaymentreciptid).get();
 
-        System.out.println(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid());
-        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransaction().getPaymenttransactionid()).get();
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransactionid()).get();
 
 
         if (receiverID != null) {
@@ -132,18 +128,19 @@ public class CollectionPaymentReceiptService {
         }
 
 
-        paymentTransaction.setPaymentreceiptid(collectionPaymentReceipt.getPaymentreceiptid());
-        System.out.println(paymentTransaction.getPaymenttransactionid());
-        paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
+        paymentTransaction.getPaymentreceipts().add(collectionPaymentReceipt);
 
         collectionPaymentReceipt.setConfirmationdate(LocalDate.now()
         );
         collectionPaymentReceipt.setAmountpaid(collectionPaymentReceipt.getRemittedamount());
         paymentTransaction.setPaid(true);
-        collectionPaymentReceipt.setPaymenttransaction(paymentTransaction);
+        collectionPaymentReceipt.setPaymenttransactionid(paymentTransaction.getPaymenttransactionid());
 
         paymentTransactionRepository.save(paymentTransaction);
         paymentReceiptRepository.save(collectionPaymentReceipt);
+
+       //code para ma true na ang isPaid sa payment transaction if ang tanan amount sa PR kay equal na sa amount due sa PT
+       paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
 
         return new ResponseEntity("Collection Payment Receipt Confirmed Successfully!", HttpStatus.OK);
     }
@@ -160,7 +157,7 @@ public class CollectionPaymentReceiptService {
         return collectionPaymentReceiptRepository.findByIsconfirmedFalse();
     }
 
-    public List<CollectionPaymentReceipt> getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(String distributorid) {
-        return collectionPaymentReceiptRepository.findByPaymenttransaction_Order_Distributor_DistributoridAndIsconfirmedFalse(distributorid);
-    }
+    /*public List<CollectionPaymentReceipt> getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(String distributorid) {
+        return collectionPaymentReceiptRepository.findByPaymenttransactionid_Order_Distributor_DistributoridAndIsconfirmedFalse(distributorid);
+    }*/
 }

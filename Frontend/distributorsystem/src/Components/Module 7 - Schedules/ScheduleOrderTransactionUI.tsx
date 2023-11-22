@@ -217,7 +217,7 @@ export default function Schedules() {
             const uuid = uuidv4();
             const paymenttransactionuuid = uuid.slice(0, 8);
 
-            const newPaymentTransaction = {
+            const newPaymentTransaction :IPaymentTransaction = {
                 paymenttransactionid: paymenttransactionuuid,
                 amountdue: parseFloat((order!.orderamount / order!.paymentterms).toFixed(2)),
                 startingdate: currentEndDate.format('YYYY-MM-DD') || "",
@@ -225,7 +225,7 @@ export default function Schedules() {
                 installmentnumber: i,
                 paid: false,
                 order: order!,
-                paymentreceiptid: null,
+                paymentreceipts: [],
             };
             currentEndDate = currentEndDate.add(15, 'day');
             newPaymentTransactions.push(newPaymentTransaction);
@@ -295,7 +295,7 @@ export default function Schedules() {
                 installmentnumber: transaction.installmentnumber,
                 paid: transaction.paid,
                 order: transaction.order,
-                paymentreceiptid: transaction.paymentreceiptid
+                paymentreceipts: transaction.paymentreceipts
             }
         )
         toast.success('Installment '+transaction.installmentnumber+" schedule has been updated.", {

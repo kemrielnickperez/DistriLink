@@ -23,7 +23,7 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
              paymenttype: directpaymentreceipt.paymenttype,
              daterecorded: directpaymentreceipt.daterecorded,
              receivedamount: directpaymentreceipt.receivedamount,
-             paymenttransaction: directpaymentreceipt.paymenttransaction,
+             paymenttransactionid: directpaymentreceipt.paymenttransactionid,
              receiverID:"",
              receivername: ""
         

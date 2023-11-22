@@ -29,7 +29,7 @@ public class PaymentTransactionService {
         //for(int i=0; i<= paymentTransaction.length; i++){
         for(PaymentTransaction pt :paymentTransactions) {
 
-                PaymentTransaction newpt = new PaymentTransaction(pt.getPaymenttransactionid(), pt.getAmountdue(), pt.getStartingdate(), pt.getEnddate(), pt.getInstallmentnumber(), pt.isPaid(),  order, pt.getPaymentreceiptid());
+                PaymentTransaction newpt = new PaymentTransaction(pt.getPaymenttransactionid(), pt.getAmountdue(), pt.getStartingdate(), pt.getEnddate(), pt.getInstallmentnumber(), pt.isPaid(),  order, pt.getPaymentreceipts());
                 newpt = paymentTransactionRepository.save(newpt);
 
                 order.getPaymenttransactionids().add(newpt.getPaymenttransactionid());
@@ -61,7 +61,6 @@ public class PaymentTransactionService {
 
 
     public List<PaymentTransaction> getAllPaymentTransactionsByOrderID(String orderid) {
-        System.out.println(orderid);
         return paymentTransactionRepository.findByOrder_Orderid(orderid);
     }
 
@@ -117,28 +116,48 @@ public class PaymentTransactionService {
         return new ResponseEntity("Payment Transaction Updated Successfully!", HttpStatus.OK);
     }
 
+    public double getTotalPaidAmount(String paymenttransactionid){
+
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
+
+        double totalAmountPaid =0;
+
+        for (PaymentReceipt pr: paymentTransaction.getPaymentreceipts()) {
+
+            totalAmountPaid += pr.getAmountpaid();
+        }
+
+        return  totalAmountPaid;
+    }
+
+
     public PaymentTransaction updatePaidPaymentTransaction(String paymenttransactionid) {
         PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
 
         Order order = orderRepository.findById(updatedPaymentTransaction.getOrder().getOrderid()).get();
 
-        updatedPaymentTransaction.setPaid(true);
+        double totalAmountPaid = getTotalPaidAmount(updatedPaymentTransaction.getPaymenttransactionid());
 
-        List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionRepository.findByOrder_Orderid(order.getOrderid());
+        if(totalAmountPaid == updatedPaymentTransaction.getAmountdue()){
+            updatedPaymentTransaction.setPaid(true);
 
-        for(PaymentTransaction pt : paymentTransactionsFromOrder) {
-            if (pt.getPaymenttransactionid().equals(updatedPaymentTransaction.getPaymenttransactionid())) {
-                pt.setPaid(updatedPaymentTransaction.isPaid());
-                pt.setPaymentreceiptid(updatedPaymentTransaction.getPaymentreceiptid());
+            List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionRepository.findByOrder_Orderid(order.getOrderid());
+
+            for(PaymentTransaction pt : paymentTransactionsFromOrder) {
+                if (pt.getPaymenttransactionid().equals(updatedPaymentTransaction.getPaymenttransactionid())) {
+                    pt.setPaid(updatedPaymentTransaction.isPaid());
+                }
             }
+
+            orderRepository.save(order);
         }
 
-        orderRepository.save(order);
 
         return paymentTransactionRepository.save(updatedPaymentTransaction);
 
 
     }
+
 
 
 }

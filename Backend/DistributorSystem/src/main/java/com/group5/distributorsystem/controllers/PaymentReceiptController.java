@@ -89,8 +89,8 @@ public class PaymentReceiptController {
         return new ResponseEntity<>(collectionPaymentReceiptService.getAllUnconfirmedCollectionPaymentReceipts(), HttpStatus.OK);
     }
 
-    @GetMapping("collectionpaymentreceipt/getAllUnconfirmedCollectionPaymentReceiptsByDistributorID/{distributorid}")
+    /*@GetMapping("collectionpaymentreceipt/getAllUnconfirmedCollectionPaymentReceiptsByDistributorID/{distributorid}")
     public ResponseEntity<Object> getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(String distributorid){
         return new ResponseEntity<>(collectionPaymentReceiptService.getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(distributorid), HttpStatus.OK);
-    }
+    }*/
 }

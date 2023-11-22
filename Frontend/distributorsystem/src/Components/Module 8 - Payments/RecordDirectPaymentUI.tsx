@@ -1,4 +1,4 @@
-import { Button, Divider, Input, Paper, Stack, Table, TableRow, TableBody, TableCell, TableContainer, TextField, styled, TableHead, Typography, Card, makeStyles, IconButton, Grid, TextFieldProps, Box, TablePagination, Autocomplete, AutocompleteRenderInputParams, MenuItem } from "@mui/material";
+import { Button, Divider, Input, Paper, Stack, Table, TableRow, TableBody, TableCell, TableContainer, TextField, styled, TableHead, Typography, Card, makeStyles, IconButton, Grid, TextFieldProps, Box, TablePagination, Autocomplete, AutocompleteRenderInputParams, MenuItem, Modal } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import NavBar from "../../Global Components/NavBar";
 //import { useRestSchedule } from "../../RestCalls/ScheduleUseRest";
@@ -202,6 +202,24 @@ const TableCellStyle = styled(TableCell)({
     color: '#707070'
 });
 
+const ModalCard = styled(Card)({
+    /* position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: 1000,
+    backgroundColor: 'background.paper',
+    border: '2px', */
+
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 1000,
+    backgroundColor: 'white',
+    border: '2px solid #000',
+})
+
 export default function RecordDirectPayment() {
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
     const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
@@ -209,12 +227,23 @@ export default function RecordDirectPayment() {
 
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
     const [selectedPaymentTransaction, setSelectedPaymentTransaction] = useState<IPaymentTransaction | null>(null);
+    const [selectedPaymentTransactionRow, setSelectedPaymentTransactionRow] = useState<IPaymentTransaction | null>(null);
 
 
 
     const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>([]);
-    const [paymentreceipts, setPaymentReceipts] = useState<IPaymentReceipt[]>([]);
+    const [paymentReceipts, setPaymentReceipts] = useState<IPaymentReceipt[]>([]);
 
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => {
+
+        //setPaymentReceipts(response.data.paymentreceipts);
+        setOpen(true);
+        console.log(paymentReceipts);
+        console.log(selectedPaymentTransactionRow);
+    }
+    const handleClose = () => setOpen(false);
 
 
     const orderIDRef = useRef<TextFieldProps>(null);
@@ -238,6 +267,9 @@ export default function RecordDirectPayment() {
             .then((response) => {
                 setPaymentTransactions(response.data);
 
+                /* response.data.forEach(element => {
+                    console.log(element.paymentreceipts)
+                }); */
             })
             .catch((error) => {
                 alert("Error retrieving payment transactions. Please try again.");
@@ -247,83 +279,55 @@ export default function RecordDirectPayment() {
     }
 
 
-    function getAllPaymentReceipts() {
-        axios.get<IDirectPaymentReceipt[]>('http://localhost:8080/paymentreceipt/getAllPaymentReceipts')
-            .then((response) => {
-                setPaymentReceipts(response.data);
-
-            })
-            .catch((error) => {
-                alert("Error retrieving payment receipts. Please try again.");
-                //console.log(error);
-            });
-    }
-
-
     const handleFindOrder = () => {
-        getOrderByID(orderIDRef.current?.value + '');
         getAllPaymentTransactionsByOrderID(orderIDRef.current?.value + '');
-
     };
 
-    /* const checkAndCloseOrder = (order: IOrder|undefined) => {
-        // Check if all payment transactions are paid
-        const allPaid = order?.paymenttransactions?.every((transaction) => transaction.paid);
-      
-        if (allPaid) {
-          // Call the orderClosed function
-          closedOrder(order!.orderid);
-        } else {
-          // Handle the case where not all payment transactions are paid
-          // You can display a message or perform other actions here
-          console.log('Not all payment transactions are paid.');
-        }
-      }; */
 
-      const cashierObject : IEmployee = {
-          employeeid: "2386f1b2",
-          firstname: "Victoria",
-          middlename: "I",
-          lastname: "Ramirez",
-          emailaddress: "charmaineramirez05@gmail.com",
-          password: "test",
-          birthdate: "2005-11-05",
-          gender: "female",
-          currentaddress: "2079 Humay-Humay Street",
-          permanentaddress: "Pajo",
-          contactnumber: "+639158523587",
-          tinnumber: '',
-          iscashier: true,
-          issalesassociate: true,
-          iscollector: true,
-          submissiondate: "2023-11-07",
-          distributor: {
-              distributorid: "distributor9",
-              firstname: "Min Gyu",
-              middlename: "",
-              lastname: "Kim",
-              emailaddress: "capstone.distrilink@gmail.com",
-              password: "doggo",
-              birthdate: "1997-04-06",
-              gender: "Male",
-              currentaddress: "Mabolo, Cebu",
-              permanentaddress: "Cebu City",
-              contactnumber: "09741258963",
-              dealerids: [],
-              employeeids: [
-                  "2386f1b2"
-              ],
-              orderids: [],
-              archiveddealerids: [],
-              paymentreceiptids: []
-          },
-          orderids: [],
-          paymentreceiptids: [],
-          collectionpaymentids: [],
-          documentids: [
-              "54219fa2"
-          ]
-      }
+    const cashierObject: IEmployee = {
+        employeeid: "2386f1b2",
+        firstname: "Victoria",
+        middlename: "I",
+        lastname: "Ramirez",
+        emailaddress: "charmaineramirez05@gmail.com",
+        password: "test",
+        birthdate: "2005-11-05",
+        gender: "female",
+        currentaddress: "2079 Humay-Humay Street",
+        permanentaddress: "Pajo",
+        contactnumber: "+639158523587",
+        tinnumber: '',
+        iscashier: true,
+        issalesassociate: true,
+        iscollector: true,
+        submissiondate: "2023-11-07",
+        distributor: {
+            distributorid: "distributor9",
+            firstname: "Min Gyu",
+            middlename: "",
+            lastname: "Kim",
+            emailaddress: "capstone.distrilink@gmail.com",
+            password: "doggo",
+            birthdate: "1997-04-06",
+            gender: "Male",
+            currentaddress: "Mabolo, Cebu",
+            permanentaddress: "Cebu City",
+            contactnumber: "09741258963",
+            dealerids: [],
+            employeeids: [
+                "2386f1b2"
+            ],
+            orderids: [],
+            archiveddealerids: [],
+            paymentreceiptids: []
+        },
+        orderids: [],
+        paymentreceiptids: [],
+        collectionpaymentids: [],
+        documentids: [
+            "54219fa2"
+        ]
+    }
 
 
     const clearInputValues = () => {
@@ -336,7 +340,7 @@ export default function RecordDirectPayment() {
 
         }
 
-       
+
     }
     const handleSaveDirectPayment = () => {
         console.log(JSON.parse(localStorage.getItem("cashier")!))
@@ -344,31 +348,118 @@ export default function RecordDirectPayment() {
 
         const uuid = uuidv4();
         const paymentreceiptuuid = uuid.slice(0, 8);
-        console.log(paymentreceiptuuid);
-        createDirectPaymentReceipt({
-            paymentreceiptid: paymentreceiptuuid,
-            remarks: remarksRef.current?.value + "",
-            datepaid: selectedDate?.format('YYYY-MM-DD') || '',
-            amountpaid: Number(amountPaidRef.current?.value),
-            receivedamount: Number(amountPaidRef.current?.value),
-            paymenttype: 'direct',
-            daterecorded: moment().format('YYYY-MM-DD'),
-            paymenttransaction: selectedPaymentTransaction!,
-            receiverID: "",
-            receivername: ""
-        }, cashierObject.employeeid)
-        
+          console.log(paymentreceiptuuid);
+          createDirectPaymentReceipt({
+             paymentreceiptid: paymentreceiptuuid,
+             remarks: remarksRef.current?.value + "",
+             datepaid: selectedDate?.format('YYYY-MM-DD') || '',
+             amountpaid: Number(amountPaidRef.current?.value),
+             receivedamount: Number(amountPaidRef.current?.value),
+             paymenttype: 'direct',
+             daterecorded: moment().format('YYYY-MM-DD'),
+             paymenttransactionid: selectedPaymentTransaction?.paymenttransactionid!,
+             receiverID: "",
+             receivername: ""
+         }, cashierObject.employeeid) 
+          
+
+        console.log(paymentReceipts);
+        console.log(selectedPaymentTransactionRow);
 
         clearInputValues();
 
     }
+
+
+    const handleViewPaymentReceiptsButtonClick = (params: { row: any }) => {
+
+
+        const selectedTransaction = paymentTransactions.find(pt => pt.paymenttransactionid === params.row.paymentTransactionID);
+        setPaymentReceipts(selectedTransaction ? selectedTransaction.paymentreceipts : []);
+        handleOpen();
+    }
+  
+
+
+
+    const PaymentReceiptcolumns: GridColDef[] = [
+        { field: 'paymentReceiptID', headerName: 'Payment Receipt ID', width: 200 },
+        { field: 'paymentType', headerName: 'Payment Type', width: 180 },
+        { field: 'amountPaid', headerName: 'Amount Paid', width: 180 },
+        { field: 'receiverName', headerName: 'Receiver Name', width: 160 },
+        { field: 'datePaid', headerName: 'Date Paid', width: 180 },
+        { field: 'receivedAmount', headerName: 'Received Amount', width: 180 },
+        { field: 'dateRecorded', headerName: 'Date Recorded', width: 180 },
+
+
+    ]
+
+    const PaymentReceiptrows = paymentReceipts.map((pr) => {
+
+        return {
+            id: pr!.paymentreceiptid!,
+            paymentReceiptID: pr.paymentreceiptid!,
+            paymentType: pr.paymenttype!,
+            amountPaid: pr.amountpaid!,
+            receiverName: pr!.receivername!,
+            //rows para if collection ba or direct
+            //datePaid: pr.!,
+            //paymentStatus: pt!.paid,
+
+        }
+    });
 
     const columns: GridColDef[] = [
         { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
         { field: 'installmentNumber', headerName: 'Installment Number', width: 180 },
         { field: 'paymentDueDate', headerName: 'Payment Due Date', width: 160 },
         { field: 'amountDue', headerName: 'Amount Due', width: 180 },
-        { field: 'status', headerName: 'Collector Status', width: 200 }
+        {
+            field: 'paymentStatus',
+            headerName: 'Payment Status',
+            renderCell: (params) => (
+                <span style={{ color: params.row.paymentStatus ? 'green' : 'red' }}>
+                    {params.row.paymentStatus ? 'Paid' : 'Not Paid'}
+                </span>
+            ),
+        },
+        {
+            field: 'actionView', headerName: '', width: 220, renderCell: (params: { row: any; }) => {
+                return (
+                    <div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => {
+                                handleViewPaymentReceiptsButtonClick(params);
+                            }}>
+                            View Payment Receipts
+                        </Button>
+                        <Modal
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+
+                        >
+                            <ModalCard>
+                                <ContentNameTypography2>Payment Receipts</ContentNameTypography2>
+                                <DataGrid
+                                    rows={PaymentReceiptrows}
+                                    sx={{ textAlign: 'center', color: '#203949', height: '350px', fontWeight: 330, margin: '50px', border: 'none', fontSize: '490' }}
+                                    columns={PaymentReceiptcolumns}
+                                    pageSizeOptions={[5]}
+                                />
+                                 <Button variant="contained" onClick={handleClose}>Close </Button>
+                            </ModalCard>
+                        </Modal>
+                    </div>
+
+
+
+                )
+            }
+        }
 
     ]
 
@@ -380,7 +471,7 @@ export default function RecordDirectPayment() {
             installmentNumber: pt!.installmentnumber!,
             paymentDueDate: pt!.enddate!,
             amountDue: pt!.amountdue!,
-            status: pt!.paid + "",
+            paymentStatus: pt!.paid,
 
         }
     });
@@ -393,7 +484,7 @@ export default function RecordDirectPayment() {
 
     useEffect(() => {
         const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
- 
+
 
         if (orderIDRef.current?.value + '' !== '') {
             handleFindOrder();
@@ -431,7 +522,7 @@ export default function RecordDirectPayment() {
                         <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
                         <DataGrid
                             rows={rows}
-                            sx={{ textAlign: 'center', color: '#203949', height: '350px', fontWeight: 330 }}
+                            sx={{ textAlign: 'center', color: '#203949', height: '350px', fontWeight: 330, margin: '50px', border: 'none', fontSize: '490' }}
                             columns={columns}
 
                             initialState={{
@@ -450,36 +541,8 @@ export default function RecordDirectPayment() {
 
 
 
-                    <ContentNameTypography>Payment Receipts</ContentNameTypography>
 
-
-                    {/**DataGrid */}
-                    {/*  <DataGrid
-                            rows={rows1}
-                            sx={{ textAlign: 'center', color: '#146C94', height: '350px', margin: '35px 20px 0 20px' }}
-                            columns={columns1.map((column) => ({
-                                ...column,
-                            }))
-                            }
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: 5,
-                                    },
-                                },
-                            }}
-                            pageSizeOptions={[5]}
-                            checkboxSelection
-
-
-                            isRowSelectable={(params) => {
-                                // Check the payment type of the row and disable the checkbox for direct payment types
-                                return params.row.paymentType !== 'direct';
-                            }}
-                        /> */}
-
-
-                    <StyledPaymentTransactionCard>
+                    {/* <StyledPaymentTransactionCard>
                         <TableContainer sx={{ borderRadius: '22px' }}>
                             <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
                             <Table>
@@ -515,7 +578,7 @@ export default function RecordDirectPayment() {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                    </StyledPaymentTransactionCard>
+                    </StyledPaymentTransactionCard> */}
                 </div>
 
             ) : (
@@ -555,47 +618,47 @@ export default function RecordDirectPayment() {
                             {option.paymenttransactionid}
                         </MenuItem>
                      ))} */}
-                    <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={paymentTransactions!}
-                        getOptionLabel={(option) => option.paymenttransactionid}
-                        isOptionEqualToValue={(option, value) => option.paymenttransactionid === value.paymenttransactionid}
-                        value={selectedPaymentTransaction}
-                        onChange={(event, newValue) => {
-                            setSelectedPaymentTransaction(newValue);
-                        }}
-                        filterOptions={(options, state) => {
-                            // Filter out "Paid" transactions from the options
-                            return options.filter((option) => !option.paid);
-                        }}
-                        // Style for the Autocomplete (Combo Box)
-                        sx={{
-                            marginTop: 2,
-                            marginRight: 15,
-                        }}
-                        // Style for the TextField (Input)
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                InputProps={{
-                                    ...params.InputProps,
-                                    disableUnderline: true,
-                                    sx: {
-                                        [`& fieldset`]: {
-                                            borderRadius: 15,
-                                            height: 40,
-                                            width: 220,
-                                            top: 4.5,
-                                            right: -250,
+                        <Autocomplete
+                            disablePortal
+                            id="combo-box-demo"
+                            options={paymentTransactions!}
+                            getOptionLabel={(option) => option.paymenttransactionid}
+                            isOptionEqualToValue={(option, value) => option.paymenttransactionid === value.paymenttransactionid}
+                            value={selectedPaymentTransaction}
+                            onChange={(event, newValue) => {
+                                setSelectedPaymentTransaction(newValue);
+                            }}
+                            filterOptions={(options, state) => {
+                                // Filter out "Paid" transactions from the options
+                                return options.filter((option) => !option.paid);
+                            }}
+                            // Style for the Autocomplete (Combo Box)
+                            sx={{
+                                marginTop: 2,
+                                marginRight: 15,
+                            }}
+                            // Style for the TextField (Input)
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        disableUnderline: true,
+                                        sx: {
+                                            [`& fieldset`]: {
+                                                borderRadius: 15,
+                                                height: 40,
+                                                width: 220,
+                                                top: 4.5,
+                                                right: -250,
+                                            },
+                                            left: 180,
                                         },
-                                        left: 180,
-                                    },
-                                }}
-                                variant="outlined"
-                            />
-                        )}
-                    />
+                                    }}
+                                    variant="outlined"
+                                />
+                            )}
+                        />
 
 
                         {/* </StyleTextField3> */}

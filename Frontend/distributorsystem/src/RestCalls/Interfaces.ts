@@ -158,7 +158,7 @@ export interface IPaymentTransaction {
     installmentnumber: number;
     paid: boolean;
     order: IOrder;
-    paymentreceiptid: string | null;
+    paymentreceipts: IPaymentReceipt[];
 }
 
 export interface IPaymentReceipt {
@@ -166,7 +166,7 @@ export interface IPaymentReceipt {
     remarks: string,
     amountpaid: number,
     paymenttype: string,
-    paymenttransaction: IPaymentTransaction, 
+    paymenttransactionid: string, 
     receiverID: string,
     receivername: string
 }

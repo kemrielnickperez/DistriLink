@@ -150,7 +150,7 @@ export default function PaymentList() {
         return {
             id: paymentreceipt.paymentreceiptid,
             paymentReceiptid: paymentreceipt.paymentreceiptid,
-            paymentTransactionid: paymentreceipt.paymenttransaction ? paymentreceipt.paymenttransaction.paymenttransactionid : '',
+            paymentTransactionid: paymentreceipt.paymenttransactionid,
             paymentType: paymentreceipt.paymenttype,
             paymentStatus: paymentreceipt.paymenttype === 'collection'
                 ? (isconfirmed ? 'Confirmed' : 'Unconfirmed')

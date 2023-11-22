@@ -7,6 +7,7 @@ import { ICollectionPaymentReceipt, ICollectorRemittanceProof, IDealerPaymentPro
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import axios from "axios";
 import { PaymentReceiptDetailsPrint } from "./PaymentReceiptDetailsPrint";
+import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
 
 const ContentNameTypography = styled(Typography)({
     marginTop: 60,
@@ -132,8 +133,7 @@ export function PaymentReceiptDetails() {
     const { objectId } = useParams();
 
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
-
+    const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
 
     const [collectorRemittanceProofs, setCollectorRemittanceProofs] = useState<ICollectorRemittanceProof[]>([]);
     const [dealerPaymentProofs, setDealerPaymentProofs] = useState<IDealerPaymentProof[]>([]);
@@ -168,12 +168,12 @@ export function PaymentReceiptDetails() {
 
     const handleFindPaymentReceipt = () => {
         getPaymentReceiptByID(objectId!)
-        //console.log(isOrderFoundError + "error")
+        
     };
 
 
     const handleFindOrder = () => {
-        getOrderByID(paymentReceipt?.paymenttransaction?.order?.orderid!)
+        getPaymentTransactionByID(paymentReceipt?.paymenttransactionid!);
     };
 
 
@@ -336,15 +336,15 @@ export function PaymentReceiptDetails() {
                </StackStyle>
                <StackStyle sx={{ left: '24%' }}>
                    <StyleLabel>Payment Transaction ID</StyleLabel>
-                   <StyleData>{paymentReceipt?.paymenttransaction.paymenttransactionid}</StyleData>
+                   <StyleData>{paymentReceipt?.paymenttransactionid}</StyleData>
                </StackStyle>
                <StackStyle sx={{ left: '42%' }}>
                    <StyleLabel>Dealer ID</StyleLabel>
-                   <StyleData>{order?.dealer.dealerid}</StyleData>
+                   <StyleData>{paymentTransaction?.order!.dealer.dealerid}</StyleData>
                </StackStyle>
                <StackStyle sx={{ left: '58%' }}>
                    <StyleLabel>Dealer Name</StyleLabel>
-                   <StyleData>{order?.dealer.firstname! + " " + order?.dealer.lastname!}</StyleData>
+                   <StyleData>{paymentTransaction?.order!.dealer.firstname! + " " + paymentTransaction?.order!.dealer.lastname!}</StyleData>
                </StackStyle>
                <StackStyle sx={{ left: '72%' }}>
                    <StyleLabel>Payment Type</StyleLabel>
@@ -394,7 +394,7 @@ export function PaymentReceiptDetails() {
                        </StackStyle>
                        <StackStyle sx={{ top: '40%', left: '74%' }}>
                            <StyleLabel>Collector Name</StyleLabel>
-                           <StyleData>{order?.collector!.firstname + " " + order?.collector!.lastname}</StyleData>
+                           <StyleData>{paymentTransaction?.order!.collector!.firstname + " " + paymentTransaction?.order!.collector!.lastname}</StyleData>
                        </StackStyle>
                        <StackStyle sx={{ top: '60%', left: '12%' }}>
                            <StyleLabel>Payment Status</StyleLabel>
@@ -498,7 +498,7 @@ export function PaymentReceiptDetails() {
                }
            </div >
         ) : (
-            <PaymentReceiptDetailsPrint paymentReceipt={paymentReceipt!} directPaymentReceipt={directPaymentReceipt!} collectionPaymentReceipt={collectionPaymentReceipt!} order={order!}/>
+            <PaymentReceiptDetailsPrint paymentReceipt={paymentReceipt!} directPaymentReceipt={directPaymentReceipt!} collectionPaymentReceipt={collectionPaymentReceipt!} order={paymentTransaction?.order!}/>
         )}
      </div>
     );
