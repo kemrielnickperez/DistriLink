@@ -133,7 +133,7 @@ export interface IOrder {
     collector: IEmployee | null,
     dealer: IDealer,
     orderedproducts: IOrderedProducts[],
-    paymenttransactionids: string[] ,
+    paymenttransactions: IPaymentTransaction[] ,
     confirmed: boolean,
     isclosed: boolean
     
@@ -157,7 +157,7 @@ export interface IPaymentTransaction {
     enddate: string;
     installmentnumber: number;
     paid: boolean;
-    order: IOrder;
+    orderid: string;
     paymentreceipts: IPaymentReceipt[];
 }
 

@@ -132,6 +132,7 @@ export function PaymentReceiptDetails() {
 
     const { objectId } = useParams();
 
+    const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
 
@@ -174,6 +175,8 @@ export function PaymentReceiptDetails() {
 
     const handleFindOrder = () => {
         getPaymentTransactionByID(paymentReceipt?.paymenttransactionid!);
+        getOrderByPaymentTransactionID(paymentReceipt?.paymenttransactionid!);
+
     };
 
 
@@ -340,11 +343,11 @@ export function PaymentReceiptDetails() {
                </StackStyle>
                <StackStyle sx={{ left: '42%' }}>
                    <StyleLabel>Dealer ID</StyleLabel>
-                   <StyleData>{paymentTransaction?.order!.dealer.dealerid}</StyleData>
+                   <StyleData>{orderFromPaymentTransaction?.dealer.dealerid}</StyleData>
                </StackStyle>
                <StackStyle sx={{ left: '58%' }}>
                    <StyleLabel>Dealer Name</StyleLabel>
-                   <StyleData>{paymentTransaction?.order!.dealer.firstname! + " " + paymentTransaction?.order!.dealer.lastname!}</StyleData>
+                   <StyleData>{orderFromPaymentTransaction?.dealer.firstname! + " " + orderFromPaymentTransaction?.dealer.lastname!}</StyleData>
                </StackStyle>
                <StackStyle sx={{ left: '72%' }}>
                    <StyleLabel>Payment Type</StyleLabel>
@@ -394,7 +397,7 @@ export function PaymentReceiptDetails() {
                        </StackStyle>
                        <StackStyle sx={{ top: '40%', left: '74%' }}>
                            <StyleLabel>Collector Name</StyleLabel>
-                           <StyleData>{paymentTransaction?.order!.collector!.firstname + " " + paymentTransaction?.order!.collector!.lastname}</StyleData>
+                           <StyleData>{orderFromPaymentTransaction?.collector!.firstname + " " + orderFromPaymentTransaction?.collector!.lastname}</StyleData>
                        </StackStyle>
                        <StackStyle sx={{ top: '60%', left: '12%' }}>
                            <StyleLabel>Payment Status</StyleLabel>
@@ -498,7 +501,7 @@ export function PaymentReceiptDetails() {
                }
            </div >
         ) : (
-            <PaymentReceiptDetailsPrint paymentReceipt={paymentReceipt!} directPaymentReceipt={directPaymentReceipt!} collectionPaymentReceipt={collectionPaymentReceipt!} order={paymentTransaction?.order!}/>
+            <PaymentReceiptDetailsPrint paymentReceipt={paymentReceipt!} directPaymentReceipt={directPaymentReceipt!} collectionPaymentReceipt={collectionPaymentReceipt!} order={orderFromPaymentTransaction!}/>
         )}
      </div>
     );

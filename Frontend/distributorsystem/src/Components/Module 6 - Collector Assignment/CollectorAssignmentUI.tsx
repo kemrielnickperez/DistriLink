@@ -59,8 +59,12 @@ const StyledButton = styled(Button)({
 })
 
 export default function CollectorAssignment() {
-  const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+
   const navigate = useNavigate();
+
+
+  const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
+  
 
   {/** useStates */ }
   const [collectors, setCollectors] = useState<IEmployee[]>([]);
@@ -73,6 +77,7 @@ export default function CollectorAssignment() {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('success');
 
+  
   const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
  
 
@@ -154,10 +159,7 @@ export default function CollectorAssignment() {
 
   }, [orders]);
 
-  {/** Columns for DataGrid */ }
-
-
-  {/** Columns for DataGrid */ }
+ 
   const columns: GridColDef[] = [
     { field: 'orderID', headerName: 'Order Transaction ID', width: 200 },
     { field: 'dealerName', headerName: 'Dealer Name', width: 180 },
@@ -214,7 +216,6 @@ export default function CollectorAssignment() {
   });
 
   const handleViewButtonClick = (objectId: string) => {
-    console.log(objectId)
     navigate(`/orderDetails/${objectId}`);
   };
 

@@ -111,25 +111,17 @@ const StyledPrintDiv = styled('div')({
 });
 
 export function OrderDetails() {
+    const navigate = useNavigate();
     const { objectId } = useParams();
 
-    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
-
-
-    const [openAlert, setOpenAlert] = useState(false);
-
-    const [alerttitle, setTitle] = useState('');
-
-    const [alertMessage, setAlertMessage] = useState('');
-
-    const [alertSeverity, setAlertSeverity] = useState('success');
-
-
-
-    const navigate = useNavigate();
-
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+    const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
+
+    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alerttitle, setTitle] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertSeverity, setAlertSeverity] = useState('success');
     const [paymentTransactionsObjects, setPaymentTransactionsObjects] = useState<IPaymentTransaction[]>([]);
     const [isMounted, setIsMounted] = useState(false);
 
@@ -152,7 +144,7 @@ export function OrderDetails() {
     const getAllPaymentTransactionsByOrderID = () => {
         axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${objectId}`)
             .then((response) => {
-             
+
                 setPaymentTransactions(response.data);
             })
             .catch((error) => {
@@ -164,7 +156,7 @@ export function OrderDetails() {
     const sortedPaymemtTransactions = paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
 
-    
+
     {/*Handlers*/ }
     const handleFindValue = () => {
         try {
@@ -175,31 +167,23 @@ export function OrderDetails() {
         }
     };
 
-    
 
 
 
-     useEffect(() => {
 
-         
+    useEffect(() => {
+
         handleFindValue();
-       
+
         setIsMounted(true); // Set the component as mounted when it renders
 
-      /*   // Only make the GET request if the component is mounted
-        if (isMounted) {
-         
-        }
-        return () => {
-            setIsMounted(false);
-        }; */
+
 
     },
         [isOrderFound, order, paymentTransactionsObjects]);
 
 
     const handleH2Click = () => {
-        console.log(order?.orderid)
         navigate(`/schedules/${order?.orderid}`);
     }
 
@@ -336,8 +320,8 @@ export function OrderDetails() {
                                     </Table>
                                 </TableContainer>
 
-                                
-                                 {/* Alerts */}              
+
+                                {/* Alerts */}
                                 <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
                                     vertical: 'top',
                                     horizontal: 'center'

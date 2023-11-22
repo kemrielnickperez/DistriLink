@@ -162,7 +162,7 @@ export function EmployeeProfileDetails() {
       })
       .catch((error) => {
        // alert("Error retrieving employee documents. Please try again.");
-       console.log(error)
+      
       });
   };
 

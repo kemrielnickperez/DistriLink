@@ -136,37 +136,28 @@ export default function Schedules() {
 
     const { objectId } = useParams();
 
-    const [startDate, setStartDate] = useState<Dayjs | null>();
+    const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
+    const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
 
+
+    const [startDate, setStartDate] = useState<Dayjs | null>();
     const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>();
     const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>();
     const [startDateModified, setStartDateModified] = useState(false);
     const [endDateModified, setEndDateModified] = useState(false);
-
-    const [currentOrder, setCurrentOrder] = useState<IOrder | undefined>();
-
-    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-
     const [paymentTransactionsObjects, setPaymentTransactionsObjects] = useState<IPaymentTransaction[]>([]);
-    const orderIDRef = useRef<TextFieldProps>(null)
-
-    const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
-
     const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
-
     const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
-
-
     const [initialMinDate, setInitialMinDate] = useState<Dayjs | null>(null);
 
-    const [penaltyApplied, setPenaltyApplied] = useState(false);
+
+    const orderIDRef = useRef<TextFieldProps>(null)
 
     const getAllPaymentTransactionsByOrderID = (idToSearch: string) => {
         axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${idToSearch}`)
             .then((response) => {
                 setPaymentTransactions(response.data);
-                
+
             })
             .catch((error) => {
                 console.error('Error fetching data: ', error);
@@ -181,7 +172,7 @@ export default function Schedules() {
             setSortedPaymentTransactions(sorted);
             //handleFindOrder();
         }
-     
+
 
         setInitialMinDate(dayjs() as Dayjs);
 
@@ -195,15 +186,15 @@ export default function Schedules() {
 
     const handleFindOrder = () => {
 
-        
+
         const idToSearch = objectId !== 'null' ? objectId : orderIDRef.current?.value + "";
-         getOrderByID(idToSearch!);
-         getAllPaymentTransactionsByOrderID(idToSearch!)
+        getOrderByID(idToSearch!);
+        getAllPaymentTransactionsByOrderID(idToSearch!)
 
         if (isOrderFound === false) {
             // alert("Order not found. Please try again.");
             // toast
-           
+
         }
 
     };
@@ -217,14 +208,14 @@ export default function Schedules() {
             const uuid = uuidv4();
             const paymenttransactionuuid = uuid.slice(0, 8);
 
-            const newPaymentTransaction :IPaymentTransaction = {
+            const newPaymentTransaction: IPaymentTransaction = {
                 paymenttransactionid: paymenttransactionuuid,
                 amountdue: parseFloat((order!.orderamount / order!.paymentterms).toFixed(2)),
                 startingdate: currentEndDate.format('YYYY-MM-DD') || "",
                 enddate: currentEndDate.add(15, 'day').format('YYYY-MM-DD') || "",
                 installmentnumber: i,
                 paid: false,
-                order: order!,
+                orderid: order?.orderid!,
                 paymentreceipts: [],
             };
             currentEndDate = currentEndDate.add(15, 'day');
@@ -240,7 +231,7 @@ export default function Schedules() {
 
             // Call createPaymentTransaction with the updated array.
             createPaymentTransaction(updatedPaymentTransactions, order!.orderid);
-            
+
             toast.success('Schedules have been created successfully', {
                 position: "bottom-right",
                 autoClose: 5000,
@@ -250,7 +241,7 @@ export default function Schedules() {
                 draggable: true,
                 progress: undefined,
                 theme: "colored",
-              })
+            })
 
             return updatedPaymentTransactions;
         });
@@ -284,45 +275,45 @@ export default function Schedules() {
 
         setStartDateModified(false);
         setEndDateModified(false);
-        try{
-        updatePaymentTransaction(
-            transaction.paymenttransactionid,
-            {
-                paymenttransactionid: transaction.paymenttransactionid,
-                amountdue: transaction.amountdue,
-                startingdate: updatedStartingDate?.format('YYYY-MM-DD') || '',
-                enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
-                installmentnumber: transaction.installmentnumber,
-                paid: transaction.paid,
-                order: transaction.order,
-                paymentreceipts: transaction.paymentreceipts
-            }
-        )
-        toast.success('Installment '+transaction.installmentnumber+" schedule has been updated.", {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          })
-    }catch(error){
-        toast.error('Unexpected error updating payment transaction.', {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          })
-    }
+        try {
+            updatePaymentTransaction(
+                transaction.paymenttransactionid,
+                {
+                    paymenttransactionid: transaction.paymenttransactionid,
+                    amountdue: transaction.amountdue,
+                    startingdate: updatedStartingDate?.format('YYYY-MM-DD') || '',
+                    enddate: updatedEndDate?.format('YYYY-MM-DD') || '',
+                    installmentnumber: transaction.installmentnumber,
+                    paid: transaction.paid,
+                    orderid: transaction.orderid,
+                    paymentreceipts: transaction.paymentreceipts
+                }
+            )
+            toast.success('Installment ' + transaction.installmentnumber + " schedule has been updated.", {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+        } catch (error) {
+            toast.error('Unexpected error updating payment transaction.', {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+        }
     };
-    
-    
+
+
 
     useEffect(() => {
 
@@ -330,7 +321,7 @@ export default function Schedules() {
         if (objectId !== 'null') {
             handleFindOrder();
         }
-        
+
 
     },
         [isOrderFound, order, paymentTransactionsObjects]);
@@ -388,10 +379,10 @@ export default function Schedules() {
                                         <TableCell align='center'><Typography1>Php {order?.orderamount}</Typography1></TableCell>
                                         <TableCell align='center'><Typography1>{order?.penaltyrate}%</Typography1></TableCell>
                                         <TableCell align="center">
-                                                      <Typography1><span style={{ color: order?.isclosed ? 'red' : 'green' }}>
-                                                            {order?.isclosed ? 'CLOSED' : 'OPEN'}
-                                                        </span></Typography1>  
-                                                    </TableCell>
+                                            <Typography1><span style={{ color: order?.isclosed ? 'red' : 'green' }}>
+                                                {order?.isclosed ? 'CLOSED' : 'OPEN'}
+                                            </span></Typography1>
+                                        </TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -400,13 +391,8 @@ export default function Schedules() {
                 </Grid>
             </Grid>
 
-            {order?.paymenttransactionids?.length !== 0 && order?.collector !== null ? (
-                <>
-
-
-
-
-
+            {order?.paymenttransactions?.length !== 0 && order?.collector !== null ? (
+                <div>
                     <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
                         <Grid item >
                             <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>
@@ -455,8 +441,8 @@ export default function Schedules() {
                                                                 }}
                                                                 value={dayjs(transaction.enddate)}
                                                                 minDate={dayjs(transaction.enddate)}
-                                                                onChange={(newValue) => handleEndDateUpdate(newValue)} 
-                                                                disabled={transaction.paid}/>
+                                                                onChange={(newValue) => handleEndDateUpdate(newValue)}
+                                                                disabled={transaction.paid} />
 
                                                         </LocalizationProvider>
                                                     </TableCell>
@@ -486,7 +472,8 @@ export default function Schedules() {
 
                             </Grid>
                         </Grid>
-                    </Grid></>
+                    </Grid>
+                </div>
             ) : order!.collector === null ? (
 
                 <div>
@@ -515,7 +502,7 @@ export default function Schedules() {
                                                         style: { width: '55%', padding: '0 10px 0 10px' }
                                                     }
                                                 }}
-                                                
+
                                                 minDate={initialMinDate}
                                                 onChange={(e) => setStartDate(e)} />
 
@@ -532,7 +519,7 @@ export default function Schedules() {
                         handleCreatePaymentTransaction
                     }> Create Schedules </StyledButton>
 
-                    
+
 
 
 

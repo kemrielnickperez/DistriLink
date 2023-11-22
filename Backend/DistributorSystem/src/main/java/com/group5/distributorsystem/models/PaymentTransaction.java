@@ -25,7 +25,7 @@ public class PaymentTransaction {
 
     private boolean isPaid;
 
-    private Order order;
+    private String orderid;
 
     private Set<PaymentReceipt> paymentreceipts ;
 
@@ -33,14 +33,14 @@ public class PaymentTransaction {
     public PaymentTransaction() {
     }
 
-    public PaymentTransaction(String paymenttransactionid, double amountdue, LocalDate startingdate, LocalDate enddate, int installmentnumber, boolean isPaid, Order order, Set<PaymentReceipt> paymentreceipts) {
+    public PaymentTransaction(String paymenttransactionid, double amountdue, LocalDate startingdate, LocalDate enddate, int installmentnumber, boolean isPaid, String orderid, Set<PaymentReceipt> paymentreceipts) {
         this.paymenttransactionid = paymenttransactionid;
         this.amountdue = amountdue;
         this.startingdate = startingdate;
         this.enddate = enddate;
         this.installmentnumber = installmentnumber;
         this.isPaid = isPaid;
-        this.order = order;
+        this.orderid = orderid;
         this.paymentreceipts = paymentreceipts;
     }
 
@@ -92,12 +92,12 @@ public class PaymentTransaction {
         isPaid = paid;
     }
 
-    public Order getOrder() {
-        return order;
+    public String getOrderid() {
+        return orderid;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOrderid(String orderid) {
+        this.orderid = orderid;
     }
 
     public Set<PaymentReceipt> getPaymentreceipts() {

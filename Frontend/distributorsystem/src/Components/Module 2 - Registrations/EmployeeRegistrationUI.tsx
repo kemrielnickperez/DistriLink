@@ -317,20 +317,19 @@ export default function EmployeeRegistration(){
     const handleCashierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsCashierSelected(event.target.checked);
 
-        console.log(event.target.checked);
-        console.log(isCashierSelected);
+     
     };
 
     const handleSalesAssociateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsSalesAssociateSelected(event.target.checked);
 
-        console.log(event.target.checked);
+     
     };
 
     const handleCollectorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsCollectorSelected(event.target.checked);
 
-        console.log(event.target.checked);
+       
     };
 
     const handlePositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -338,8 +337,7 @@ export default function EmployeeRegistration(){
             handleInputChange('position')
         }
         setSelectedPosition(event.target.value);
-        console.log(event.target.checked);
-        console.log(isCashierSelected);
+       
     };
 
     const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -347,7 +345,7 @@ export default function EmployeeRegistration(){
 
         if (file) {
             const maxSize = 1024 * 1024 * 5; // 5 MB 
-            console.log(file.size)
+           
             if (file.size <= maxSize) {
                 setSelectedProfilePicture(file);
             } else {

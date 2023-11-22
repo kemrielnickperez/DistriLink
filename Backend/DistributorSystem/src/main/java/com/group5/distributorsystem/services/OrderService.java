@@ -43,6 +43,9 @@ public class OrderService {
     @Autowired
     DistributorRepository distributorRepository;
 
+    @Autowired
+    PaymentTransactionService paymentTransactionService;
+
     public Order createOrder(Order order) {
 
         Order newOrder =  orderRepository.save(order);
@@ -108,10 +111,14 @@ public class OrderService {
 
     }
 
-    public Optional<Order> getOrderByID(String orderid){
-        return orderRepository.findById(orderid);
+    public Order getOrderByID(String orderid){
+        return orderRepository.findById(orderid).get();
     }
 
+    public Order getOrderByPaymentTransactionID(String paymenttransactionid){
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
+        return orderRepository.findById(paymentTransaction.getOrderid()).get();
+    }
 
     /*public ResponseEntity assignCollector(String orderid, Employee collector) {
         Order order = orderRepository.findById(orderid).get();
@@ -220,7 +227,7 @@ public class OrderService {
             Order order = optionalOrder.get();
             boolean allPaymentsPaid = true;
 
-            List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionRepository.findByOrder_Orderid(order.getOrderid());
+            List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionService.getAllPaymentTransactionsByOrderID(order.getOrderid());
 
 
             for (PaymentTransaction transaction : paymentTransactionsFromOrder) {
@@ -282,7 +289,7 @@ public class OrderService {
             if (!order.isIsclosed()) {
                // Set<PaymentTransaction> paymentTransactions = order.getPaymenttransactions();
 
-                List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionRepository.findByOrder_Orderid(order.getOrderid());
+                List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionService.getAllPaymentTransactionsByOrderID(order.getOrderid());
 
 
                 for (PaymentTransaction paymentTransaction : paymentTransactionsFromOrder) {
@@ -299,7 +306,7 @@ public class OrderService {
                         paymentTransactionRepository.save(paymentTransaction);
 
                     }
-                    order.getPaymenttransactionids().add(paymentTransaction.getPaymenttransactionid());
+                    order.getPaymenttransactions().add(paymentTransaction);
                     orderRepository.save(order);
                 }
             }

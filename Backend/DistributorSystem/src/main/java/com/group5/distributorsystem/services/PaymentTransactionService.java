@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -29,10 +30,10 @@ public class PaymentTransactionService {
         //for(int i=0; i<= paymentTransaction.length; i++){
         for(PaymentTransaction pt :paymentTransactions) {
 
-                PaymentTransaction newpt = new PaymentTransaction(pt.getPaymenttransactionid(), pt.getAmountdue(), pt.getStartingdate(), pt.getEnddate(), pt.getInstallmentnumber(), pt.isPaid(),  order, pt.getPaymentreceipts());
+                PaymentTransaction newpt = new PaymentTransaction(pt.getPaymenttransactionid(), pt.getAmountdue(), pt.getStartingdate(), pt.getEnddate(), pt.getInstallmentnumber(), pt.isPaid(),  order.getOrderid(), pt.getPaymentreceipts());
                 newpt = paymentTransactionRepository.save(newpt);
 
-                order.getPaymenttransactionids().add(newpt.getPaymenttransactionid());
+                order.getPaymenttransactions().add(newpt);
         }
 
         orderRepository.save(order);
@@ -61,7 +62,13 @@ public class PaymentTransactionService {
 
 
     public List<PaymentTransaction> getAllPaymentTransactionsByOrderID(String orderid) {
-        return paymentTransactionRepository.findByOrder_Orderid(orderid);
+        Order order = orderRepository.findById(orderid).get();
+        List<PaymentTransaction> paymentTransactions = new ArrayList<>();
+        for (PaymentTransaction pt: order.getPaymenttransactions()) {
+            paymentTransactions.add(pt);
+        }
+        //return paymentTransactionRepository.findByOrder_Orderid(orderid);
+        return paymentTransactions;
     }
 
 
@@ -97,13 +104,13 @@ public class PaymentTransactionService {
     public ResponseEntity updatePaymentTransaction(String paymenttransactionid, PaymentTransaction paymentTransaction) {
         PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
 
-        Order order = orderRepository.findById(paymentTransaction.getOrder().getOrderid()).get();
+        Order order = orderRepository.findById(paymentTransaction.getOrderid()).get();
         updatedPaymentTransaction.setEnddate(paymentTransaction.getEnddate());
         updatedPaymentTransaction.setStartingdate(paymentTransaction.getStartingdate());
 
         PaymentTransaction updated2 = paymentTransactionRepository.save(updatedPaymentTransaction);
 
-        List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionRepository.findByOrder_Orderid(order.getOrderid());
+        List<PaymentTransaction> paymentTransactionsFromOrder = getAllPaymentTransactionsByOrderID(order.getOrderid());
 
         for(PaymentTransaction pt : paymentTransactionsFromOrder)
             if(pt.getPaymenttransactionid().equals(updated2.getPaymenttransactionid())){
@@ -134,14 +141,14 @@ public class PaymentTransactionService {
     public PaymentTransaction updatePaidPaymentTransaction(String paymenttransactionid) {
         PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
 
-        Order order = orderRepository.findById(updatedPaymentTransaction.getOrder().getOrderid()).get();
+        Order order = orderRepository.findById(updatedPaymentTransaction.getOrderid()).get();
 
         double totalAmountPaid = getTotalPaidAmount(updatedPaymentTransaction.getPaymenttransactionid());
 
         if(totalAmountPaid == updatedPaymentTransaction.getAmountdue()){
             updatedPaymentTransaction.setPaid(true);
 
-            List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionRepository.findByOrder_Orderid(order.getOrderid());
+            List<PaymentTransaction> paymentTransactionsFromOrder = getAllPaymentTransactionsByOrderID(order.getOrderid());
 
             for(PaymentTransaction pt : paymentTransactionsFromOrder) {
                 if (pt.getPaymenttransactionid().equals(updatedPaymentTransaction.getPaymenttransactionid())) {

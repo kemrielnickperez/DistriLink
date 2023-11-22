@@ -11,8 +11,10 @@ import { toast } from "react-toastify";
 export const useRestOrder = (): [
     (order: IOrder) => void,
     (orderid: string) => void,
-    (collectorid: string, orderids:string[]) => void,
+    (paymenttransactionid: string) => void,
+    (collectorid: string, orderids: string[]) => void,
     (orderID: string) => void,
+    IOrder | undefined,
     IOrder | undefined,
     boolean | undefined,
     boolean | undefined,
@@ -20,12 +22,13 @@ export const useRestOrder = (): [
     (orderID: string | undefined, updatedOrder: IOrder) => void,
     (orderID: string) => void,
     (orderID: string | undefined) => void,
-   
+
 ] => {
 
     const [order, setOrder] = useState<IOrder>();
+    const [orderFromPaymentTransaction, setOrderFromPaymentTransaction] = useState<IOrder>();
     const [isOrderFound, setIsOrderFound] = useState<boolean>(true);
-   
+
     const [assignedStatus, setAssignedStatus] = useState<boolean>(true);
     const [removeStatus, setRemoveStatus] = useState<boolean>(true);
 
@@ -81,7 +84,7 @@ export const useRestOrder = (): [
             confirmed: order.confirmed,
             closed: order.isclosed
 
-            
+
 
         })
             .then((response) => {
@@ -111,7 +114,7 @@ export const useRestOrder = (): [
 
 
     function getOrderByID(orderid: string) {
-    
+
         axios.get(`http://localhost:8080/order/getOrderByID/${orderid}`)
             .then((response) => {
                 setOrder(response.data)
@@ -150,21 +153,35 @@ export const useRestOrder = (): [
 
                 // alert("Error finding the order. Please try again.");
             });
-        }
-           
+    }
+    
+    function getOrderByPaymentTransactionID(paymenttransactionid: string) {
 
-/* 
-    function assignCollector(orderID: string, collector: IEmployee) {
-        axios.put(`http://localhost:8080/order/assignCollector/${orderID}`, collector)
+        axios.get(`http://localhost:8080/order/getOrderByPaymentTransactionID/${paymenttransactionid}`)
             .then((response) => {
-                setAssignedStatus(true);
+                setOrderFromPaymentTransaction(response.data);
+                
             })
             .catch((error) => {
-                setAssignedStatus(false);
-                console.error('Error assigning collector:', error);
+
+                // alert("Error finding the order. Please try again.");
             });
-    } */
-    function assignCollector(collectorid: string, orderids:string[]) {
+    }
+
+
+
+    /* 
+        function assignCollector(orderID: string, collector: IEmployee) {
+            axios.put(`http://localhost:8080/order/assignCollector/${orderID}`, collector)
+                .then((response) => {
+                    setAssignedStatus(true);
+                })
+                .catch((error) => {
+                    setAssignedStatus(false);
+                    console.error('Error assigning collector:', error);
+                });
+        } */
+    function assignCollector(collectorid: string, orderids: string[]) {
         axios.put(`http://localhost:8080/order/assignCollector/${collectorid}`, orderids)
             .then((response) => {
                 setAssignedStatus(true);
@@ -189,7 +206,7 @@ export const useRestOrder = (): [
     function closedOrder(orderID: string) {
         axios.put(`http://localhost:8080/order/updateOrderClosedStatus/${orderID}`)
             .then((response) => {
-               
+
                 console.log("Order is closed successfully!");
             })
             .catch((error) => {
@@ -199,14 +216,14 @@ export const useRestOrder = (): [
 
     function applyPenalty(orderID: string | undefined) {
         axios.put(`http://localhost:8080/order/applyPenalty/${orderID}`)
-          .then((response) => {
-            console.log("Penalty applied successfully!");
-          })
-          .catch((error) => {
-            console.log("Error applying penalty. Please try again.");
-          });
-      }
+            .then((response) => {
+                console.log("Penalty applied successfully!");
+            })
+            .catch((error) => {
+                console.log("Error applying penalty. Please try again.");
+            });
+    }
 
 
-    return [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty];
+    return [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty];
 }

@@ -381,7 +381,7 @@ export default function DealerProfileDetails() {
         if (document) {
             setSelectedDocument(document);
             setOpen(true);
-            console.log(document.name, document.type, document.content)
+
         }
     }
 

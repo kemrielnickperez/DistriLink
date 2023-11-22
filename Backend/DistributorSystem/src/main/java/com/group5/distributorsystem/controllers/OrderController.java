@@ -38,10 +38,19 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getOrderByID(orderid), HttpStatus.OK);
     }
 
+    @GetMapping("/getOrderByPaymentTransactionID/{paymenttransactionid}")
+    public ResponseEntity<Object> getOrderByPaymentTransactionID(@PathVariable String paymenttransactionid){
+        return new ResponseEntity<>(orderService.getOrderByPaymentTransactionID(paymenttransactionid), HttpStatus.OK);
+    }
+
+
+
     @GetMapping("/getAllOrdersByDistributorID/{distributorid}")
     public ResponseEntity<Object> getAllOrdersByDistributorID(@PathVariable String distributorid) {
         return new ResponseEntity<>(orderService.getAllOrdersByDistributorID(distributorid), HttpStatus.OK);
     }
+
+
 
    /* @PutMapping("/assignCollector/{orderid}")
     public ResponseEntity<Object> assignCollector(@PathVariable String orderid, @RequestBody Employee collector){

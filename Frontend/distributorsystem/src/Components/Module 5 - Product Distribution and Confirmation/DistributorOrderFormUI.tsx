@@ -127,14 +127,9 @@ export default function ProductDistributionList() {
 
   const navigate = useNavigate();
 
-  const [newOrder] = useRestOrder();
-
-
-
+  const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
   const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit]  = useRestDealer();
 
-
-  const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
   const [products, setProducts] = useState<IProduct[]>([]);
 
@@ -160,10 +155,7 @@ export default function ProductDistributionList() {
 
   const [open, setOpen] = useState(false);
 
-  /* const [isDealerConfirmed, setIsDealerConfirmed] = useState(false); */
-
-
-
+  
   const penaltyRateRef = useRef<TextFieldProps>(null);
   const dealerIDRef = useRef<TextFieldProps>(null);
 
@@ -299,7 +291,6 @@ export default function ProductDistributionList() {
           quantity: Number(quantity),
           subtotal: chosenProduct.price * Number(quantity),
         };
-        console.log(chosenProduct.price * Number(quantity))
         setOrderedProducts([...orderedProducts, newOrderedProduct]);
         setChosenProduct(null);
         setQuantity('');
@@ -399,7 +390,7 @@ export default function ProductDistributionList() {
           collector: null,
           dealer: dealer!,
           orderedproducts: orderedProducts,
-          paymenttransactionids: [],
+          paymenttransactions: [],
           confirmed: true,
           isclosed: false
         });

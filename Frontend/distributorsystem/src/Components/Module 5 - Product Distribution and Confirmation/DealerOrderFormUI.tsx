@@ -121,11 +121,9 @@ const OverallGrid = styled(Grid)({
 
 export default function DealerOrderForm() {
 
-  const [newOrder] = useRestOrder();
-
+  const  [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
   const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit] = useRestDealer();
 
-  const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
   const [products, setProducts] = useState<IProduct[]>([]);
 
@@ -149,7 +147,7 @@ export default function DealerOrderForm() {
 
   const [open, setOpen] = useState(false);
 
-  const [toastShown, setToastShown] = useState(false);
+
 
   const penaltyRateRef = useRef<TextFieldProps>(null);
 
@@ -231,8 +229,6 @@ export default function DealerOrderForm() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
       .then((response) => {
         setProducts(response.data);
-        //console.log(response.data);
-        // headerHandleAlert('Success', 'Products have been successfully added for distribution.', 'success');
       })
       .catch((error) => {
         console.error('Error retrieving products:', error);
@@ -271,7 +267,6 @@ export default function DealerOrderForm() {
           quantity: Number(quantity),
           subtotal: chosenProduct.price * Number(quantity),
         };
-        console.log(chosenProduct.price * Number(quantity))
         setOrderedProducts([...orderedProducts, newOrderedProduct]);
         setChosenProduct(null);
         setQuantity('');
@@ -371,7 +366,7 @@ export default function DealerOrderForm() {
           collector: null,
           dealer: dealer!,
           orderedproducts: orderedProducts,
-          paymenttransactionids: [],
+          paymenttransactions: [],
           confirmed: false,
           isclosed: false
         });

@@ -17,6 +17,4 @@ public interface PaymentTransactionRepository extends MongoRepository<PaymentTra
     List<PaymentTransaction> findLatePayments(LocalDate currentDate);
 
 
-    List<PaymentTransaction> findByOrder_Orderid(String orderid);
-
 }

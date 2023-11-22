@@ -78,12 +78,15 @@ const TabStyle = styled(Tab)({
 
 export default function ProductDistributionList() {
     const navigate = useNavigate();
+    
     const [order, setOrder] = useState<IOrder[] | null>(null);
     const [openAlert, setOpenAlert] = useState(false);
     const [alerttitle, setTitle] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [alertSeverity, setAlertSeverity] = useState('success');
     const [value, setValue] = useState(0);
+
+
     {/*Tabs*/ }
     function CustomTabPanel(props: TabPanelProps) {
         const { children, value, index, ...other } = props;
@@ -169,7 +172,6 @@ export default function ProductDistributionList() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.orderId);
                             if (params.row.confirmed === false) {
 
                                 handleViewButtonFalse(params.row.orderId);
@@ -195,8 +197,8 @@ export default function ProductDistributionList() {
         confirmed: orderItem.confirmed
     }));
 
-     {/** Rows for DataGrid */ }
-      const rowsConfirmed = (order || []).filter((order) => (order.confirmed)).map((orderItem) => ({
+    {/** Rows for DataGrid */ }
+    const rowsConfirmed = (order || []).filter((order) => (order.confirmed)).map((orderItem) => ({
         id: orderItem.orderid,
         dealerId: orderItem.dealer.dealerid,
         dealerName: `${orderItem.dealer.firstname} ${orderItem.dealer.middlename} ${orderItem.dealer.lastname}`,
@@ -204,8 +206,8 @@ export default function ProductDistributionList() {
         orderDate: orderItem.orderdate,
         confirmed: orderItem.confirmed
     }));
-     {/** Columns for DataGrid */ }
-     const columnsConfirmed: GridColDef[] = [
+    {/** Columns for DataGrid */ }
+    const columnsConfirmed: GridColDef[] = [
         { field: 'dealerId', headerName: 'Dealer ID', width: 235 },
         { field: 'dealerName', headerName: 'Dealer Name', width: 255 },
         { field: 'orderId', headerName: 'Order Transaction ID', width: 235 },
@@ -232,7 +234,6 @@ export default function ProductDistributionList() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.orderId);
                             if (params.row.confirmed === false) {
 
                                 handleViewButtonFalse(params.row.orderId);
@@ -250,7 +251,6 @@ export default function ProductDistributionList() {
     ]
 
     const handleViewButtonClick = (objectId: string) => {
-        console.log(objectId);
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
 
         navigate(`/orderTransactionDetails/${objectId}`);
@@ -268,7 +268,6 @@ export default function ProductDistributionList() {
             <StyledCard>
                 <ContentNameTypography>Product Distribution</ContentNameTypography>
                 <StyledAddButton onClick={() => {
-                    console.log('Button clicked for adding a new order');
                     navigate("/distributorOrderForm");
                 }}>Add new Product Distribution</StyledAddButton>
                 <Box sx={{ width: '100%', marginTop: 3, marginLeft: 0.5 }}>
@@ -280,21 +279,21 @@ export default function ProductDistributionList() {
                     </Box>
                     <CustomTabPanel value={value} index={0}>
                         <DataGrid
-                                rows={rowsConfirmed}
-                                sx={{ textAlign: 'center', color: '#203949', height: '370px', margin: '20px 10px 0px 14px' }}
-                                columns={columnsConfirmed.map((column) => ({
-                                    ...column,
-                                }))}
-                                initialState={{
-                                    pagination: {
-                                        paginationModel: {
-                                            pageSize: 5,
-                                        },
+                            rows={rowsConfirmed}
+                            sx={{ textAlign: 'center', color: '#203949', height: '370px', margin: '20px 10px 0px 14px' }}
+                            columns={columnsConfirmed.map((column) => ({
+                                ...column,
+                            }))}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        pageSize: 5,
                                     },
-                                }}
-                                pageSizeOptions={[5]}
+                                },
+                            }}
+                            pageSizeOptions={[5]}
 
-                            />
+                        />
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
                         <DataGrid

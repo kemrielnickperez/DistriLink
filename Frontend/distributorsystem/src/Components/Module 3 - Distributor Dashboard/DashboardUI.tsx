@@ -209,11 +209,7 @@ export default function Dashboard() {
     }
 
     const handleOrdersListClick = () => {
-        //console.log(localStorage.getItem("salesAssociate"));
-        //console.log(JSON.parse(localStorage.getItem("salesAssociateAndCashier")!));
-        console.log(localStorage.getItem("salesAssociate"));
-        console.log(JSON.parse(localStorage.getItem("distributor")!));
-        // navigate(`/productDistributionList`);
+        navigate(`/productDistributionList`);
     }
 
 

@@ -630,7 +630,6 @@ useEffect(() => {
     setMaxDate(currentDate);
     getAllDistributors();
 
-    // console.log(selectedDistributor)
 
 }, [distributors]);
 

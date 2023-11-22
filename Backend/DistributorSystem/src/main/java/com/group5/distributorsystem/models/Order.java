@@ -36,7 +36,7 @@ public class Order {
 
     private Set<OrderedProduct> orderedproducts;
 
-    private Set<String> paymenttransactionids = new HashSet<>();;
+    private Set<PaymentTransaction> paymenttransactions = new HashSet<>();;
 
     private boolean isconfirmed;
 
@@ -46,7 +46,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(String orderid, LocalDate orderdate, LocalDate distributiondate, float penaltyrate, int paymentterms, double orderamount, Distributor distributor, Dealer dealer, Employee collector, Set<OrderedProduct> orderedproducts, Set<String> paymenttransactionids, boolean isconfirmed, boolean isclosed) {
+    public Order(String orderid, LocalDate orderdate, LocalDate distributiondate, float penaltyrate, int paymentterms, double orderamount, Distributor distributor, Dealer dealer, Employee collector, Set<OrderedProduct> orderedproducts, Set<PaymentTransaction> paymenttransactions, boolean isconfirmed, boolean isclosed) {
         this.orderid = orderid;
         this.orderdate = orderdate;
         this.distributiondate = distributiondate;
@@ -57,7 +57,7 @@ public class Order {
         this.dealer = dealer;
         this.collector = collector;
         this.orderedproducts = orderedproducts;
-        this.paymenttransactionids = paymenttransactionids;
+        this.paymenttransactions = paymenttransactions;
         this.isconfirmed = isconfirmed;
         this.isclosed = isclosed;
     }
@@ -142,12 +142,12 @@ public class Order {
         this.orderedproducts = orderedproducts;
     }
 
-    public Set<String> getPaymenttransactionids() {
-        return paymenttransactionids;
+    public Set<PaymentTransaction> getPaymenttransactions() {
+        return paymenttransactions;
     }
 
-    public void setPaymenttransactionids(Set<String> paymenttransactionids) {
-        this.paymenttransactionids = paymenttransactionids;
+    public void setPaymenttransactions(Set<PaymentTransaction> paymenttransactions) {
+        this.paymenttransactions = paymenttransactions;
     }
 
     public boolean getConfirmed() {

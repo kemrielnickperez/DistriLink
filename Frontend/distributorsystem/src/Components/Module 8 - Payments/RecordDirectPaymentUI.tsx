@@ -222,20 +222,21 @@ const ModalCard = styled(Card)({
 
 export default function RecordDirectPayment() {
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
+    const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
+
+
 
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
     const [selectedPaymentTransaction, setSelectedPaymentTransaction] = useState<IPaymentTransaction | null>(null);
     const [selectedPaymentTransactionRow, setSelectedPaymentTransactionRow] = useState<IPaymentTransaction | null>(null);
-
-
 
     const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>([]);
     const [paymentReceipts, setPaymentReceipts] = useState<IPaymentReceipt[]>([]);
 
 
     const [open, setOpen] = React.useState(false);
+
     const handleOpen = () => {
 
         //setPaymentReceipts(response.data.paymentreceipts);
@@ -247,23 +248,15 @@ export default function RecordDirectPayment() {
 
 
     const orderIDRef = useRef<TextFieldProps>(null);
-
     const amountPaidRef = useRef<TextFieldProps>(null);
     const remarksRef = useRef<TextFieldProps>(null);
 
 
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
 
-    const sortedPaymemtTransactions = paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
-
-
-    //const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
-
-
-
-
+    
     function getAllPaymentTransactionsByOrderID(orderid: string) {
-        axios.get<IPaymentTransaction[]>(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${orderIDRef.current?.value + ''}`)
+        axios.get<IPaymentTransaction[]>(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${orderid}`)
             .then((response) => {
                 setPaymentTransactions(response.data);
 
@@ -362,17 +355,12 @@ export default function RecordDirectPayment() {
              receivername: ""
          }, cashierObject.employeeid) 
           
-
-        console.log(paymentReceipts);
-        console.log(selectedPaymentTransactionRow);
-
         clearInputValues();
 
     }
 
 
     const handleViewPaymentReceiptsButtonClick = (params: { row: any }) => {
-
 
         const selectedTransaction = paymentTransactions.find(pt => pt.paymenttransactionid === params.row.paymentTransactionID);
         setPaymentReceipts(selectedTransaction ? selectedTransaction.paymentreceipts : []);
