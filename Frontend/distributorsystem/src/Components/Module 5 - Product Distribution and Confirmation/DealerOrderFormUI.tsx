@@ -123,7 +123,7 @@ export default function DealerOrderForm() {
 
   const [newOrder] = useRestOrder();
 
-  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
+  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, updateDealerCreditLimit, isDealerFound, dealer,] = useRestDealer();
 
   const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 

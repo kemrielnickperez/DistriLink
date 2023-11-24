@@ -2,12 +2,14 @@ import axios, {  } from "axios";
 import { useState } from "react";
 import { IDealer, IDealerDocument } from "./Interfaces";
 import { toast } from "react-toastify";
+import { error } from "console";
+import de from "date-fns/locale/de";
 
 
 
 
 
-export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, (dealerID: string, creditlimit: number) => void, (dealerID: string, remarks: string) => void, (dealerID: string, remarks: string, dateArchived: string) => void, boolean | undefined, IDealer | undefined] => {
+export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, (dealerID: string, creditlimit: number) => void, (dealerID: string, remarks: string) => void, (dealerID: string, remarks: string, dateArchived: string) => void, (dealerID: string, creditlimit: number) => void, boolean | undefined, IDealer | undefined] => {
 
     const [dealer, setDealer] = useState<IDealer>();
     const [isDealerFound, setIsDealerFound] = useState(false);
@@ -199,8 +201,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
     function declineDealer(dealerID: string, reason: string, dateArchived: string) {
         console.log(dealerID + dateArchived)
 
-       
-
         axios.put(`http://localhost:8080/dealer/updateDealerDecline/${dealerID}`, null, {
             params: {
                 remarks: reason,
@@ -236,8 +236,44 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
             });
     }
 
+    function updateDealerCreditLimit(dealerID: string, creditLimit: number){
+        axios.put(`http://localhost:8080/dealer/updateCreditLimit/${dealerID}`, null,{
+            params: {
+                creditlimit: creditLimit,
+            }
+        })
+        .then((response) => {
+            // alert('Dealer status updated to pending successfully!');
+            toast.success("Dealer Credit Limit is Updated!" , {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+        })
+        .catch((error) => {
+            //alert('Error updating dealer status to pending. Please try again.');
+            toast.error("Unexpected Error Updating Credit Limit. Please try again" , {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
+        });
+    }
 
-    function getDealerByID(dealerID: String) {
+    
+
+
+    function getDealerByID(dealerID: string) {
         axios.get(`http://localhost:8080/dealer/getDealerByID/${dealerID}`, {
             params: {
                 dealerid: dealerID
@@ -257,5 +293,5 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealer: IDealer, 
                 console.error('Error retrieving dealer data:', error);
             });
     }
-    return [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,]
+    return [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer,updateDealerCreditLimit, isDealerFound, dealer,]
 }

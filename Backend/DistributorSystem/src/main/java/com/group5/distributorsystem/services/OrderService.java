@@ -109,6 +109,7 @@ public class OrderService {
     }
 
     public Optional<Order> getOrderByID(String orderid){
+
         return orderRepository.findById(orderid);
     }
 
@@ -293,7 +294,13 @@ public class OrderService {
     }
 
     public List<Order> getAllUnconfirmedOrders() {
+
         return orderRepository.findByIsconfirmedFalse();
+    }
+
+    public List<Order> getOrderByDealerId(String dealerId){
+
+        return orderRepository.findByDealer_Dealerid(dealerId);
     }
 
 }

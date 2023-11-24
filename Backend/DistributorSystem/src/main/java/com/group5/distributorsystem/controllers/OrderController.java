@@ -82,4 +82,9 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getAllUnconfirmedOrders(), HttpStatus.OK);
     }
 
+    @GetMapping("/getOrderByDealerId/{dealerId}")
+    public ResponseEntity<Object> getOrderByDealerId(@PathVariable String dealerId){
+        return new ResponseEntity<>(orderService.getOrderByDealerId(dealerId), HttpStatus.OK);
+    }
+
 }

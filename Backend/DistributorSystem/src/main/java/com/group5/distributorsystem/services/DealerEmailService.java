@@ -43,5 +43,16 @@ public class DealerEmailService {
         System.out.println("Declined Email Sent Successfully!");
     }
 
+    public void sendUpdatedCreditLimitEmail(Dealer dealer, String subject, String content) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom("capstone.distrilink@gmail.com");
+        mailMessage.setTo(dealer.getEmailaddress());
+        mailMessage.setSubject(subject);
+        mailMessage.setText(content);
+
+        javaMailSender.send(mailMessage);
+        System.out.println("Updated Credit Limit Email Sent Successfully!");
+    }
+
     }
 
