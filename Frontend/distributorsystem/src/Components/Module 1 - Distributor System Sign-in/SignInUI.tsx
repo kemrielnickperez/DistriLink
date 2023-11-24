@@ -100,7 +100,7 @@ export default function SignIn() {
     const [open, setOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-    const [severity, setSeverity] = useState<AlertColor | undefined>("error");
+    const [severity, setSeverity] = useState<AlertColor | undefined>();
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -120,13 +120,15 @@ export default function SignIn() {
                     const result = response.data;
                     if (result.tableName === 'Dealer') {
                         console.log('Login successful as Dealer');
-                        sessionStorage.setItem('user', JSON.stringify(result));
+                        localStorage.setItem('user', JSON.stringify(result))
+                        sessionStorage.setItem('user', JSON.stringify(result))
                         // Redirect to the Dealer screen
                         window.location.assign('Dashboard');
                         setSuccessMessage("Login successful as Dealer");
                         setOpen(true);
                     } else if (result.tableName === 'Distributor') {
                         console.log('Login successful as Distributor');
+                        localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result));
                         // Redirect to the Dealer screen
                         window.location.assign('Dashboard');
@@ -134,6 +136,7 @@ export default function SignIn() {
                         setOpen(true);
                     } else if (result.tableName === 'Sales Associate' || result.tableName === 'Cashier') {
                         console.log('Login successful as Employee');
+                        localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result));
                         // Redirect to the Employee screen
                         window.location.assign('Dashboard');
@@ -144,6 +147,7 @@ export default function SignIn() {
                         if (user) {
                             console.log(userid, password);
                             console.log("Login successful!");
+                            localStorage.setItem('user', JSON.stringify(result))
                             sessionStorage.setItem('user', JSON.stringify(user));
                             setCode(2);
                             window.location.assign('http://localhost:3000/dashboard');
