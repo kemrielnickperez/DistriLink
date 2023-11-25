@@ -40,8 +40,7 @@ public class DirectPaymentReceiptService {
 
         DirectPaymentReceipt newdirectPaymentReceipt = directPaymentReceiptRepository.save(directPaymentReceipt);
 
-        PaymentTransaction paymentTransaction = paymentTransactionRepository
-                .findById(newdirectPaymentReceipt.getPaymenttransactionid()).get();
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(newdirectPaymentReceipt.getPaymenttransactionid()).get();
 
         if (receiverID != null) {
             Distributor distributor = distributorRepository.findById(receiverID).orElse(null);
@@ -61,9 +60,9 @@ public class DirectPaymentReceiptService {
         }
         paymentTransaction.getPaymentreceipts().add(newdirectPaymentReceipt);
         paymentTransactionRepository.save(paymentTransaction);
-
         //code para ma true na ang isPaid sa payment transaction if ang tanan amount sa PR kay equal na sa amount due sa PT
-        paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
+        PaymentTransaction updatedPaymentTransaction = paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
+        paymentTransactionService.UpdatePaymentTransactionInOrder(updatedPaymentTransaction.getPaymenttransactionid());
 
 
         return directPaymentReceiptRepository.save(newdirectPaymentReceipt);

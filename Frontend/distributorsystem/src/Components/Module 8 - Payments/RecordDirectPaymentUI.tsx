@@ -1,4 +1,4 @@
-import { Button, Divider, Input, Paper, Stack, Table, TableRow, TableBody, TableCell, TableContainer, TextField, styled, TableHead, Typography, Card, makeStyles, IconButton, Grid, TextFieldProps, Box, TablePagination, Autocomplete, AutocompleteRenderInputParams, MenuItem, Modal } from "@mui/material";
+import { Button, Divider, Input, Paper, Stack, Table, TableRow, TableBody, TableCell, TableContainer, TextField, styled, TableHead, Typography, Card, makeStyles, IconButton, Grid, TextFieldProps, Box, TablePagination, Autocomplete, AutocompleteRenderInputParams, MenuItem, Modal, Tabs, Tab } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import NavBar from "../../Global Components/NavBar";
 //import { useRestSchedule } from "../../RestCalls/ScheduleUseRest";
@@ -9,7 +9,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useRestPaymentReceipt } from "../../RestCalls/PaymentReceiptUseRest";
 import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
-import { IDirectPaymentReceipt, IEmployee, IOrder, IPaymentReceipt, IPaymentTransaction } from "../../RestCalls/Interfaces";
+import { ICollectionPaymentReceipt, IDirectPaymentReceipt, IEmployee, IOrder, IPaymentReceipt, IPaymentTransaction } from "../../RestCalls/Interfaces";
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 import React from "react";
 import { v4 as uuidv4 } from 'uuid';
@@ -215,13 +215,29 @@ const ModalCard = styled(Card)({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 1000,
     backgroundColor: 'white',
     border: '2px solid #000',
 })
 
+const TabStyle = styled(Tab)({
+    width: 320,
+    fontWeight: '550',
+    label: {
+        color: '#707070',
+        fontWeight: 'bold',
+        fontFamily: 'Inter',
+    }
+})
+
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+}
+
 export default function RecordDirectPayment() {
-    const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
+    const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, getRemainingPaymentAmount, getTotalPaidAmount, paymentTransaction, totalPaidAmount, remainingPaymentAmount] = useRestPaymentTransaction();
     const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
 
@@ -233,16 +249,19 @@ export default function RecordDirectPayment() {
 
     const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>([]);
     const [paymentReceipts, setPaymentReceipts] = useState<IPaymentReceipt[]>([]);
+    const [directPaymentReceipts, setDirectPaymentReceipts] = useState<IDirectPaymentReceipt[]>([]);
+    const [collectionPaymentReceipts, setCollectionPaymentReceipts] = useState<ICollectionPaymentReceipt[]>([]);
 
 
     const [open, setOpen] = React.useState(false);
+
+
+    const sortedPaymentTransactions = paymentTransactions.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
     const handleOpen = () => {
 
         //setPaymentReceipts(response.data.paymentreceipts);
         setOpen(true);
-        console.log(paymentReceipts);
-        console.log(selectedPaymentTransactionRow);
     }
     const handleClose = () => setOpen(false);
 
@@ -254,25 +273,24 @@ export default function RecordDirectPayment() {
 
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
 
-    
+
+
     function getAllPaymentTransactionsByOrderID(orderid: string) {
         axios.get<IPaymentTransaction[]>(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${orderid}`)
             .then((response) => {
                 setPaymentTransactions(response.data);
 
-                /* response.data.forEach(element => {
-                    console.log(element.paymentreceipts)
-                }); */
             })
             .catch((error) => {
                 alert("Error retrieving payment transactions. Please try again.");
-                console.log(error)
+
 
             });
     }
 
 
-    const handleFindOrder = () => {
+    const handleFindPaymentTransactions = () => {
+        getOrderByID(orderIDRef.current?.value + '');
         getAllPaymentTransactionsByOrderID(orderIDRef.current?.value + '');
     };
 
@@ -332,29 +350,37 @@ export default function RecordDirectPayment() {
             amountPaidRef.current!.value = '';
 
         }
-
-
     }
+
+
+
     const handleSaveDirectPayment = () => {
-        console.log(JSON.parse(localStorage.getItem("cashier")!))
         const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
 
-        const uuid = uuidv4();
-        const paymentreceiptuuid = uuid.slice(0, 8);
-          console.log(paymentreceiptuuid);
-          createDirectPaymentReceipt({
-             paymentreceiptid: paymentreceiptuuid,
-             remarks: remarksRef.current?.value + "",
-             datepaid: selectedDate?.format('YYYY-MM-DD') || '',
-             amountpaid: Number(amountPaidRef.current?.value),
-             receivedamount: Number(amountPaidRef.current?.value),
-             paymenttype: 'direct',
-             daterecorded: moment().format('YYYY-MM-DD'),
-             paymenttransactionid: selectedPaymentTransaction?.paymenttransactionid!,
-             receiverID: "",
-             receivername: ""
-         }, cashierObject.employeeid) 
-          
+        if (Number(amountPaidRef.current?.value) > Number(remainingPaymentAmount!.toFixed(2))) {
+            alert("Amount paid is greater than amount due. Please change it to be equal or less than the amount due.")
+            return;
+        }
+
+        createDirectPaymentReceipt({
+            paymentreceiptid: uuidv4().slice(0, 8),
+            remarks: remarksRef.current?.value + "",
+            datepaid: selectedDate?.format('YYYY-MM-DD') || '',
+            amountpaid: Number(amountPaidRef.current?.value),
+            receivedamount: Number(amountPaidRef.current?.value),
+            paymenttype: 'direct',
+            daterecorded: moment().format('YYYY-MM-DD'),
+            paymenttransactionid: selectedPaymentTransaction?.paymenttransactionid!,
+            receiverID: "",
+            receivername: ""
+        }, cashierObject.employeeid)
+
+
+        const allPaid = paymentTransactions.every((transaction) => transaction.paid);
+        if(allPaid){
+            closedOrder(order?.orderid!);
+        }
+
         clearInputValues();
 
     }
@@ -364,22 +390,65 @@ export default function RecordDirectPayment() {
 
         const selectedTransaction = paymentTransactions.find(pt => pt.paymenttransactionid === params.row.paymentTransactionID);
         setPaymentReceipts(selectedTransaction ? selectedTransaction.paymentreceipts : []);
+        if (selectedTransaction) {
+            // Filter payment receipts by type
+            setDirectPaymentReceipts(selectedTransaction.paymentreceipts.filter(
+                receipt => receipt.paymenttype === 'direct'
+            ) as IDirectPaymentReceipt[]);
+
+            setCollectionPaymentReceipts(selectedTransaction.paymentreceipts.filter(
+                receipt => receipt.paymenttype === 'collection'
+            ) as ICollectionPaymentReceipt[]);
+
+            console.log(selectedTransaction.paymentreceipts)
+        }
+
+        getRemainingPaymentAmount(selectedTransaction ? selectedTransaction.paymenttransactionid : '');
+        getTotalPaidAmount(selectedTransaction ? selectedTransaction.paymenttransactionid : '');
+
         handleOpen();
     }
-  
 
+
+
+    function CustomTabPanel(props: TabPanelProps) {
+        const { children, value, index, ...other } = props;
+        return (
+            <div
+                role="tabpanel"
+                hidden={value !== index}
+                id={`simple-tabpanel-${index}`}
+                aria-labelledby={`simple-tab-${index}`}
+                {...other}
+            >
+                {value === index && (
+                    <Box sx={{ p: 2 }}>
+                        <Typography>{children}</Typography>
+                    </Box>
+                )}
+            </div>
+        );
+    }
+
+    function a11yProps(index: number) {
+        return {
+            id: `simple-tab-${index}`,
+            'aria-controls': `simple-tabpanel-${index}`,
+        };
+    }
+
+    const [value, setValue] = useState(0);
+
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
 
 
     const PaymentReceiptcolumns: GridColDef[] = [
         { field: 'paymentReceiptID', headerName: 'Payment Receipt ID', width: 200 },
-        { field: 'paymentType', headerName: 'Payment Type', width: 180 },
         { field: 'amountPaid', headerName: 'Amount Paid', width: 180 },
         { field: 'receiverName', headerName: 'Receiver Name', width: 160 },
-        { field: 'datePaid', headerName: 'Date Paid', width: 180 },
-        { field: 'receivedAmount', headerName: 'Received Amount', width: 180 },
-        { field: 'dateRecorded', headerName: 'Date Recorded', width: 180 },
-
-
+        { field: 'remarks', headerName: 'Remarks', width: 160 },
     ]
 
     const PaymentReceiptrows = paymentReceipts.map((pr) => {
@@ -387,21 +456,83 @@ export default function RecordDirectPayment() {
         return {
             id: pr!.paymentreceiptid!,
             paymentReceiptID: pr.paymentreceiptid!,
-            paymentType: pr.paymenttype!,
             amountPaid: pr.amountpaid!,
+            remarks: pr.remarks!,
             receiverName: pr!.receivername!,
-            //rows para if collection ba or direct
-            //datePaid: pr.!,
-            //paymentStatus: pt!.paid,
 
         }
     });
+
+
+
+    const DirectPaymentReceiptcolumns: GridColDef[] = [
+        { field: 'paymentReceiptID', headerName: 'Payment Receipt ID', width: 200 },
+        { field: 'amountPaid', headerName: 'Amount Paid', width: 180 },
+        { field: 'receiverName', headerName: 'Receiver Name', width: 160 },
+        { field: 'remarks', headerName: 'Remarks', width: 160 },
+        { field: 'datePaid', headerName: 'Date Paid', width: 180 },
+        { field: 'receivedAmount', headerName: 'Received Amount', width: 180 },
+        { field: 'dateRecorded', headerName: 'Date Recorded', width: 180 },
+    ]
+
+
+    const DirectPaymentReceiptrows = directPaymentReceipts.map((pr) => {
+
+
+        return {
+            id: pr!.paymentreceiptid!,
+            paymentReceiptID: pr.paymentreceiptid!,
+            amountPaid: pr.amountpaid!,
+            remarks: pr.remarks!,
+            receiverName: pr!.receivername!,
+            datePaid: pr.datepaid,
+            daterecorded: pr.daterecorded,
+            receivedamount: pr.receivedamount,
+
+        }
+    });
+
+
+    const CollectionPaymentReceiptcolumns: GridColDef[] = [
+        { field: 'paymentReceiptID', headerName: 'Payment Receipt ID', width: 200 },
+        { field: 'amountPaid', headerName: 'Amount Paid', width: 180 },
+        { field: 'confirmationStatus', headerName: 'Confirmation Status', width: 180 },
+        { field: 'receiverName', headerName: 'Receiver Name', width: 160 },
+        { field: 'remarks', headerName: 'Remarks', width: 160 },
+        { field: 'collectionDate', headerName: 'Collection Date', width: 180 },
+        { field: 'collectionAmount', headerName: 'Collection Amount', width: 180 },
+        { field: 'remittedDate', headerName: 'Remitted Date', width: 180 },
+        { field: 'remittedAmount', headerName: 'Remitted Amount', width: 180 },
+        { field: 'confirmationDate', headerName: 'Confirmation Date', width: 180 },
+
+    ]
+
+    const CollectionPaymentReceiptrows = collectionPaymentReceipts.map((pr) => {
+        return {
+            id: pr!.paymentreceiptid!,
+            paymentReceiptID: pr.paymentreceiptid!,
+            amountPaid: pr.amountpaid!,
+            remarks: pr.remarks!,
+            receiverName: pr!.receivername!,
+            collectiondate: pr.collectiondate,
+            collectionamount: pr.collectionamount,
+            remitteddate: pr.remitteddate,
+            remittedamount: pr.remittedamount,
+            confirmationdate: pr.confirmationdate,
+            confirmationStatus: pr.isconfirmed ? 'Confirmed' : 'Unconfirmed',
+
+        }
+    });
+
+
+
 
     const columns: GridColDef[] = [
         { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
         { field: 'installmentNumber', headerName: 'Installment Number', width: 180 },
         { field: 'paymentDueDate', headerName: 'Payment Due Date', width: 160 },
         { field: 'amountDue', headerName: 'Amount Due', width: 180 },
+
         {
             field: 'paymentStatus',
             headerName: 'Payment Status',
@@ -432,13 +563,65 @@ export default function RecordDirectPayment() {
                         >
                             <ModalCard>
                                 <ContentNameTypography2>Payment Receipts</ContentNameTypography2>
-                                <DataGrid
-                                    rows={PaymentReceiptrows}
-                                    sx={{ textAlign: 'center', color: '#203949', height: '350px', fontWeight: 330, margin: '50px', border: 'none', fontSize: '490' }}
-                                    columns={PaymentReceiptcolumns}
-                                    pageSizeOptions={[5]}
-                                />
-                                 <Button variant="contained" onClick={handleClose}>Close </Button>
+
+
+                                <Box sx={{ width: '100%', marginTop: 3, marginLeft: 0.5 }}>
+
+                                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" style={{ marginLeft: 40 }}>
+                                            <TabStyle label="Direct Payment Receipts" {...a11yProps(0)} />
+                                            <TabStyle label="Collection Payment Receipts" {...a11yProps(1)} />
+                                        </Tabs>
+                                    </Box>
+
+
+                                    <CustomTabPanel value={value} index={0}>
+                                        <DataGrid
+                                            rows={DirectPaymentReceiptrows}
+                                            sx={{ textAlign: 'center', color: '#203949', height: '350px', width: '1000px', fontWeight: 330, margin: '50px', border: 'none', fontSize: '490' }}
+                                            columns={DirectPaymentReceiptcolumns}
+
+                                            initialState={{
+                                                pagination: {
+                                                    paginationModel: {
+                                                        pageSize: 5,
+                                                    },
+                                                },
+                                            }}
+                                            pageSizeOptions={[5]}
+                                        />
+                                    </CustomTabPanel>
+                                    <CustomTabPanel value={value} index={1}>
+
+                                        <DataGrid
+                                            rows={CollectionPaymentReceiptrows}
+                                            sx={{ textAlign: 'center', color: '#203949', height: '350px', width: '1000px', fontWeight: 330, margin: '50px', border: 'none', fontSize: '490' }}
+                                            columns={CollectionPaymentReceiptcolumns.map((column) => ({
+                                                ...column,
+                                            }))}
+
+                                            initialState={{
+                                                pagination: {
+                                                    paginationModel: {
+                                                        pageSize: 5,
+                                                    },
+                                                },
+                                            }}
+                                            pageSizeOptions={[5]}
+                                        />
+
+                                    </CustomTabPanel>
+                                </Box>
+
+                                <h1>
+                                    Total Amount Paid: {totalPaidAmount!.toFixed(2)}
+                                </h1>
+                                <h1>
+                                    Remaining Payment Amount: {remainingPaymentAmount!.toFixed(2)}
+                                </h1>
+                                <Button variant="contained" onClick={handleClose}>Close </Button>
+
+
                             </ModalCard>
                         </Modal>
                     </div>
@@ -452,7 +635,12 @@ export default function RecordDirectPayment() {
     ]
 
 
-    const rows = paymentTransactions.map((pt) => {
+
+
+    const rows = sortedPaymentTransactions.map((pt) => {
+
+
+
         return {
             id: pt!.paymenttransactionid!,
             paymentTransactionID: pt!.paymenttransactionid!,
@@ -475,15 +663,18 @@ export default function RecordDirectPayment() {
 
 
         if (orderIDRef.current?.value + '' !== '') {
-            handleFindOrder();
+            handleFindPaymentTransactions();
 
         }
 
-        /*
-        if (allPaid) {
-            // Call the orderClosed function
-            closedOrder(order!.orderid);
-        } */
+        if(allPaid){
+            closedOrder(order?.orderid!);
+        }
+        console.log(order);
+
+        
+
+
 
         setMaxDate(dayjs() as Dayjs);
 
@@ -498,7 +689,7 @@ export default function RecordDirectPayment() {
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <LabelTypography>Enter Order Transaction ID</LabelTypography>
                 <StyleTextField inputRef={orderIDRef} />
-                <SearchButton type="button" aria-label="search" onClick={handleFindOrder}>
+                <SearchButton type="button" aria-label="search" onClick={handleFindPaymentTransactions}>
                     <SearchIcon sx={{ color: "white" }} />
                 </SearchButton>
 
@@ -516,7 +707,7 @@ export default function RecordDirectPayment() {
                             initialState={{
                                 pagination: {
                                     paginationModel: {
-                                        pageSize: 5,
+                                        pageSize: paymentTransactions.length,
                                     },
                                 },
                             }}
@@ -615,6 +806,7 @@ export default function RecordDirectPayment() {
                             value={selectedPaymentTransaction}
                             onChange={(event, newValue) => {
                                 setSelectedPaymentTransaction(newValue);
+                                getRemainingPaymentAmount(newValue?.paymenttransactionid!);
                             }}
                             filterOptions={(options, state) => {
                                 // Filter out "Paid" transactions from the options

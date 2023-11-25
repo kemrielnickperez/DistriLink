@@ -147,7 +147,6 @@ public class OrderService {
         return orderRepository.findAllByDistributor_Distributorid(distributorid);
     }
 
-
     public ResponseEntity assignCollector(String[] orderids, String collectorid) {
         Employee employee = employeeRepository.findById(collectorid).get();
 
@@ -174,9 +173,6 @@ public class OrderService {
         employeeRepository.save(employee);
         return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
     }
-
-
-
 
     public ResponseEntity removeCollector(String orderid) {
 
@@ -222,28 +218,22 @@ public class OrderService {
     }
 
     public ResponseEntity updateOrderClosedStatus(String orderId) {
-        Optional<Order> optionalOrder = orderRepository.findById(orderId);
-        if (optionalOrder.isPresent()) {
-            Order order = optionalOrder.get();
-            boolean allPaymentsPaid = true;
+        Order order = orderRepository.findById(orderId).get();
 
-            List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionService.getAllPaymentTransactionsByOrderID(order.getOrderid());
+        boolean allPaymentsPaid = true;
 
+        List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionService.getAllPaymentTransactionsByOrderID(order.getOrderid());
 
-            for (PaymentTransaction transaction : paymentTransactionsFromOrder) {
-                if (!transaction.isPaid()) {
-                    allPaymentsPaid = false;
-                    break; // Exit the loop as soon as you find an unpaid transaction
-                }
+        for (PaymentTransaction transaction : paymentTransactionsFromOrder) {
+            if (!transaction.isPaid()) {
+                allPaymentsPaid = false;
+                break; // Exit the loop as soon as you find an unpaid transaction
             }
-
-            order.setIsclosed(allPaymentsPaid);
-            orderRepository.save(order);
-
-            return new ResponseEntity<>("Order closed status updated successfully", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
         }
+
+        order.setIsclosed(allPaymentsPaid);
+        orderRepository.save(order);
+        return new ResponseEntity<>("Order closed status updated successfully", HttpStatus.OK);
     }
 
   /*  @Scheduled(cron = "0 0 0 * * *") // Run every day at midnight

@@ -50,9 +50,12 @@ public class CollectionPaymentReceiptService {
             List<String> collectordocumentTypes, List<String> dealerdocumentTypes,
             List<MultipartFile> collectordocumentContents, List<MultipartFile> dealerdocumentContents
     ) {
+
         CollectionPaymentReceipt savedCollectionPaymentReceipt = collectionPaymentReceiptRepository.save(collectionPaymentReceipt);
 
-        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransactionid()).get();
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(savedCollectionPaymentReceipt.getPaymenttransactionid()).get();
+
+
 
         for (int i = 0; i < collectorproofid.size(); i++) {
             CollectorRemittanceProof collectorProof = new CollectorRemittanceProof();
@@ -92,10 +95,16 @@ public class CollectionPaymentReceiptService {
             savedCollectionPaymentReceipt.getDealerpaymentproofids().add(dealerProof.getDealerpaymentproofid());
         }
 
+
         paymentTransaction.getPaymentreceipts().add(savedCollectionPaymentReceipt);
 
         paymentReceiptRepository.save(savedCollectionPaymentReceipt);
+        paymentTransactionService.UpdatePaymentTransactionInOrder(paymentTransaction.getPaymenttransactionid());
         paymentTransactionRepository.save(paymentTransaction);
+
+        paymentTransactionService.UpdatePaymentTransactionInOrder(paymentTransaction.getPaymenttransactionid());
+
+
 
         return collectionPaymentReceiptRepository.save(savedCollectionPaymentReceipt);
     }
@@ -104,43 +113,45 @@ public class CollectionPaymentReceiptService {
 
    public ResponseEntity confirmCollectionPaymentReceipt(String collectionpaymentreciptid, String receiverID) {
 
-        CollectionPaymentReceipt collectionPaymentReceipt = collectionPaymentReceiptRepository.findById(collectionpaymentreciptid).get();
+       CollectionPaymentReceipt outdatedCollectionPaymentReceipt = collectionPaymentReceiptRepository.findById(collectionpaymentreciptid).get();
 
-        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(collectionPaymentReceipt.getPaymenttransactionid()).get();
+       CollectionPaymentReceipt updatedCdollectionPaymentReceipt = collectionPaymentReceiptRepository.findById(collectionpaymentreciptid).get();
 
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(updatedCdollectionPaymentReceipt.getPaymenttransactionid()).get();
 
         if (receiverID != null) {
             Distributor distributor = distributorRepository.findById(receiverID).orElse(null);
             Employee employee = employeeRepository.findById(receiverID).orElse(null);
 
             if (distributor != null) {
-                collectionPaymentReceipt.setReceiverID(distributor.getDistributorid());
-                collectionPaymentReceipt.setReceivername(distributor.getFullName());
-                distributor.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
+                updatedCdollectionPaymentReceipt.setReceiverID(distributor.getDistributorid());
+                updatedCdollectionPaymentReceipt.setReceivername(distributor.getFullName());
+                distributor.getPaymentreceiptids().add(updatedCdollectionPaymentReceipt.getPaymentreceiptid());
                 distributorRepository.save(distributor);
             } else if (employee != null) {
-                collectionPaymentReceipt.setReceiverID(employee.getEmployeeid());
-                collectionPaymentReceipt.setReceivername(employee.getFullName());
-                employee.getPaymentreceiptids().add(collectionPaymentReceipt.getPaymentreceiptid());
+                updatedCdollectionPaymentReceipt.setReceiverID(employee.getEmployeeid());
+                updatedCdollectionPaymentReceipt.setReceivername(employee.getFullName());
+                employee.getPaymentreceiptids().add(updatedCdollectionPaymentReceipt.getPaymentreceiptid());
                 employeeRepository.save(employee);
             }
-            collectionPaymentReceipt.setIsconfirmed(true);
+            updatedCdollectionPaymentReceipt.setIsconfirmed(true);
         }
+       updatedCdollectionPaymentReceipt.setConfirmationdate(LocalDate.now());
+       updatedCdollectionPaymentReceipt.setAmountpaid(updatedCdollectionPaymentReceipt.getRemittedamount());
+       updatedCdollectionPaymentReceipt.setPaymenttransactionid(paymentTransaction.getPaymenttransactionid());
+       paymentReceiptRepository.save(updatedCdollectionPaymentReceipt);
 
-
-        paymentTransaction.getPaymentreceipts().add(collectionPaymentReceipt);
-
-        collectionPaymentReceipt.setConfirmationdate(LocalDate.now()
-        );
-        collectionPaymentReceipt.setAmountpaid(collectionPaymentReceipt.getRemittedamount());
-        paymentTransaction.setPaid(true);
-        collectionPaymentReceipt.setPaymenttransactionid(paymentTransaction.getPaymenttransactionid());
-
-        paymentTransactionRepository.save(paymentTransaction);
-        paymentReceiptRepository.save(collectionPaymentReceipt);
+       for (PaymentReceipt pr: paymentTransaction.getPaymentreceipts()) {
+           if(pr.getPaymentreceiptid().equals(outdatedCollectionPaymentReceipt.getPaymentreceiptid())){
+                    paymentTransaction.getPaymentreceipts().remove(pr);
+           }
+       }
+       paymentTransaction.getPaymentreceipts().add(updatedCdollectionPaymentReceipt);
+       paymentTransactionRepository.save(paymentTransaction);
 
        //code para ma true na ang isPaid sa payment transaction if ang tanan amount sa PR kay equal na sa amount due sa PT
-       paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
+       PaymentTransaction updatedPaymentTransaction = paymentTransactionService.updatePaidPaymentTransaction(paymentTransaction.getPaymenttransactionid());
+       paymentTransactionService.UpdatePaymentTransactionInOrder(updatedPaymentTransaction.getPaymenttransactionid());
 
         return new ResponseEntity("Collection Payment Receipt Confirmed Successfully!", HttpStatus.OK);
     }

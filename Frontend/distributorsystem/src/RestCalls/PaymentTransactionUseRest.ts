@@ -4,16 +4,16 @@ import { useState } from "react";
 
 
 
-export const useRestPaymentTransaction = (): [(paymenttransactions: IPaymentTransaction[], orderid: string) => void, (paymenttransactionid: string) => void, (paymentransactionid: string, paymentransaction: IPaymentTransaction) => void, IPaymentTransaction | undefined] => {
+export const useRestPaymentTransaction = (): [(paymenttransactions: IPaymentTransaction[], orderid: string) => void, (paymenttransactionid: string) => void, (paymentransactionid: string, paymentransaction: IPaymentTransaction) => void, (paymenttransactionid: string) => void, (paymenttransactionid: string) => void, IPaymentTransaction | undefined, number | undefined, number | undefined] => {
 
     const [paymentTransaction, setPaymentTransaction] = useState<IPaymentTransaction>();
     const [isPaymentTransactionFound, setIsPaymentTransactionFound] = useState<boolean>();
     const [order, setOrder] = useState<IOrder>();
     const [isOrderFound, setIsOrderFound] = useState<boolean>();
-
+    const [remainingPaymentAmount, setRemainingPaymentAmount] = useState(0);
+    const [totalPaidAmount, setTotalPaidAmount] = useState(0);
 
     function createPaymentTransaction(paymenttransactions: IPaymentTransaction[], orderid: string) {
-        console.log(paymenttransactions)
           axios.post(`http://localhost:8080/paymenttransaction/createPaymentTransaction/${orderid}`, paymenttransactions )
             .then((response) => {
             
@@ -97,7 +97,6 @@ export const useRestPaymentTransaction = (): [(paymenttransactions: IPaymentTran
             .then((response) => {
 
                 setPaymentTransaction(response.data);
-                //console.log(response.data);
                 
                  if (response.data !== null) {
                     setIsPaymentTransactionFound(true);
@@ -128,6 +127,32 @@ export const useRestPaymentTransaction = (): [(paymenttransactions: IPaymentTran
     }
 
 
-    return [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction]
+    function getRemainingPaymentAmount(paymenttransactionid: string) {
+        axios.get(`http://localhost:8080/paymenttransaction/getRemainingPaymentAmount/${paymenttransactionid}`)
+            .then((response) => {
+                setRemainingPaymentAmount(response.data)
+               
+            })
+            .catch((error) => {
+                
+            });
+    }
+
+
+    
+
+    function getTotalPaidAmount(paymenttransactionid: string) {
+        axios.get(`http://localhost:8080/paymenttransaction/getTotalPaidAmount/${paymenttransactionid}`)
+            .then((response) => {
+                setTotalPaidAmount(response.data)
+               
+            })
+            .catch((error) => {
+                
+            });
+    }
+
+
+    return [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, getRemainingPaymentAmount, getTotalPaidAmount, paymentTransaction, totalPaidAmount, remainingPaymentAmount]
 
 }

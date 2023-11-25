@@ -82,7 +82,7 @@ export default function PaymentList() {
 
     useEffect(() => {
         getAllPaymentReceipts();
-        console.log(paymentReceipt)
+
        
        
 
@@ -144,7 +144,7 @@ export default function PaymentList() {
             // If it is, set the confirmed value
            
             isconfirmed = paymentreceipt.isconfirmed;
-            console.log(paymentreceipt.isconfirmed)
+        
         }
 
         return {
@@ -167,6 +167,7 @@ export default function PaymentList() {
     };
     const handleConfirmPaymentsButton = () => {
         try{
+           
             
         
         let count = 0;
@@ -176,7 +177,7 @@ export default function PaymentList() {
         else {
             
             selectedRows.map((id) => {
-              
+                console.log(id)
                 confirmCollectionPaymentReceipt(id, 'd5be5e4b')
                 count++;
 

@@ -23,6 +23,8 @@ public class PaymentTransactionService {
     @Autowired
     OrderRepository orderRepository;
 
+
+
     public void createPaymentTransaction(PaymentTransaction[] paymentTransactions, String orderid) {
 
         Order order = orderRepository.findById(orderid).get();
@@ -67,6 +69,7 @@ public class PaymentTransactionService {
         for (PaymentTransaction pt: order.getPaymenttransactions()) {
             paymentTransactions.add(pt);
         }
+
         //return paymentTransactionRepository.findByOrder_Orderid(orderid);
         return paymentTransactions;
     }
@@ -137,6 +140,34 @@ public class PaymentTransactionService {
         return  totalAmountPaid;
     }
 
+    public double getRemainingPaymentAmount(String paymenttransactionid){
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
+       return Math.round( (paymentTransaction.getAmountdue() - getTotalPaidAmount(paymentTransaction.getPaymenttransactionid())) * 100.0) / 100.0;
+
+    }
+
+
+    public void UpdatePaymentTransactionInOrder(String paymenttransactionid){
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
+        Order order = orderRepository.findById(paymentTransaction.getOrderid()).get();
+
+        for (PaymentTransaction pt: order.getPaymenttransactions()) {
+            if(pt.getPaymenttransactionid().equals(paymentTransaction.getPaymenttransactionid())){
+                order.getPaymenttransactions().remove(pt);
+                order.getPaymenttransactions().add(paymentTransaction);
+                orderRepository.save(order);
+                break;
+            }
+        }
+
+      //  orderService.updateOrderClosedStatus(order.getOrderid());
+
+
+    }
+
+
+
+
 
     public PaymentTransaction updatePaidPaymentTransaction(String paymenttransactionid) {
         PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
@@ -144,6 +175,7 @@ public class PaymentTransactionService {
         Order order = orderRepository.findById(updatedPaymentTransaction.getOrderid()).get();
 
         double totalAmountPaid = getTotalPaidAmount(updatedPaymentTransaction.getPaymenttransactionid());
+
 
         if(totalAmountPaid == updatedPaymentTransaction.getAmountdue()){
             updatedPaymentTransaction.setPaid(true);

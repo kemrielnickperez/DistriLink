@@ -16,7 +16,6 @@ public class PaymentReceipt {
 
     private String paymenttype;
 
-
     private String paymenttransactionid;
 
    /* private PaymentReceiver paymentReceiver;*/
