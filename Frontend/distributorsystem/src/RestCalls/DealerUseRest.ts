@@ -298,24 +298,26 @@ export const useRestDealer = (): [
 
                 if (response.data !== null) {
                     if (response.data.isconfirmed !== false) {
+                        console.log("naa ra siya mhie")
                         setDealer(response.data);
                         setIsDealerFound(true);
+                        creditLimit = response.data.creditlimit;
+                        setDealerCreditLimit(creditLimit)
+                        toast.success("Dealer found successfully! Dealer Credit Limit: ₱" + response.data.creditlimit, {
+                            position: "bottom-right",
+                            autoClose: 5000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        })
                     }
                     else {
                         alert("wala pa ni siya na confirm, use lain dealer please")
                     }
-                    creditLimit = response.data.creditlimit;
-                    setDealerCreditLimit(creditLimit)
-                    toast.success("Dealer found successfully! Dealer Credit Limit: ₱" + response.data.creditlimit, {
-                        position: "bottom-right",
-                        autoClose: 5000,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    })
+
 
                 }
                 else {

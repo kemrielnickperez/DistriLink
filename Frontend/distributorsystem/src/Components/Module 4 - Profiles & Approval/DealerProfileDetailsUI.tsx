@@ -435,8 +435,15 @@ export default function DealerProfileDetails() {
     };
 
     const handleFindDealer = () => {
-        getDealerByID(objectId!);
-        getOrderByDealerId(objectId!);
+        try {
+            if (objectId) {
+                getDealerByID(objectId!);
+                getAllDealerDocuments(); 
+                getOrderByDealerId(objectId);
+            }
+        } catch (error) {
+            headerHandleAlert('Error', "Failed to retrieve dealer information. Please try again.", 'error');
+        }
     };
 
 
@@ -470,19 +477,10 @@ export default function DealerProfileDetails() {
 
 
     useEffect(() => {
-        try {
-            if (objectId) {
-                handleFindDealer();
-                getAllDealerDocuments();
-                // headerHandleAlert('Success', "Dealer records retrieved successfully.", 'success');    
-                getOrderByDealerId(objectId);
-            }
-        } catch (error) {
-            headerHandleAlert('Error', "Failed to retrieve dealer information. Please try again.", 'error');
-        }
+        handleFindDealer();
         
       
-    }, [objectId, dealer, dealerDocuments]);
+    }, []);
 
 
 
@@ -856,120 +854,7 @@ export default function DealerProfileDetails() {
 
 
 
-            {/* {dealer ? (
-                <div>
-                    <Grid item>
-                        <Grid item>
-                            <ContentNameTypography>Dealer Information</ContentNameTypography>
-                            <img src={imageSource} style={{ width:'auto',height: '250px', margin: '30px 500px 0px -550px' }}></img> 
-                         
-                           
-                        </Grid>
-                    </Grid>
-                    Render dealer details 
-                    <StackStyle sx={{ left: '40%', top: '20%' }}>
-                        <StyleLabel>Dealer Name</StyleLabel>
-                        <StyleMainInfo>{dealer?.firstname} {dealer?.middlename} {dealer?.lastname}</StyleMainInfo>
-                    </StackStyle>
-                    <StackStyle sx={{ left: '61%', top: '20%' }}>
-                        <StyleLabel>Dealer ID</StyleLabel>
-                        <StyleMainInfo>{dealer?.dealerid}</StyleMainInfo>
-                    </StackStyle>
-                    <StackStyle sx={{ left: '75%', top: '19%' }}>
-                        <StyleLabel>Credit Limit <Icon onClick={handleEditCreditLimit}> <EditOutlinedIcon /> </Icon></StyleLabel>
-                        {isEditing ? (
-                            <div>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gridGap: "10px", alignItems: "left" }}>
-                                    <input
-                                        type="number"
-                                        value={editedCreditLimit || ""}
-                                        onChange={(e) => setEditedCreditLimit(parseInt(e.target.value, 10) || undefined)}
-                                    />
-                                    <div >
-                                        <ButtonCredit variant="contained" onClick={handleSaveCreditLimit} >
-                                            Save
-                                        </ButtonCredit>
-                                    </div>
-                                    <div>
-                                        <ButtonCredit variant="contained" onClick={handleCancelEdit} >
-                                            Cancel
-                                        </ButtonCredit>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
-                            <StyleCredit>
-                                Php {dealer?.creditlimit}
-                            </StyleCredit>
-                        )}
-                    </StackStyle>
-                    <ButtonInfo variant="contained" onClick={basicInfoClickHandler}>
-                        <Icon style={{ color: '#203949', height: '50px', marginTop: '15px', marginRight: '15px' }}>
-                            <PersonIcon />
-                        </Icon>
-                        Basic Information
-                    </ButtonInfo>
-                    <ButtonInfo variant="contained" onClick={businessInfoClickHandler} disabled={!dealer.hasbusiness}>
-                        <Icon style={{ color: '#203949', height: '50px', marginTop: '15px', marginRight: '15px' }}>
-                            <BusinessCenterIcon />
-                        </Icon>
-                        Business Information
-                    </ButtonInfo>
-                    {displayInfo}
-
-                    <StyldeInfoHeader>Dealer Documents</StyldeInfoHeader>
-
-                    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-                        {dealerDocuments.map((document) => (
-                            <div key={document.documentid} style={{ marginRight: '10px', marginBottom: '10px' }}>
-                                {displayFile(document.content, document.type, document.name, document.documentid, document.dealer!)}
-                            </div>
-                        ))}
-                    </div>
-                    <Modal
-                        open={open}
-                        onClose={handleCloseDocument}
-                    >
-                        <div>
-                            <ButtonDocument onClick={handleCloseDocument}>Close</ButtonDocument>
-                            {selectedDocument && (
-                                <div>
-                                    {selectedDocument.type === 'application/pdf' ? (
-                                        <iframe
-                                            title="PDF Document"
-                                            src={`data:application/pdf;base64,${selectedDocument.content}`}
-                                            width="100%"
-                                            height="1000px"
-                                        />
-                                    ) : selectedDocument.type.startsWith("image") ? (
-                                            <img
-                                                src={`data:${selectedDocument.type};base64,${selectedDocument.content}`}
-                                                alt="Document"
-                                                style={{ maxWidth: '100%', maxHeight: '10000px', justifyItems: 'center', justifyContent: 'center' }}
-                                            />
-                                    ) : (
-                                        <a href={`data:${selectedDocument.type};base64,${selectedDocument.content}`} download={`document.${selectedDocument.type}`}>
-                                            Download Document
-                                        </a>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </Modal>
-                </div>
-            ) : (
-                <Grid sx={{ justifyContent: "center", marginTop: '200px' }}>
-                    {dealer === null ? (
-                        <>
-                            <AutorenewOutlinedIcon />
-                            <h4>Loading...</h4>
-                        </>
-                    ) : (
-                        <p>Dealer not found.</p>
-                    )}
-                </Grid>
-            )} */}
-
+           
         </div>
     );
 }
