@@ -218,9 +218,8 @@ export default function Dashboard() {
         getAllUnconfirmedDealers();
         getAllUnconfirmedOrders();
         getAllUnconfirmedCollectionPaymentReceipts();
-    }, []);
+    }, [unconfirmedDealers, unconfirmedOrders, unconfirmedCollectionPaymentReceipts]);
 
-    //unconfirmedDealers, unconfirmedOrders, unconfirmedCollectionPaymentReceipts
 
     return (
         <Grid container>
@@ -238,7 +237,7 @@ export default function Dashboard() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {unconfirmedOrders?.map((order) => (
+                                {unconfirmedOrders?.slice(0, 5).map((order) => (
                                     <TableRow key={order.orderid}>
                                         <TableCell align="left">{order.orderid}</TableCell>
                                         <TableCell align="left">{order.orderdate}</TableCell>
@@ -267,7 +266,7 @@ export default function Dashboard() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {unconfirmedCollectionPaymentReceipts?.map((receipt) => (
+                                {unconfirmedCollectionPaymentReceipts?.slice(0, 3).map((receipt) => (
                                     <TableRow key={receipt.paymentreceiptid}>
                                         <TableCell align="center">{receipt.paymentreceiptid}</TableCell>
                                         <TableCell align="center">{receipt.remitteddate}</TableCell>
@@ -292,7 +291,7 @@ export default function Dashboard() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {unconfirmedDealers?.map((dealer) => (
+                                {unconfirmedDealers?.slice(0, 5).map((dealer) => (
                                     <TableRow key={dealer.dealerid}>
                                         <TableCell align="left">{dealer.firstname + " " + dealer.lastname}</TableCell>
                                         <TableCell align="left">{dealer.submissiondate}</TableCell>

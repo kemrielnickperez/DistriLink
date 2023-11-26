@@ -11,8 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CollectionPaymentReceiptService {
@@ -40,6 +42,9 @@ public class CollectionPaymentReceiptService {
 
     @Autowired
     PaymentReceiptRepository paymentReceiptRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
 
 
 
@@ -168,7 +173,39 @@ public class CollectionPaymentReceiptService {
         return collectionPaymentReceiptRepository.findByIsconfirmedFalse();
     }
 
-    /*public List<CollectionPaymentReceipt> getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(String distributorid) {
-        return collectionPaymentReceiptRepository.findByPaymenttransactionid_Order_Distributor_DistributoridAndIsconfirmedFalse(distributorid);
-    }*/
+    public List<CollectionPaymentReceipt> getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(String distributorid) {
+
+            List<CollectionPaymentReceipt> collectionPaymentReceipts = new ArrayList<>();
+            Optional<Distributor> distributorOptional = distributorRepository.findById(distributorid);
+
+            if (distributorOptional.isPresent()) {
+                Distributor distributor = distributorOptional.get();
+
+                for (String orderId : distributor.getOrderids()) {
+                    Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+                    if (orderOptional.isPresent()) {
+                        Order order = orderOptional.get();
+
+                        for (PaymentTransaction paymentTransaction : order.getPaymenttransactions()) {
+
+                            for (PaymentReceipt pr:paymentTransaction.getPaymentreceipts()) {
+                                if (pr instanceof CollectionPaymentReceipt) {
+                                    CollectionPaymentReceipt collectionPaymentReceipt = (CollectionPaymentReceipt) pr;
+
+                                    if (!collectionPaymentReceipt.isIsconfirmed()) {
+                                        collectionPaymentReceipts.add(collectionPaymentReceipt);
+                                    }
+                                }
+                            }
+                            }
+                        }
+                    }
+                }
+
+
+            return collectionPaymentReceipts;
+            // return collectionPaymentReceiptRepository.findByPaymenttransactionid_Order_Distributor_DistributoridAndIsconfirmedFalse(distributorid);
+        }
+
 }

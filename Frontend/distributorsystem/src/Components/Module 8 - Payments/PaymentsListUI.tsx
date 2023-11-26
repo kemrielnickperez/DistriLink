@@ -57,6 +57,9 @@ export default function PaymentList() {
 
     const navigate = useNavigate();
 
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+    const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
+
 
     {/** useStates */ }
     const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -69,7 +72,7 @@ export default function PaymentList() {
     const [alertSeverity, setAlertSeverity] = useState('success');
 
     function getAllPaymentReceipts() {
-        axios.get<IDirectPaymentReceipt[]>('http://localhost:8080/paymentreceipt/getAllPaymentReceipts')
+        axios.get<IDirectPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setPaymentReceipts(response.data);
 
@@ -83,10 +86,8 @@ export default function PaymentList() {
     useEffect(() => {
         getAllPaymentReceipts();
 
-       
-       
 
-    }, [paymentreceipts]);
+    }, [[paymentreceipts]]);
     {/**Handler for Alert - Function to define the type of alert*/ }
 
     function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
@@ -123,7 +124,6 @@ export default function PaymentList() {
                         color="primary"
                         onClick={() => {
                             // Handle button click for this row here
-
                             handleViewButtonClick(params.row.paymentReceiptid);
                         }}
                     >
@@ -136,15 +136,15 @@ export default function PaymentList() {
     ]
     {/** Rows for DataGrid */ }
     const rows = paymentreceipts.map((paymentreceipt) => {
-       
+
         let isconfirmed = null; // Initialize with null
 
         // Check if the payment receipt is of type ICollectionPaymentReceipt
         if (paymentreceipt.paymenttype === 'collection' && 'isconfirmed' in paymentreceipt) {
             // If it is, set the confirmed value
-           
+
             isconfirmed = paymentreceipt.isconfirmed;
-        
+
         }
 
         return {
@@ -166,43 +166,39 @@ export default function PaymentList() {
         setSelectedRows(selectedRowIds);
     };
     const handleConfirmPaymentsButton = () => {
-        try{
-           
-            
-        
-        let count = 0;
-        if (!selectedRows.length) {
-            headerHandleAlert('Payment Receipt Required', "Please select payment receipt to confirm", 'warning');
+        try {
+            let count = 0;
+            if (!selectedRows.length) {
+                headerHandleAlert('Payment Receipt Required', "Please select payment receipt to confirm", 'warning');
+            }
+            else {
+
+                selectedRows.map((id) => {
+                    console.log(id)
+                    confirmCollectionPaymentReceipt(id, 'd5be5e4b')
+                    count++;
+
+                    if (count === selectedRows.length) {
+                        //  alert(count + " Payment Receipts Confirmed Successfully!")
+                        toast.success(count + ' Payment Receipt(s) Confirmed Successfully!', {
+                            position: "bottom-right",
+                            autoClose: 5000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        })
+                    }
+
+                });
+            }
+        } catch (error) {
+            headerHandleAlert('Unexpected Error', "Cannot update Payment Receipt. Please try again.", 'error');
         }
-        else {
-            
-            selectedRows.map((id) => {
-                console.log(id)
-                confirmCollectionPaymentReceipt(id, 'd5be5e4b')
-                count++;
 
-                if (count === selectedRows.length) {
-                    //  alert(count + " Payment Receipts Confirmed Successfully!")
-                    toast.success(count + ' Payment Receipt(s) Confirmed Successfully!', {
-                        position: "bottom-right",
-                        autoClose: 5000,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    })
-                }
-
-            });
-        }
-    }catch(error){
-        headerHandleAlert('Unexpected Error', "Cannot update Payment Receipt. Please try again.", 'error');
-    }
-
-    setSelectedRows([]);
-
+        setSelectedRows([]);
     }
 
     const handleViewButtonClick = (objectId: string) => {
@@ -217,16 +213,10 @@ export default function PaymentList() {
         <div>
             <StyledCard>
                 <ContentNameTypography>Payment Receipts</ContentNameTypography>
-
-
-                {/**DataGrid */}
                 <DataGrid
                     rows={rows}
-                    sx={{ textAlign: 'center', color: '#146C94', height: '350px', margin: '35px 20px 0 20px' }}
-                    columns={columns.map((column) => ({
-                        ...column,
-                    }))
-                    }
+                    sx={{ textAlign: 'center', color: '#203949', height: '350px', margin: '35px 20px 0 20px', fontWeight: 330 }}
+                    columns={columns}
                     initialState={{
                         pagination: {
                             paginationModel: {
@@ -238,16 +228,15 @@ export default function PaymentList() {
                     checkboxSelection
                     onRowSelectionModelChange={(handleRowSelection)}
                     rowSelectionModel={selectedRows}
-
-                    isRowSelectable={(params) => {
-                        // Check the payment type of the row and disable the checkbox for direct payment types
-                        return params.row.paymentType !== 'direct';
-                    }}
                 />
+
             </StyledCard>
+
+
             <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{ color: '#FFFFFF', marginTop: '20px' }}>
                 Confirm
             </StyledButton>
+
 
             {/* Alerts */}
             <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{

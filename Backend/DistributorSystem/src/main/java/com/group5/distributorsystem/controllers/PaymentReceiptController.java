@@ -42,6 +42,13 @@ public class PaymentReceiptController {
         return new ResponseEntity<>(paymentReceiptService.getPaymentReceiptByID(paymentreceiptid), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllPaymentReceiptsByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllPaymentReceiptsByDistributorID(@PathVariable String distributorid){
+        return new ResponseEntity<>(paymentReceiptService.getAllPaymentReceiptsByDistributorID(distributorid), HttpStatus.OK);
+    }
+
+
+
 
 
     @PostMapping("directpaymentreceipt/createDirectPaymentReceipt/{receiverid}")
@@ -89,8 +96,9 @@ public class PaymentReceiptController {
         return new ResponseEntity<>(collectionPaymentReceiptService.getAllUnconfirmedCollectionPaymentReceipts(), HttpStatus.OK);
     }
 
-    /*@GetMapping("collectionpaymentreceipt/getAllUnconfirmedCollectionPaymentReceiptsByDistributorID/{distributorid}")
-    public ResponseEntity<Object> getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(String distributorid){
+    @GetMapping("collectionpaymentreceipt/getAllUnconfirmedCollectionPaymentReceiptsByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(@PathVariable String distributorid){
         return new ResponseEntity<>(collectionPaymentReceiptService.getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(distributorid), HttpStatus.OK);
-    }*/
+    }
+
 }
