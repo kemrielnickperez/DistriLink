@@ -1,21 +1,23 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
-import { IDealer, IDealerDocument, IDealerPaymentProof } from "../../RestCalls/Interfaces";
+import { IDealer, IDealerDocument, IDealerPaymentProof, IOrder } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Button, Card, Grid, Icon, Modal, Paper, Stack, Typography, styled, Tab, Box, Tabs, Snackbar, Alert, AlertTitle, SlideProps, Slide } from "@mui/material";
+import { Button, Card, Grid, Icon, Modal, Paper, Stack, Typography, styled, Tab, Box, Tabs, Snackbar, Alert, AlertTitle, SlideProps, Slide, TextFieldProps, TextField } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import profilepic from "./profilepic.png"
 import profilepicture from "../../Global Components/Images/profilepicture.png"
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { relative } from "path";
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 
 
@@ -52,7 +54,19 @@ const StyldeInfoHeader = styled(Typography)({
     fontSize: '20px',
     color: '#203949'
 })
-
+const StyledButton = styled(Button)({
+    backgroundColor: '#2D85E7',
+    color: '#FFFFFF',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '15px',
+    width: '50px',
+    height: 35,
+    ':hover': {
+        backgroundColor: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s'
+})
 
 const StackStyle = styled(Stack)({
     position: 'absolute',
@@ -249,7 +263,7 @@ export default function DealerProfileDetails() {
 
     const [value, setValue] = useState(0);
 
-    const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
+    const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit] = useRestDealer();
 
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
 
@@ -263,7 +277,7 @@ export default function DealerProfileDetails() {
 
     const [isEditing, setIsEditing] = useState(false);
 
-    const [editedCreditLimit, setEditedCreditLimit] = useState(dealer?.creditlimit);
+    const [dealers, setDealers] = useState<IDealer[] | null>(null);
 
     const [isEditIcon, setIsEditIcon] = useState(true);
 
@@ -274,6 +288,14 @@ export default function DealerProfileDetails() {
     const [alertMessage, setAlertMessage] = useState('');
 
     const [alertSeverity, setAlertSeverity] = useState('success');
+
+    const creditLimitRef = useRef(null);
+
+    const [orders, setOrders] = useState<IOrder[]>([]);
+
+    const navigate = useNavigate();
+
+
 
 
    
@@ -292,7 +314,7 @@ export default function DealerProfileDetails() {
                 {...other}
             >
                 {value === index && (
-                    <Box sx={{ p: 2 }}>
+                    <Box sx={{ p: 3 }}>
                         <Typography>{children}</Typography>
                     </Box>
                 )}
@@ -321,7 +343,7 @@ export default function DealerProfileDetails() {
         setOpenAlert(false);
     };
 
-    
+
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -390,9 +412,17 @@ export default function DealerProfileDetails() {
         setOpenProfile(false)
     }
 
-    const handleFindDealer = () => {
-        getDealerByID(objectId!);
-    };
+   
+    const getOrderByDealerId = (dealerID: string) => {
+        axios.get(`http://localhost:8080/order/getOrderByDealerId/${dealerID}`)
+            .then((response) => {
+                console.log("Getting Order by Dealer is Successful!");
+                setOrders(response.data);
+            })
+            .catch((error) => {
+                console.error('Error retrieving Order by Dealer Data!')
+            });
+    }
 
     function getAllDealerDocuments() {
         axios.get<IDealerDocument[]>(`http://localhost:8080/dealerdocument/findAllDocumentsByDealerId/${objectId!}`)
@@ -403,6 +433,14 @@ export default function DealerProfileDetails() {
                 alert("Error retrieving dealer documents. Please try again.");
             });
     };
+
+    const handleFindDealer = () => {
+        getDealerByID(objectId!);
+        getOrderByDealerId(objectId!);
+    };
+
+
+
 
     const business = dealer?.hasbusiness ? (
         <>
@@ -437,6 +475,7 @@ export default function DealerProfileDetails() {
                 handleFindDealer();
                 getAllDealerDocuments();
                 // headerHandleAlert('Success', "Dealer records retrieved successfully.", 'success');    
+                getOrderByDealerId(objectId);
             }
         } catch (error) {
             headerHandleAlert('Error', "Failed to retrieve dealer information. Please try again.", 'error');
@@ -503,29 +542,40 @@ export default function DealerProfileDetails() {
     };
 
 
-    //needs dealer id in path
-    const handleSaveCreditLimit = () => {
-        axios.put(`http://localhost:8080/dealer/updateCreditLimit`, {
-            dealerId: dealer?.dealerid,
-            newCreditLimit: editedCreditLimit,
-        })
-            .then((response) => {
-                setIsEditing(false);
-                // You can update the 'dealer' object in the state with the updated credit limit here if needed.
-            })
-            .catch((error) => {
-                console.error("Error updating credit limit:", error);
-                // Handle the error appropriately.
-            });
+    const handleUpdateCreditLimit = (objectId: string) => {
+        const newCreditLimit = Number((creditLimitRef.current as unknown as HTMLInputElement)?.value);
+
+        // Check if the newCreditLimit is a valid number before calling the updateDealerCreditLimit
+        if (!isNaN(newCreditLimit)) {
+            updateDealerCreditLimit(objectId, newCreditLimit);
+            setIsEditing(false); // Assuming you want to exit editing mode after updating
+            setIsEditIcon(!isEditIcon);
+            console.log("Dealer Credit Limit is Updated!");
+        } else {
+            // Handle the case where the input is not a valid number
+            // You may want to display an error message or take other appropriate action
+            console.error('Invalid credit limit input');
+        }
     };
 
     const handleCancelEdit = () => {
         setIsEditing(false);
         // Reset the edited credit limit to the current value.
-        setEditedCreditLimit(dealer?.creditlimit);
         setIsEditIcon(true);
 
     };
+
+    const handleViewButtonClick = (objectId: string) => {
+        console.log(objectId);
+        // Use the `navigate` function to navigate to the details page with the objectId as a parameter
+
+        navigate(`/orderTransactionDetails/${objectId}`);
+    };
+
+    const handleViewButtonFalse = (objectId: string) => {
+        console.log(objectId);
+        navigate(`/orderConfirmation/${objectId}`);
+    }
 
     const profilePic = dealerDocuments.find(image => image.name === dealer?.lastname + '_profilepicture');
     const imageSource = profilePic ? `data:${profilePic?.type} ;base64,${profilePic?.content}`
@@ -533,13 +583,70 @@ export default function DealerProfileDetails() {
     const handleOpenProfile = () => {
         setOpenProfile(true);
     }
+
+    // Define columns for the orders table
+    const columnsOrder: GridColDef[] = [
+        { field: 'id', headerName: 'Order ID', width: 150 },
+        { field: 'orderDate', headerName: 'Order Date', width: 180 },
+        { field: 'distributionDate', headerName: 'Distribution Date', width: 180 },
+        { field: 'orderAmount', headerName: 'Order Amount', width: 180 },
+        {
+            field: 'confirmed',
+            headerName: 'Status',
+            width: 120,
+            renderCell: (params: { row: any; }) => {
+                const dealer = params.row;
+                const isConfirmed = params.row.confirmed;
+
+                return (
+                    <div>
+                        {isConfirmed ? <span>Confirmed</span> : <span>Pending</span>}
+                    </div>
+                );
+            }
+        },
+        {
+            field: 'view', headerName: '', width: 100,
+            renderCell: (params: { row: any; }) => {
+                const order = params.row;
+                return (
+                    <StyledButton
+                        onClick={() => {
+                            // Handle button click for this row here
+                            console.log('Button clicked for row:', order.id);
+                            if (order.confirmed === false) {
+                                handleViewButtonFalse(order.id);
+                            } else {
+                                handleViewButtonClick(order.id);
+                            }
+                        }}
+                    >
+                        View
+                    </StyledButton>
+                )
+            }
+        },
+    ];
+
+    // Map orders data to rows
+    const rowsOrder = orders.map((order) => ({
+        id: order.orderid,
+        orderDate: order.orderdate,
+        distributionDate: order.distributiondate,
+        orderAmount: `Php ${order.orderamount}`,
+        orderStatus: order.confirmed,
+
+    }));
+
+
+
     return (
         <div>
             <Grid container spacing={3}>
                 <ContentNameTypography>Dealer Information </ContentNameTypography>
                 <Grid item style={{ marginRight: -70 }}>
                     <Grid>
-                        <ProfileCard onClick={handleOpenProfile} style={{cursor:'pointer'}}>
+                        <ProfileCard onClick={handleOpenProfile} style={{ cursor: 'pointer' }}>
                             <img src={imageSource} style={{ inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%' }}></img>
                         </ProfileCard>
                     </Grid>
@@ -568,7 +675,7 @@ export default function DealerProfileDetails() {
                                 <ButtonClose variant='contained' onClick={handleCloseDocument}><CloseIcon /></ButtonClose>
                             </div>
                             <ModalCard>
-                                <img src={imageSource} style={{position: 'absolute',  inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%'}}></img>
+                                <img src={imageSource} style={{ position: 'absolute', inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%' }}></img>
                             </ModalCard>
                         </div>
                     </Modal>
@@ -646,13 +753,12 @@ export default function DealerProfileDetails() {
                                     <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gridGap: "10px", alignItems: "left" }}>
                                         <input
                                             type="number"
+                                            ref={creditLimitRef}
                                             style={{ height: 20, width: 120, marginTop: 15, marginLeft: 115 }}
-                                            value={editedCreditLimit || ""}
-                                            onChange={(e) => setEditedCreditLimit(parseInt(e.target.value, 10) || undefined)}
                                         />
-                                        <div >
-                                            <ButtonCredit variant="contained" style={{ marginTop: 10 }}>
-                                                <CheckIcon style={{ color: '#2A9221', }} />
+                                        <div>
+                                            <ButtonCredit variant="contained" style={{ marginTop: 10 }} onClick={() => handleUpdateCreditLimit(dealer!.dealerid)}>
+                                                <CheckIcon style={{ color: '#2A9221' }} />
                                             </ButtonCredit>
                                         </div>
                                     </div>
@@ -662,7 +768,6 @@ export default function DealerProfileDetails() {
                                     Php {dealer?.creditlimit}
                                 </StyleMainInfo>
                             )}
-
                         </Grid>
                     </Grid>
                     <Grid container>
@@ -672,6 +777,7 @@ export default function DealerProfileDetails() {
                                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
                                         <TabStyle icon={<PermIdentityIcon />} iconPosition="start" label="Basic Information" {...a11yProps(0)} />
                                         <TabStyle icon={<WorkOutlineIcon />} iconPosition="start" label="Business Information" {...a11yProps(1)} />
+                                        <TabStyle icon={<ReceiptLongOutlinedIcon />} iconPosition="start" label="Orders" {...a11yProps(2)} />
                                     </Tabs>
                                 </Box>
                                 <CustomTabPanel value={value} index={0}>
@@ -712,6 +818,23 @@ export default function DealerProfileDetails() {
                                 {/* Business Information */}
                                 <CustomTabPanel value={value} index={1}>
                                     {business}
+                                </CustomTabPanel>
+
+                                {/* Orders */}
+                                <CustomTabPanel value={value} index={2}>
+                                    <div>
+                                        {/* Your other components for displaying order-related information */}
+                                        <DataGrid
+                                            rows={rowsOrder} columns={columnsOrder}
+                                            initialState={{
+                                                pagination: {
+                                                    paginationModel: {
+                                                        pageSize: 5,
+                                                    },
+                                                },
+                                            }}
+                                            pageSizeOptions={[5]} />
+                                    </div>
                                 </CustomTabPanel>
                             </Box>
                         </Grid>

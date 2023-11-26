@@ -15,6 +15,7 @@ import java.util.List;
 public interface OrderRepository extends MongoRepository<Order, String> {
 
     List<Order> findByIsconfirmedFalse();
+    List<Order> findByDealer_Dealerid(String dealerId);
 
     List<Order> findByDistributor_DistributoridAndIsconfirmedFalse(String distributorId);
 

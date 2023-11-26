@@ -229,48 +229,45 @@ export function OrderTransactionDetails() {
 
               <StyldeInfoHeader>Dealer Contact Information</StyldeInfoHeader>
               <StackStyle sx={{ left: '30%' }}>
-                <StyleLabel>Dealer Name</StyleLabel>
-                <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
-              </StackStyle>
-              <StackStyle sx={{ left: '40%' }}>
                 <StyleLabel>Dealer ID</StyleLabel>
                 <StyleData>{order?.dealer.dealerid}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '50%' }}>
+              <StackStyle sx={{ left: '43%' }}>
+                <StyleLabel>Dealer Name</StyleLabel>
+                <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
+              </StackStyle>
+              <StackStyle sx={{ left: '60%' }}>
                 <StyleLabel>Contact Number</StyleLabel>
                 <StyleData>{order?.dealer.contactnumber}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '60%' }}>
-                <StyleLabel>Business Address</StyleLabel>
-                <StyleData>{order?.dealer.businessaddress}</StyleData>
+              <StackStyle sx={{ left: '75%' }}>
+                <StyleLabel>Email Address</StyleLabel>
+                <StyleData>{order?.dealer.emailaddress}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '70%' }}>
+              <StackStyle sx={{ left: '92%' }}>
                 <StyleLabel>Current Address</StyleLabel>
                 <StyleData>{order?.dealer.currentaddress}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '80%' }}>
-                <StyleLabel>Permanent Address</StyleLabel>
-                <StyleData>{order?.dealer.permanentaddress}</StyleData>
-              </StackStyle>
+              
               <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader>
               {/* set style left and top manually here in stack */}
               <StackStyle sx={{ left: '30%', top: '350px' }}>
                 <StyleLabel>Order Transaction ID</StyleLabel>
                 <StyleData>{order?.orderid}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '45%', top: '350px' }}>
-                <StyleLabel>Order Distribution Date</StyleLabel>
+              <StackStyle sx={{ left: '43%', top: '350px' }}>
+                <StyleLabel>Order Date</StyleLabel>
                 <StyleData>{order?.orderdate}</StyleData>
-              </StackStyle>
-              <StackStyle sx={{ left: '60%', top: '350px' }}>
+            </StackStyle>
+            <StackStyle sx={{ left: '60%', top: '350px' }}>
+                <StyleLabel>Distribution Date</StyleLabel>
+                <StyleData>{order?.distributiondate}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '75%', top: '350px' }}>
                 <StyleLabel>Total Ordered Amount</StyleLabel>
                 <StyleData>Php {order?.orderamount}</StyleData>
-              </StackStyle>
-              <StackStyle sx={{ left: '75%', top: '350px' }}>
-                <StyleLabel>Penalty Rate</StyleLabel>
-                <StyleData>{order?.penaltyrate} %</StyleData>
-              </StackStyle>
-              <StackStyle sx={{ left: '85%', top: '350px' }}>
+            </StackStyle>
+              <StackStyle sx={{ left: '92%', top: '350px' }}>
                 <StyleLabel>Payment Terms</StyleLabel>
                 <StyleData>{order?.paymentterms} Gives</StyleData>
               </StackStyle>
@@ -298,9 +295,9 @@ export function OrderTransactionDetails() {
                               <TableCell align='center'>{op.quantity}</TableCell>
                               <TableCell align='center'>{op.product.unit}</TableCell>
                               <TableCell align='center'>{op.product.name}</TableCell>
-                              <TableCell align='center'>{op.product.price}</TableCell>
+                              <TableCell align='center'>Php {op.product.price}</TableCell>
                               <TableCell align='center'>{op.product.commissionrate}</TableCell>
-                              <TableCell align='center'>{op.product.price * op.quantity}</TableCell>
+                              <TableCell align='center'>Php {op.product.price * op.quantity}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>

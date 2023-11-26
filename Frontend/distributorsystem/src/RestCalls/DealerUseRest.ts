@@ -2,13 +2,26 @@ import axios, { } from "axios";
 import { useState } from "react";
 import { IDealer, IDealerDocument } from "./Interfaces";
 import { toast } from "react-toastify";
+import { error } from "console";
+import de from "date-fns/locale/de";
 import { response } from "express";
 
 
 
 
 
-export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String, distributorid: string) => void, (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, (dealerID: string, creditlimit: number) => void, (dealerID: string, remarks: string) => void, (dealerID: string, remarks: string, dateArchived: string) => void, () => void, boolean | undefined, boolean | undefined, IDealer | undefined, number | undefined] => {
+export const useRestDealer = (): [
+    (dealerID: string) => void,
+    (dealerID: String, distributorid: string) => void,
+    (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void,
+    (dealerID: string, creditlimit: number) => void,
+    (dealerID: string, remarks: string) => void,
+    (dealerID: string, remarks: string, dateArchived: string) => void,
+    () => void,
+    (dealerID: string, creditLimit: number) => void,
+    boolean | undefined,
+    boolean | undefined,
+    IDealer | undefined, number | undefined] => {
 
     const [dealer, setDealer] = useState<IDealer | null>();
     const [isDealerFound, setIsDealerFound] = useState(false);
@@ -206,8 +219,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
     function declineDealer(dealerID: string, reason: string, dateArchived: string) {
         console.log(dealerID + dateArchived)
 
-
-
         axios.put(`http://localhost:8080/dealer/updateDealerDecline/${dealerID}`, null, {
             params: {
                 remarks: reason,
@@ -243,8 +254,42 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
             });
     }
 
+    function updateDealerCreditLimit(dealerID: string, creditLimit: number) {
+        axios.put(`http://localhost:8080/dealer/updateCreditLimit/${dealerID}`, null, {
+            params: {
+                creditlimit: creditLimit,
+            }
+        })
+            .then((response) => {
+                // alert('Dealer status updated to pending successfully!');
+                toast.success("Dealer Credit Limit is Updated!", {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+            })
+            .catch((error) => {
+                //alert('Error updating dealer status to pending. Please try again.');
+                toast.error("Unexpected Error Updating Credit Limit. Please try again", {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+            });
+    }
 
-    function getDealerByID(dealerID: String) {
+
+    function getDealerByID(dealerID: string) {
         let creditLimit = 0;
         let remainingCredit = 0;
         axios.get(`http://localhost:8080/dealer/getDealerByID/${dealerID}`)
@@ -253,7 +298,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
 
                 if (response.data !== null) {
                     if (response.data.isconfirmed !== false) {
-                        alert("naa?")
                         setDealer(response.data);
                         setIsDealerFound(true);
                     }
@@ -306,8 +350,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
     }
 
     function getDealerByDistributor(dealerID: String, distributorid: string) {
-
-
         axios.get(`http://localhost:8080/dealer/getDealerByDistributor/${dealerID}/${distributorid}`)
             .then((response) => {
                 if (response.data !== '') {
@@ -365,10 +407,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
             .catch((error) => {
                 console.error('Error retrieving dealer data:', error);
             });
-
-
-
-
     }
 
     function getRemainingDealerCredit(dealerID: string) {
@@ -395,7 +433,7 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
                 console.error('Error retrieving dealer credit limit:', error);
             });
 
-            return remainingCredit;
+        return remainingCredit;
     }
 
 
@@ -405,9 +443,6 @@ export const useRestDealer = (): [(dealerID: string) => void, (dealerID: String,
     }
 
 
-    return [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, isDealerFound, isDealerConfirmed, dealer!, dealerRemainingCredit]
+    return [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer!, dealerRemainingCredit]
 }
-/* [(dealerID: string) => void, 
-     (dealer: IDealer, dealerDocuments: IDealerDocument[]) => void, 
-     (dealerID: string, creditlimit: number) => void, 
-     (dealerID: string, remarks: string) => void, (dealerID: string, remarks: string, dateArchived: string) => void, boolean | undefined, boolean | undefined, IDealer | undefined, number | undefined] */
+

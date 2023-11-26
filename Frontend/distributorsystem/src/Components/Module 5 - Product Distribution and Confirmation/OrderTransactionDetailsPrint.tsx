@@ -4,7 +4,7 @@ import { IOrder } from "../../RestCalls/Interfaces";
 
 const ContentNameTypography = styled(Typography)({
     marginTop: 60,
-    marginLeft: '8%',
+    marginLeft: '9%',
     fontFamily: 'Inter',
     fontWeight: 'bold',
     textAlign: 'left',
@@ -102,57 +102,54 @@ export default function OrderTransactionDetailsPrint({ order}: { order: IOrder})
             </ContentNameTypography >
 
             <StyldeInfoHeader>Dealer Contact Information</StyldeInfoHeader>
-            <StackStyle sx={{ left: '30%' }}>
-                <StyleLabel>Dealer Name</StyleLabel>
-                <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '40%' }}>
+            <StackStyle sx={{ left: '27%' }}>
                 <StyleLabel>Dealer ID</StyleLabel>
                 <StyleData>{order?.dealer.dealerid}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '50%' }}>
+              </StackStyle>
+              <StackStyle sx={{ left: '38%' }}>
+                <StyleLabel>Dealer Name</StyleLabel>
+                <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
+              </StackStyle>
+              <StackStyle sx={{ left: '57%' }}>
                 <StyleLabel>Contact Number</StyleLabel>
                 <StyleData>{order?.dealer.contactnumber}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '60%' }}>
-                <StyleLabel>Business Address</StyleLabel>
-                <StyleData>{order?.dealer.businessaddress}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '70%' }}>
+              </StackStyle>
+              <StackStyle sx={{ left: '72%' }}>
+                <StyleLabel>Email Address</StyleLabel>
+                <StyleData>{order?.dealer.emailaddress}</StyleData>
+              </StackStyle>
+              <StackStyle sx={{ left: '96%' }}>
                 <StyleLabel>Current Address</StyleLabel>
                 <StyleData>{order?.dealer.currentaddress}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '80%' }}>
-                <StyleLabel>Permanent Address</StyleLabel>
-                <StyleData>{order?.dealer.permanentaddress}</StyleData>
-            </StackStyle>
+              </StackStyle>
+            
             <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader>
             {/* set style left and top manually here in stack */}
-            <StackStyle sx={{ left: '30%', top: '350px' }}>
+            <StackStyle sx={{ left: '27%', top: '350px' }}>
                 <StyleLabel>Order Transaction ID</StyleLabel>
                 <StyleData>{order?.orderid}</StyleData>
             </StackStyle>
-            <StackStyle sx={{ left: '45%', top: '350px' }}>
-                <StyleLabel>Order Distribution Date</StyleLabel>
+            <StackStyle sx={{ left: '47%', top: '350px' }}>
+                <StyleLabel>Order Date</StyleLabel>
                 <StyleData>{order?.orderdate}</StyleData>
             </StackStyle>
-            <StackStyle sx={{ left: '60%', top: '350px' }}>
+            <StackStyle sx={{ left: '59%', top: '350px' }}>
+                <StyleLabel>Distribution Date</StyleLabel>
+                <StyleData>{order?.distributiondate}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '75%', top: '350px' }}>
                 <StyleLabel>Total Ordered Amount</StyleLabel>
                 <StyleData>Php {order?.orderamount}</StyleData>
             </StackStyle>
-            <StackStyle sx={{ left: '75%', top: '350px' }}>
-                <StyleLabel>Penalty Rate</StyleLabel>
-                <StyleData>{order?.penaltyrate} %</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '85%', top: '350px' }}>
+            <StackStyle sx={{ left: '96%', top: '350px' }}>
                 <StyleLabel>Payment Terms</StyleLabel>
                 <StyleData>{order?.paymentterms} Gives</StyleData>
             </StackStyle>
             <StyldeInfoHeader>Order Breakdown</StyldeInfoHeader>
 
-            <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '-100px' }}>
+            <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '-90px' }}>
                 <Grid item >
-                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "215px", justifyContent: 'center', display: 'flex', alignItems: 'left', position: 'relative', width: '1200px' }}>
+                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "215px", justifyContent: 'center', display: 'flex', alignItems: 'left', position: 'relative', width: '800px' }}>
 
                         <TableContainer>
                             <Table aria-label='simple table'>
@@ -174,13 +171,13 @@ export default function OrderTransactionDetailsPrint({ order}: { order: IOrder})
                                             <TableCell align='center'>{op.product.name}</TableCell>
                                             <TableCell align='center'>{op.product.price}</TableCell>
                                             <TableCell align='center'>{op.product.commissionrate}</TableCell>
-                                            <TableCell align='center'>{op.product.price * op.quantity}</TableCell>
+                                            <TableCell align='center'>Php {op.product.price * op.quantity}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                        <StackStyle sx={{ left: '85%', top: '230px' }}>
+                        <StackStyle sx={{ left: '80%', top: '230px' }}>
                             <StyleTotalLabel>Total Ordered Amount:</StyleTotalLabel>
                             <StyleTotalPaper>
                                 <StyleTotalData>Php {order?.orderamount}</StyleTotalData>

@@ -89,7 +89,7 @@ export default function DealerProfileListUI() {
 
     const [remarks, setRemarks] = useState(""); // State to capture remarks
     const [creditlimit, setCreditlimit] = useState(0);
-    const  [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
+    const  [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -196,22 +196,26 @@ export default function DealerProfileListUI() {
         { field: 'dealerName', headerName: 'Dealer Name', width: 300 },
         { field: 'submissionDate', headerName: 'Date Submitted', width: 203 },
 
+
+        
         {
             field: 'view',
             headerName: '',
             width: 150,
             renderCell: (params: { row: any; }) => {
+                const dealer = params.row;
                 return (
                     <StyledButton
                         onClick={() => {
-                            handleViewButtonClick(params.row.dealerid);
+
+                            handleViewButtonClick(dealer.id);
                         }}
                     >
                         View
-                    </StyledButton>
-                    )
+                    </StyledButton>)
             }
         },
+           
         {
             field: 'confirm', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {

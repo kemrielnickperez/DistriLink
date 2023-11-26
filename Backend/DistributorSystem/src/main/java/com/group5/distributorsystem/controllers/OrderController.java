@@ -95,6 +95,11 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getAllUnconfirmedOrders(), HttpStatus.OK);
     }
 
+    @GetMapping("/getOrderByDealerId/{dealerId}")
+    public ResponseEntity<Object> getOrderByDealerId(@PathVariable String dealerId){
+        return new ResponseEntity<>(orderService.getOrderByDealerId(dealerId), HttpStatus.OK);
+    }
+
     @GetMapping("/getAllUnconfirmedOrdersByDistributorID/{distributorid}")
     public ResponseEntity<Object> getAllUnconfirmedOrdersByDistributorID(@PathVariable String distributorid){
         return new ResponseEntity<>(orderService.getAllUnconfirmedOrdersByDistributorID(distributorid), HttpStatus.OK);

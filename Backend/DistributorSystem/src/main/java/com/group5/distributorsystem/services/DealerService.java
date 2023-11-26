@@ -146,15 +146,26 @@ public class DealerService {
         return dealerRepository.findByDealeridAndPassword(dealerid, password);
     }
 
-    public void updateDealerCreditLimit(String dealerId, double newCreditLimit) {
-        Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
-        if (optionalDealer.isPresent()) {
-            Dealer dealer = optionalDealer.get();
-            dealer.setCreditlimit(newCreditLimit);
-            dealerRepository.save(dealer);
-        } else {
-            // Handle the case where the dealer doesn't exist.
-        }
+    public void updateDealerCreditLimit(String dealerId, double creditlimit) {
+        Dealer optionalDealer = dealerRepository.findById(dealerId).get();
+        double previousCreditLmit = optionalDealer.getCreditlimit();
+        // Get the dealer's information
+
+        String subject = "Dealer Account Status Update";
+        String content =
+                "Dealer Name: " + optionalDealer.getFirstname() +" "+  optionalDealer.getMiddlename() +" "+ optionalDealer.getLastname() + "\n" +
+                        "Dealer ID: " + optionalDealer.getDealerid()+ "\n" +
+                        "Your Credit Limit is Updated.\n" +
+                        "Previous Credit Limit: "+ previousCreditLmit + "\n" +
+                        "Updated Credit Limit: " + creditlimit;
+
+        // Use the EmailService to send the email using the dealer's email address
+        dealerEmailService.sendUpdatedCreditLimitEmail(optionalDealer, subject, content);
+
+        // Save the updated "confirmed" property back to the database
+        optionalDealer.setCreditlimit(creditlimit);
+        dealerRepository.save(optionalDealer);
+
     }
 
     public List<Dealer> getAllUnconfirmedDealers() {
