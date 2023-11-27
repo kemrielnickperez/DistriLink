@@ -676,6 +676,9 @@ export default function RecordDirectPayment() {
             }
         }
 
+        if(orderIDRef.current!.value+"" !== '')
+            handleFindPaymentTransactions();
+
 
     
         setMaxDate(dayjs() as Dayjs);

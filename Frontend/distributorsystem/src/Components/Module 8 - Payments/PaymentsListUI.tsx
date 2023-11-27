@@ -263,9 +263,9 @@ export default function PaymentList() {
 
     return (
         <div>
-            <StyledCard>
-                <ContentNameTypography>Payment Receipts</ContentNameTypography>
-                <DataGrid
+             <StyledCard>
+    
+               {/*  <DataGrid
                     rows={rows}
                     sx={{ textAlign: 'center', color: '#203949', height: '350px', margin: '35px 20px 0 20px', fontWeight: 330 }}
                     columns={columns}
@@ -280,17 +280,9 @@ export default function PaymentList() {
                     checkboxSelection
                     onRowSelectionModelChange={(handleRowSelection)}
                     rowSelectionModel={selectedRows}
-                />
+                /> */}
 
-            </StyledCard>
-
-
-            <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{ color: '#FFFFFF', marginTop: '20px' }}>
-                Confirm
-            </StyledButton>
-
-            {/**DataGrid */}
-            <Box sx={{ pt: 2, pr: 2, pl: 2 }}>
+                  <Box sx={{ pt: 2, pr: 2, pl: 2 }}>
                 <DataGridStyle
                     rows={rows}
                     columns={columns.map((column) => ({
@@ -314,11 +306,19 @@ export default function PaymentList() {
                         return params.row.paymentType !== 'direct';
                     }}
                 />
-            </Box>
+            </Box> 
 
-            <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{ color: '#FFFFFF', marginTop: '20px' }}>
+             <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{ color: '#FFFFFF', marginTop: '20px' }}>
                 Confirm
-            </StyledButton>
+            </StyledButton> 
+
+            </StyledCard> 
+
+
+            
+
+            {/**DataGrid */}
+           
 
             <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
                 vertical: 'top',
