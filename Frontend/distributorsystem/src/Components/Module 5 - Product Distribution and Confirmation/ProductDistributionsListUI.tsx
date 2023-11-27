@@ -141,11 +141,12 @@ export default function ProductDistributionList() {
         };
     }
 
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
 
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
         axios
-            .get<IOrder[]>('http://localhost:8080/order/getAllOrders')
+            .get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setOrder(response.data);
             })

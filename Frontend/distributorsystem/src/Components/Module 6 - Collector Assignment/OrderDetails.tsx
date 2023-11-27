@@ -177,6 +177,7 @@ export function OrderDetails() {
 
         setIsMounted(true); // Set the component as mounted when it renders
 
+        console.log(order);
 
 
     },
