@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Autocomplete, Button, Card, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Autocomplete, Box, Button, Card, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { IDirectPaymentReceipt, IEmployee, IOrder, IPaymentReceipt } from "../../RestCalls/Interfaces";
 import { auto } from "@popperjs/core";
@@ -14,12 +14,19 @@ function SlideTransitionDown(props: SlideProps) {
 
 const StyledCard = styled(Card)({
     padding: '10px 10px 10px 2px',
-    margin: "50px 28% 20px 10%",
-    width: '85%',
-    height: '550px',
+    margin: "50px 28% 0px 7.2%",
+    width: '90%',
+    height: '530px',
+    background: 'linear-gradient(50deg, rgba(255,255,255,0.4) 12%,rgba(255,255,255,0.1) 77% )',
+    backgroundBlendMode: '',
+    // backgroundColor:'rgb(245, 247, 249,0.4)',
+    backdropFilter: 'blur(5px)',
+    WebkitBackdropFilter: 'blur(5px)',
+    boxShadow: '0 4px 7px 1px rgba(0,0,0,0.28)',
     alignItems: 'center',
-    borderRadius: '25px',
-    justifyContent: 'left'
+    borderRadius: '10px',
+    justifyContent: 'center',
+    position: 'fixed'
 })
 const ContentNameTypography = styled(Typography)({
 
@@ -41,7 +48,7 @@ const LabelTypography = styled(Typography)({
     color: '#707070'
 })
 const StyledButton = styled(Button)({
-    marginTop: -5,
+    paddingTop: -40,
     marginLeft: 30,
     backgroundColor: '#2C85E7',
     fontFamily: 'Inter, sans-serif',
@@ -49,8 +56,44 @@ const StyledButton = styled(Button)({
     width: '150px',
     height: 40,
     ':hover': {
-        backgroundColor: '#87BAF3',
-    }
+        backgroundColor: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s',
+})
+const StyledButton1 = styled(Button)({
+    backgroundColor: 'rgb(45, 133, 231,0.8)',
+    borderRadius: 20,
+    color: '#FFFFFF',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '15px',
+    width: '100px',
+    height: 35,
+    ':hover': {
+        backgroundColor: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s'
+})
+
+const DataGridStyle = styled(DataGrid)({
+
+    textAlign: 'center',
+    fontSize: 15,
+    color: '#203949',
+    height: '420px',
+    width: '100%',
+    margin: '10px 10px 0px 0px',
+    borderRadius: '5px',
+    border: '0px solid #e0e0e0',
+    '& .MuiDataGrid-columnHeader': {
+        backgroundColor: 'rgb(45, 133, 231, 0.2)',
+        fontWeight: 'bold'
+    },
+
+    '& .MuiDataGrid-row:nth-child(even)': {
+        backgroundColor: 'rgb(45, 133, 231, 0.1)',
+    },
 })
 
 export default function PaymentList() {
@@ -78,8 +121,8 @@ export default function PaymentList() {
 
             })
             .catch((error) => {
-                alert("Error retrieving payment receipts. Please try again.");
-                headerHandleAlert('Error', "Error retrieving payment receipts. Please try again..", 'error');
+                // alert("Error retrieving payment receipts. Please try again.");
+                // headerHandleAlert('Error', "Error retrieving payment receipts. Please try again..", 'error');
             });
     }
 
@@ -111,24 +154,33 @@ export default function PaymentList() {
         { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 200 },
         { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 200 },
         { field: 'paymentType', headerName: 'Payment Type', width: 200 },
-        { field: 'paymentStatus', headerName: 'Payment Status', width: 200 },
+        {
+            field: 'paymentStatus',
+            headerName: 'Payment Status',
+            width: 200,
+            renderCell: (params) => (
+                <div style={{
+                    color: params.value === 'Unconfirmed' ? '#E77D7D' : '#2A9221'
+                }}>
+                    {params.value}
+                </div>
+            ),
+        },
         { field: 'receiverName', headerName: 'Receiver Name', width: 200 },
         {
             field: 'action',
             headerName: '',
-            width: 150,
+            width: 260,
             renderCell: (params: { row: any; }) => {
                 return (
-                    <Button
-                        variant="contained"
-                        color="primary"
+                    <StyledButton1
                         onClick={() => {
                             // Handle button click for this row here
                             handleViewButtonClick(params.row.paymentReceiptid);
                         }}
                     >
                         View
-                    </Button>
+                    </StyledButton1>
                 )
             }
         }
@@ -237,8 +289,37 @@ export default function PaymentList() {
                 Confirm
             </StyledButton>
 
+            {/**DataGrid */}
+            <Box sx={{ pt: 2, pr: 2, pl: 2 }}>
+                <DataGridStyle
+                    rows={rows}
+                    columns={columns.map((column) => ({
+                        ...column,
+                    }))
+                    }
+                    initialState={{
+                        pagination: {
+                            paginationModel: {
+                                pageSize: 10,
+                            },
+                        },
+                    }}
+                    pageSizeOptions={[10]}
+                    checkboxSelection
+                    onRowSelectionModelChange={(handleRowSelection)}
+                    rowSelectionModel={selectedRows}
 
-            {/* Alerts */}
+                    isRowSelectable={(params) => {
+                        // Check the payment type of the row and disable the checkbox for direct payment types
+                        return params.row.paymentType !== 'direct';
+                    }}
+                />
+            </Box>
+
+            <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{ color: '#FFFFFF', marginTop: '20px' }}>
+                Confirm
+            </StyledButton>
+
             <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'center'
@@ -263,6 +344,7 @@ export default function PaymentList() {
                 style={{ width: 450 }}
                 theme="colored"
             />
+
         </div>
 
 

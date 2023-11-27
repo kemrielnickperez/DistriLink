@@ -18,6 +18,8 @@ import { useContext, useEffect, useRef, useState } from 'react';
 //Please Install npm i react-toastify or if doesn't work, install npm i react-toastify
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+
 import { useNavigate } from 'react-router';
 
 
@@ -29,8 +31,10 @@ function SlideTransitionDown(props: SlideProps) {
 
 
 const StyledDatePicker = styled(DatePicker)({
+
   [`& fieldset`]: {
-    borderRadius: 20
+    borderRadius: 20,
+    height: 55,
   }
 });
 
@@ -43,8 +47,12 @@ const StyledProductTextField = styled(TextField)({
 });
 
 const StyledTextField = styled(TextField)({
+  input: {
+    marginTop: "-3px"
+  },
   [`& fieldset`]: {
-    borderRadius: 20
+    borderRadius: 20,
+    height: 53,
   }
 })
 
@@ -53,7 +61,6 @@ const LabelGrid = styled(Grid)({
   display: "flex",
   justifyContent: "center",
   top: 20,
-  left: -60
 })
 
 const TableHeaderCell = styled(TableCell)({
@@ -63,6 +70,8 @@ const TableHeaderCell = styled(TableCell)({
 });
 
 const ProductName = styled(Typography)({
+  color: '#707070',
+  fontWeight: '550',
   position: 'relative',
   left: 30,
   top: -50
@@ -72,12 +81,16 @@ const StyledProductField = styled(TextField)({
   position: 'relative',
   width: '400px',
   left: -70,
+  height: 55,
   [`& fieldset`]: {
     borderRadius: 20
+
   }
 })
 
 const QuantityName = styled(Typography)({
+  color: '#707070',
+  fontWeight: '550',
   position: 'relative',
   left: -20,
   top: -50
@@ -109,18 +122,89 @@ const TitleBox = styled(Box)({
   left: -350,
 })
 
+const StyledNumber=styled(TextField)({
+  '& fieldset': {
+    borderColor: 'rgb(0,0,0,0)', // Change 'your-color' to the desired color
+  },
+})
 
+const SaveButton= styled(Button)({
+  // position: 'relative',
+  // width: '200px',
+  // height: 50,
+  // left: -30,
+  // ':hover': {
+  //   backgroundColor: '#2D85E7',
+  //   transform: 'scale(1.1)'
+  // },
+  // transition: 'all 0.4s'
+  backgroundColor: 'rgb(45, 133, 231,0.8)',
+  borderRadius: 5,
+  color: '#FFFFFF',
+  fontFamily: 'Inter, sans-serif',
+  fontSize: '20px',
+  width: '200px',
+  height: 50,
+  ':hover': {
+      backgroundColor: '#2D85E7',
+      transform: 'scale(1.1)'
+  },
+  transition: 'all 0.4s'
+})
 const AddToCart = styled(Button)({
   position: 'relative',
   width: '200px',
-  left: -30
+  height: 50,
+  left: -30,
+  ':hover': {
+    backgroundColor: '#2D85E7',
+    transform: 'scale(1.1)'
+  },
+  transition: 'all 0.4s'
 })
 
 const OverallGrid = styled(Grid)({
   position: 'relative',
   display: "flex",
   justifyContent: "center",
-  top: 50
+  paddingTop: 30
+})
+
+const StyleLabel = styled(Typography)({
+  textAlign: 'left',
+  fontWeight: '550',
+  marginLeft: 0,
+  marginTop: 20,
+  paddingBottom: 10,
+  color: '#707070',
+  fontSize: '15px',
+  width: 'max-content',
+  fontFamily: 'Inter',
+})
+
+const PaperStyle = styled(Paper)({  
+  background: 'linear-gradient(50deg, rgba(255,255,255,0.4) 12%,rgba(255,255,255,0.1) 77% )',
+  backgroundBlendMode: '',
+  // backgroundColor:'rgb(245, 247, 249,0.4)',
+  backdropFilter: 'blur(5px)',
+  WebkitBackdropFilter: 'blur(5px)',
+  boxShadow: '0 3px 3px 1px rgba(0,0,0,0.28)',
+  borderRadius: "10px",
+  height: "200px",
+  justifyContent: 'center',
+  display: 'flex',
+  alignItems: 'center',
+  position: 'relative',
+  width: '1200px',
+  marginTop: 30
+})
+
+const RemoveButton =styled(Button)({
+  ":hover":{
+
+    transform: 'scale(1.4)'
+},
+transition: 'all 0.4s'
 })
 
 export default function ProductDistributionList() {
@@ -128,7 +212,7 @@ export default function ProductDistributionList() {
   const navigate = useNavigate();
 
   const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
-  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit]  = useRestDealer();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile]  = useRestDealer();
 
 
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -270,6 +354,16 @@ export default function ProductDistributionList() {
       if (existingProductIndex !== -1) {
         // alert('Product already added to the cart');
         // toast
+        toast.info("If you'd like to increase the quantity of products, adjust product quantity as needed.", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        })
         toast.warning(chosenProduct.name + ' is already been added to the cart', {
           position: "bottom-right",
           autoClose: 5000,
@@ -280,6 +374,7 @@ export default function ProductDistributionList() {
           progress: undefined,
           theme: "colored",
         })
+
 
         setChosenProduct(null);
         setQuantity('');
@@ -371,6 +466,7 @@ export default function ProductDistributionList() {
       saveHandleAlert('No Ordered Products', "Please add products to your order before saving.", 'warning')
     }
 
+
     // Create an order object with the necessary data
     else if (orderedProducts.length > 0 && isDealerFound) {
       const orderAmount = orderedProducts.reduce((total, product) => {
@@ -421,68 +517,75 @@ export default function ProductDistributionList() {
 
   return (
     <div>
-      <TitleBox>
-        <TitleTypo>Product Distribution Form</TitleTypo>
-      </TitleBox>
+
+
       <OverallGrid container>
-        <LabelGrid container>
-          <Grid item sx={{ marginRight: 27 }}>
-            <Typography>Dealer ID</Typography>
-          </Grid>
-          <Grid item sx={{ marginRight: 19 }}>
-            <Typography>Distribution Date</Typography>
-          </Grid>
-          <Grid item sx={{ marginRight: 23 }}>
-            <Typography>Penalty Rate</Typography>
-          </Grid>
-          <Grid item>
-            <Typography>Payment Terms</Typography>
-          </Grid>
-        </LabelGrid>
-        <Box component="form" sx={{ '& > :not(style)': { position: 'relative', top: 10, left: 10, m: 2, width: '28ch', borderRadius: "25px" } }}>
-          <StyledTextField
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end" >
-                  <IconButton onClick={handleFindDealer}>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            variant="outlined"
-            inputRef={dealerIDRef}
-          >
-          </StyledTextField>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <StyledDatePicker
-              slotProps={{
-                textField: {
-                  InputProps: {
-                    disableUnderline: true
-                  },
-                  // Set the variant to "standard"
-                  variant: "outlined",
-                }
-              }}
-              value={selectedDate}
-              minDate={minDate}
-              onChange={(date) => setSelectedDate(date as Dayjs | null)} />
-          </LocalizationProvider>
-          <StyledTextField variant="outlined" InputProps={{ disableUnderline: true }} inputRef={penaltyRateRef}></StyledTextField>
-          <StyledTextField variant="outlined" select
-            value={paymentTerm}
-            onChange={(event) => setPaymentTerm(Number(event.target.value))}>
-            {paymentchoices.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </StyledTextField>
+        <Box sx={{ pl: 2, pr: 2 }}>
+          <LabelGrid container>
+            <Grid item paddingRight={5} paddingBottom={2}>
+              <StyleLabel>Dealer ID</StyleLabel>
+              <StyledTextField
+                sx={{ zIndex: 2 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end" >
+                      <IconButton type="button" sx={{ zIndex: 1, backgroundColor: "#2d85e7", left: 14, top: -1.5, height: '50px', width: '51px', borderRadius: "0 20px 20px 0", '&:hover': { backgroundColor: "#2d85e7" } }} onClick={handleFindDealer}>
+                        <SearchIcon sx={{ color: "white" }} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                variant="outlined"
+                inputRef={dealerIDRef}
+              >
+              </StyledTextField>
+            </Grid>
+            <Grid item paddingRight={5} paddingBottom={2}>
+              <StyleLabel>Distribution Date</StyleLabel>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <StyledDatePicker
+
+                  slotProps={{
+                    textField: {
+                      style: { height: 55 },
+                      InputProps: {
+                        disableUnderline: true
+                      },
+
+                      // Set the variant to "standard"
+                      variant: "outlined",
+                    }
+                  }}
+                  value={selectedDate}
+                  minDate={minDate}
+                  onChange={(date) => setSelectedDate(date as Dayjs | null)} />
+              </LocalizationProvider>
+
+            </Grid>
+            <Grid item paddingRight={5} paddingBottom={2}>
+              <StyleLabel>Penalty Rate</StyleLabel>
+              <StyledTextField style={{ width: 250 }} variant="outlined" InputProps={{ disableUnderline: true }} inputRef={penaltyRateRef}></StyledTextField>
+            </Grid>
+            <Grid item>
+              <StyleLabel>Payment Terms</StyleLabel>
+              <StyledTextField
+                variant="outlined"
+                select
+                style={{ width: 250 }}
+                value={paymentTerm}
+                onChange={(event) => setPaymentTerm(Number(event.target.value))}>
+                {paymentchoices.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </StyledTextField>
+            </Grid>
+          </LabelGrid>
         </Box>
         <Grid item container sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
           <Grid item>
-            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "200px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
+            <PaperStyle>
               <ProductName>Product Name</ProductName>
               <Autocomplete disablePortal id="flat-demo" options={products}
                 getOptionLabel={(option) => option.name}
@@ -497,30 +600,32 @@ export default function ProductDistributionList() {
               />
               <QuantityName>Quantity</QuantityName>
               <StyledQuantityField variant="outlined" InputProps={{ disableUnderline: true }} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-              <AddToCart variant="contained" onClick={() => { handleAddToCart(); }}>ADD TO CART</AddToCart>
-            </Paper>
+              <AddToCart variant="contained" onClick={() => { handleAddToCart(); }}>ADD TO CART<AddShoppingCartIcon style={{ paddingLeft: 10, height: 22 }} /></AddToCart>
+            </PaperStyle>
           </Grid>
         </Grid>
         <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
           <Grid item >
-            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>
+            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "10px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>
               <TableContainer>
                 <Table aria-label='simple table'>
-                  <TableHead>
+                  <TableHead style={{ backgroundColor: 'rgb(45, 133, 231, 0.08)', }}>
                     <TableRow>
-                      <TableHeaderCell align="center">Quantity</TableHeaderCell>
-                      <TableHeaderCell align="center">Unit</TableHeaderCell>
-                      <TableHeaderCell align="center">Product Name</TableHeaderCell>
-                      <TableHeaderCell align="center">Unit Price</TableHeaderCell>
-                      <TableHeaderCell align="center">Commission Rate</TableHeaderCell>
-                      <TableHeaderCell align="center">Amount</TableHeaderCell>
+                      <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Quantity</TableHeaderCell>
+                      <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Unit</TableHeaderCell>
+                      <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Product Name</TableHeaderCell>
+                      <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Unit Price</TableHeaderCell>
+                      <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Commission Rate</TableHeaderCell>
+                      <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Amount</TableHeaderCell>
+                      <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}></TableHeaderCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {orderedProducts.map((product) => (
-                      <TableRow key={product.product.productid}>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>
-                          <input
+                    {orderedProducts.map((product, index) => (
+
+                      <TableRow sx={{ backgroundColor: index % 2 === 0 ? 'inherit' : 'rgb(45, 133, 231, 0.08)' }} key={product.product.productid}>
+                        <TableCell align='center' sx={{ color: "#156D94" }}>
+                          {/* <input
                             type="number"
                             value={product.quantity}
                             onChange={(e) => {
@@ -531,14 +636,29 @@ export default function ProductDistributionList() {
                                 handleUpdateQuantity(product, newValue);
                               }
                             }}
+                          /> */}
+                          <StyledNumber
+                            variant="outlined"
+                            
+                            type='number'
+                            value={product.quantity}
+                            style={{width:90}}
+                            onChange={(e) => {
+                              const newValue = Number(e.target.value);
+                              if (newValue < 0) {
+                                handleUpdateQuantity(product, 0);
+                              } else {
+                                handleUpdateQuantity(product, newValue);
+                              }
+                            }}
                           />
                         </TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.unit}</TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.name}</TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price}</TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.commissionrate}</TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price * product.quantity}</TableCell>
-                        <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}><Button onClick={() => handleRemoveFromCart(product)}>REMOVE</Button></TableCell>
+                        <TableCell align='center' sx={{ color: "#203949" }}>{product.product.unit}</TableCell>
+                        <TableCell align='center' sx={{ color: "#203949" }}>{product.product.name}</TableCell>
+                        <TableCell align='center' sx={{ color: "#203949" }}>{product.product.price}</TableCell>
+                        <TableCell align='center' sx={{ color: "#203949" }}>{product.product.commissionrate}</TableCell>
+                        <TableCell align='center' sx={{ color: "#203949" }}>{product.product.price * product.quantity}</TableCell>
+                        <TableCell align='center' sx={{ color: "#203949" }}><RemoveButton onClick={() => handleRemoveFromCart(product)}><RemoveCircleIcon/></RemoveButton></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -546,12 +666,11 @@ export default function ProductDistributionList() {
               </TableContainer>
             </Paper>
             <br></br>
-            <Paper sx={{ width: '200px', display: 'flex', marginLeft: 'auto', alignContent: 'center' }}><Typography sx={{ fontSize: 15, color: "#000000", fontWeight: "bold" }}>Total Amount:</Typography><Typography>  Php {totalAmount}</Typography></Paper>
+            <Paper sx={{ width: '220px', height: '40px', display: 'flex', marginLeft: 'auto', alignContent: 'center', paddingTop: 2, paddingLeft: 2 }}><Typography sx={{ fontSize: 15, color: "#000000", fontWeight: "bold" }}>Total Amount: Php {totalAmount}</Typography></Paper>
             <br></br>
           </Grid>
         </Grid>
-        <Button variant='contained' sx={{ background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6, paddingRight: 6, fontWeight: 'bold', borderRadius: 5 }} disabled={!isDealerFound}
-          onClick={handleSaveOrder}>Save</Button>
+        <SaveButton variant='contained' onClick={handleSaveOrder} disabled={!isDealerFound}>Save</SaveButton>
 
 
         {/* Alerts */}
@@ -576,7 +695,7 @@ export default function ProductDistributionList() {
           pauseOnFocusLoss
           draggable
           pauseOnHover
-          style={{ width: 430 }}
+          style={{ width: 450 }}
           theme="colored"
         />
 

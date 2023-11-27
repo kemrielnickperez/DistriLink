@@ -122,7 +122,7 @@ export default function WelcomeScreen(){
             })
             .catch((error) => {
 
-                alert("Error retrieving payment receipts. Please try again.");
+                // alert("Error retrieving payment receipts. Please try again.");
             });
     } 
     

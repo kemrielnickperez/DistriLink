@@ -741,26 +741,7 @@ export default function RecordDirectPayment() {
                     ) : (<div>
                         <Grid container>
                             <Grid item><StyleLabel>Payment Transaction ID</StyleLabel>
-                                {/* <StyleTextField3
-                     variant="outlined"
-                     select
-                     value={selectedPaymentTransaction}
-                     style={{width:230}}
-                     onChange={(newValue) => {
-                        setPaymentTransactionID(newValue+''); 
-                    }}
-                     SelectProps={{
-                        native: true,
-                    }}
-                    
-                    > 
-                     {order?.paymenttransactions!.map((option)=>(
-                        <MenuItem key={option.paymenttransactionid}
-                        value={option.paymenttransactionid} 
-                        style={{marginLeft:'200px'}}>
-                            {option.paymenttransactionid}
-                        </MenuItem>
-                     ))} */}
+            
                                 <Autocomplete
                                     disablePortal
                                     id="combo-box-demo"

@@ -1,13 +1,18 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { IArchivedDealer, IDealer, IDistributor } from "../../RestCalls/Interfaces";
+import { IArchivedDealer, IDealer, IDistributor, IDealerDocument } from "../../RestCalls/Interfaces";
 import axios from "axios";
 import { Alert, AlertTitle, Box, Button, Card, Grid, Modal, Slide, SlideProps, Snackbar, Tab, Tabs, TextField, TextFieldProps, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import profilepicture from "../../Global Components/Images/profilepicture.png"
+
 
 
 
@@ -35,12 +40,19 @@ const style = {
 
 const StyledCard = styled(Card)({
     padding: '10px 10px 10px 2px',
-    margin: "50px 28% 20px 7.2%",
+    margin: "50px 28% 0px 7.2%",
     width: '90%',
-    height: '650px',
+    height: '550px',
+    background: 'linear-gradient(50deg, rgba(255,255,255,0.4) 12%,rgba(255,255,255,0.1) 77% )',
+    backgroundBlendMode: '',
+    // backgroundColor:'rgb(245, 247, 249,0.4)',
+    backdropFilter: 'blur(5px)',
+    WebkitBackdropFilter: 'blur(5px)',
+    boxShadow: '0 4px 7px 1px rgba(0,0,0,0.28)',
     alignItems: 'center',
     borderRadius: '10px',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    position: 'fixed'
 })
 const ContentNameTypography = styled(Typography)({
     marginTop: 60,
@@ -54,7 +66,8 @@ const ContentNameTypography = styled(Typography)({
 })
 
 const StyledButton = styled(Button)({
-    backgroundColor: '#2D85E7',
+    backgroundColor: 'rgb(45, 133, 231,0.8)',
+    borderRadius: 20,
     color: '#FFFFFF',
     fontFamily: 'Inter, sans-serif',
     fontSize: '15px',
@@ -66,6 +79,21 @@ const StyledButton = styled(Button)({
     },
     transition: 'all 0.4s'
 })
+const StyledButtonDecline = styled(Button)({
+    backgroundColor: 'rgb(221, 91, 91,0.8)',
+    borderRadius: 20,
+    color: '#FFFFFF',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '15px',
+    width: '100px',
+    height: 35,
+    ':hover': {
+        backgroundColor: '#de5b5b',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s'
+})
+
 const TabStyle = styled(Tab)({
     width: 320,
     fontWeight: '550',
@@ -74,6 +102,25 @@ const TabStyle = styled(Tab)({
         fontWeight: 'bold',
         fontFamily: 'Inter',
     }
+})
+
+const DataGridStyle = styled(DataGrid)({
+    textAlign: 'center',
+    fontSize: 15,
+    color: '#203949',
+    height: '420px',
+    width: '100%',
+    margin: '10px 10px 0px 0px',
+    borderRadius: '5px',
+    border: '0px solid #e0e0e0',
+    '& .MuiDataGrid-columnHeader': {
+        backgroundColor: 'rgb(45, 133, 231, 0.2)',
+        fontWeight: 'bold'
+    },
+
+    '& .MuiDataGrid-row:nth-child(even)': {
+        backgroundColor: 'rgb(45, 133, 231, 0.1)',
+    },
 })
 export default function DealerProfileListUI() {
     const navigate = useNavigate();
@@ -89,7 +136,7 @@ export default function DealerProfileListUI() {
 
     const [remarks, setRemarks] = useState(""); // State to capture remarks
     const [creditlimit, setCreditlimit] = useState(0);
-    const  [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer,] = useRestDealer();
+    const  [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile] = useRestDealer();
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -135,8 +182,7 @@ export default function DealerProfileListUI() {
             'aria-controls': `simple-tabpanel-${index}`,
         };
     }
-
-
+    
     function getAllDealers() {
         axios.get<IDealer[]>(`http://localhost:8080/dealer/getAllDealersByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
@@ -194,10 +240,7 @@ export default function DealerProfileListUI() {
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'Dealer ID', width: 210 },
         { field: 'dealerName', headerName: 'Dealer Name', width: 300 },
-        { field: 'submissionDate', headerName: 'Date Submitted', width: 203 },
-
-
-        
+        { field: 'submissionDate', headerName: 'Date Submitted', width: 190 },
         {
             field: 'view',
             headerName: '',
@@ -207,7 +250,6 @@ export default function DealerProfileListUI() {
                 return (
                     <StyledButton
                         onClick={() => {
-
                             handleViewButtonClick(dealer.id);
                         }}
                     >
@@ -215,14 +257,56 @@ export default function DealerProfileListUI() {
                     </StyledButton>)
             }
         },
-           
+        {
+            field: 'pending', headerName: '', width: 145,
+            renderCell: (params: { row: any; }) => {
+                const dealer = params.row
+                return (
+                    <><StyledButton
+                        // variant='contained'
+                        onClick={handlePendingOpen} >
+                        Pending
+                    </StyledButton><Grid item>
+                            <Modal
+                                open={openPending}
+                                onClose={handlePendingClose}
+                                aria-labelledby="modal-title"
+                                aria-describedby="Comment"
+                            >
+                                <Box sx={style}>
+                                    <Typography style={{ color: "#2D85E7", fontSize: '20px', fontWeight: 'bold', marginBottom: '20px' }} id="modal-title"> Reasons </Typography>
+                                    <TextField
+                                        id="filled-multiline-static"
+                                        label="State the Reason for Pending"
+                                        multiline
+                                        rows={4}
+                                        variant="filled"
+                                        style={{ width: '400px' }}
+                                        value={remarks} // Capture the remarks
+                                        onChange={(e) => setRemarks(e.target.value)}
+                                    />
+                                    <StyledButton onClick={() => handlePendingClick(dealer.id)} sx={{ marginTop: '20px', marginLeft: '150px' }}>
+                                        Submit
+                                    </StyledButton>
+                                </Box>
+                            </Modal>
+                        </Grid></>
+
+                )
+            }
+        },
         {
             field: 'confirm', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
                 const dealer = params.row;
                 return (
                     <><StyledButton
-                        onClick={handleConfirmOpen} >
+                        style={{
+                            width: 120
+                        }}
+                        onClick={handleConfirmOpen}
+                    >
+                        <CheckIcon style={{ marginTop: -5, marginLeft: -3, height: 20, width: 'auto', color: 'rgb(116, 254, 189)', fontWeight: 'bolder' }} />
                         Confirm
                     </StyledButton>
                          <Grid item>
@@ -261,80 +345,21 @@ export default function DealerProfileListUI() {
             }
         },
         {
-            field: 'pending', headerName: '', width: 150,
-            renderCell: (params: { row: any; }) => {
-                const dealer = params.row
-                return (
-                    <>
-                        <StyledButton variant='contained'
-                            onClick={handlePendingOpen} >
-                            Pending
-                        </StyledButton>
-                          <Grid item>
-                            <Modal
-                                open={openPending}
-                                onClose={handlePendingClose}
-                                aria-labelledby="modal-title"
-                                aria-describedby="Comment"
-                            >
-                                <Box sx={style}>
-                                    <Typography style={{ color: "#2D85E7", fontSize: '20px', fontWeight: 'bold', marginBottom: '20px' }} id="modal-title"> Reasons </Typography>
-                                    <TextField
-                                        id="filled-multiline-static"
-                                        label="State the Reason for Pending"
-                                        multiline
-                                        rows={4}
-                                        variant="filled"
-                                        style={{ width: '400px' }}
-                                        inputRef={pendingReasonRef}
-                                    />
-                                    <StyledButton onClick={() => handlePendingClick(dealer.id)} sx={{ marginTop: '20px', marginLeft: '150px' }}>
-                                        Submit
-                                    </StyledButton>
-                                </Box>
-                            </Modal>
-                        </Grid> 
-                    </>
-
-                )
-            }
-        },
-
-        {
-            field: 'decline', headerName: '', width: 150,
+            field: 'decline', headerName: '', width: 160,
             renderCell: (params: { row: any; }) => {
                 const dealer = params.row;
                 return (
-                    <>
-                        <StyledButton
-                            onClick={handleDeclinedOpen} >
-                            Decline
-                        </StyledButton>
-                         <Grid item>
-                            <Modal
-                                open={openDeclinedModal}
-                                onClose={handleDeclinedClose}
-                                aria-labelledby="modal-title"
-                                aria-describedby="Comment"
-                            >
-                                <Box sx={style}>
-                                    <Typography style={{ color: "#2D85E7", fontSize: '20px', fontWeight: 'bold', marginBottom: '20px' }} id="decline-modal-title"> Reasons </Typography>
-                                    <TextField
-                                        label="State the Reason for Decline"
-                                        multiline
-                                        rows={4}
-                                        variant="filled"
-                                        style={{ width: '400px' }}
-                                        inputRef={declineReasonRef}
-                                    />
-                                    <StyledButton onClick={() => handleDeclineClick(dealer.id)} sx={{ marginTop: '20px', marginLeft: '150px' }}>
-                                        Submit
-                                    </StyledButton>
-                                </Box>
-                            </Modal>
-                        </Grid> 
-                    </>
-                );
+                    <StyledButton
+                        style={{
+                            width: 120
+                        }}
+                        onClick={() => {
+                            //  handleDeclineClick(dealer.id)
+                        }}
+                    >
+                        <CloseIcon style={{ marginTop: -3, paddingLeft: -8, height: 20, width: 'auto', color: 'rgb(227, 80, 155)', fontWeight: 'bolder' }} />
+                        Decline
+                    </StyledButton>)
             }
         },
 
@@ -352,11 +377,11 @@ export default function DealerProfileListUI() {
 
     {/** Columns for Confirmed */ }
     const columnsConfirmed: GridColDef[] = [
-        { field: 'id', headerName: 'Dealer ID', width: 210 },
-        { field: 'dealerName', headerName: 'Dealer Name', width: 300 },
-        { field: 'submissionDate', headerName: 'Date Submitted', width: 203 },
+        { field: 'id', headerName: 'Dealer ID', width: 280 },
+        { field: 'dealerName', headerName: 'Dealer Name', width: 410 },
+        { field: 'submissionDate', headerName: 'Date Submitted', width: 303 },
         {
-            field: 'view', headerName: '', width: 150,
+            field: 'view', headerName: '', width: 320,
             renderCell: (params: { row: any; }) => {
                 const dealer = params.row;
                 return (
@@ -434,21 +459,23 @@ export default function DealerProfileListUI() {
         const dateArchive = moment().format('YYYY-MM-DD');
 
 
-        // Call the declineDealer function to update the dealer's status on the server
-        declineDealer(objectId, declineReasonRef.current!.value + "", dateArchive);
+        // Call the markDealerAsPending function to update the dealer's status on the server
+         markDealerAsPending(objectId, pendingReasonRef.current!.value + "");
 
         handleDeclinedClose();
         getAllArchivedDealers();
     };
 
+
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
+
     return (
         <div>
             <StyledCard>
-                <ContentNameTypography>Dealer Profile List</ContentNameTypography>
-                <Box sx={{ width: '100%', marginTop: 3, marginLeft: 0.5 }}>
+                {/* <ContentNameTypography>Dealer Profile List</ContentNameTypography> */}
+                <Box sx={{ width: '100%', marginTop: 4, marginLeft: 0.5 }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" style={{ marginLeft: 40 }}>
                             <TabStyle label="Unconfirmed Dealers" {...a11yProps(0)} />
@@ -457,58 +484,42 @@ export default function DealerProfileListUI() {
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
-                        <DataGrid
+                        <DataGridStyle
                             rows={rows}
-                            sx={{ textAlign: 'center', fontSize: 15, color: '#203949', height: '370px', margin: '30px 10px 0px 17px' }}
                             columns={columns.map((column) => ({
                                 ...column,
                             }))}
                             initialState={{
                                 pagination: {
                                     paginationModel: {
-                                        pageSize: 5,
+                                        pageSize: 10,
                                     },
                                 },
                             }}
-                            pageSizeOptions={[5]}
+                            pageSizeOptions={[10]}
 
                         />
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
-                        <DataGrid
+                        <DataGridStyle
                             rows={rowsConfirmed}
-                            sx={{ textAlign: 'center', fontSize: 15, color: '#203949', height: '370px', margin: '30px 10px 0px 17px' }}
+
                             columns={columnsConfirmed.map((column) => ({
                                 ...column,
+
                             }))}
                             initialState={{
                                 pagination: {
                                     paginationModel: {
-                                        pageSize: 5,
+                                        pageSize: 10,
                                     },
                                 },
                             }}
-                            pageSizeOptions={[5]}
-
+                            pageSizeOptions={[10]}
                         />
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={2}>
-                        <DataGrid
-                            rows={rowsDeclined}
-                            sx={{ textAlign: 'center', fontSize: 15, color: '#203949', height: '370px', margin: '30px 10px 0px 17px' }}
-                            columns={columnsDeclined.map((column) => ({
-                                ...column,
-                            }))}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: 5,
-                                    },
-                                },
-                            }}
-                            pageSizeOptions={[5]}
-
-                        />
+                        Decline
                     </CustomTabPanel>
                 </Box>
             </StyledCard>
