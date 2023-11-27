@@ -1,10 +1,11 @@
 import styled from "@emotion/styled";
-import { Autocomplete, Alert, AlertTitle, Button, FormControlLabel, FormHelperText, Grid, Icon, IconButton, InputAdornment, Radio, RadioGroup, Snackbar, Switch, TextField, TextFieldProps, Typography } from "@mui/material";
+import { Autocomplete, Alert, AlertTitle, Button, FormControlLabel, FormHelperText, Grid, Icon, IconButton, InputAdornment, Radio, RadioGroup, Snackbar, Switch, TextField, TextFieldProps, Typography, Card, Stepper, StepLabel, Step, Box } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import UploadIcon from '@mui/icons-material/Upload';
-import dealer1 from '../../Global Components/Images/dealer1.png'
+import dealer1 from '../../Global Components/Images/dealer1-2.png'
+import logo4 from '../../Global Components/Images/logo4.png'
 import { useNavigate } from "react-router-dom";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import { IDealer, IDealerDocument, IDistributor, IProduct } from "../../RestCalls/Interfaces";
@@ -19,6 +20,29 @@ import { error } from "console";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { es } from "date-fns/locale";
 {/**Grids Body*/ }
+
+
+const StyledCard = styled(Card)({
+    padding: '10px 10px 10px 10px',
+    display: 'flex',
+    marginTop: 50,
+    width: '1250px',
+    height: '600px',
+    alignItems: 'center',
+    borderRadius: '25px',
+    justifyContent: 'left',
+    backgroundColor: ' rgba(255, 255, 255, 0.8)',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    backdropFilter: 'blur(50px)',
+    border: '0px solid rgba(255, 255, 255, 0.3)'
+
+})
+
+const StyleGrid = styled(Grid)({
+    position: "relative",
+    display: "flex",
+    justifyContent: "center",
+})
 const ImageStyle = styled(Typography)({
     display: 'flex',
     alignItems: 'center',
@@ -26,12 +50,28 @@ const ImageStyle = styled(Typography)({
     marginTop: '-30px'
 })
 const ContentNameTypography = styled(Typography)({
-    marginTop: -10,
+    paddingTop: '15px',
     fontFamily: 'Inter',
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: '30px',
-    margin: '50px 0 0 200px',
+    fontSize: '25px',
+    margin: '-15px 0 30px -450px',
+    paddingLeft: '10px',
+    color: '#203949',
+
+})
+
+const ContentNameTypography1 = styled(Typography)({
+    marginTop: -15,
+    marginBottom: 15,
+    marginLeft: 20,
+    fontFamily: 'Inter',
+    fontWeight: 'bold',
+    textAlign: 'left',
+    fontSize: '20px',
+    // margin: '-80px 0 30px -450px',
+
+    paddingLeft: '10px',
     color: '#203949',
 
 })
@@ -46,8 +86,8 @@ const LabelTypography = styled(Typography)({
     color: '#707070'
 })
 const TypographyLabel = styled(Typography)({
-    marginTop: "16px",
-    marginLeft: '25px',
+    marginTop: "22px",
+    marginLeft: '10px',
     marginBottom: '10px',
     marginRight: '-175px',
     fontFamily: 'Inter',
@@ -59,9 +99,10 @@ const TypographyLabel = styled(Typography)({
 
 })
 const TypographyLabelB = styled(Typography)({
-    marginTop: "18px",
-    marginLeft: "330px",
+
+    marginLeft: "220px",
     textAlign: 'center',
+    justifyContent: 'center',
     fontSize: 17,
     color: '#707070',
     display: 'flex',
@@ -75,6 +116,7 @@ const TypographyLabelC = styled(Typography)({
     display: 'flex',
     fontWeight: '550',
     fontFamily: 'inter',
+
 })
 const RadioLabel = styled(Typography)({
     textAlign: 'left',
@@ -96,12 +138,10 @@ const RadioStyle = styled(RadioGroup)({
 const StyledTextField = styled(TextField)({
     // backgroundColor: "#ffffff", 
     borderRadius: "22px",
-    width: '380px',
-    height: 5,
+    width: '343px',
+    height: 10,
     marginTop: "10px",
-    marginLeft: "80px",
-    marginRight: '-110px',
-    marginBottom: '43px',
+    marginBottom: '55px',
     input: {
         color: '#707070',
         fontFamily: 'Inter'
@@ -114,8 +154,7 @@ const StyledTextField = styled(TextField)({
 });
 
 const StyledDatePicker = styled(DatePicker)({
-    width: '380px',
-    marginLeft: "80px",
+    width: '700px',
     marginTop: "10px",
     // marginBottom:'43px',
     input: {
@@ -164,13 +203,35 @@ const SignUpButton = styled(Button)({
     },
     transition: 'all 0.4s'
 })
+const SignInTypo = styled(Typography)({
+    display: 'flex',
+    position: "relative",
+    textAlign: 'center',
+    // alignItems:'center',
 
-
-const GridField = styled(Grid)({
-
+    margin: '-90px 0 0 125px',
+    // marginTop:-150,
+    // marginLeft:150,
+    // left: 1300,
+    width: "500px",
+    fontWeight: 'normal',
+    fontFamily: "Inter, sans-serif",
+    color: "#ffffff",
+    fontSize: 14,
+    zIndex: 3
 
 })
 
+
+
+const GridField = styled(Grid)({
+    // position: "relative",
+    // display: "flex",
+    // justifyContent: "center",
+})
+
+{/* <Steppers/> */ }
+const steps = ['Basic Information', 'Contact Information', 'Business Information', 'Document Verification', 'Account Creation']
 
 export default function DealerRegistration() {
 
@@ -227,6 +288,9 @@ export default function DealerRegistration() {
         bussinesscontract: '',
         bussinessdoc: '',
     })
+    {/* <UseState Steppers/> */ }
+    const [activeStep, setActiveStep] = useState(0);
+
 
 
     {/**UseRefs*/ }
@@ -273,7 +337,7 @@ export default function DealerRegistration() {
             })
             .catch((error) => {
 
-                alert("Error retrieving payment receipts. Please try again.");
+                // alert("Error retrieving payment receipts. Please try again.");
             });
     }
 
@@ -284,6 +348,66 @@ export default function DealerRegistration() {
 
 
     {/**Handlers*/ }
+
+    {/* Handler for Steppers */ }
+    const handleNext = () => {
+        if (activeStep === 0) {
+            if (!firstnameRef.current?.value ||
+                !lastnameRef.current?.value ||
+                !selectedBDate ||
+                !selectedGender) {
+                handleAlert('Warning', 'Please fill in all required fields', 'warning');
+                setFieldWarning(helperWarning);
+                return;
+            }
+        }
+        else if (activeStep === 1) {
+            if (!contactnumberRef.current?.value ||
+                !currentaddressRef.current?.value ||
+                !permanentAddressRef.current?.value) {
+                handleAlert('Warning', 'Please fill in all required fields', 'warning');
+                setFieldWarning(helperWarning);
+                return;
+            }
+        }
+        else if (activeStep === 2) {
+            if (selectedBusinessOpt)
+                if (!businessnameRef.current?.value ||
+                    !businessaddressRef.current?.value ||
+                    !businessphonenumberRef.current?.value ||
+                    !selectedContract ||
+                    !selectedBusinessDocs) {
+                    handleAlert('Warning', 'Please fill in all required business information fields', 'warning');
+                    setFieldBussinessWarning(helperBussinessWarning);
+                    return;
+                }
+        }
+        else if (activeStep === 3) {
+            if (!tinnumberRef.current?.value ||
+                !selectedValidID) {
+                handleAlert('Warning', 'Please fill in all required fields', 'warning');
+                setFieldWarning(helperWarning);
+                return;
+            }
+        }
+        else if (activeStep === 4) {
+            if (!emailladdressRef.current?.value ||
+                !passwordRef.current?.value ||
+                !selectedProfilePicture) {
+                handleAlert('Warning', 'Please fill in all required fields', 'warning');
+                setFieldWarning(helperWarning);
+                return;
+            }
+        }
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+    const handleFinish = () => {
+        handleNewDealer();
+    }
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
 
     {/**Handler for Alert - Function to define the type of alert*/ }
     function handleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
@@ -364,7 +488,7 @@ export default function DealerRegistration() {
     {/**Handler for Radio Button - Gender*/ }
     const handleGender = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedGender(event.target.value);
-        handleInputChange('gender');
+      
     };
 
 
@@ -528,7 +652,6 @@ export default function DealerRegistration() {
         contactnum: !contactnumberRef.current?.value ? 'Contact Number is required' : '',
         selectedprofile: !selectedProfilePicture ? 'Please attach your Profile Picture' : '',
         selectedvalidid: !selectedValidID ? 'Please attach your Valid ID' : '',
-        
         tinnum: !tinnumberRef.current?.value ? 'TIN Number is required' : '',
         distributor: !selectedDistributor ? 'Please choose a Distributor' : '',
     }
@@ -579,6 +702,8 @@ export default function DealerRegistration() {
                 setFieldWarning(helperWarning);
                 return;
             }
+
+
             if (selectedBusinessOpt) {
                 if (
                     !businessnameRef.current?.value ||
@@ -641,506 +766,524 @@ export default function DealerRegistration() {
     };
 
 
- {/**Use Effects*/ }
-useEffect(() => {
-    const currentDate = dayjs().subtract(18, 'year') as Dayjs;
-    setMaxDate(currentDate);
-    getAllDistributors();
+    {/**Use Effects*/ }
+    useEffect(() => {
+        const currentDate = dayjs().subtract(18, 'year') as Dayjs;
+        setMaxDate(currentDate);
+        getAllDistributors();
 
-    // console.log(selectedDistributor)
+        // console.log(selectedDistributor)
 
-}, []);
+    }, []);
 
+    {/**getContent for Each Fields*/ }
+    const getStepContent = (step: number) => {
+        switch (step) {
+            case 0:
+                return (
+                    <div style={{ paddingTop: 30, paddingBottom: 30 }}>
+                        {/**Textfield For First Name*/}
+                        <ContentNameTypography1>Basic Information</ContentNameTypography1>
+                        <GridField container spacing={3}>
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="First Name" required inputRef={firstnameRef} />
+                                <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                    {fieldWarning.firstname}
+                                </FormHelperText>
+                            </Grid>
+                            {/**Textfield For Middle Name*/}
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="Middle Name" inputRef={middlenameRef} />
+                            </Grid>
+                        </GridField>
+                        <GridField container spacing={3}>
+                            {/**Textfield For Last Name*/}
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="Last Name" required inputRef={lastnameRef} />
+                                <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                    {fieldWarning.lastname}
+                                </FormHelperText>
+                            </Grid>
+                            <Grid item>
+                                {/**Radio Group Button For Gender*/}
+                                <TypographyLabel>Gender:
+                                    <div style={{ margin: '-7px 0 0 0px' }}>
+                                        <RadioStyle
+                                            row
+                                            name="genderRadioGroup"
+                                            aria-required
+                                            value={selectedGender}
+                                            onChange={handleGender}
+                                        >
+                                            <FormControlLabel style={{ marginLeft: '20px' }} value='Male' control={<Radio />} label={<RadioLabel>Male</RadioLabel>} />
+                                            <FormControlLabel style={{ marginLeft: '20px' }} value='Female' control={<Radio />} label={<RadioLabel>Female</RadioLabel>} />
+                                        </RadioStyle>
+                                    </div>
+                                </TypographyLabel>
+                                <FormHelperText style={{ marginLeft: 9, color: '#BD9F00' }}>
+                                    {fieldWarning.gender}
+                                </FormHelperText>
+                            </Grid>
+                        </GridField>
+                        <GridField container spacing={3}>
+                            {/**DatePicker For Birthdate*/}
+                            <Grid item>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <StyledDatePicker
+                                        slotProps={{
+                                            textField: {
+                                                variant: 'outlined',
+                                                label: <span style={labelStyle}>Birthdate</span>,
 
-{/**Return Statement*/ }
-return (
-    <div>
-        <GridBody>
-            {/**Grids Body*/}
-            <Grid item>
-                <ContentNameTypography>Sign Up</ContentNameTypography>
-                <LabelTypography>as Dealer</LabelTypography>
+                                                style: labelStyle
+                                            }
+                                        }}
+                                        value={selectedBDate}
+                                        maxDate={maxDate}
+                                        onChange={(date) => {
+                                            setSelectedBDate(date as Dayjs | null);
+                                           
+                                        }}
 
-
-                {/**Grids Textfields*/}
-                <GridField container spacing={8}>
-
-                    {/**Textfield For First Name*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="First Name" required size="small" inputRef={firstnameRef} onChange={() => handleInputChange('firstname')} />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.firstname}
-                        </FormHelperText>
-                    </Grid>
-
-                    {/**Textfield For Middle Name*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="Middle Name" size="small" inputRef={middlenameRef} />
-                    </Grid>
-
-                </GridField>
-
-
-                <GridField container spacing={8}>
-
-                    {/**Textfield For Last Name*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="Last Name" required size="small" inputRef={lastnameRef} onChange={() => handleInputChange('lastname')} />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.lastname}
-                        </FormHelperText>
-                    </Grid>
-
-                    {/**Textfield For Contact Number*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="Contact Number" required size="small" inputRef={contactnumberRef} onChange={() => handleInputChange('contactnum')} />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.contactnum}
-                        </FormHelperText>
-                    </Grid>
-
-                </GridField>
-
-
-                <GridField container spacing={8}>
-
-                    {/**Textfield For Email Address*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="Email Address" required size="small" style={{ width: '795px' }} inputRef={emailladdressRef} onChange={() => handleInputChange('email')} />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.email}
-                        </FormHelperText>
-                    </Grid>
-
-                </GridField>
-
-
-                <GridField container spacing={8}>
-
-                    {/**Textfield For Password*/}
-                    <Grid item>
-                        <StyledTextField
-                            type={isshowPassword ? 'text' : 'password'}
-                            variant="outlined"
-                            required
-                            label='Password'
-                            size="small"
-                            style={{ width: '795px' }}
-                            value={password}
-                            onChange={handlePasswordChange}
-                            inputRef={passwordRef}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton onClick={handleShowPassword} onMouseDown={handleMouseDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
-                                            {isshowPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.password}
-                        </FormHelperText>
-                    </Grid>
-
-                </GridField>
-
-
-                <GridField container spacing={8}>
-
-                    {/**Textfield For Password Confirmation*/}
-                    <Grid item>
-                        <StyledTextField
-                            type={isshowConfirmPassword ? 'text' : 'password'}
-                            variant="outlined"
-                            required label="Confirm Password"
-                            size="small" style={{ width: '795px', marginBottom: 60 }}
-                            value={confirmPassword}
-                            onChange={handleConfirmPasswordChange}
-                            error={passwordError !== ''}
-                            helperText={passwordError}
-                            inputRef={confirmpasswordRef}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton onClick={handleShowConfirmPassword} onMouseDown={handleMouseConfirmDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
-                                            {isshowConfirmPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
-
-                                        </IconButton>
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                    </Grid>
-                </GridField>
-
-
-                <GridField container spacing={3}>
-
-                    {/**DatePicker For Birthdate*/}
-                    <Grid item>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <StyledDatePicker
-                                slotProps={{
-                                    textField: {
-                                        variant: 'outlined',
-                                        label: <span style={labelStyle}>Birthdate</span>,
-                                        size: 'small',
-                                        style: labelStyle
-                                    }
-                                }}
-                                value={selectedBDate}
-                                maxDate={maxDate}
-                                onChange={(date) => {
-                                    setSelectedBDate(date as Dayjs | null);
-                                    handleInputChange('birthdate');
-                                }}
-
-                            />
-                        </LocalizationProvider>
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.birthdate}
-                        </FormHelperText>
-                    </Grid>
-                    <Grid item>
-
-                        {/**Radio Group Button For Gender*/}
-                        <TypographyLabel>Gender:
-                            <div style={{ margin: '-8px 0 0 0px' }}>
-                                <RadioStyle
-                                    row
-                                    name="genderRadioGroup"
-                                    aria-required
-                                    value={selectedGender}
-                                    onChange={handleGender}
-                                >
-                                    <FormControlLabel style={{ marginLeft: '30px' }} value='Male' control={<Radio />} label={<RadioLabel>Male</RadioLabel>} />
-                                    <FormControlLabel style={{ marginLeft: '40px' }} value='Female' control={<Radio />} label={<RadioLabel>Female</RadioLabel>} />
-                                </RadioStyle>
-                            </div>
-                        </TypographyLabel>
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.gender}
-                        </FormHelperText>
-
-                    </Grid>
-                </GridField>
-
-
-                <GridField container spacing={8}>
-
-                    {/**Textfield For Current Addrress*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="Current Address" required size="small" style={{ width: '795px' }} inputRef={currentaddressRef} onChange={handleCurrentAddressChange} />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.currentadd}
-                        </FormHelperText>
-                    </Grid>
-
-
-                </GridField>
-
-                <GridField container spacing={8}>
-
-                    {/**Textfield For Permanent Address*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="Permanent Address"
-                            required size="small"
-                            style={{ width: '795px' }}
-                            inputRef={permanentAddressRef}
-                            value={permanentAddress}
-                            onChange={(e) => { setPermanentAddress(e.target.value); handleInputChange('permanentadd') }}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <Button variant='contained' style={{ height: 40, marginRight: -13 }} onClick={handleCopyAddress}>Permanent = Current Address</Button>
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.permanentadd}
-                        </FormHelperText>
-                    </Grid>
-
-                </GridField>
-
-
-                <GridField container spacing={0}>
-
-                    {/**Textfield For TIN Number*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="TIN Number" size="small" required style={{ width: '795px' }} inputRef={tinnumberRef} onChange={() => handleInputChange('tinnum')} />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.tinnum}
-                        </FormHelperText>
-                    </Grid>
-                </GridField>
-                <GridField>
-                    <Grid item>
-                        <Autocomplete
-                            disablePortal
-                            id="flat-demo"
-                            options={distributors}
-                            getOptionLabel={(option) => option.firstname + " " + option.lastname}
-                            isOptionEqualToValue={(option, value) => option.distributorid === value.distributorid}
-                            value={selectedDistributor}
-                            onChange={
-                                (event, newValue) => {
-                                setSelectedDistributor(newValue!);
-                                handleInputChange('distributor')}}
-                            renderInput={(params) => (
-                                <StyledTextField
-                                    {...params}
-                                    InputProps={{
-                                        ...params.InputProps, disableUnderline: true
-                                    }}
-                                    variant="outlined"
-                                    label="Distributor"
-                                    size="small"
-                                    style={{ width: '795px' }}
-
-                                />)}
-
-                        />
-                         <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.distributor}
-                        </FormHelperText>
-                    </Grid>
-                </GridField>
-               
-                <GridField container spacing={8} >
-
-                    {/**Button For Valid ID File*/}
-                    <Grid item>
-                        <label htmlFor="validid-input">
-                            <Button variant="contained" component="span" aria-required
-                                sx={{
-                                    backgroundColor: '#2D85E7',
-                                    width: '380px',
-                                    marginBottom: '43px',
-                                    margin: '10px 0 0 80px',
-                                    height: '40px',
-                                    marginRight: '-110px',
-                                    ':hover': {
-                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    transition: 'all 0.4s'
-                                }}>
-                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                    <input hidden type="file"
-                                        accept=".pdf,.jpg, .jpeg, .png"
-                                        onChange={handleValidIDFileChange}
-                                        style={{ display: 'none' }}
-                                        id="validid-input"
                                     />
-                                    <UploadIcon />
-                                </Icon>
-                                <TypographyLabelC>
-                                    {selectedValidID?.name === undefined ? 'Upload Valid ID' : selectedValidID?.name}
-                                </TypographyLabelC>
-                            </Button>
-                        </label>
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.selectedvalidid}
-                        </FormHelperText>
-                    </Grid>
-
-                    {/**Button For Profile Picture File*/}
-                    <Grid item>
-                        <label htmlFor="profilepicture-input">
-
-                            <Button variant="contained" component="span" aria-required
-                                sx={{
-                                    backgroundColor: '#2D85E7',
-                                    width: '380px',
-                                    marginBottom: '43px',
-                                    margin: '10px 0 0 80px',
-                                    height: '40px',
-                                    marginRight: '-110px',
-                                    ':hover': {
-                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    transition: 'all 0.4s'
-                                }}>
-                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                    <input hidden accept=".jpeg,.jpg,.png" type="file"
-                                        onChange={handleProfilePictureFileChange}
-                                        style={{ display: 'none' }}
-                                        id="profilepicture-input" />
-                                    <UploadIcon />
-                                </Icon>
-                                <TypographyLabelC >
-                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name}
-                                </TypographyLabelC>
-                            </Button>
-
-                        </label>
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldWarning.selectedprofile}
-                        </FormHelperText>
-                    </Grid>
-
-                </GridField>
-
-                {/**Switch for Business Info*/}
-                <GridField container spacing={8}>
-                    <Grid item>
-                        <TypographyLabelB>Do you own a Business?
-                            <div style={{ marginTop: '-5px', marginLeft: '10px' }}>
-                                <Switch
-                                    value={selectedBusinessOpt}
-                                    checked={selectedBusinessOpt}
-                                    onChange={handleHasBusinessChange}
-                                    inputProps={{ 'aria-label': 'controlled' }}
+                                </LocalizationProvider>
+                                <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                    {fieldWarning.birthdate}
+                                </FormHelperText>
+                            </Grid>
+                        </GridField>
+                    </div>
+                );
+            case 1:
+                return (
+                    <div style={{ paddingTop: 30, paddingBottom: 30 }}>
+                        <ContentNameTypography1>Contact Information</ContentNameTypography1>
+                        <GridField container spacing={3}>
+                            {/**Textfield For Contact Number*/}
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="Contact Number" required style={{ width: '700px' }} inputRef={contactnumberRef}  />
+                                <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                    {fieldWarning.contactnum}
+                                </FormHelperText>
+                            </Grid>
+                        </GridField>
+                        <GridField container spacing={3}>
+                            {/**Textfield For Current Addrress*/}
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="Current Address" required style={{ width: '700px', }} inputRef={currentaddressRef} />
+                                <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                    {fieldWarning.currentadd}
+                                </FormHelperText>
+                            </Grid>
+                        </GridField>
+                        <GridField container spacing={3}>
+                            {/**Textfield For Permanent Address*/}
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="Permanent Address"
+                                    style={{ width: '700px' }}
+                                    inputRef={permanentAddressRef}
+                                    value={permanentAddress}
+                                    onChange={(e) => { setPermanentAddress(e.target.value)}}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <Button variant='contained' style={{ height: 40, marginRight: -13 }} onClick={handleCopyAddress}>Permanent = Current Address</Button>
+                                            </InputAdornment>
+                                        )
+                                    }}
                                 />
-                            </div>
-                        </TypographyLabelB>
-                    </Grid>
+                            </Grid>
+                        </GridField>
 
-                </GridField>
+                    </div>
+                );
+            case 2:
+                return (
+                    <div style={{ paddingTop: 30, paddingBottom: 30 }}>
+                        <ContentNameTypography1>Bussiness Information</ContentNameTypography1>
+                        <GridField container spacing={3}>
+                            <Grid item>
+                                <TypographyLabelB>Do you own a Business?
+                                    <div style={{ marginTop: '-5px', marginLeft: '10px' }}>
+                                        <Switch
+                                            value={selectedBusinessOpt}
+                                            checked={selectedBusinessOpt}
+                                            onChange={handleHasBusinessChange}
+                                            inputProps={{ 'aria-label': 'controlled' }}
+                                        />
+                                    </div>
+                                </TypographyLabelB>
+                            </Grid>
 
+                        </GridField>
+                        <GridField container spacing={3}>
+                            {/**Text Field for Business Name*/}
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="Business Name" required style={{ width: '700px' }} disabled={!selectedBusinessOpt} inputRef={businessnameRef} />
+                                <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                    {!selectedBusinessOpt ? '' : fieldBussinessWarning.bussinessname}
+                                </FormHelperText>
+                            </Grid>
+                        </GridField>
+                        <GridField container spacing={3}>
+                            {/**Text Field for Business Business Address*/}
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="Business Address" required disabled={!selectedBusinessOpt} inputRef={businessaddressRef}  />
+                                <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                    {!selectedBusinessOpt ? '' : fieldBussinessWarning.bussinessadd}
+                                </FormHelperText>
+                            </Grid>
 
-                <GridField container spacing={0}>
-                    {/**Text Field for Business Name*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="Business Name" required size="small" style={{ width: '795px' }} disabled={!selectedBusinessOpt} inputRef={businessnameRef} onChange={() => handleBussinessInputChange('bussinessname')} />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {!selectedBusinessOpt ? '' : fieldBussinessWarning.bussinessname}
-                        </FormHelperText>
-                    </Grid>
+                            {/**Text Field for Business Phone Number*/}
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="Business Phone Number" required disabled={!selectedBusinessOpt} inputRef={businessphonenumberRef}  />
+                                <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                    {!selectedBusinessOpt ? '' : fieldBussinessWarning.bussinessphonnum}
+                                </FormHelperText>
+                            </Grid>
+                        </GridField>
+                        <GridField container spacing={3} >
+                            {/**Button for Contract File*/}
+                            <Grid item>
+                                <label htmlFor="contract-input">
+                                    <Button variant="contained" disabled={!selectedBusinessOpt}
+                                        component="span"
+                                        sx={{
+                                            backgroundColor: '#2D85E7',
+                                            width: '345px',
+                                            marginBottom: '43px',
+                                            margin: '10px -80px 0 0px',
+                                            height: '40px',
+                                            //marginRight: '-110px',
+                                            ':hover': {
+                                                backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                                transform: 'scale(1.1)'
+                                            },
+                                            transition: 'all 0.4s'
+                                        }}>
+                                        <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                            <input hidden
+                                                type="file"
+                                                accept=".pdf,.jpg, .jpeg, .png"
+                                                onChange={handleContractFileChange}
+                                                style={{ display: 'none' }}
+                                                id="contract-input" />
+                                            <UploadIcon />
+                                        </Icon>
+                                        <TypographyLabelC>
+                                            {selectedContract?.name === undefined ? 'Upload Contract' : selectedContract?.name}
+                                        </TypographyLabelC>
+                                    </Button>
+                                </label>
+                                <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                    {fieldBussinessWarning.bussinesscontract}
+                                </FormHelperText>
+                            </Grid>
 
-                </GridField>
+                            {/**Text Field for Business Document*/}
+                            <Grid item>
+                                <label htmlFor="business-input">
+                                    <Button variant='contained'
+                                        disabled={!selectedBusinessOpt}
+                                        component="span"
+                                        sx={{
+                                            backgroundColor: '#2D85E7',
+                                            width: '345px',
+                                            marginBottom: '43px',
+                                            margin: '10px -100px 0 80px',
+                                            height: '40px',
 
+                                            ':hover': {
+                                                backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                                transform: 'scale(1.1)'
+                                            },
+                                            transition: 'all 0.4s'
+                                        }}
+                                    >
 
-                <GridField container spacing={8}>
-                    {/**Text Field for Business Business Address*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="Business Address" required size="small" disabled={!selectedBusinessOpt} inputRef={businessaddressRef} onChange={() => handleBussinessInputChange('bussinessadd')} />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {!selectedBusinessOpt ? '' : fieldBussinessWarning.bussinessadd}
-                        </FormHelperText>
-                    </Grid>
+                                        <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                            <input hidden
+                                                type="file"
+                                                accept=".pdf,.jpg, .jpeg,.png"
+                                                onChange={handleBusinessDocChange}
+                                                style={{ display: 'none' }}
+                                                id="business-input" />
+                                            <UploadIcon />
+                                        </Icon>
+                                        <TypographyLabelC >
+                                            {selectedBusinessDocs?.name === undefined ? 'Upload Business Document' : selectedBusinessDocs?.name}
+                                        </TypographyLabelC>
+                                    </Button>
+                                </label>
+                                <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                    {fieldBussinessWarning.bussinessdoc}
+                                </FormHelperText>
+                            </Grid>
 
-                    {/**Text Field for Business Phone Number*/}
-                    <Grid item>
-                        <StyledTextField variant="outlined" label="Business Phone Number" required size="small" disabled={!selectedBusinessOpt} inputRef={businessphonenumberRef} onChange={() => handleBussinessInputChange('bussinessphonnum')} />
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {!selectedBusinessOpt ? '' : fieldBussinessWarning.bussinessphonnum}
-                        </FormHelperText>
-                    </Grid>
-                </GridField>
+                        </GridField>
+                    </div>
+                );
+            case 3:
+                return (
+                    <div style={{ paddingTop: 30, paddingBottom: 30 }}>
+                        <ContentNameTypography1>Document Verification</ContentNameTypography1>
+                        <GridField container spacing={3} >
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="TIN Number" required style={{ width: '700px' }} inputRef={tinnumberRef} onChange={() => handleInputChange('tinnum')} />
+                                <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                    {fieldWarning.tinnum}
+                                </FormHelperText>
+                            </Grid>
+                        </GridField>
+                        <GridField container spacing={3}>
+                            <Grid item>
+                                <label htmlFor="validid-input">
+                                    <Button variant="contained" component="span" aria-required
+                                        sx={{
+                                            backgroundColor: '#2D85E7',
+                                            width: '700px',
+                                            marginBottom: '43px',
+                                            margin: '10px 0 0 0px',
+                                            height: '40px',
+                                            marginRight: '-110px',
+                                            ':hover': {
+                                                backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                                transform: 'scale(1.1)'
+                                            },
+                                            transition: 'all 0.4s'
+                                        }}>
+                                        <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                            <input hidden type="file"
+                                                accept=".pdf,.jpg, .jpeg, .png"
+                                                onChange={handleValidIDFileChange}
+                                                style={{ display: 'none' }}
+                                                id="validid-input"
+                                            />
+                                            <UploadIcon />
+                                        </Icon>
+                                        <TypographyLabelC>
+                                            {selectedValidID?.name === undefined ? 'Upload Valid ID' : selectedValidID?.name}
+                                        </TypographyLabelC>
+                                    </Button>
+                                </label>
+                                <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                    {fieldWarning.selectedvalidid}
+                                </FormHelperText>
+                            </Grid>
+                        </GridField>
 
+                    </div>
+                );
+            case 4:
+                return (
+                    <div style={{ paddingTop: 30, paddingBottom: 30 }}>
+                        <ContentNameTypography1>Account Creation</ContentNameTypography1>
+                        <GridField container spacing={3}>
+                            {/**Textfield For Email Address*/}
+                            <Grid item>
+                                <StyledTextField variant="outlined" label="Email Address" style={{ width: '700px' }} inputRef={emailladdressRef} onChange={() => handleInputChange('email')} />
+                                <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                    {fieldWarning.email}
+                                </FormHelperText>
+                            </Grid>
+                        </GridField>
+                        <GridField container spacing={3}>
+                            {/**Textfield For Password*/}
+                            <Grid item>
+                                <StyledTextField
+                                    type={isshowPassword ? 'text' : 'password'}
+                                    variant="outlined"
+                                    required
+                                    label='Password'
 
-                <GridField container spacing={8} >
-                    {/**Button for Contract File*/}
-                    <Grid item>
-                        <label htmlFor="contract-input">
-                            <Button variant="contained" disabled={!selectedBusinessOpt}
-                                component="span"
-                                sx={{
-                                    backgroundColor: '#2D85E7',
-                                    width: '380px',
-                                    marginBottom: '43px',
-                                    margin: '10px 0 0 80px',
-                                    height: '40px',
-                                    marginRight: '-110px',
-                                    ':hover': {
-                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    transition: 'all 0.4s'
-                                }}>
-                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                    <input hidden
-                                        type="file"
-                                        accept=".pdf,.jpg, .jpeg, .png"
-                                        onChange={handleContractFileChange}
-                                        style={{ display: 'none' }}
-                                        id="contract-input" />
-                                    <UploadIcon />
-                                </Icon>
-                                <TypographyLabelC>
-                                    {selectedContract?.name === undefined ? 'Upload Contract' : selectedContract?.name}
-                                </TypographyLabelC>
-                            </Button>
-                        </label>
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldBussinessWarning.bussinesscontract}
-                        </FormHelperText>
-                    </Grid>
+                                    style={{ width: '700px' }}
+                                    value={password}
+                                    onChange={handlePasswordChange}
+                                    inputRef={passwordRef}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton onClick={handleShowPassword} onMouseDown={handleMouseDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
+                                                    {isshowPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                                <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                    {fieldWarning.password}
+                                </FormHelperText>
+                            </Grid>
+                        </GridField>
+                        <GridField container spacing={3}>
 
-                    {/**Text Field for Business Document*/}
-                    <Grid item>
-                        <label htmlFor="business-input">
-                            <Button variant='contained'
-                                disabled={!selectedBusinessOpt}
-                                component="span"
-                                sx={{
-                                    backgroundColor: '#2D85E7',
-                                    width: '380px',
-                                    marginBottom: '43px',
-                                    margin: '10px 0 0 80px',
-                                    height: '40px',
-                                    marginRight: '-110px',
-                                    ':hover': {
-                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                        transform: 'scale(1.1)'
-                                    },
-                                    transition: 'all 0.4s'
-                                }}
-                            >
+                            {/**Textfield For Password Confirmation*/}
+                            <Grid item>
+                                <StyledTextField
+                                    type={isshowConfirmPassword ? 'text' : 'password'}
+                                    variant="outlined"
+                                    required label="Confirm Password"
+                                    style={{ width: '700px' }}
+                                    value={confirmPassword}
+                                    onChange={handleConfirmPasswordChange}
+                                    error={passwordError !== ''}
+                                    helperText={passwordError}
+                                    inputRef={confirmpasswordRef}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton onClick={handleShowConfirmPassword} onMouseDown={handleMouseConfirmDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
+                                                    {isshowConfirmPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
 
-                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                    <input hidden
-                                        type="file"
-                                        accept=".pdf,.jpg, .jpeg,.png"
-                                        onChange={handleBusinessDocChange}
-                                        style={{ display: 'none' }}
-                                        id="business-input" />
-                                    <UploadIcon />
-                                </Icon>
-                                <TypographyLabelC >
-                                    {selectedBusinessDocs?.name === undefined ? 'Upload Business Document' : selectedBusinessDocs?.name}
-                                </TypographyLabelC>
-                            </Button>
-                        </label>
-                        <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
-                            {fieldBussinessWarning.bussinessdoc}
-                        </FormHelperText>
-                    </Grid>
+                                                </IconButton>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            </Grid>
+                        </GridField>
+                        <GridField>
+                        {/**Button For Profile Picture File*/}
+                        <Grid item>
+                            <label htmlFor="profilepicture-input">
 
-                </GridField>
-                <GridField container spacing={0} >
-                    {/**Button for Signing Up*/}
-                    <Grid item>
-                        <SignUpButton variant="contained" onClick={handleSignUp}>
-                            Sign Up
-                        </SignUpButton>
-                        <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center'
-                        }}>
-                            <Alert onClose={handleClose} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
-                                <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
-                                {alertMessage}
-                            </Alert>
-                        </Snackbar>
-                    </Grid>
-                </GridField>
+                                <Button variant="contained" component="span" aria-required
+                                    sx={{
+                                        backgroundColor: '#2D85E7',
+                                        width: '700px',
+                                        margin: '10px 0 0 0px',
+                                        height: '40px',
+                                        
+                                        ':hover': {
+                                            backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                            transform: 'scale(1.1)'
+                                        },
+                                        transition: 'all 0.4s'
+                                    }}>
+                                    <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                        <input hidden accept=".jpeg,.jpg,.png" type="file"
+                                            onChange={handleProfilePictureFileChange}
+                                            style={{ display: 'none' }}
+                                            id="profilepicture-input" />
+                                        <UploadIcon />
+                                    </Icon>
+                                    <TypographyLabelC >
+                                        {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name}
+                                    </TypographyLabelC>
+                                </Button>
 
-            </Grid>
+                            </label>
+                            <FormHelperText style={{ marginLeft: 80, color: '#BD9F00' }}>
+                                {fieldWarning.selectedprofile}
+                            </FormHelperText>
+                        </Grid>
+                        </GridField>
 
+                    </div>
+                );
+        }
+    }
 
+    {/**Return Statement*/ }
+    return (
+        <div style={{ background: 'linear-gradient(#004AAD, #5DE0E6)', width: '100vw', height: '100vh', position: 'fixed', }}>
+            <StyleGrid>
+                <StyledCard>
+                    <div style={{ backgroundColor: 'rgb(45, 133, 231, 0.8)', width: '40%', height: 1000, marginLeft: -10 }}>
+                        <img src={logo4}
+                            style={{
+                                width: 'auto',
+                                marginLeft: 0,
+                                padding: '170px 20px 0px 75px',
+                                height: '180px',
+                                alignItems: 'center',
+                                display: 'flex',
+                                position: 'relative',
+                                zIndex: 2
+                            }}
+                        />
+                        <img src={dealer1}
+                            style={{
+                                width: 'auto',
+                                height: '600px',
+                                marginTop: -130,
+                                marginLeft: 30,
+                                display: 'flex',
+                                position: 'relative',
+                                zIndex: 1
+                            }} />
+                        <SignInTypo>Already have an account?&nbsp;<a href="/SignIn"> Sign In</a></SignInTypo>
 
-            {/**Image Grids */}
-            <Grid item>
-                <ImageStyle><img src={dealer1} style={{ width: 'auto', height: '900px' }}></img></ImageStyle>
-            </Grid>
-        </GridBody>
-    </div>
-);
+                        {/* <style>
+                            {`
+                                @media (max-width: 768px) {
+                                    img {
+                                    height: 600px !important;
+                                    margin-top: 80px !important;
+                                    margin-left: -20px !important;
+                                    }
+                                }
+
+                                @media (max-width: 576px) {
+                                    img {
+                                    height: 400px !important;
+                                    margin-top: 60px !important;
+                                    margin-left: 0 !important;
+                                    }
+                                }
+                            `}
+                        </style> */}
+                    </div>
+                    <div style={{ padding: '1px 1px 1px 30px', display: 'flex', flexDirection: 'column' }}>
+                        <ContentNameTypography>Sign Up as Dealer</ContentNameTypography>
+                        <Stepper activeStep={activeStep} alternativeLabel>
+                            {['Basic Information', 'Contact Information', 'Business Information', 'Document Verification', 'Account Creation'].map((label, index) => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                        <div>
+                            {activeStep === 5 ? (
+                                <div>
+                                    <Typography>All steps completed - you&apos;re finished</Typography>
+                                </div>
+                            ) : (
+                                <div>
+                                    {getStepContent(activeStep)}
+
+                                    <div>
+                                        <Button variant="outlined" style={{ height: 50, width: 170, borderRadius: 50, marginRight: 20, marginLeft: 350 }} disabled={activeStep === 0} onClick={handleBack}>
+                                            Back
+                                        </Button>
+                                        {activeStep === 4 ? (
+                                            <Button variant="contained" style={{ height: 50, width: 170, borderRadius: 50 }} onClick={handleFinish}>
+                                                Sign Up
+                                            </Button>) : (
+                                            <Button variant="contained" style={{ height: 50, width: 170, borderRadius: 50 }} onClick={handleNext}>
+                                                Next
+                                            </Button>
+                                        )}
+                                        {/* 
+                                        <Button variant="contained" style={{ height: 50, width: 170, borderRadius: 50 }} onClick={handleNext}>
+                                            {activeStep === 4 ? 'Finish' : 'Next'}
+                                        </Button> */}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </StyledCard>
+                <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center'
+                }}>
+                    <Alert onClose={handleClose} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                        <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                        {alertMessage}
+                    </Alert>
+                </Snackbar>
+            </StyleGrid>
+        </div>
+    );
 }

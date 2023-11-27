@@ -218,7 +218,7 @@ export default function Dashboard() {
             })
             .catch((error) => {
 
-                alert("Error retrieving payment receipts. Please try again.");
+                // alert("Error retrieving payment receipts. Please try again.");
             });
     } 
 

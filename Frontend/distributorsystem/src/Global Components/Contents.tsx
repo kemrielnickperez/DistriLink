@@ -1,43 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Outlet, useLocation} from 'react-router-dom';
 import NewNavBar from './NewNavBar';
+import { AppBar, Container, Toolbar } from '@mui/material';
+import NewAppBar from './NewAppBar';
 
 
 export default function Content() {
   const location = useLocation();
 
-  const getNavPage = () => {
-    const path = location.pathname;
-    const navPageMapping: Record<string,string>={
+  const getNavNamePage=()=>{
+    const path=location.pathname;
+    const navPageNameMapping: Record<string,string>={
         '/dashboard':'Dashboard',
-        //'/assignmentCollector': 'Collector Assignment',
-        //'/dealerRegistration':'Dealer Registration',
-        //'/dealerApproval':'Dealer Approval',
+        '/collectorAssignment':'Collector Assignment',
+        '/dealerProfileList': 'Dealer Profiles List',
+        '/employeeProfileList': 'Employee Profiles List',
+        '/productDistributionList':'Product Distribution List',
+        '/paymentList':'Payment Receipts',
+        '/distributorOrderForm': 'Product Distribution Form',
+    }
+    const navpageMapped= navPageNameMapping[path]||'Unknown';
+    return navpageMapped;
+}
+const getNavContentPage=()=>{
+ 
+  const path=location.pathname;
 
-        '/schedules':'Payment Transaction Schedule',
-        '/orderTransactionDetails': 'Order Transaction Details',
-        '/printDetails': 'Print Details',
-        '/paymentList': 'Payment Lists',
-        '/recordDirectPayment': 'Record Direct Payment',
+  const navPageContentMapping: Record<string,string>={
+      '/dashboard':'Your pendings overview',
+      '/collectorAssignment':'Assign, reassign, or unassign collector to your order',
+      '/dealerProfileList': 'View unconfirmed & confirmed Dealers, awaiting for your confirmation.',
+      '/employeeProfileList': 'List of your emplooyes',
+      '/productDistributionList':'View confirmed & pending product orders from your dealers, awaiting for your confirmation.',
+      '/paymentList':"List of Dealer's Payment Receipts",
+      '/distributorOrderForm': "Allocate a product to generate a dealer's order.",
+    }
+  const navpageMapped= navPageContentMapping[path]||'Unknown';
+  return navpageMapped;
+}
 
-        //'/distributorOrderForm':'Distribution Order Form',
-        //'/orderConfirmation': 'Order Confrimation',
-        //'/paymentSummary':'Payment Summary',
-
-        //'/dealerProfile':'Dealer Profile',
-      // '/dealerApproval':'Dealer Approval'
-        '/productDistributionList': 'Product Distribution List'
-        
-    };
-
-    const navpage = navPageMapping[path] || 'Unknown';
-    return navpage;
-  };
-   
     return (
       <div>
-        <NewNavBar moduleName={getNavPage()} /> 
-        <Outlet />
+        <NewAppBar moduleName={getNavNamePage()} moduleContent={getNavContentPage()}/>
+        <NewNavBar/>   
+        <div style={{paddingTop:60}}>
+         <Outlet/>
+        </div>
       </div>
     );
-  }
+}
