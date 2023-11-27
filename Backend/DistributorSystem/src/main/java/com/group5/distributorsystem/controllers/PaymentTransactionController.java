@@ -38,9 +38,9 @@ public class PaymentTransactionController {
         return new ResponseEntity<>(paymentTransactionService.getAllPaymentTransactions(), HttpStatus.OK);
     }
 
-    @GetMapping("/getAllPaymentTransactionsByOrderID/{orderid}")
-    public ResponseEntity<Object> getAllPaymentTransactionsByOrderID(@PathVariable String orderid){
-        return new ResponseEntity<>(paymentTransactionService.getAllPaymentTransactionsByOrderID(orderid), HttpStatus.OK);
+    @GetMapping("/getAllPaymentTransactionsByOrderID/{orderid}/{distributorid}")
+    public ResponseEntity<Object> getAllPaymentTransactionsByOrderID(@PathVariable String orderid, @PathVariable String distributorid){
+        return new ResponseEntity<>(paymentTransactionService.getAllPaymentTransactionsByOrderID(orderid, distributorid), HttpStatus.OK);
     }
 
 

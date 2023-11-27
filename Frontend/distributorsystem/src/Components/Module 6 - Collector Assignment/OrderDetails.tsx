@@ -142,7 +142,7 @@ export function OrderDetails() {
     };
 
     const getAllPaymentTransactionsByOrderID = () => {
-        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${objectId}`)
+        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${objectId}/${distributorFromStorage.distributorid}`)
             .then((response) => {
 
                 setPaymentTransactions(response.data);
@@ -155,12 +155,12 @@ export function OrderDetails() {
     //sorting the payment transactions
     const sortedPaymemtTransactions = paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
-
-
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+   
     {/*Handlers*/ }
     const handleFindValue = () => {
         try {
-            getOrderByID(objectId!);
+            getOrderByID(objectId!, distributorFromStorage.distributorid);
             getAllPaymentTransactionsByOrderID();
         } catch (error) {
             headerHandleAlert('Error', "Failed to retrieve order data. Please try again.", 'error');

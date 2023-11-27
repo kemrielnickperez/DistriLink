@@ -154,8 +154,9 @@ export default function Schedules() {
     const orderIDRef = useRef<TextFieldProps>(null)
 
     const getAllPaymentTransactionsByOrderID = (idToSearch: string) => {
-        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${idToSearch}`)
+        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${idToSearch}/${distributorFromStorage.distributorid}`)
             .then((response) => {
+
                 setPaymentTransactions(response.data);
 
             })
@@ -165,37 +166,21 @@ export default function Schedules() {
     }
 
 
-    useEffect(() => {
-        if (order && paymentTransactions) {
-            // Clone the array and sort it
-            const sorted = [...paymentTransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
-            setSortedPaymentTransactions(sorted);
-            //handleFindOrder();
-        }
+    
 
 
-        setInitialMinDate(dayjs() as Dayjs);
-
-
-
-
-    }, [order, paymentTransactions]);
-
-
-
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
 
     const handleFindOrder = () => {
 
-
         const idToSearch = objectId !== 'null' ? objectId : orderIDRef.current?.value + "";
-        getOrderByID(idToSearch!);
-        getAllPaymentTransactionsByOrderID(idToSearch!)
 
-        if (isOrderFound === false) {
-            // alert("Order not found. Please try again.");
-            // toast
 
+        getOrderByID(idToSearch!, distributorFromStorage.distributorid);
+        if (isOrderFound === true) {
+            getAllPaymentTransactionsByOrderID(idToSearch!)
         }
+
 
     };
 
@@ -315,16 +300,23 @@ export default function Schedules() {
 
 
 
+
     useEffect(() => {
 
+        handleFindOrder();
 
-        if (objectId !== 'null') {
-            handleFindOrder();
+        if (order && paymentTransactions) {
+            // Clone the array and sort it
+            const sorted = [...paymentTransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
+            setSortedPaymentTransactions(sorted);
         }
 
 
-    },
-        [isOrderFound, order, paymentTransactionsObjects]);
+        setInitialMinDate(dayjs() as Dayjs);
+
+
+    }, [order, paymentTransactions, isOrderFound, paymentTransactionsObjects]);
+  
 
 
     return (
@@ -350,184 +342,196 @@ export default function Schedules() {
                 </Grid>
             </Grid>
 
-            <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '5px' }}>
-                <Grid item >
-
-                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "300px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
-
-                        <Typography sx={{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Inter, sans - serif', fontWeight: 'bold', fontSize: '25px', color: "#203949", paddingTop: '30px' }}>Order Transaction Details</Typography>
-
-                        <TableContainer sx={{ borderBottom: 'none', padding: 2, marginTop: 1, border: 'none' }}>
-                            <Table aria-label='simple table' style={{ borderCollapse: 'collapse' }}>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableHeaderCell align="center"><Label1>Order Transaction ID</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"><Label1>Dealer Name</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"><Label1>Distribution Date</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"><Label1>Payment Terms</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"><Label1>Total Ordered Amount</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"><Label1>Penalty Rate</Label1></TableHeaderCell>
-                                        <TableHeaderCell align="center"><Label1>Status</Label1></TableHeaderCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell align='center'><Typography1>{order?.orderid}</Typography1></TableCell>
-                                        <TableCell align='center'><Typography1>{order?.dealer!.firstname}  {order?.dealer!.lastname}</Typography1></TableCell>
-                                        <TableCell align='center'><Typography1>{order?.distributiondate}</Typography1></TableCell>
-                                        <TableCell align='center'><Typography1>{order?.paymentterms}</Typography1></TableCell>
-                                        <TableCell align='center'><Typography1>Php {order?.orderamount}</Typography1></TableCell>
-                                        <TableCell align='center'><Typography1>{order?.penaltyrate}%</Typography1></TableCell>
-                                        <TableCell align="center">
-                                            <Typography1><span style={{ color: order?.isclosed ? 'red' : 'green' }}>
-                                                {order?.isclosed ? 'CLOSED' : 'OPEN'}
-                                            </span></Typography1>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Paper>
-                </Grid>
-            </Grid>
-
-            {order?.paymenttransactions?.length !== 0 && order?.collector !== null ? (
+            {isOrderFound ? (
                 <div>
-                    <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
+
+                    <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '5px' }}>
                         <Grid item >
-                            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>
-                                <TableContainer >
-                                    <Table aria-label='simple table'>
+
+                            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "300px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
+
+                                <Typography sx={{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', fontFamily: 'Inter, sans - serif', fontWeight: 'bold', fontSize: '25px', color: "#203949", paddingTop: '30px' }}>Order Transaction Details</Typography>
+
+                                <TableContainer sx={{ borderBottom: 'none', padding: 2, marginTop: 1, border: 'none' }}>
+                                    <Table aria-label='simple table' style={{ borderCollapse: 'collapse' }}>
                                         <TableHead>
                                             <TableRow>
-                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Payment Transaction ID</Label1></TableHeaderCell>
-                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Installment Number</Label1></TableHeaderCell>
-                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Starting Date</Label1></TableHeaderCell>
-                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Ending Date</Label1></TableHeaderCell>
-                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Amount Due</Label1></TableHeaderCell>
-                                                <TableHeaderCell align="center" sx={{ paddingTop: 5 }}></TableHeaderCell>
+                                                <TableHeaderCell align="center"><Label1>Order Transaction ID</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center"><Label1>Dealer Name</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center"><Label1>Distribution Date</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center"><Label1>Payment Terms</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center"><Label1>Total Ordered Amount</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center"><Label1>Penalty Rate</Label1></TableHeaderCell>
+                                                <TableHeaderCell align="center"><Label1>Status</Label1></TableHeaderCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-
-                                            {paymentTransactions?.map((transaction, index) => (
-                                                <TableRow key={transaction.paymenttransactionid}>
-                                                    <TableCell align="center">
-                                                        {transaction.paymenttransactionid}
-                                                    </TableCell>
-
-                                                    <TableCell align="center">
-                                                        Installment {transaction.installmentnumber}
-                                                    </TableCell>
-                                                    <TableCell align="center">
-                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                            <Typography >{dayjs(transaction.startingdate).format('MM/DD/YYYY')}</Typography>
-                                                        </LocalizationProvider>
-                                                    </TableCell>
-
-
-                                                    <TableCell align="center">
-                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                            <DatePicker
-                                                                slotProps={{
-                                                                    textField: {
-                                                                        InputProps: {
-                                                                            disableUnderline: true
-                                                                        },
-                                                                        // Set the variant to "standard"
-                                                                        variant: "standard",
-                                                                        style: { width: '50%', padding: '0 10px 0 10px' }
-                                                                    }
-                                                                }}
-                                                                value={dayjs(transaction.enddate)}
-                                                                minDate={dayjs(transaction.enddate)}
-                                                                onChange={(newValue) => handleEndDateUpdate(newValue)}
-                                                                disabled={transaction.paid} />
-
-                                                        </LocalizationProvider>
-                                                    </TableCell>
-
-                                                    <TableCell>
-
-                                                        Php {transaction.amountdue.toFixed(2)}
-
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <StyledButton
-                                                            onClick={() => handleSaveClick(transaction)}
-                                                            disabled={transaction.paid}
-                                                        > Update </StyledButton>
-                                                    </TableCell>
-
-
-                                                </TableRow>
-
-                                            ))}
+                                            <TableRow>
+                                                <TableCell align='center'><Typography1>{order?.orderid}</Typography1></TableCell>
+                                                <TableCell align='center'><Typography1>{order?.dealer!.firstname}  {order?.dealer!.lastname}</Typography1></TableCell>
+                                                <TableCell align='center'><Typography1>{order?.distributiondate}</Typography1></TableCell>
+                                                <TableCell align='center'><Typography1>{order?.paymentterms}</Typography1></TableCell>
+                                                <TableCell align='center'><Typography1>Php {order?.orderamount}</Typography1></TableCell>
+                                                <TableCell align='center'><Typography1>{order?.penaltyrate}%</Typography1></TableCell>
+                                                <TableCell align="center">
+                                                    <Typography1><span style={{ color: order?.isclosed ? 'red' : 'green' }}>
+                                                        {order?.isclosed ? 'CLOSED' : 'OPEN'}
+                                                    </span></Typography1>
+                                                </TableCell>
+                                            </TableRow>
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-
                             </Paper>
-                            <Grid>
-
-                            </Grid>
                         </Grid>
                     </Grid>
-                </div>
-            ) : order!.collector === null ? (
 
-                <div>
-                    <h2 style={{ color: 'black', marginTop: '50px' }}> No Collector Assigned</h2>
+
+
+                    {order?.paymenttransactions?.length !== 0 && order?.collector !== null ? (
+                        <div>
+                            <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
+                                <Grid item >
+                                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>
+                                        <TableContainer >
+                                            <Table aria-label='simple table'>
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Payment Transaction ID</Label1></TableHeaderCell>
+                                                        <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Installment Number</Label1></TableHeaderCell>
+                                                        <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Starting Date</Label1></TableHeaderCell>
+                                                        <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Ending Date</Label1></TableHeaderCell>
+                                                        <TableHeaderCell align="center" sx={{ paddingTop: 5 }}><Label1>Amount Due</Label1></TableHeaderCell>
+                                                        <TableHeaderCell align="center" sx={{ paddingTop: 5 }}></TableHeaderCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+
+                                                    {sortedPaymentTransactions?.map((transaction, index) => (
+                                                        <TableRow key={transaction.paymenttransactionid}>
+                                                            <TableCell align="center">
+                                                                {transaction.paymenttransactionid}
+                                                            </TableCell>
+
+                                                            <TableCell align="center">
+                                                                Installment {transaction.installmentnumber}
+                                                            </TableCell>
+                                                            <TableCell align="center">
+                                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                                    <Typography >{dayjs(transaction.startingdate).format('MM/DD/YYYY')}</Typography>
+                                                                </LocalizationProvider>
+                                                            </TableCell>
+
+
+                                                            <TableCell align="center">
+                                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                                    <DatePicker
+                                                                        slotProps={{
+                                                                            textField: {
+                                                                                InputProps: {
+                                                                                    disableUnderline: true
+                                                                                },
+                                                                                // Set the variant to "standard"
+                                                                                variant: "standard",
+                                                                                style: { width: '50%', padding: '0 10px 0 10px' }
+                                                                            }
+                                                                        }}
+                                                                        value={dayjs(transaction.enddate)}
+                                                                        minDate={dayjs(transaction.enddate)}
+                                                                        onChange={(newValue) => handleEndDateUpdate(newValue)}
+                                                                        disabled={transaction.paid} />
+
+                                                                </LocalizationProvider>
+                                                            </TableCell>
+
+                                                            <TableCell>
+
+                                                                Php {transaction.amountdue.toFixed(2)}
+
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <StyledButton
+                                                                    onClick={() => handleSaveClick(transaction)}
+                                                                    disabled={transaction.paid}
+                                                                > Update </StyledButton>
+                                                            </TableCell>
+
+
+                                                        </TableRow>
+
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+
+                                    </Paper>
+                                    <Grid>
+
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </div>
+                    ) : order!.collector === null ? (
+
+                        <div>
+                            <h2 style={{ color: 'black', marginTop: '50px' }}> No Collector Assigned</h2>
+                        </div>
+                    ) : order?.paymenttransactions?.length === 0 ? (
+                        <div>
+                            <h2 style={{ color: 'black', marginTop: '50px' }}> no schedules yet</h2>
+
+                            <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
+                                <Grid item>
+                                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none', height: '50px' }}>
+                                        <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
+                                            <Grid>
+                                                <Label1 sx={{ paddingTop: '30px', paddingLeft: '25px' }}>Select Starting Date </Label1>
+                                            </Grid>
+                                            <Grid>
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <DatePicker
+                                                        slotProps={{
+                                                            textField: {
+                                                                InputProps: {
+                                                                    disableUnderline: true
+                                                                },
+                                                                variant: "standard",
+                                                                style: { width: '55%', padding: '0 10px 0 10px' }
+                                                            }
+                                                        }}
+
+                                                        minDate={initialMinDate}
+                                                        onChange={(e) => setStartDate(e)} />
+
+                                                </LocalizationProvider>
+                                            </Grid>
+                                            <Grid>
+                                            </Grid>
+                                        </Grid>
+                                    </Paper>
+                                </Grid>
+                            </Grid>
+                            <br></br>
+                            <StyledButton onClick={
+                                handleCreatePaymentTransaction
+                            }> Create Schedules </StyledButton>
+                        </div>
+
+                    ) :
+                        (
+                            <div>
+                            </div>
+                        )
+
+                    }
                 </div>
             ) : (
                 <div>
-                    <h2 style={{ color: 'black', marginTop: '50px' }}> no schedules yet</h2>
-
-                    <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
-                        <Grid item>
-                            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none', height: '50px' }}>
-                                <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
-                                    <Grid>
-                                        <Label1 sx={{ paddingTop: '30px', paddingLeft: '25px' }}>Select Starting Date </Label1>
-                                    </Grid>
-                                    <Grid>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <DatePicker
-                                                slotProps={{
-                                                    textField: {
-                                                        InputProps: {
-                                                            disableUnderline: true
-                                                        },
-                                                        variant: "standard",
-                                                        style: { width: '55%', padding: '0 10px 0 10px' }
-                                                    }
-                                                }}
-
-                                                minDate={initialMinDate}
-                                                onChange={(e) => setStartDate(e)} />
-
-                                        </LocalizationProvider>
-                                    </Grid>
-                                    <Grid>
-                                    </Grid>
-                                </Grid>
-                            </Paper>
-                        </Grid>
-                    </Grid>
-                    <br></br>
-                    <StyledButton onClick={
-                        handleCreatePaymentTransaction
-                    }> Create Schedules </StyledButton>
-
-
-
-
-
+                    {/* Display an empty field or a message when the order is not found */}
+                    <h2 style={{ color: 'black', marginTop: '50px' }}>Order Not Found</h2>
+                    {/* You can add more components or customize the message as needed */}
                 </div>
-
-            )
-
-            }
+            )}
 
             {/* Alerts */}
             <ToastContainer

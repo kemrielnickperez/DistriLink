@@ -48,9 +48,6 @@ public class PaymentReceiptController {
     }
 
 
-
-
-
     @PostMapping("directpaymentreceipt/createDirectPaymentReceipt/{receiverid}")
     public ResponseEntity<Object> createDirectPaymentReceipt(@RequestBody DirectPaymentReceipt directPaymentReceipt, @PathVariable String receiverid){
         directPaymentReceiptService.createDirectPaymentReceipt(directPaymentReceipt, receiverid);

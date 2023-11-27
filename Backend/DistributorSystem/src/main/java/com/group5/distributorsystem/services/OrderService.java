@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -223,7 +222,7 @@ public class OrderService {
 
         boolean allPaymentsPaid = true;
 
-        List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionService.getAllPaymentTransactionsByOrderID(order.getOrderid());
+        List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionService.getAllPaymentTransactionsByOrderID(order.getOrderid(), order.getDistributor().getDistributorid());
 
         for (PaymentTransaction transaction : paymentTransactionsFromOrder) {
             if (!transaction.isPaid()) {
@@ -280,7 +279,7 @@ public class OrderService {
             if (!order.isIsclosed()) {
                // Set<PaymentTransaction> paymentTransactions = order.getPaymenttransactions();
 
-                List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionService.getAllPaymentTransactionsByOrderID(order.getOrderid());
+                List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionService.getAllPaymentTransactionsByOrderID(order.getOrderid(), order.getDistributor().getDistributorid());
 
 
                 for (PaymentTransaction paymentTransaction : paymentTransactionsFromOrder) {
@@ -317,6 +316,20 @@ public class OrderService {
     public List<Order> getAllUnconfirmedOrdersByDistributorID(String distributorid) {
         return orderRepository.findByDistributor_DistributoridAndIsconfirmedFalse(distributorid);
     }
+
+
+
+    public Order getOrderByIDUnderDistributor(String orderid, String distributorid){
+        boolean exists = orderRepository.existsByOrderidAndDistributor_Distributorid(orderid, distributorid);
+        if(exists) {
+            return orderRepository.findById(orderid).get();
+        }
+        else
+            return null;
+    }
+
+
+
 
 }
 

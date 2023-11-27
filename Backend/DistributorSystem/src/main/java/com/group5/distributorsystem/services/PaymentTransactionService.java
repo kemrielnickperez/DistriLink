@@ -63,15 +63,21 @@ public class PaymentTransactionService {
     }
 
 
-    public List<PaymentTransaction> getAllPaymentTransactionsByOrderID(String orderid) {
-        Order order = orderRepository.findById(orderid).get();
-        List<PaymentTransaction> paymentTransactions = new ArrayList<>();
-        for (PaymentTransaction pt: order.getPaymenttransactions()) {
-            paymentTransactions.add(pt);
-        }
+    public List<PaymentTransaction> getAllPaymentTransactionsByOrderID(String orderid, String distributorid) {
 
-        //return paymentTransactionRepository.findByOrder_Orderid(orderid);
-        return paymentTransactions;
+        Order order;
+        boolean exists = orderRepository.existsByOrderidAndDistributor_Distributorid(orderid, distributorid);
+        if(exists) {
+            order = orderRepository.findById(orderid).get();
+            List<PaymentTransaction> paymentTransactions = new ArrayList<>();
+            for (PaymentTransaction pt : order.getPaymenttransactions()) {
+                paymentTransactions.add(pt);
+            }
+            return paymentTransactions;
+        }
+        else
+            return null;
+
     }
 
 
@@ -113,7 +119,7 @@ public class PaymentTransactionService {
 
         PaymentTransaction updated2 = paymentTransactionRepository.save(updatedPaymentTransaction);
 
-        List<PaymentTransaction> paymentTransactionsFromOrder = getAllPaymentTransactionsByOrderID(order.getOrderid());
+        List<PaymentTransaction> paymentTransactionsFromOrder = getAllPaymentTransactionsByOrderID(order.getOrderid(), order.getDistributor().getDistributorid());
 
         for(PaymentTransaction pt : paymentTransactionsFromOrder)
             if(pt.getPaymenttransactionid().equals(updated2.getPaymenttransactionid())){
@@ -180,7 +186,7 @@ public class PaymentTransactionService {
         if(totalAmountPaid == updatedPaymentTransaction.getAmountdue()){
             updatedPaymentTransaction.setPaid(true);
 
-            List<PaymentTransaction> paymentTransactionsFromOrder = getAllPaymentTransactionsByOrderID(order.getOrderid());
+            List<PaymentTransaction> paymentTransactionsFromOrder = getAllPaymentTransactionsByOrderID(order.getOrderid(), order.getDistributor().getDistributorid());
 
             for(PaymentTransaction pt : paymentTransactionsFromOrder) {
                 if (pt.getPaymenttransactionid().equals(updatedPaymentTransaction.getPaymenttransactionid())) {

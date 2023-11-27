@@ -143,7 +143,7 @@ export default function OrderConfirmation() {
   const dealerIDRef = useRef<TextFieldProps>(null);
 
 
-  const orderID = 'fa20eeaf';
+ 
 
   const paymentchoices = [
     {
@@ -178,8 +178,10 @@ export default function OrderConfirmation() {
 
   const [isMounted, setIsMounted] = useState(false);
 
+
+  const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
   const handleFindOrder = () => {
-    getOrderByID(objectId!);
+    getOrderByID(objectId!, distributorFromStorage.distributorid);
   }
 
 

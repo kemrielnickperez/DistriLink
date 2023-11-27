@@ -256,7 +256,7 @@ export default function RecordDirectPayment() {
     const [open, setOpen] = React.useState(false);
 
 
-    const sortedPaymentTransactions = paymentTransactions.sort((a, b) => a.installmentnumber - b.installmentnumber);
+    //const sortedPaymentTransactions = paymentTransactions.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
     const handleOpen = () => {
 
@@ -272,11 +272,12 @@ export default function RecordDirectPayment() {
 
 
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
+    const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
 
 
 
     function getAllPaymentTransactionsByOrderID(orderid: string) {
-        axios.get<IPaymentTransaction[]>(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${orderid}`)
+        axios.get<IPaymentTransaction[]>(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${orderid}/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setPaymentTransactions(response.data);
 
@@ -287,11 +288,14 @@ export default function RecordDirectPayment() {
 
             });
     }
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
 
 
     const handleFindPaymentTransactions = () => {
-        getOrderByID(orderIDRef.current?.value + '');
-        getAllPaymentTransactionsByOrderID(orderIDRef.current?.value + '');
+        getOrderByID(orderIDRef.current?.value + "", distributorFromStorage.distributorid);
+        if (isOrderFound === true) {
+            getAllPaymentTransactionsByOrderID(orderIDRef.current?.value + "")
+        }
     };
 
 
@@ -377,7 +381,7 @@ export default function RecordDirectPayment() {
 
 
         const allPaid = paymentTransactions.every((transaction) => transaction.paid);
-        if(allPaid){
+        if (allPaid) {
             closedOrder(order?.orderid!);
         }
 
@@ -400,7 +404,7 @@ export default function RecordDirectPayment() {
                 receipt => receipt.paymenttype === 'collection'
             ) as ICollectionPaymentReceipt[]);
 
-            console.log(selectedTransaction.paymentreceipts)
+
         }
 
         getRemainingPaymentAmount(selectedTransaction ? selectedTransaction.paymenttransactionid : '');
@@ -637,7 +641,7 @@ export default function RecordDirectPayment() {
 
 
 
-    const rows = sortedPaymentTransactions.map((pt) => {
+    const rows = sortedPaymentTransactions!.map((pt) => {
 
 
 
@@ -659,23 +663,21 @@ export default function RecordDirectPayment() {
 
 
     useEffect(() => {
-        const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
-
-
-        if (orderIDRef.current?.value + '' !== '') {
-            handleFindPaymentTransactions();
-
-        }
-
-        if(allPaid){
-            closedOrder(order?.orderid!);
-        }
-        console.log(order);
-
         
+        if (order && paymentTransactions) {
+            const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
+
+            // Clone the array and sort it
+            const sorted = [...paymentTransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
+            setSortedPaymentTransactions(sorted);
+
+            if (allPaid) {
+                closedOrder(order?.orderid!);
+            }
+        }
 
 
-
+    
         setMaxDate(dayjs() as Dayjs);
 
     }, [isOrderFound, order, order?.isclosed, paymentTransactions]);
@@ -694,90 +696,52 @@ export default function RecordDirectPayment() {
                 </SearchButton>
 
             </div>
-            {paymentTransactions.length !== 0 ? (
+
+            {isOrderFound ? (
                 <div>
+                    {paymentTransactions.length !== 0 ? (
+                        <div>
 
-                    <StyledPaymentTransactionCard1>
-                        <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
-                        <DataGrid
-                            rows={rows}
-                            sx={{ textAlign: 'center', color: '#203949', height: '350px', fontWeight: 330, margin: '50px', border: 'none', fontSize: '490' }}
-                            columns={columns}
+                            <StyledPaymentTransactionCard1>
+                                <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
+                                <DataGrid
+                                    rows={rows}
+                                    sx={{ textAlign: 'center', color: '#203949', height: '350px', fontWeight: 330, margin: '50px', border: 'none', fontSize: '490' }}
+                                    columns={columns}
 
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: paymentTransactions.length,
-                                    },
-                                },
-                            }}
-                            pageSizeOptions={[5]}
-
-
-
-                        />
-                    </StyledPaymentTransactionCard1>
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: paymentTransactions.length,
+                                            },
+                                        },
+                                    }}
+                                    pageSizeOptions={[5]}
 
 
 
+                                />
+                            </StyledPaymentTransactionCard1>
+                        </div>
 
-                    {/* <StyledPaymentTransactionCard>
-                        <TableContainer sx={{ borderRadius: '22px' }}>
-                            <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
-                            <Table>
-                                <TableHead >
-                                    <TableRow>
-                                        <TableCellStyle align="center">Payment Transaction ID</TableCellStyle>
-                                        <TableCellStyle align="center">Installment Number</TableCellStyle>
-                                        <TableCellStyle align="center">Payment Due Date</TableCellStyle>
-                                        <TableCellStyle align="center"> Amount Due</TableCellStyle>
-                                        <TableCellStyle align="center"> Status</TableCellStyle>
-                                        <TableCellStyle align="center">Payment Type</TableCellStyle>
-                                        <TableCellStyle align="center">Remarks</TableCellStyle>
+                    ) : (
+                        <div>
+                            <h2 style={{ color: '#707070', marginTop: '50px' }}> no schedules yet</h2>
 
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {paymentTransactions?.map((transaction) => (
-                                        <StyledTableRow key={transaction.paymenttransactionid}>
-                                            <TableCell component="th" scope="row" align="center">{transaction.paymenttransactionid}</TableCell>
-                                            <TableCell component="th" scope="row" align="center">{transaction.installmentnumber}</TableCell>
+                        </div>
 
-                                            <TableCell align="center">{transaction.enddate}</TableCell>
-                                            <TableCell align="center">{transaction.amountdue.toFixed(2)}</TableCell>
-                                            <TableCell align="center">
-                                                <span style={{ color: transaction.paid ? 'green' : 'red' }}>
-                                                    {transaction.paid ? 'Paid' : 'Not Paid'}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell align="center">{paymentReceipt?.paymenttype}</TableCell>
-                                            <TableCell align="center">{paymentReceipt?.remarks}</TableCell>
-                                        </StyledTableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </StyledPaymentTransactionCard> */}
-                </div>
-
-            ) : (
-                <div>
-                    <h2 style={{ color: '#707070', marginTop: '50px' }}> no schedules yet</h2>
-
-                </div>
-
-            )
-            }
-            {order?.isclosed ? (
-                <div>
-                    <h1>
-                        All payment transactions have been paid. Order is now closed.
-                    </h1>
-                </div>
-            ) : (<div>
-                <Grid container>
-                    <Grid item><StyleLabel>Payment Transaction ID</StyleLabel>
-                        {/* <StyleTextField3
+                    )
+                    }
+                    {order?.isclosed ? (
+                        <div>
+                            <h1>
+                                All payment transactions have been paid. Order is now closed.
+                            </h1>
+                        </div>
+                    ) : (<div>
+                        <Grid container>
+                            <Grid item><StyleLabel>Payment Transaction ID</StyleLabel>
+                                {/* <StyleTextField3
                      variant="outlined"
                      select
                      value={selectedPaymentTransaction}
@@ -797,97 +761,105 @@ export default function RecordDirectPayment() {
                             {option.paymenttransactionid}
                         </MenuItem>
                      ))} */}
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={paymentTransactions!}
-                            getOptionLabel={(option) => option.paymenttransactionid}
-                            isOptionEqualToValue={(option, value) => option.paymenttransactionid === value.paymenttransactionid}
-                            value={selectedPaymentTransaction}
-                            onChange={(event, newValue) => {
-                                setSelectedPaymentTransaction(newValue);
-                                getRemainingPaymentAmount(newValue?.paymenttransactionid!);
-                            }}
-                            filterOptions={(options, state) => {
-                                // Filter out "Paid" transactions from the options
-                                return options.filter((option) => !option.paid);
-                            }}
-                            // Style for the Autocomplete (Combo Box)
-                            sx={{
-                                marginTop: 2,
-                                marginRight: 15,
-                            }}
-                            // Style for the TextField (Input)
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        disableUnderline: true,
-                                        sx: {
-                                            [`& fieldset`]: {
-                                                borderRadius: 15,
-                                                height: 40,
-                                                width: 220,
-                                                top: 4.5,
-                                                right: -250,
-                                            },
-                                            left: 180,
-                                        },
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    options={paymentTransactions!}
+                                    getOptionLabel={(option) => option.paymenttransactionid}
+                                    isOptionEqualToValue={(option, value) => option.paymenttransactionid === value.paymenttransactionid}
+                                    value={selectedPaymentTransaction}
+                                    onChange={(event, newValue) => {
+                                        setSelectedPaymentTransaction(newValue);
+                                        getRemainingPaymentAmount(newValue?.paymenttransactionid!);
                                     }}
-                                    variant="outlined"
+                                    filterOptions={(options, state) => {
+                                        // Filter out "Paid" transactions from the options
+                                        return options.filter((option) => !option.paid);
+                                    }}
+                                    // Style for the Autocomplete (Combo Box)
+                                    sx={{
+                                        marginTop: 2,
+                                        marginRight: 15,
+                                    }}
+                                    // Style for the TextField (Input)
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                disableUnderline: true,
+                                                sx: {
+                                                    [`& fieldset`]: {
+                                                        borderRadius: 15,
+                                                        height: 40,
+                                                        width: 220,
+                                                        top: 4.5,
+                                                        right: -250,
+                                                    },
+                                                    left: 180,
+                                                },
+                                            }}
+                                            variant="outlined"
+                                        />
+                                    )}
                                 />
-                            )}
+
+
+                                {/* </StyleTextField3> */}
+                            </Grid>
+                            <Grid item>
+                                <StyleLabel top={1}>Date Paid</StyleLabel>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <StyledDatePicker
+                                        slotProps={{
+                                            textField: {
+                                                variant: 'outlined',
+                                            }
+                                        }}
+                                        value={selectedDate}
+                                        maxDate={maxDate}
+                                        onChange={(date) => setSelectedDate(date as Dayjs | null)} />
+                                </LocalizationProvider>
+                            </Grid>
+                            <Grid item>
+                                <StyleLabel>Amount Paid</StyleLabel>
+                                <StyleTextField2 style={{ marginLeft: 63 }} inputRef={amountPaidRef} />
+                            </Grid>
+                            <Grid item><StyleLabel>Remarks</StyleLabel>
+                                <StyleTextField2 style={{ marginLeft: 63 }} inputRef={remarksRef} />
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item>
+                            </Grid>
+                        </Grid>
+                        <StyledButton onClick={handleSaveDirectPayment}>Save Payment Record</StyledButton>
+                        {/* <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader> */}
+                        {/* set style left and top manually here in stack */}
+                        {/* Alerts */}
+                        <ToastContainer
+                            position="bottom-right"
+                            autoClose={5000}
+                            limit={3}
+                            hideProgressBar
+                            newestOnTop
+                            closeOnClick
+                            rtl={false}
+                            pauseOnFocusLoss
+                            draggable
+                            pauseOnHover
+                            style={{ width: 450 }}
+                            theme="colored"
                         />
-
-
-                        {/* </StyleTextField3> */}
-                    </Grid>
-                    <Grid item>
-                        <StyleLabel top={1}>Date Paid</StyleLabel>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <StyledDatePicker
-                                slotProps={{
-                                    textField: {
-                                        variant: 'outlined',
-                                    }
-                                }}
-                                value={selectedDate}
-                                maxDate={maxDate}
-                                onChange={(date) => setSelectedDate(date as Dayjs | null)} />
-                        </LocalizationProvider>
-                    </Grid>
-                    <Grid item>
-                        <StyleLabel>Amount Paid</StyleLabel>
-                        <StyleTextField2 style={{ marginLeft: 63 }} inputRef={amountPaidRef} />
-                    </Grid>
-                    <Grid item><StyleLabel>Remarks</StyleLabel>
-                        <StyleTextField2 style={{ marginLeft: 63 }} inputRef={remarksRef} />
-                    </Grid>
-                </Grid>
-                <Grid container>
-                    <Grid item>
-                    </Grid>
-                </Grid>
-                <StyledButton onClick={handleSaveDirectPayment}>Save Payment Record</StyledButton>
-                {/* <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader> */}
-                {/* set style left and top manually here in stack */}
-                {/* Alerts */}
-                <ToastContainer
-                    position="bottom-right"
-                    autoClose={5000}
-                    limit={3}
-                    hideProgressBar
-                    newestOnTop
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    style={{ width: 450 }}
-                    theme="colored"
-                />
-            </div>)}
+                    </div>)}
+                </div>
+            ) : (
+                <div>
+                    {/* Display an empty field or a message when the order is not found */}
+                    <h2 style={{ color: 'black', marginTop: '50px' }}>Order Not Found</h2>
+                    {/* You can add more components or customize the message as needed */}
+                </div>
+            )}
 
 
 

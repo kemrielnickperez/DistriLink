@@ -43,6 +43,11 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getOrderByPaymentTransactionID(paymenttransactionid), HttpStatus.OK);
     }
 
+    @GetMapping("/getOrderByIDUnderDistributor/{orderid}/{distributorid}")
+    public ResponseEntity<Object> getOrderByIDUnderDistributor(@PathVariable String orderid, @PathVariable String distributorid){
+        return new ResponseEntity<>(orderService.getOrderByIDUnderDistributor(orderid, distributorid), HttpStatus.OK);
+    }
+
 
 
     @GetMapping("/getAllOrdersByDistributorID/{distributorid}")

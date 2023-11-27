@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 
 export const useRestOrder = (): [
     (order: IOrder) => void,
-    (orderid: string) => void,
+    (orderid: string, distributorid:string) => void,
     (paymenttransactionid: string) => void,
     (collectorid: string, orderids: string[]) => void,
     (orderID: string) => void,
@@ -113,15 +113,15 @@ export const useRestOrder = (): [
     }
 
 
-    function getOrderByID(orderid: string) {
-
-        axios.get(`http://localhost:8080/order/getOrderByID/${orderid}`)
+    function getOrderByID(orderid: string, distributorid:string) {
+        axios.get(`http://localhost:8080/order/getOrderByIDUnderDistributor/${orderid}/${distributorid}`)
             .then((response) => {
-                setOrder(response.data)
-                if (response.data !== null) {
+               
+                 if (response.data !== '') {
+                    setOrder(response.data)
                     setIsOrderFound(true);
                     //setIsOrderFoundError(false);
-                    /* toast.success('Order found. Please set or update the schedule.', {
+                   /*   toast.success('Order found. Please set or update the schedule.', {
                         position: "bottom-right",
                         autoClose: 5000,
                         hideProgressBar: true,
@@ -130,8 +130,8 @@ export const useRestOrder = (): [
                         draggable: true,
                         progress: undefined,
                         theme: "colored",
-                    })
- */
+                    }) */
+ 
                 }
                 else {
                     setIsOrderFound(false);
@@ -146,13 +146,13 @@ export const useRestOrder = (): [
                         theme: "colored",
                     })
                     //setIsOrderFoundError(false);
-                }
+                } 
 
             })
             .catch((error) => {
 
                 // alert("Error finding the order. Please try again.");
-            });
+            }); 
     }
     
     function getOrderByPaymentTransactionID(paymenttransactionid: string) {
