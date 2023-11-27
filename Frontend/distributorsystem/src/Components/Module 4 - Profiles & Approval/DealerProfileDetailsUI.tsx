@@ -263,7 +263,7 @@ export default function DealerProfileDetails() {
 
     const [value, setValue] = useState(0);
 
-    const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit] = useRestDealer();
+    const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile] = useRestDealer();
 
     const [dealerDocuments, setDealerDocuments] = useState<IDealerDocument[]>([]);
 
@@ -298,7 +298,7 @@ export default function DealerProfileDetails() {
 
 
 
-   
+
 
 
 
@@ -412,7 +412,7 @@ export default function DealerProfileDetails() {
         setOpenProfile(false)
     }
 
-   
+
     const getOrderByDealerId = (dealerID: string) => {
         axios.get(`http://localhost:8080/order/getOrderByDealerId/${dealerID}`)
             .then((response) => {
@@ -435,15 +435,14 @@ export default function DealerProfileDetails() {
     };
 
     const handleFindDealer = () => {
-        try {
-            if (objectId) {
-                getDealerByID(objectId!);
-                getAllDealerDocuments(); 
-                getOrderByDealerId(objectId);
-            }
-        } catch (error) {
-            headerHandleAlert('Error', "Failed to retrieve dealer information. Please try again.", 'error');
-        }
+
+        getDealerByIDForProfile(objectId!);
+        getAllDealerDocuments();
+        getOrderByDealerId(objectId!);
+
+        /*  } catch (error) {
+             headerHandleAlert('Error', "Failed to retrieve dealer information. Please try again.", 'error');
+         } */
     };
 
 
@@ -477,9 +476,10 @@ export default function DealerProfileDetails() {
 
 
     useEffect(() => {
-        handleFindDealer();
-        
-      
+
+        if (objectId !== null)
+            handleFindDealer();
+
     }, []);
 
 
@@ -589,16 +589,15 @@ export default function DealerProfileDetails() {
         { field: 'distributionDate', headerName: 'Distribution Date', width: 180 },
         { field: 'orderAmount', headerName: 'Order Amount', width: 180 },
         {
-            field: 'confirmed',
-            headerName: 'Status',
+            field: 'orderStatus',
+            headerName: 'Order Status',
             width: 120,
             renderCell: (params: { row: any; }) => {
                 const dealer = params.row;
-                const isConfirmed = params.row.confirmed;
-
+                const isClosed = params.row.orderStatus;
                 return (
                     <div>
-                        {isConfirmed ? <span>Confirmed</span> : <span>Pending</span>}
+                        {isClosed ? <span>Closed</span> : <span>Open</span>}
                     </div>
                 );
             }
@@ -628,11 +627,12 @@ export default function DealerProfileDetails() {
 
     // Map orders data to rows
     const rowsOrder = orders.map((order) => ({
+
         id: order.orderid,
         orderDate: order.orderdate,
         distributionDate: order.distributiondate,
         orderAmount: `Php ${order.orderamount}`,
-        orderStatus: order.confirmed,
+        orderStatus: order.isclosed,
 
     }));
 
@@ -854,7 +854,7 @@ export default function DealerProfileDetails() {
 
 
 
-           
+
         </div>
     );
 }

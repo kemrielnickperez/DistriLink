@@ -21,7 +21,9 @@ export const useRestDealer = (): [
     (dealerID: string, creditLimit: number) => void,
     boolean | undefined,
     boolean | undefined,
-    IDealer | undefined, number | undefined] => {
+    IDealer | undefined, 
+    number | undefined,
+    (dealerID: string) => void] => {
 
     const [dealer, setDealer] = useState<IDealer | null>();
     const [isDealerFound, setIsDealerFound] = useState(false);
@@ -294,11 +296,8 @@ export const useRestDealer = (): [
         let remainingCredit = 0;
         axios.get(`http://localhost:8080/dealer/getDealerByID/${dealerID}`)
             .then((response) => {
-
-
                 if (response.data !== null) {
                     if (response.data.isconfirmed !== false) {
-                        console.log("naa ra siya mhie")
                         setDealer(response.data);
                         setIsDealerFound(true);
                         creditLimit = response.data.creditlimit;
@@ -317,7 +316,6 @@ export const useRestDealer = (): [
                     else {
                         alert("wala pa ni siya na confirm, use lain dealer please")
                     }
-
 
                 }
                 else {
@@ -347,6 +345,30 @@ export const useRestDealer = (): [
             })
             .catch((error) => {
                 console.error('Error retrieving dealer credit limit:', error);
+            });
+
+    }
+
+
+    function getDealerByIDForProfile(dealerID: string) {
+        axios.get(`http://localhost:8080/dealer/getDealerByID/${dealerID}`)
+            .then((response) => {
+                if (response.data !== null) {
+                    if (response.data.isconfirmed !== false) {
+                        setDealer(response.data);
+                        setIsDealerFound(true);
+                    }
+                    else {
+                        alert("wala pa ni siya na confirm, use lain dealer please")
+                    }
+
+                }
+                else {
+                    setIsDealerFound(false);
+                }
+            })
+            .catch((error) => {
+                console.error('Error retrieving dealer data:', error);
             });
 
     }
@@ -445,6 +467,6 @@ export const useRestDealer = (): [
     }
 
 
-    return [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer!, dealerRemainingCredit]
+    return [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer!, dealerRemainingCredit, getDealerByIDForProfile]
 }
 
