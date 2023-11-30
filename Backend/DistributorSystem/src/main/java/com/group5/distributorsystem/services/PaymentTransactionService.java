@@ -113,22 +113,13 @@ public class PaymentTransactionService {
     public ResponseEntity updatePaymentTransaction(String paymenttransactionid, PaymentTransaction paymentTransaction) {
         PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
 
-        Order order = orderRepository.findById(paymentTransaction.getOrderid()).get();
         updatedPaymentTransaction.setEnddate(paymentTransaction.getEnddate());
-        updatedPaymentTransaction.setStartingdate(paymentTransaction.getStartingdate());
 
-        PaymentTransaction updated2 = paymentTransactionRepository.save(updatedPaymentTransaction);
+        updatedPaymentTransaction = paymentTransactionRepository.save(updatedPaymentTransaction);
 
-        List<PaymentTransaction> paymentTransactionsFromOrder = getAllPaymentTransactionsByOrderID(order.getOrderid(), order.getDistributor().getDistributorid());
-
-        for(PaymentTransaction pt : paymentTransactionsFromOrder)
-            if(pt.getPaymenttransactionid().equals(updated2.getPaymenttransactionid())){
-                pt.setEnddate(updated2.getEnddate());
-                pt.setStartingdate(updated2.getStartingdate());
-            }
+        UpdatePaymentTransactionInOrder(updatedPaymentTransaction.getPaymenttransactionid());
 
         paymentTransactionRepository.save(updatedPaymentTransaction);
-        orderRepository.save(order);
         return new ResponseEntity("Payment Transaction Updated Successfully!", HttpStatus.OK);
     }
 
@@ -165,10 +156,6 @@ public class PaymentTransactionService {
                 break;
             }
         }
-
-      //  orderService.updateOrderClosedStatus(order.getOrderid());
-
-
     }
 
 

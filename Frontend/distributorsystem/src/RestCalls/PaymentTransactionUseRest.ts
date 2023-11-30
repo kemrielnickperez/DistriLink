@@ -116,7 +116,7 @@ export const useRestPaymentTransaction = (): [(paymenttransactions: IPaymentTran
     function updatePaymentTransaction(paymentransactionid: string, paymentransaction: IPaymentTransaction) {
         axios.put(`http://localhost:8080/paymenttransaction/updatePaymentTransaction/${paymentransactionid}`, paymentransaction)
             .then((response) => {
-        
+                console.log("ni work yeyeyeye")
                 // alert("successfully updated!")
                 
                 

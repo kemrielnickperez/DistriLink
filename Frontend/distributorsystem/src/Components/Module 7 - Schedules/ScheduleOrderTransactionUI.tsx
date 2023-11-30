@@ -166,7 +166,7 @@ export default function Schedules() {
     }
 
 
-    
+
 
 
     const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
@@ -246,20 +246,16 @@ export default function Schedules() {
 
         const updatedStartingDate = selectedStartDate || startingDateFromDB;
         const updatedEndDate = selectedEndDate || endDateFromDB;
-        /* 
-       
-                if (updatedStartingDate?.toString() === 'Invalid Date') {
-                   alert('Please select a start date.');
-                   return;
-               }
-       
-               if (updatedEndDate?.toString() === 'Invalid Date') {
-                   alert('Please select an end date.');
-                   return;
-               }*/
+
+        console.log(updatedEndDate.format("DD/MM/YYYY"))
+        if (updatedEndDate?.toString() === 'Invalid Date') {
+            alert('Please select an end date.');
+            return;
+        }
 
         setStartDateModified(false);
         setEndDateModified(false);
+
         try {
             updatePaymentTransaction(
                 transaction.paymenttransactionid,
@@ -316,12 +312,12 @@ export default function Schedules() {
 
 
     }, [order, paymentTransactions, isOrderFound, paymentTransactionsObjects]);
-  
+
 
 
     return (
         <div>
-            
+
 
             <Grid container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
                 <Grid item container sx={{ width: '1000px', borderRadius: '22px', }} justifyContent={"center"}  >

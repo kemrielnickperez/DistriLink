@@ -25,9 +25,9 @@ export const useRestOrder = (): [
 
 ] => {
 
-    const [order, setOrder] = useState<IOrder>();
+    const [order, setOrder] = useState<IOrder | undefined>();
     const [orderFromPaymentTransaction, setOrderFromPaymentTransaction] = useState<IOrder>();
-    const [isOrderFound, setIsOrderFound] = useState<boolean>(true);
+    const [isOrderFound, setIsOrderFound] = useState<boolean>(false);
 
     const [assignedStatus, setAssignedStatus] = useState<boolean>(true);
     const [removeStatus, setRemoveStatus] = useState<boolean>(true);
@@ -116,25 +116,16 @@ export const useRestOrder = (): [
     function getOrderByID(orderid: string, distributorid:string) {
         axios.get(`http://localhost:8080/order/getOrderByIDUnderDistributor/${orderid}/${distributorid}`)
             .then((response) => {
-               
+            
                  if (response.data !== '') {
+                    
                     setOrder(response.data)
                     setIsOrderFound(true);
-                    //setIsOrderFoundError(false);
-                   /*   toast.success('Order found. Please set or update the schedule.', {
-                        position: "bottom-right",
-                        autoClose: 5000,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    }) */
- 
                 }
+
                 else {
                     setIsOrderFound(false);
+                    setOrder(undefined);
                     toast.error('Order not found. Please try again.', {
                         position: "bottom-right",
                         autoClose: 5000,

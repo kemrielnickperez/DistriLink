@@ -113,7 +113,7 @@ export default function CollectorAssignment() {
 
 
   const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
-  
+
 
   {/** useStates */ }
   const [collectors, setCollectors] = useState<IEmployee[]>([]);
@@ -126,23 +126,10 @@ export default function CollectorAssignment() {
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('success');
 
-  
+
   const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
- 
 
 
-  {/** functions */ }
-  /*  function getAllCollectors() {
-     axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
-       .then((response) => {
-         setCollectors(response.data);
-         
-       })
-       .catch((error) => {
-         console.error('Error retrieving collectors:', error);
-         alert("Error retrieving collectors. Please try again.");
-       });
-   } */
 
 
   {/**Handler for Alert - Function to define the type of alert*/ }
@@ -175,17 +162,14 @@ export default function CollectorAssignment() {
       .catch((error) => {
         console.error('Error retrieving collectors:', error);
         headerHandleAlert('Error', "Error retrieving collectors. Please try again..", 'error');
-        // alert("Error retrieving collectors. Please try again.");
+
       });
   }
 
   function getAllOrders() {
     axios.get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${distributorFromStorage.distributorid}`)
       .then((response) => {
-        const confirmedOrders = response.data.filter(order => order.confirmed && !order.isclosed);
-
-        setOrders(confirmedOrders);
-
+        setOrders(response.data.filter(order => order.confirmed && !order.isclosed));
       })
       .catch((error) => {
         console.error('Error retrieving collectors:', error);
@@ -194,33 +178,25 @@ export default function CollectorAssignment() {
       });
   }
 
-
-  const handleButtonClick = (objectId: string) => {
-    // Update the context if needed
-
-    navigate(`/paymenttransactiondetailsss/${objectId}`);
-  };
-
   useEffect(() => {
     getAllCollectors();
     getAllOrders();
-    
+
 
   }, [orders]);
 
- 
+
   const columns: GridColDef[] = [
     { field: 'orderID', headerName: 'Order Transaction ID', width: 200 },
     { field: 'dealerName', headerName: 'Dealer Name', width: 215 },
-    // { field: 'dueDate', headerName: 'Payment Due Date', width: 160 },
     { field: 'amountDue', headerName: 'Amount Due', width: 145 },
     {
       field: 'collectorStatus',
       headerName: 'Collector Status',
       width: 175,
       renderCell: (params) => (
-        <div style={{ 
-          color: params.value === 'Assigned' ? '#2A9221' : '#E77D7D'  
+        <div style={{
+          color: params.value === 'Assigned' ? '#2A9221' : '#E77D7D'
         }}>
           {params.value}
         </div>
@@ -314,41 +290,11 @@ export default function CollectorAssignment() {
     })
   }
 
-
-  {/** Handle Assign */ }
-  /*   const handleAssignCollector = () => {
-      if (selectedCollector === null) {
-        alert("Please choose a collector")
-      } else {
-        let count = 0;
-        for (const selectedOrderID of selectedRows) {
-          if (assignedStatus === false) {
-            break;
-          }
-          else {
-            assignCollector(selectedOrderID, selectedCollector)
-            count++;
-          } 
-        }
-  
-  
-        if (count === selectedRows.length) {
-          alert("Collector assigned successfully to all of the selected orders!")
-        }
-        else {
-          alert(`Only ${count}! number of orders was assigned.`)
-        }
-  
-        setSelectedRows([]);
-        setSelectedCollector(null);
-      }
-    }; */
   const handleAssignCollector = () => {
     if (selectedCollector === null) {
-      // alert("Please choose a collector");
       headerHandleAlert('Collector Assignment Required', "To proceed, please assign a collector to the order(s).", 'warning');
     } else if (selectedRows.length === 0) {
-      // alert("Please select at least one order to assign a collector");
+
       headerHandleAlert('Order Selection Required', "Please choose an order before assigning a collector.", 'warning');
     } else {
       assignCollector(selectedCollector.employeeid!, selectedRows);

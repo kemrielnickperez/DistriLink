@@ -322,7 +322,7 @@ public class OrderService {
     public Order getOrderByIDUnderDistributor(String orderid, String distributorid){
         boolean exists = orderRepository.existsByOrderidAndDistributor_Distributorid(orderid, distributorid);
         if(exists) {
-            return orderRepository.findById(orderid).get();
+            return orderRepository.findById(orderid).orElse(null);
         }
         else
             return null;

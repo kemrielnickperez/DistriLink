@@ -275,6 +275,7 @@ export default function RecordDirectPayment() {
     const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
 
 
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
 
     function getAllPaymentTransactionsByOrderID(orderid: string) {
         axios.get<IPaymentTransaction[]>(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${orderid}/${distributorFromStorage.distributorid}`)
@@ -283,21 +284,26 @@ export default function RecordDirectPayment() {
 
             })
             .catch((error) => {
-                alert("Error retrieving payment transactions. Please try again.");
-
 
             });
     }
-    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
-
+  
 
     const handleFindPaymentTransactions = () => {
         getOrderByID(orderIDRef.current?.value + "", distributorFromStorage.distributorid);
-        if (isOrderFound === true) {
-            getAllPaymentTransactionsByOrderID(orderIDRef.current?.value + "")
-        }
+
+        getAllPaymentTransactionsByOrderID(orderIDRef.current?.value + "")
+
     };
 
+    
+
+   /*  
+   972c30e3
+   b5029695
+    e70e7bb6
+    e440db26
+ */
 
     const cashierObject: IEmployee = {
         employeeid: "2386f1b2",
@@ -446,27 +452,6 @@ export default function RecordDirectPayment() {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-
-
-    const PaymentReceiptcolumns: GridColDef[] = [
-        { field: 'paymentReceiptID', headerName: 'Payment Receipt ID', width: 200 },
-        { field: 'amountPaid', headerName: 'Amount Paid', width: 180 },
-        { field: 'receiverName', headerName: 'Receiver Name', width: 160 },
-        { field: 'remarks', headerName: 'Remarks', width: 160 },
-    ]
-
-    const PaymentReceiptrows = paymentReceipts.map((pr) => {
-
-        return {
-            id: pr!.paymentreceiptid!,
-            paymentReceiptID: pr.paymentreceiptid!,
-            amountPaid: pr.amountpaid!,
-            remarks: pr.remarks!,
-            receiverName: pr!.receivername!,
-
-        }
-    });
-
 
 
     const DirectPaymentReceiptcolumns: GridColDef[] = [
@@ -638,13 +623,9 @@ export default function RecordDirectPayment() {
 
     ]
 
-
-
-
     const rows = sortedPaymentTransactions!.map((pt) => {
-
-
-
+        console.log("pyame")
+        console.log(pt)
         return {
             id: pt!.paymenttransactionid!,
             paymentTransactionID: pt!.paymenttransactionid!,
@@ -657,31 +638,25 @@ export default function RecordDirectPayment() {
     });
 
 
-
-
-
-
-
     useEffect(() => {
-        
-        if (order && paymentTransactions) {
+        const sorted = [...paymentTransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
+        setSortedPaymentTransactions(sorted);
+
+        if (order && paymentTransactions.length !== 0) {
             const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
 
             // Clone the array and sort it
-            const sorted = [...paymentTransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
-            setSortedPaymentTransactions(sorted);
+          
 
             if (allPaid) {
                 closedOrder(order?.orderid!);
             }
         }
 
-        if(orderIDRef.current!.value+"" !== '')
-            handleFindPaymentTransactions();
+        console.log(paymentTransactions)
 
-
-    
         setMaxDate(dayjs() as Dayjs);
+
 
     }, [isOrderFound, order, order?.isclosed, paymentTransactions]);
 
@@ -700,152 +675,131 @@ export default function RecordDirectPayment() {
 
             </div>
 
-            {isOrderFound ? (
+            {order ? (
                 <div>
-                    {paymentTransactions.length !== 0 ? (
-                        <div>
-
-                            <StyledPaymentTransactionCard1>
-                                <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
-                                <DataGrid
-                                    rows={rows}
-                                    sx={{ textAlign: 'center', color: '#203949', height: '350px', fontWeight: 330, margin: '50px', border: 'none', fontSize: '490' }}
-                                    columns={columns}
-
-                                    initialState={{
-                                        pagination: {
-                                            paginationModel: {
-                                                pageSize: paymentTransactions.length,
-                                            },
-                                        },
-                                    }}
-                                    pageSizeOptions={[5]}
-
-
-
-                                />
-                            </StyledPaymentTransactionCard1>
-                        </div>
-
-                    ) : (
-                        <div>
-                            <h2 style={{ color: '#707070', marginTop: '50px' }}> no schedules yet</h2>
-
-                        </div>
-
-                    )
-                    }
+                    <StyledPaymentTransactionCard1>
+                        <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
+                        <DataGrid
+                            rows={rows}
+                            sx={{
+                                textAlign: 'center',
+                                color: '#203949',
+                                height: '350px',
+                                fontWeight: 330,
+                                margin: '50px',
+                                border: 'none',
+                                fontSize: '490',
+                            }}
+                            columns={columns}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        pageSize: paymentTransactions.length,
+                                    },
+                                },
+                            }}
+                            pageSizeOptions={[5]}
+                        />
+                    </StyledPaymentTransactionCard1>
                     {order?.isclosed ? (
                         <div>
-                            <h1>
-                                All payment transactions have been paid. Order is now closed.
-                            </h1>
+                            <h1>All payment transactions have been paid. Order is closed.</h1>
                         </div>
-                    ) : (<div>
-                        <Grid container>
-                            <Grid item><StyleLabel>Payment Transaction ID</StyleLabel>
-            
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    options={paymentTransactions!}
-                                    getOptionLabel={(option) => option.paymenttransactionid}
-                                    isOptionEqualToValue={(option, value) => option.paymenttransactionid === value.paymenttransactionid}
-                                    value={selectedPaymentTransaction}
-                                    onChange={(event, newValue) => {
-                                        setSelectedPaymentTransaction(newValue);
-                                        getRemainingPaymentAmount(newValue?.paymenttransactionid!);
-                                    }}
-                                    filterOptions={(options, state) => {
-                                        // Filter out "Paid" transactions from the options
-                                        return options.filter((option) => !option.paid);
-                                    }}
-                                    // Style for the Autocomplete (Combo Box)
-                                    sx={{
-                                        marginTop: 2,
-                                        marginRight: 15,
-                                    }}
-                                    // Style for the TextField (Input)
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            InputProps={{
-                                                ...params.InputProps,
-                                                disableUnderline: true,
-                                                sx: {
-                                                    [`& fieldset`]: {
-                                                        borderRadius: 15,
-                                                        height: 40,
-                                                        width: 220,
-                                                        top: 4.5,
-                                                        right: -250,
+                    ) : paymentTransactions.length !== 0 ? (
+                        <div>
+                            <Grid container>
+                                <Grid item>
+                                    <StyleLabel>Payment Transaction ID</StyleLabel>
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={paymentTransactions!}
+                                        getOptionLabel={(option) => option.paymenttransactionid}
+                                        isOptionEqualToValue={(option, value) => option.paymenttransactionid === value.paymenttransactionid}
+                                        value={selectedPaymentTransaction}
+                                        onChange={(event, newValue) => {
+                                            setSelectedPaymentTransaction(newValue);
+                                            getRemainingPaymentAmount(newValue?.paymenttransactionid!);
+                                        }}
+                                        filterOptions={(options, state) => {
+                                            return options.filter((option) => !option.paid);
+                                        }}
+                                        sx={{
+                                            marginTop: 2,
+                                            marginRight: 15,
+                                        }}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                InputProps={{
+                                                    ...params.InputProps,
+                                                    disableUnderline: true,
+                                                    sx: {
+                                                        [`& fieldset`]: {
+                                                            borderRadius: 15,
+                                                            height: 40,
+                                                            width: 220,
+                                                            top: 4.5,
+                                                            right: -250,
+                                                        },
+                                                        left: 180,
                                                     },
-                                                    left: 180,
+                                                }}
+                                                variant="outlined"
+                                            />
+                                        )}
+                                    />
+                                </Grid>
+                                <Grid item>
+                                    <StyleLabel top={1}>Date Paid</StyleLabel>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <StyledDatePicker
+                                            slotProps={{
+                                                textField: {
+                                                    variant: 'outlined',
                                                 },
                                             }}
-                                            variant="outlined"
+                                            value={selectedDate}
+                                            maxDate={maxDate}
+                                            onChange={(date) => setSelectedDate(date as Dayjs | null)}
                                         />
-                                    )}
-                                />
-
-
-                                {/* </StyleTextField3> */}
+                                    </LocalizationProvider>
+                                </Grid>
+                                <Grid item>
+                                    <StyleLabel>Amount Paid</StyleLabel>
+                                    <StyleTextField2 style={{ marginLeft: 63 }} inputRef={amountPaidRef} />
+                                </Grid>
+                                <Grid item>
+                                    <StyleLabel>Remarks</StyleLabel>
+                                    <StyleTextField2 style={{ marginLeft: 63 }} inputRef={remarksRef} />
+                                </Grid>
                             </Grid>
-                            <Grid item>
-                                <StyleLabel top={1}>Date Paid</StyleLabel>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <StyledDatePicker
-                                        slotProps={{
-                                            textField: {
-                                                variant: 'outlined',
-                                            }
-                                        }}
-                                        value={selectedDate}
-                                        maxDate={maxDate}
-                                        onChange={(date) => setSelectedDate(date as Dayjs | null)} />
-                                </LocalizationProvider>
-                            </Grid>
-                            <Grid item>
-                                <StyleLabel>Amount Paid</StyleLabel>
-                                <StyleTextField2 style={{ marginLeft: 63 }} inputRef={amountPaidRef} />
-                            </Grid>
-                            <Grid item><StyleLabel>Remarks</StyleLabel>
-                                <StyleTextField2 style={{ marginLeft: 63 }} inputRef={remarksRef} />
-                            </Grid>
-                        </Grid>
-                        <Grid container>
-                            <Grid item>
-                            </Grid>
-                        </Grid>
-                        <StyledButton onClick={handleSaveDirectPayment}>Save Payment Record</StyledButton>
-                        {/* <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader> */}
-                        {/* set style left and top manually here in stack */}
-                        {/* Alerts */}
-                        <ToastContainer
-                            position="bottom-right"
-                            autoClose={5000}
-                            limit={3}
-                            hideProgressBar
-                            newestOnTop
-                            closeOnClick
-                            rtl={false}
-                            pauseOnFocusLoss
-                            draggable
-                            pauseOnHover
-                            style={{ width: 450 }}
-                            theme="colored"
-                        />
-                    </div>)}
+                            <StyledButton onClick={handleSaveDirectPayment}>Save Payment Record</StyledButton>
+                        </div>
+                    ) : (
+                        <div>
+                            <h2 style={{ color: '#707070', marginTop: '50px' }}> No schedules yet.</h2>
+                        </div>
+                    )}
                 </div>
             ) : (
-                <div>
-                    {/* Display an empty field or a message when the order is not found */}
-                    <h2 style={{ color: 'black', marginTop: '50px' }}>Order Not Found</h2>
-                    {/* You can add more components or customize the message as needed */}
-                </div>
+                <div></div>
             )}
 
-
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                limit={3}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                style={{ width: 450 }}
+                theme="colored"
+            />
 
         </div>
     );
