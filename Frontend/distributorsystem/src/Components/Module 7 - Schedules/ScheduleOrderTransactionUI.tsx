@@ -134,7 +134,7 @@ const TableHeaderCell = styled(TableCell)({
 
 export default function Schedules() {
 
-    const { objectId } = useParams();
+    let { objectId } = useParams();
 
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
     const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
@@ -146,41 +146,16 @@ export default function Schedules() {
     const [startDateModified, setStartDateModified] = useState(false);
     const [endDateModified, setEndDateModified] = useState(false);
     const [paymentTransactionsObjects, setPaymentTransactionsObjects] = useState<IPaymentTransaction[]>([]);
-    const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
-    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
+  
+    // const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
     const [initialMinDate, setInitialMinDate] = useState<Dayjs | null>(null);
-
-
-    const orderIDRef = useRef<TextFieldProps>(null)
-
-    const getAllPaymentTransactionsByOrderID = (idToSearch: string) => {
-        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${idToSearch}/${distributorFromStorage.distributorid}`)
-            .then((response) => {
-
-                setPaymentTransactions(response.data);
-
-            })
-            .catch((error) => {
-                console.error('Error fetching data: ', error);
-            });
-    }
-
 
 
 
 
     const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
 
-    const handleFindOrder = () => {
 
-        const idToSearch = objectId !== 'null' ? objectId : orderIDRef.current?.value + "";
-
-
-        getOrderByID(idToSearch!, distributorFromStorage.distributorid);
-        getAllPaymentTransactionsByOrderID(idToSearch!)
-
-
-    };
 
     const handleCreatePaymentTransaction = () => {
         const newPaymentTransactions: IPaymentTransaction[] = [];
@@ -228,6 +203,9 @@ export default function Schedules() {
 
             return updatedPaymentTransactions;
         });
+
+
+
     };
 
 
@@ -245,7 +223,7 @@ export default function Schedules() {
         const updatedStartingDate = selectedStartDate || startingDateFromDB;
         const updatedEndDate = selectedEndDate || endDateFromDB;
 
-        console.log(updatedEndDate.format("DD/MM/YYYY"))
+      
         if (updatedEndDate?.toString() === 'Invalid Date') {
             alert('Please select an end date.');
             return;
@@ -268,7 +246,8 @@ export default function Schedules() {
                     paymentreceipts: transaction.paymentreceipts
                 }
             )
-            toast.success('Installment ' + transaction.installmentnumber + " schedule has been updated.", {
+
+            /* toast.success('Installment ' + transaction.installmentnumber + " schedule has been updated.", {
                 position: "bottom-right",
                 autoClose: 5000,
                 hideProgressBar: true,
@@ -277,7 +256,8 @@ export default function Schedules() {
                 draggable: true,
                 progress: undefined,
                 theme: "colored",
-            })
+            }) */
+            
         } catch (error) {
             toast.error('Unexpected error updating payment transaction.', {
                 position: "bottom-right",
@@ -290,34 +270,39 @@ export default function Schedules() {
                 theme: "colored",
             })
         }
+
+
     };
 
+    const [inputValue, setInputValue] = useState('');
+    const [displayedValue, setDisplayedValue] = useState(objectId || '');
 
+    const orderIDChanger = () => {
 
+    }
 
+    const handleFindOrder = () => {
+        setDisplayedValue(inputValue);
+    };
+
+    
     useEffect(() => {
 
-        if (objectId !== 'null') {
-            handleFindOrder();
-        }
-
-        if (order && paymentTransactions) {
-            // Clone the array and sort it
-            const sorted = [...paymentTransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
-            setSortedPaymentTransactions(sorted);
-        }
-
-
+  
+        getOrderByID(displayedValue!, distributorFromStorage.distributorid);
+     
         setInitialMinDate(dayjs() as Dayjs);
+       
 
-
-    }, [order, paymentTransactions, isOrderFound, paymentTransactionsObjects]);
+        //displayedValue kay para sa pag search sa orderids nga di mag disco's, niya mo render dayun
+        //order.paymenttransactions kay para ika create og payment transaction kay mo render/reflect dayun
+    }, [displayedValue, order?.paymenttransactions]);
 
 
 
     return (
         <div>
-
+          
             <Grid container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
                 <Grid item container sx={{ width: '1000px', borderRadius: '22px', }} justifyContent={"center"}  >
                     <Grid item xs={4} sx={{ marginTop: '15px' }}>
@@ -325,10 +310,10 @@ export default function Schedules() {
                     </Grid>
                     <Grid item sx={{ marginTop: '15px' }}>
                         <Paper sx={{ borderRadius: "22px", height: "fit-content", transform: 'translateY(-50%)', border: '1px solid #ccc', boxShadow: 'none' }}>
-                            <TextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true, }} inputRef={orderIDRef} sx={{ width: '300px', height: '50px', '& input': { textAlign: 'left', padding: '12px 12px' } }}
+                            <TextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true, }} onChange={(e) => setInputValue(e.target.value)} sx={{ width: '300px', height: '50px', '& input': { textAlign: 'left', padding: '12px 12px' } }}
 
                             />
-                            <IconButton type="button" aria-label="search" sx={{ backgroundColor: "#2d85e7", height: '50px', width: '50px', borderRadius: "0 41% 41% 0", '&:hover': { backgroundColor: "#2d85e7" } }} onClick={handleFindOrder}>
+                            <IconButton type="button" aria-label="search" sx={{ backgroundColor: "#2d85e7", height: '50px', width: '50px', borderRadius: "0 41% 41% 0", '&:hover': { backgroundColor: "#2d85e7" } }} onClick={() => { orderIDChanger(); handleFindOrder(); }}>
                                 <SearchIcon sx={{ color: "white" }} />
                             </IconButton>
 
@@ -377,11 +362,7 @@ export default function Schedules() {
                                 </Paper>
                             </Grid>
                         </Grid>
-                        {order?.isclosed ? (
-                            <div>
-                                <h1>All payment transactions have been paid. Order is closed.</h1>
-                            </div>
-                        ) : order?.paymenttransactions?.length !== 0 && order?.collector !== null ? (
+                        {order?.paymenttransactions?.length !== 0 && order?.collector !== null ? (
                             <div>
                                 <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
                                     <Grid item>
@@ -399,49 +380,51 @@ export default function Schedules() {
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
-                                                        {sortedPaymentTransactions?.map((transaction, index) => (
-                                                            <TableRow key={transaction.paymenttransactionid}>
-                                                                <TableCell align="center">
-                                                                    {transaction.paymenttransactionid}
-                                                                </TableCell>
-                                                                <TableCell align="center">
-                                                                    Installment {transaction.installmentnumber}
-                                                                </TableCell>
-                                                                <TableCell align="center">
-                                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                        <Typography>{dayjs(transaction.startingdate).format('MM/DD/YYYY')}</Typography>
-                                                                    </LocalizationProvider>
-                                                                </TableCell>
-                                                                <TableCell align="center">
-                                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                        <DatePicker
-                                                                            slotProps={{
-                                                                                textField: {
-                                                                                    InputProps: {
-                                                                                        disableUnderline: true
-                                                                                    },
-                                                                                    variant: "standard",
-                                                                                    style: { width: '50%', padding: '0 10px 0 10px' }
-                                                                                }
-                                                                            }}
-                                                                            value={dayjs(transaction.enddate)}
-                                                                            minDate={dayjs(transaction.enddate)}
-                                                                            onChange={(newValue) => handleEndDateUpdate(newValue)}
+                                                        {order?.paymenttransactions!.sort((a, b) => {
+                                                            return a.installmentnumber - (b.installmentnumber);
+                                                        }).map((transaction) => (
+                                                                <TableRow key={transaction.paymenttransactionid}>
+                                                                    <TableCell align="center">
+                                                                        {transaction.paymenttransactionid}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        Installment {transaction.installmentnumber}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                                            <Typography>{dayjs(transaction.startingdate).format('MM/DD/YYYY')}</Typography>
+                                                                        </LocalizationProvider>
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                                            <DatePicker
+                                                                                slotProps={{
+                                                                                    textField: {
+                                                                                        InputProps: {
+                                                                                            disableUnderline: true
+                                                                                        },
+                                                                                        variant: "standard",
+                                                                                        style: { width: '50%', padding: '0 10px 0 10px' }
+                                                                                    }
+                                                                                }}
+                                                                                value={dayjs(transaction.enddate)}
+                                                                                minDate={dayjs(transaction.enddate)}
+                                                                                onChange={(newValue) => handleEndDateUpdate(newValue)}
+                                                                                disabled={transaction.paid}
+                                                                            />
+                                                                        </LocalizationProvider>
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        Php {transaction.amountdue.toFixed(2)}
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        <StyledButton
+                                                                            onClick={() => handleSaveClick(transaction)}
                                                                             disabled={transaction.paid}
-                                                                        />
-                                                                    </LocalizationProvider>
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    Php {transaction.amountdue.toFixed(2)}
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    <StyledButton
-                                                                        onClick={() => handleSaveClick(transaction)}
-                                                                        disabled={transaction.paid}
-                                                                    > Update </StyledButton>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        ))}
+                                                                        > Update </StyledButton>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
                                                     </TableBody>
                                                 </Table>
                                             </TableContainer>
@@ -449,7 +432,18 @@ export default function Schedules() {
                                         <Grid></Grid>
                                     </Grid>
                                 </Grid>
+
+                                {order.isclosed ? (
+                                    <div>
+                                        <h1>All payment transactions have been paid. Order is closed.</h1>
+                                    </div>
+                                ) : (
+                                    <div>
+                                    </div>
+                                )}
                             </div>
+
+
                         ) : order!.collector === null ? (
                             <div>
                                 <h2 style={{ color: 'black', marginTop: '50px' }}> No Collector Assigned</h2>
@@ -495,6 +489,23 @@ export default function Schedules() {
                     <div></div>
                 )}
             </div>
+
+            {/* Alerts */}
+            <ToastContainer
+                position="bottom-right"
+                autoClose={5000}
+                limit={3}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                style={{ width: 430 }}
+                theme="colored"
+            />
         </div>
+
     );
 }

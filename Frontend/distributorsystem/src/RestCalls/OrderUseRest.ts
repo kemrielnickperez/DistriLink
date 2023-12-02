@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 
 export const useRestOrder = (): [
     (order: IOrder) => void,
-    (orderid: string, distributorid:string) => void,
+    (orderid: string, distributorid: string) => void,
     (paymenttransactionid: string) => void,
     (collectorid: string, orderids: string[]) => void,
     (orderID: string) => void,
@@ -99,7 +99,7 @@ export const useRestOrder = (): [
 
     function updateOrder(orderID: string | undefined, updatedOrder: IOrder) {
         updatedOrder.orderedproducts.map((op) => {
-            console.log(op)
+            
         })
         axios.put(`http://localhost:8080/order/updateOrder/${orderID}`, updatedOrder)
             .then((response) => {
@@ -113,45 +113,38 @@ export const useRestOrder = (): [
     }
 
 
-    function getOrderByID(orderid: string, distributorid:string) {
+    function getOrderByID(orderid: string, distributorid: string) {
+
         axios.get(`http://localhost:8080/order/getOrderByIDUnderDistributor/${orderid}/${distributorid}`)
             .then((response) => {
-            
-                 if (response.data !== '') {
-                    
+
+                if (response.data !== '') {
+
                     setOrder(response.data)
                     setIsOrderFound(true);
+                    
                 }
 
                 else {
                     setIsOrderFound(false);
                     setOrder(undefined);
-                    toast.error('Order not found. Please try again.', {
-                        position: "bottom-right",
-                        autoClose: 5000,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    })
+                    
                     //setIsOrderFoundError(false);
-                } 
+                }
 
             })
             .catch((error) => {
 
                 // alert("Error finding the order. Please try again.");
-            }); 
+            });
     }
-    
+
     function getOrderByPaymentTransactionID(paymenttransactionid: string) {
 
         axios.get(`http://localhost:8080/order/getOrderByPaymentTransactionID/${paymenttransactionid}`)
             .then((response) => {
                 setOrderFromPaymentTransaction(response.data);
-                
+
             })
             .catch((error) => {
 
@@ -198,7 +191,6 @@ export const useRestOrder = (): [
         axios.put(`http://localhost:8080/order/updateOrderClosedStatus/${orderID}`)
             .then((response) => {
 
-                console.log("Order is closed successfully!");
             })
             .catch((error) => {
                 console.log("Error closing the order. Please try again.");
@@ -208,10 +200,10 @@ export const useRestOrder = (): [
     function applyPenalty(orderID: string | undefined) {
         axios.put(`http://localhost:8080/order/applyPenalty/${orderID}`)
             .then((response) => {
-                console.log("Penalty applied successfully!");
+
             })
             .catch((error) => {
-                console.log("Error applying penalty. Please try again.");
+
             });
     }
 

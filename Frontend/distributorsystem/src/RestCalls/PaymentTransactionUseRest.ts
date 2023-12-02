@@ -1,6 +1,7 @@
 import axios from "axios";
 import { IDirectPaymentReceipt, IOrder, IPaymentTransaction } from "./Interfaces";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 
 
@@ -116,9 +117,17 @@ export const useRestPaymentTransaction = (): [(paymenttransactions: IPaymentTran
     function updatePaymentTransaction(paymentransactionid: string, paymentransaction: IPaymentTransaction) {
         axios.put(`http://localhost:8080/paymenttransaction/updatePaymentTransaction/${paymentransactionid}`, paymentransaction)
             .then((response) => {
-                console.log("ni work yeyeyeye")
-                // alert("successfully updated!")
-                
+               console.log("na update ra hoho")
+                toast.success('Installment ' + paymentransaction.installmentnumber + " schedule has been updated.", {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
                 
             })
             .catch((error) => {
