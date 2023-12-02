@@ -298,12 +298,7 @@ export default function RecordDirectPayment() {
 
     
 
-   /*  
-   972c30e3
-   b5029695
-    e70e7bb6
-    e440db26
- */
+   
 
     const cashierObject: IEmployee = {
         employeeid: "2386f1b2",
@@ -624,8 +619,6 @@ export default function RecordDirectPayment() {
     ]
 
     const rows = sortedPaymentTransactions!.map((pt) => {
-        console.log("pyame")
-        console.log(pt)
         return {
             id: pt!.paymenttransactionid!,
             paymentTransactionID: pt!.paymenttransactionid!,
@@ -638,6 +631,17 @@ export default function RecordDirectPayment() {
     });
 
 
+    /*  
+    
+    e1d92cab
+    393349ba
+    1adfd341
+   972c30e3
+   b5029695
+    e70e7bb6
+    e440db26
+ */
+
     useEffect(() => {
         const sorted = [...paymentTransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
         setSortedPaymentTransactions(sorted);
@@ -646,19 +650,19 @@ export default function RecordDirectPayment() {
             const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
 
             // Clone the array and sort it
-          
-
+        
             if (allPaid) {
                 closedOrder(order?.orderid!);
             }
+            //getAllPaymentTransactionsByOrderID(orderIDRef.current?.value+"")
         }
 
-        console.log(paymentTransactions)
+      
 
         setMaxDate(dayjs() as Dayjs);
 
 
-    }, [isOrderFound, order, order?.isclosed, paymentTransactions]);
+    }, [order, paymentTransactions]);
 
 
     return (
