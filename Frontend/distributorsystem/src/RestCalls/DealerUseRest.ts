@@ -87,7 +87,17 @@ export const useRestDealer = (): [
             formData.append(`distributor.orderids`, orderid);
         });
 
+        dealer.distributor.paymentreceiptids.forEach((paymentreceiptid) => {
+            formData.append(`distributor.paymentreceiptids`, paymentreceiptid);
+        });
 
+        dealer.distributor.archiveddealerids.forEach((archiveddealerid) => {
+            formData.append(`distributor.archiveddealerids`, archiveddealerid);
+        });
+
+        dealer.distributor.documentids.forEach((documentid) => {
+            formData.append(`distributor.documentids`, documentid);
+        });
 
         dealerDocuments.forEach((document) => {
 

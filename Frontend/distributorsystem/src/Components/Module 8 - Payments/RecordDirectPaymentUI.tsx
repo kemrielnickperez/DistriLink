@@ -311,7 +311,8 @@ export default function RecordDirectPayment() {
             ],
             orderids: [],
             archiveddealerids: [],
-            paymentreceiptids: []
+            paymentreceiptids: [],
+            documentids: []
         },
         orderids: [],
         paymentreceiptids: [],

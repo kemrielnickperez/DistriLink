@@ -16,7 +16,17 @@ export interface IDistributor{
     employeeids: string[],
     orderids: string[],
     paymentreceiptids: string[],
-    archiveddealerids: string[]
+    archiveddealerids: string[],
+    documentids: string[],
+}
+
+
+export interface IDistributorDocument {
+    documentid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    distributor: IDistributor | null; // You can reference the 'IDealer' interface you've already defined.
 }
 
 
