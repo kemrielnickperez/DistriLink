@@ -241,22 +241,17 @@ export default function RecordDirectPayment() {
     const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
 
-
-
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
     const [selectedPaymentTransaction, setSelectedPaymentTransaction] = useState<IPaymentTransaction | null>(null);
     const [selectedPaymentTransactionRow, setSelectedPaymentTransactionRow] = useState<IPaymentTransaction | null>(null);
 
-    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>([]);
+
     const [paymentReceipts, setPaymentReceipts] = useState<IPaymentReceipt[]>([]);
     const [directPaymentReceipts, setDirectPaymentReceipts] = useState<IDirectPaymentReceipt[]>([]);
     const [collectionPaymentReceipts, setCollectionPaymentReceipts] = useState<ICollectionPaymentReceipt[]>([]);
 
 
     const [open, setOpen] = React.useState(false);
-
-
-    //const sortedPaymentTransactions = paymentTransactions.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
     const handleOpen = () => {
 
@@ -270,35 +265,16 @@ export default function RecordDirectPayment() {
     const amountPaidRef = useRef<TextFieldProps>(null);
     const remarksRef = useRef<TextFieldProps>(null);
 
-
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
-    const [sortedPaymentTransactions, setSortedPaymentTransactions] = useState<IPaymentTransaction[] | null>([]);
-
-
+  
     const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
 
-    function getAllPaymentTransactionsByOrderID(orderid: string) {
-        axios.get<IPaymentTransaction[]>(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${orderid}/${distributorFromStorage.distributorid}`)
-            .then((response) => {
-                setPaymentTransactions(response.data);
-
-            })
-            .catch((error) => {
-
-            });
-    }
-  
+    
 
     const handleFindPaymentTransactions = () => {
         getOrderByID(orderIDRef.current?.value + "", distributorFromStorage.distributorid);
 
-        getAllPaymentTransactionsByOrderID(orderIDRef.current?.value + "")
-
     };
-
-    
-
-   
 
     const cashierObject: IEmployee = {
         employeeid: "2386f1b2",
@@ -381,7 +357,7 @@ export default function RecordDirectPayment() {
         }, cashierObject.employeeid)
 
 
-        const allPaid = paymentTransactions.every((transaction) => transaction.paid);
+        const allPaid = order?.paymenttransactions.every((transaction) => transaction.paid);
         if (allPaid) {
             closedOrder(order?.orderid!);
         }
@@ -393,7 +369,7 @@ export default function RecordDirectPayment() {
 
     const handleViewPaymentReceiptsButtonClick = (params: { row: any }) => {
 
-        const selectedTransaction = paymentTransactions.find(pt => pt.paymenttransactionid === params.row.paymentTransactionID);
+        const selectedTransaction = order?.paymenttransactions.find(pt => pt.paymenttransactionid === params.row.paymentTransactionID);
         setPaymentReceipts(selectedTransaction ? selectedTransaction.paymentreceipts : []);
         if (selectedTransaction) {
             // Filter payment receipts by type
@@ -510,7 +486,6 @@ export default function RecordDirectPayment() {
 
 
 
-
     const columns: GridColDef[] = [
         { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
         { field: 'installmentNumber', headerName: 'Installment Number', width: 180 },
@@ -618,7 +593,9 @@ export default function RecordDirectPayment() {
 
     ]
 
-    const rows = sortedPaymentTransactions!.map((pt) => {
+    const rows = order?.paymenttransactions!.sort((a, b) => {
+        return a.installmentnumber - (b.installmentnumber);
+    }).map((pt) => {
         return {
             id: pt!.paymenttransactionid!,
             paymentTransactionID: pt!.paymenttransactionid!,
@@ -643,26 +620,22 @@ export default function RecordDirectPayment() {
  */
 
     useEffect(() => {
-        const sorted = [...paymentTransactions].sort((a, b) => a.installmentnumber - b.installmentnumber);
-        setSortedPaymentTransactions(sorted);
 
-        if (order && paymentTransactions.length !== 0) {
-            const allPaid = paymentTransactions?.every((transaction) => transaction.paid);
+        getOrderByID(orderIDRef.current?.value + "", distributorFromStorage.distributorid);
+    
+        if (order && order.paymenttransactions.length !== 0) {
+            const allPaid = order.paymenttransactions?.every((transaction) => transaction.paid);
 
-            // Clone the array and sort it
-        
             if (allPaid) {
                 closedOrder(order?.orderid!);
             }
-            //getAllPaymentTransactionsByOrderID(orderIDRef.current?.value+"")
-        }
 
-      
+        }
 
         setMaxDate(dayjs() as Dayjs);
 
 
-    }, [order, paymentTransactions]);
+    }, [order, order?.paymenttransactions]);
 
 
     return (
@@ -684,7 +657,7 @@ export default function RecordDirectPayment() {
                     <StyledPaymentTransactionCard1>
                         <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
                         <DataGrid
-                            rows={rows}
+                            rows={rows!}
                             sx={{
                                 textAlign: 'center',
                                 color: '#203949',
@@ -698,7 +671,7 @@ export default function RecordDirectPayment() {
                             initialState={{
                                 pagination: {
                                     paginationModel: {
-                                        pageSize: paymentTransactions.length,
+                                        pageSize: order.paymenttransactions.length,
                                     },
                                 },
                             }}
@@ -709,7 +682,7 @@ export default function RecordDirectPayment() {
                         <div>
                             <h1>All payment transactions have been paid. Order is closed.</h1>
                         </div>
-                    ) : paymentTransactions.length !== 0 ? (
+                    ) : order.paymenttransactions.length !== 0 ? (
                         <div>
                             <Grid container>
                                 <Grid item>
@@ -717,7 +690,7 @@ export default function RecordDirectPayment() {
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
-                                        options={paymentTransactions!}
+                                        options={order.paymenttransactions!}
                                         getOptionLabel={(option) => option.paymenttransactionid}
                                         isOptionEqualToValue={(option, value) => option.paymenttransactionid === value.paymenttransactionid}
                                         value={selectedPaymentTransaction}
