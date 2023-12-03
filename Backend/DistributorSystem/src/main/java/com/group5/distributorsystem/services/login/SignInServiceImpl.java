@@ -65,18 +65,23 @@ public class SignInServiceImpl implements SignInService{
             result.put("userId", distributor.getDistributorid());
             result.put("tableName", "Distributor");
         } else if (employee != null && employee.getPassword().equals(password)) {
-            if (employee.isIs_salesassociate()){
+            if (employee.isIssalesassociate() && employee.isIscashier()) {
+                result.put("userId", employee.getEmployeeid());
+                result.put("tableName", "Sales Associate and Cashier");
+                result.put("salesAssociateAndCashier", employee);
+            } else if (employee.isIssalesassociate()) {
                 result.put("userId", employee.getEmployeeid());
                 result.put("tableName", "Sales Associate");
-            } else if(employee.isIs_cashier()){
+                result.put("salesAssociate", employee);
+            } else if (employee.isIscashier()) {
                 result.put("userId", employee.getEmployeeid());
                 result.put("tableName", "Cashier");
+                result.put("cashier", employee);
             }
         } else {
-            result.put("userId", null);
-            result.put("tableName", "Error");
+                result.put("userId", null);
+                result.put("tableName", "Error");
         }
-
         return result;
     }
 }

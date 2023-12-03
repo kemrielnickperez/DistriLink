@@ -39,11 +39,11 @@ public class Employee {
 
     private String tinnumber;
 
-    private boolean is_cashier;
+    private boolean iscashier;
 
-    private boolean is_salesassociate;
+    private boolean issalesassociate;
 
-    private boolean is_collector;
+    private boolean iscollector;
 
     private LocalDate submissiondate;
 
@@ -61,7 +61,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String employeeid, String firstname, String middlename, String lastname, String emailaddress, String password, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, String tinnumber, boolean is_cashier, boolean is_salesassociate, boolean is_collector, LocalDate submissiondate, Distributor distributor, Set<String> orderids, Set<String> paymentreceiptids, Set<String> collectionpaymentids, Set<String> documentids) {
+    public Employee(String employeeid, String firstname, String middlename, String lastname, String emailaddress, String password, String birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, String tinnumber, boolean iscashier, boolean issalesassociate, boolean iscollector, LocalDate submissiondate, Distributor distributor, Set<String> orderids, Set<String> paymentreceiptids, Set<String> collectionpaymentids, Set<String> documentids) {
         this.employeeid = employeeid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -74,9 +74,9 @@ public class Employee {
         this.permanentaddress = permanentaddress;
         this.contactnumber = contactnumber;
         this.tinnumber = tinnumber;
-        this.is_cashier = is_cashier;
-        this.is_salesassociate = is_salesassociate;
-        this.is_collector = is_collector;
+        this.iscashier = iscashier;
+        this.issalesassociate = issalesassociate;
+        this.iscollector = iscollector;
         this.submissiondate = submissiondate;
         this.distributor = distributor;
         this.orderids = orderids;
@@ -181,28 +181,28 @@ public class Employee {
         this.tinnumber = tinnumber;
     }
 
-    public boolean isIs_cashier() {
-        return is_cashier;
+    public boolean isIscashier() {
+        return iscashier;
     }
 
-    public void setIs_cashier(boolean is_cashier) {
-        this.is_cashier = is_cashier;
+    public void setIscashier(boolean iscashier) {
+        this.iscashier = iscashier;
     }
 
-    public boolean isIs_salesassociate() {
-        return is_salesassociate;
+    public boolean isIssalesassociate() {
+        return issalesassociate;
     }
 
-    public void setIs_salesassociate(boolean is_salesassociate) {
-        this.is_salesassociate = is_salesassociate;
+    public void setIssalesassociate(boolean issalesassociate) {
+        this.issalesassociate = issalesassociate;
     }
 
-    public boolean isIs_collector() {
-        return is_collector;
+    public boolean isIscollector() {
+        return iscollector;
     }
 
-    public void setIs_collector(boolean is_collector) {
-        this.is_collector = is_collector;
+    public void setIscollector(boolean iscollector) {
+        this.iscollector = iscollector;
     }
 
     public LocalDate getSubmissiondate() {

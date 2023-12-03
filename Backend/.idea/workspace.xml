@@ -6,8 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="09407ee5-de1b-4af2-bf6b-1bb6cfac1aa2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Module 1 - Distributor System Sign-in/SignInUI.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Components/Module 1 - Distributor System Sign-in/SignInUI.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/Contents.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/Contents.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DistributorSystem/src/main/java/com/group5/distributorsystem/models/Employee.java" beforeDir="false" afterPath="$PROJECT_DIR$/DistributorSystem/src/main/java/com/group5/distributorsystem/models/Employee.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DistributorSystem/src/main/java/com/group5/distributorsystem/repositories/EmployeeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/DistributorSystem/src/main/java/com/group5/distributorsystem/repositories/EmployeeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DistributorSystem/src/main/java/com/group5/distributorsystem/services/EmployeeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/DistributorSystem/src/main/java/com/group5/distributorsystem/services/EmployeeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DistributorSystem/src/main/java/com/group5/distributorsystem/services/login/SignInServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/DistributorSystem/src/main/java/com/group5/distributorsystem/services/login/SignInServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/ContentsDealer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/ContentsDealer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/Routes.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/distributorsystem/src/Global Components/Routes.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

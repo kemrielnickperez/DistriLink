@@ -123,7 +123,7 @@ export default function SignIn() {
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result))
                         // Redirect to the Dealer screen
-                        window.location.assign('Dashboard');
+                        window.location.assign('dashboard');
                         setSuccessMessage("Login successful as Dealer");
                         setOpen(true);
                     } else if (result.tableName === 'Distributor') {
@@ -131,15 +131,15 @@ export default function SignIn() {
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result));
                         // Redirect to the Dealer screen
-                        window.location.assign('Dashboard');
+                        window.location.assign('dashboard');
                         setSuccessMessage("Login successful as Distributor");
                         setOpen(true);
-                    } else if (result.tableName === 'Sales Associate' || result.tableName === 'Cashier') {
+                    } else if (result.tableName === 'Sales Associate' || result.tableName === 'Cashier' || result.tableName === 'Sales Associate and Cashier') {
                         console.log('Login successful as Employee');
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result));
                         // Redirect to the Employee screen
-                        window.location.assign('Dashboard');
+                        window.location.assign('dashboard');
                         setSuccessMessage('Login successful as Employee');
                         setOpen(true);
                         const user = response.data.find(

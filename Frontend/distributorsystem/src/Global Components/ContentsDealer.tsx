@@ -1,13 +1,12 @@
 import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import NewNavBar from './NewNavBar';
 import NewNavBarDealer from './NewNavBarDealer';
 
 
 export default function ContentDealer() {
     const location = useLocation();
 
-    const getNavPage = () => {
+    const getNavPageDealer = () => {
         const path = location.pathname;
         const navPageMapping: Record<string, string> = {
             '/dashboard': 'Dashboard',
@@ -20,7 +19,7 @@ export default function ContentDealer() {
 
     return (
         <div>
-            <NewNavBarDealer moduleName={getNavPage()} />
+            <NewNavBarDealer moduleName={getNavPageDealer()} />
             <Outlet />
         </div>
     );

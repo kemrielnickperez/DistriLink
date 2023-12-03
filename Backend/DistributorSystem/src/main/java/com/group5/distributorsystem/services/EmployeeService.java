@@ -66,7 +66,7 @@ public class EmployeeService {
         List<Employee> collectors = new ArrayList<>();
 
         for(Employee e : allEmployees){
-            if(e.isIs_collector()){
+            if(e.isIscollector()){
                 collectors.add(e);
             }
         }
