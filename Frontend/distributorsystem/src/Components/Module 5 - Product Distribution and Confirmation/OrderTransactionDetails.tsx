@@ -1,4 +1,4 @@
-import { Alert,AlertTitle,  Button, Grid, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
+import { Alert,AlertTitle,  Box,  Button, Grid, LinearProgress, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import { IOrder } from "../../RestCalls/Interfaces";
 import { useEffect, useState } from "react";
@@ -6,9 +6,6 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import OrderTransactionDetailsPrint from "./OrderTransactionDetailsPrint";
 import logo5 from '../../Global Components/Images/logo5.png';
-
-import logo5 from '../../Global Components/Images/logo5.png';
-
 
 function SlideTransitionDown(props: SlideProps) {
   return <Slide {...props} direction="down" />;
