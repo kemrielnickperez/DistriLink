@@ -6,7 +6,7 @@ import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
-
+import java.util.Set;
 
 
 @Document("PaymentTransactions")
@@ -27,13 +27,13 @@ public class PaymentTransaction {
 
     private String orderid;
 
-    private String paymentreceiptid ;
+    private Set<PaymentReceipt> paymentreceipts ;
 
 
     public PaymentTransaction() {
     }
 
-    public PaymentTransaction(String paymenttransactionid, double amountdue, LocalDate startingdate, LocalDate enddate, int installmentnumber, boolean isPaid, String orderid, String paymentreceiptid) {
+    public PaymentTransaction(String paymenttransactionid, double amountdue, LocalDate startingdate, LocalDate enddate, int installmentnumber, boolean isPaid, String orderid, Set<PaymentReceipt> paymentreceipts) {
         this.paymenttransactionid = paymenttransactionid;
         this.amountdue = amountdue;
         this.startingdate = startingdate;
@@ -41,7 +41,7 @@ public class PaymentTransaction {
         this.installmentnumber = installmentnumber;
         this.isPaid = isPaid;
         this.orderid = orderid;
-        this.paymentreceiptid = paymentreceiptid;
+        this.paymentreceipts = paymentreceipts;
     }
 
     public String getPaymenttransactionid() {
@@ -100,11 +100,15 @@ public class PaymentTransaction {
         this.orderid = orderid;
     }
 
-    public String getPaymentreceiptid() {
-        return paymentreceiptid;
+    public Set<PaymentReceipt> getPaymentreceipts() {
+        return paymentreceipts;
     }
 
-    public void setPaymentreceiptid(String paymentreceiptid) {
-        this.paymentreceiptid = paymentreceiptid;
+    public void setPaymentreceipts(Set<PaymentReceipt> paymentreceipts) {
+        this.paymentreceipts = paymentreceipts;
     }
+
+
+
+
 }

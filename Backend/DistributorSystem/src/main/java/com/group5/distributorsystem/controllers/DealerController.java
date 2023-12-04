@@ -47,11 +47,20 @@ public class DealerController {
         return new ResponseEntity<>(dealerService.getDealerByID(dealerid), HttpStatus.OK);
     }
 
+    @GetMapping("/getDealerByDistributor/{dealerid}/{distributorid}")
+    public ResponseEntity<Object> getDealerByDistributor(@PathVariable("dealerid") String dealerid, @PathVariable("distributorid") String distributorid){
+        return new ResponseEntity<>(dealerService.getDealerByDistributor(dealerid, distributorid), HttpStatus.OK);
+    }
 
-    @PutMapping("/updateCreditLimit")
-    public ResponseEntity<Object> updateCreditLimit(@RequestParam String dealerId, @RequestParam double newCreditLimit) {
-        dealerService.updateDealerCreditLimit(dealerId, newCreditLimit);
-        return new ResponseEntity<>("Dealer credit limit updated successfully!", HttpStatus.OK);
+    @GetMapping("/getAllDealersByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllDealersByDistributorID(@PathVariable String distributorid) {
+        return new ResponseEntity<>(dealerService.getAllDealersByDistributorID(distributorid), HttpStatus.OK);
+    }
+
+    @PutMapping("/updateCreditLimit/{dealerId}")
+    public ResponseEntity<Object> updateCreditLimit(@PathVariable String dealerId, @RequestParam double creditlimit) {
+        dealerService.updateDealerCreditLimit(dealerId, creditlimit);
+        return ResponseEntity.ok("Dealer credit limit updated successfully!");
     }
 
     @PutMapping("/confirmDealer/{dealerId}")
@@ -82,6 +91,17 @@ public class DealerController {
     @GetMapping("/getAllUnconfirmedDealers")
     public ResponseEntity<Object> getAllUnconfirmedDealers(){
         return new ResponseEntity<>(dealerService.getAllUnconfirmedDealers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUnconfirmedDealersByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllUnconfirmedDealersByDistributorID(@PathVariable String distributorid){
+        return new ResponseEntity<>(dealerService.getAllUnconfirmedDealersByDistributorID(distributorid), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/getTotalOrderAmountByDealerID/{dealerid}")
+    public ResponseEntity<Double> getTotalOrderAmountByDealerID(@PathVariable String dealerid){
+        return new ResponseEntity<>(dealerService.getTotalOrderAmountByDealerID(dealerid), HttpStatus.OK);
     }
 
 }

@@ -1,10 +1,11 @@
 import axios from "axios";
 import { ICollectionPaymentReceipt, IDirectPaymentReceipt, IPaymentReceipt } from "./Interfaces";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 
 
-export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentReceipt) => void, (paymentreceiptid: string) => void, (collectionpaymentreceiptid: string, cashierid: string) => void, IPaymentReceipt | undefined, IDirectPaymentReceipt | undefined, ICollectionPaymentReceipt | undefined, boolean | undefined] => {
+export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentReceipt, receiverID: string) => void, (paymentreceiptid: string) => void, (collectionpaymentreceiptid: string, cashierid: string) => void, IPaymentReceipt | undefined, IDirectPaymentReceipt | undefined, ICollectionPaymentReceipt | undefined, boolean | undefined] => {
 
     const [paymentReceipt, setPaymentReceipt] = useState<IPaymentReceipt>();
     const [directPaymentReceipt, setDirectPaymentReceipt] = useState<IDirectPaymentReceipt>();
@@ -13,67 +14,41 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
     const [isPaymentReceiptFound, setIsPaymentReceiptFound] = useState<boolean>();
 
 
-    function createDirectPaymentReceipt(directpaymentreceipt: IDirectPaymentReceipt) {
-        
-        axios.post('http://localhost:8080/paymentreceipt/createDirectPaymentReceipt', {
-             paymentreceiptid: directpaymentreceipt.paymentreceiptid,
-             remarks: directpaymentreceipt.remarks,
-             datepaid: directpaymentreceipt.datepaid,
-             amountpaid: directpaymentreceipt.amountpaid,
-             paymenttype: directpaymentreceipt.paymenttype,
-             daterecorded: directpaymentreceipt.daterecorded,
-             receivedamount: directpaymentreceipt.receivedamount,
-             paymenttransaction: directpaymentreceipt.paymenttransaction,
-              cashier: {
-                  employeeid: directpaymentreceipt.cashier!.employeeid,
-                  firstname: directpaymentreceipt.cashier!.firstname,
-                  middlename: directpaymentreceipt.cashier!.middlename,
-                  lastname: directpaymentreceipt.cashier!.lastname,
-                  birthdate: directpaymentreceipt.cashier!.birthdate,
-                  gender: directpaymentreceipt.cashier!.gender,
-                  currentaddress: directpaymentreceipt!.cashier!.currentaddress,
-                  permanentaddress: directpaymentreceipt!.cashier!.permanentaddress,
-                  contactnumber: directpaymentreceipt!.cashier!.contactnumber,
-                  iscashier: directpaymentreceipt.cashier!.is_cashier,
-                  issalesassociate: directpaymentreceipt!.cashier!.is_salesassociate,
-                  iscollector: directpaymentreceipt!.cashier!.is_collector
-                   /*  employeeid: "3593cd2f",
-                    firstname: "Victoria",
-                    middlename: "Victoria",
-                    lastname: "Ramirez",
-                    emailaddress: "charmaineramirez05@gmail.com",
-                    birthdate:"1997-10-15",
-                    gender:"Female",
-                    password: "test",
-                    currentaddress:"2079 Humay-Humay Street",
-                    permanentaddress:"Pajo",
-                    contactnumber:"09123456789",
-                    tinnumber: null,
-                    is_cashier:true,
-                    is_salesassociate:false,
-                    is_collector:true,
-                    submissiondate: "2023-10-23",
-                    orderids: [
-                        "e60e0410"
-                    ],
-                    paymentreceiptids: [],
-                    collectionpaymentids: [],
-                    documentids: [
-                        "04853f62"
-                    ] */
+    function createDirectPaymentReceipt(directpaymentreceipt: IDirectPaymentReceipt, receiverID: string) {
 
-             }, 
-            
-    })
-        .then((response) => {
-            alert("Success")
-           
+        axios.post(`http://localhost:8080/paymentreceipt/directpaymentreceipt/createDirectPaymentReceipt/${receiverID}`, {
+            paymentreceiptid: directpaymentreceipt.paymentreceiptid,
+            remarks: directpaymentreceipt.remarks,
+            datepaid: directpaymentreceipt.datepaid,
+            amountpaid: directpaymentreceipt.amountpaid,
+            paymenttype: directpaymentreceipt.paymenttype,
+            daterecorded: directpaymentreceipt.daterecorded,
+            receivedamount: directpaymentreceipt.receivedamount,
+            paymenttransactionid: directpaymentreceipt.paymenttransactionid,
+            receiverID: "",
+            receivername: ""
+
         })
-        .catch((error) => {
-            console.log(error)
-            alert("Please try again.");
-        }); 
+            .then((response) => {
+                toast.success(`Payment for Payment Transaction ${directpaymentreceipt.paymenttransactionid} successfully recorded!`, {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
+
+
+            })
+            .catch((error) => {
+                alert("Please try again.");
+            });
     }
+
+
 
     function getPaymentReceiptByID(paymentreceiptid: string) {
         axios.get(`http://localhost:8080/paymentreceipt/getPaymentReceiptByID/${paymentreceiptid}`)
@@ -93,19 +68,19 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
                 }
             })
             .catch((error) => {
-               
+
                 alert("Cannot find Payment Receipt. Please try again.");
             });
     }
 
-    function confirmCollectionPaymentReceipt(collectionpaymentreceiptid: string, cashierid: string) {
-        axios.put(`http://localhost:8080/paymentreceipt/updateCollectionPaymentReceipt/${collectionpaymentreceiptid}/${cashierid}`)
+    function confirmCollectionPaymentReceipt(collectionpaymentreceiptid: string, receiverID: string) {
+        axios.put(`http://localhost:8080/paymentreceipt/collectionpaymentreceipt/updateCollectionPaymentReceipt/${collectionpaymentreceiptid}/${receiverID}`)
             .then((response) => {
 
-                
+
             })
             .catch((error) => {
-                
+
                 // alert("Cannot update Payment Receipt. Please try again.");
             });
 

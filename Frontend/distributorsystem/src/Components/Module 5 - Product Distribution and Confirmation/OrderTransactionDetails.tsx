@@ -1,11 +1,11 @@
-import { Alert,AlertTitle,  Button, Grid, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
+import { Alert,AlertTitle,  Box,  Button, Grid, LinearProgress, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import { IOrder } from "../../RestCalls/Interfaces";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import OrderTransactionDetailsPrint from "./OrderTransactionDetailsPrint";
-
+import logo5 from '../../Global Components/Images/logo5.png';
 
 function SlideTransitionDown(props: SlideProps) {
   return <Slide {...props} direction="down" />;
@@ -39,7 +39,7 @@ const StyledButton = styled(Button)({
 
 
 const StyldeInfoHeader = styled(Typography)({
-  marginTop: '45px',
+  marginTop: '40px',
   marginBottom: '90px',
   marginLeft: '10%',
   fontFamily: 'Inter',
@@ -64,7 +64,7 @@ const StyleLabel = styled(Typography)({
   fontSize: '15px',
   width: 'max-content',
   fontFamily: 'Inter',
-  top: '-45px'
+  top: '5px'
 })
 const StyleData = styled(Typography)({
 
@@ -72,7 +72,7 @@ const StyleData = styled(Typography)({
   textAlign: 'left',
   width: 200,
   left: '-140px',
-  top: '-15px',
+  top: '25px',
   color: '#203949',
   fontSize: '15px',
   fontFamily: 'Inter',
@@ -145,7 +145,7 @@ const StyledPrintDiv = styled('div')({
 
 export function OrderTransactionDetails() {
   const [order, setOrder] = useState<IOrder | null>(null);
-  
+
   const [openAlert, setOpenAlert] = useState(false);
 
   const [alerttitle, setTitle] = useState('');
@@ -229,48 +229,45 @@ export function OrderTransactionDetails() {
 
               <StyldeInfoHeader>Dealer Contact Information</StyldeInfoHeader>
               <StackStyle sx={{ left: '30%' }}>
-                <StyleLabel>Dealer Name</StyleLabel>
-                <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
-              </StackStyle>
-              <StackStyle sx={{ left: '40%' }}>
                 <StyleLabel>Dealer ID</StyleLabel>
                 <StyleData>{order?.dealer.dealerid}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '50%' }}>
+              <StackStyle sx={{ left: '43%' }}>
+                <StyleLabel>Dealer Name</StyleLabel>
+                <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
+              </StackStyle>
+              <StackStyle sx={{ left: '60%' }}>
                 <StyleLabel>Contact Number</StyleLabel>
                 <StyleData>{order?.dealer.contactnumber}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '60%' }}>
-                <StyleLabel>Business Address</StyleLabel>
-                <StyleData>{order?.dealer.businessaddress}</StyleData>
+              <StackStyle sx={{ left: '75%' }}>
+                <StyleLabel>Email Address</StyleLabel>
+                <StyleData>{order?.dealer.emailaddress}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '70%' }}>
+              <StackStyle sx={{ left: '92%' }}>
                 <StyleLabel>Current Address</StyleLabel>
                 <StyleData>{order?.dealer.currentaddress}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '80%' }}>
-                <StyleLabel>Permanent Address</StyleLabel>
-                <StyleData>{order?.dealer.permanentaddress}</StyleData>
-              </StackStyle>
+
               <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader>
               {/* set style left and top manually here in stack */}
               <StackStyle sx={{ left: '30%', top: '350px' }}>
                 <StyleLabel>Order Transaction ID</StyleLabel>
                 <StyleData>{order?.orderid}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '45%', top: '350px' }}>
-                <StyleLabel>Order Distribution Date</StyleLabel>
+              <StackStyle sx={{ left: '43%', top: '350px' }}>
+                <StyleLabel>Order Date</StyleLabel>
                 <StyleData>{order?.orderdate}</StyleData>
               </StackStyle>
               <StackStyle sx={{ left: '60%', top: '350px' }}>
+                <StyleLabel>Distribution Date</StyleLabel>
+                <StyleData>{order?.distributiondate}</StyleData>
+              </StackStyle>
+              <StackStyle sx={{ left: '75%', top: '350px' }}>
                 <StyleLabel>Total Ordered Amount</StyleLabel>
                 <StyleData>Php {order?.orderamount}</StyleData>
               </StackStyle>
-              <StackStyle sx={{ left: '75%', top: '350px' }}>
-                <StyleLabel>Penalty Rate</StyleLabel>
-                <StyleData>{order?.penaltyrate} %</StyleData>
-              </StackStyle>
-              <StackStyle sx={{ left: '85%', top: '350px' }}>
+              <StackStyle sx={{ left: '92%', top: '350px' }}>
                 <StyleLabel>Payment Terms</StyleLabel>
                 <StyleData>{order?.paymentterms} Gives</StyleData>
               </StackStyle>
@@ -298,9 +295,9 @@ export function OrderTransactionDetails() {
                               <TableCell align='center'>{op.quantity}</TableCell>
                               <TableCell align='center'>{op.product.unit}</TableCell>
                               <TableCell align='center'>{op.product.name}</TableCell>
-                              <TableCell align='center'>{op.product.price}</TableCell>
+                              <TableCell align='center'>Php {op.product.price}</TableCell>
                               <TableCell align='center'>{op.product.commissionrate}</TableCell>
-                              <TableCell align='center'>{op.product.price * op.quantity}</TableCell>
+                              <TableCell align='center'>Php {op.product.price * op.quantity}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
@@ -315,16 +312,16 @@ export function OrderTransactionDetails() {
                   </Paper>
                 </Grid>
 
-                
+
                 {/* Alerts */}
                 <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center'
+                  vertical: 'top',
+                  horizontal: 'center'
                 }} TransitionComponent={SlideTransitionDown}>
-                    <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
-                        <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
-                        {alertMessage}
-                    </Alert>
+                  <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                    <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                    {alertMessage}
+                  </Alert>
                 </Snackbar>
               </Grid>
 
@@ -332,13 +329,11 @@ export function OrderTransactionDetails() {
 
 
           ) : (
-            <div >
-              <Grid sx={{ justifyContent: "center", marginTop: '200px' }}>
-                <AutorenewOutlinedIcon />
-                <h4>loading...</h4>
-
-              </Grid>
-            </div>
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
+              <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+              <LinearProgress sx={{ width: '20%' }} />
+              {/* You can adjust the width as needed */}
+            </Box>
           )}
         </div>
       ) : (

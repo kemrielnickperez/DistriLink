@@ -114,7 +114,7 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
             </StackStyle>
             <StackStyle sx={{ left: '24%' }}>
                 <StyleLabel>Payment Transaction ID</StyleLabel>
-                <StyleData>{paymentReceipt?.paymenttransaction.paymenttransactionid}</StyleData>
+                <StyleData>{paymentReceipt?.paymenttransactionid}</StyleData>
             </StackStyle>
             <StackStyle sx={{ left: '42%' }}>
                 <StyleLabel>Dealer ID</StyleLabel>
@@ -142,7 +142,7 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
                     </StackStyle>
                     <StackStyle sx={{ top: '40%', left: '44%' }}>
                         <StyleLabel>Receiver Name</StyleLabel>
-                        <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
+                        <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.receivername
                             : ''} </StyleData>
                     </StackStyle>
                     <StackStyle sx={{ top: '40%', left: '60%' }}>
@@ -186,7 +186,7 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
 
                     <StackStyle sx={{ top: '60%', left: '43%' }}>
                         <StyleLabel>Receiver Name</StyleLabel>
-                        <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
+                        <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.receivername
                             : ''}</StyleData>
                     </StackStyle>
 

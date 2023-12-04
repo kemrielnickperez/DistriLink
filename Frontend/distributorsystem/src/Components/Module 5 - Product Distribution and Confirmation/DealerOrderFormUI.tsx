@@ -14,6 +14,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useEffect, useRef, useState } from 'react';
 import { BorderAllOutlined } from '@mui/icons-material';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 //Imports for Toastify
 //Please Install npm i react-toastify or if doesn't work, install npm i react-toastify
 import { ToastContainer, toast } from 'react-toastify';
@@ -109,7 +110,36 @@ const TitleBox = styled(Box)({
 const AddToCart = styled(Button)({
   position: 'relative',
   width: '200px',
-  left: -30
+  height: 50,
+  left: -30,
+  ':hover': {
+    backgroundColor: '#2D85E7',
+    transform: 'scale(1.1)'
+  },
+  transition: 'all 0.4s'
+})
+const SaveButton= styled(Button)({
+  // position: 'relative',
+  // width: '200px',
+  // height: 50,
+  // left: -30,
+  // ':hover': {
+  //   backgroundColor: '#2D85E7',
+  //   transform: 'scale(1.1)'
+  // },
+  // transition: 'all 0.4s'
+  backgroundColor: 'rgb(45, 133, 231,0.8)',
+  borderRadius: 5,
+  color: '#FFFFFF',
+  fontFamily: 'Inter, sans-serif',
+  fontSize: '20px',
+  width: '200px',
+  height: 50,
+  ':hover': {
+      backgroundColor: '#2D85E7',
+      transform: 'scale(1.1)'
+  },
+  transition: 'all 0.4s'
 })
 
 const OverallGrid = styled(Grid)({
@@ -118,14 +148,39 @@ const OverallGrid = styled(Grid)({
   justifyContent: "center",
   top: 50
 })
+const PaperStyle = styled(Paper)({  
+  background: 'linear-gradient(50deg, rgba(255,255,255,0.4) 12%,rgba(255,255,255,0.1) 77% )',
+  backgroundBlendMode: '',
+  // backgroundColor:'rgb(245, 247, 249,0.4)',
+  backdropFilter: 'blur(5px)',
+  WebkitBackdropFilter: 'blur(5px)',
+  boxShadow: '0 3px 3px 1px rgba(0,0,0,0.28)',
+  borderRadius: "10px",
+  height: "200px",
+  justifyContent: 'center',
+  display: 'flex',
+  alignItems: 'center',
+  position: 'relative',
+  width: '1200px',
+  marginTop: 30
+})
+const StyledNumber=styled(TextField)({
+  '& fieldset': {
+    borderColor: 'rgb(0,0,0,0)', // Change 'your-color' to the desired color
+  },
+})
+const RemoveButton =styled(Button)({
+  ":hover":{
 
+    transform: 'scale(1.4)'
+},
+transition: 'all 0.4s'
+})
 export default function DealerOrderForm() {
 
-  const [newOrder] = useRestOrder();
+  const  [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit] = useRestDealer();
 
-  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
-
-  const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
   const [products, setProducts] = useState<IProduct[]>([]);
 
@@ -149,7 +204,7 @@ export default function DealerOrderForm() {
 
   const [open, setOpen] = useState(false);
 
-   const [toastShown, setToastShown] = useState(false);
+
 
   const penaltyRateRef = useRef<TextFieldProps>(null);
 
@@ -186,9 +241,19 @@ export default function DealerOrderForm() {
     }
   ];
 
+  const isMounted = useRef(false);
+
   useEffect(() => {
-    findDealer();
+    if (!isMounted.current) {
+      // Your code to be executed once after component mounts
+      findDealer();
+
+      // Set isMounted to true to prevent this block from running again
+      isMounted.current = true;
+    }
+
     getAllProducts();
+
     const newTotalAmount = orderedProducts.reduce((total, product) => {
       return total + product.product.price * product.quantity;
     }, 0);
@@ -196,15 +261,9 @@ export default function DealerOrderForm() {
     // Update the total amount state
     setTotalAmount(newTotalAmount);
 
-  }, [isDealerFound, products, orderedProducts]);
-  /* 
-    function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
-      return {
-        product: product,
-        quantity: quantity,
-        subtotal: product.price * quantity
-      };
-    } */
+
+  }, [orderedProducts, products]); // Include only the dependencies that are used inside the useEffect
+
 
   {/**Handler for Alert - Function to define the type of alert*/ }
   function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
@@ -227,8 +286,6 @@ export default function DealerOrderForm() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
       .then((response) => {
         setProducts(response.data);
-        //console.log(response.data);
-        // headerHandleAlert('Success', 'Products have been successfully added for distribution.', 'success');
       })
       .catch((error) => {
         console.error('Error retrieving products:', error);
@@ -267,7 +324,6 @@ export default function DealerOrderForm() {
           quantity: Number(quantity),
           subtotal: chosenProduct.price * Number(quantity),
         };
-        console.log(chosenProduct.price * Number(quantity))
         setOrderedProducts([...orderedProducts, newOrderedProduct]);
         setChosenProduct(null);
         setQuantity('');
@@ -335,7 +391,7 @@ export default function DealerOrderForm() {
 
   const findDealer = () => {
 
-    getDealerByID("6d6abfe8")
+    getDealerByID("343317e8")
 
     //Problematic pa siya ngari na part kay on loop sya
     // isDealerFound ? headerHandleAlert('Dealer located in the System.', "The dealer ID has been found and is ready for product distribution.", 'success')
@@ -354,28 +410,30 @@ export default function DealerOrderForm() {
       const orderAmount = orderedProducts.reduce((total, product) => {
         return total + product.product.price * product.quantity;
       }, 0);
-      const uuid = uuidv4();
-      const orderuuid = uuid.slice(0, 8)
-      console.log(orderedProducts)
-      newOrder({
-        orderid: orderuuid,
-        distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-        //moment ang gamit ani para maka generate og date today
-        orderdate: moment().format('YYYY-MM-DD'),
-        penaltyrate: Number(penaltyRateRef.current?.value),
-        paymentterms: paymentTerm,
-        orderamount: orderAmount,
-        distributor: dealer!.distributor,
-        collector: null,
-        dealer: dealer!,
-        orderedproducts: orderedProducts,
-        paymenttransactions: [],
-        confirmed: false,
-        isclosed: false
-      });
-      //if possible kay ara na siya mo clear after sa snackbar
-      headerHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
-      clearInputValues();
+      if (orderAmount < dealerRemainingCredit!) {
+        newOrder({
+          orderid: uuidv4().slice(0, 8),
+          distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
+          //moment ang gamit ani para maka generate og date today
+          orderdate: moment().format('YYYY-MM-DD'),
+          penaltyrate: Number(penaltyRateRef.current?.value),
+          paymentterms: paymentTerm,
+          orderamount: orderAmount,
+          distributor: dealer!.distributor!,
+          collector: null,
+          dealer: dealer!,
+          orderedproducts: orderedProducts,
+          paymenttransactions: [],
+          confirmed: false,
+          isclosed: false
+        });
+        //if possible kay ara na siya mo clear after sa snackbar
+        headerHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
+        clearInputValues();
+      }
+      else {
+        headerHandleAlert('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust ToT.", 'warning')
+      }
     }
 
     else {
@@ -393,14 +451,10 @@ export default function DealerOrderForm() {
 
   return (
     <div>
-      <TitleBox>
-        <TitleTypo>Product Distribution Form</TitleTypo>
-      </TitleBox>
       <OverallGrid container>
-
         <Grid item container sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
           <Grid item>
-            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "200px", justifyContent: 'center', display: 'flex', alignItems: 'center', position: 'relative', width: '1200px' }}>
+          <PaperStyle>
               <ProductName>Product Name</ProductName>
               <Autocomplete disablePortal id="flat-demo" options={products}
                 getOptionLabel={(option) => option.name}
@@ -415,29 +469,30 @@ export default function DealerOrderForm() {
               />
               <QuantityName>Quantity</QuantityName>
               <StyledQuantityField variant="outlined" InputProps={{ disableUnderline: true }} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-              <AddToCart variant="contained" onClick={() => { handleAddToCart(); }}>ADD TO CART</AddToCart>
-            </Paper>
+              <AddToCart variant="contained" onClick={() => { handleAddToCart(); }}>ADD TO CART<AddShoppingCartIcon style={{ paddingLeft: 10, height: 22 }} /></AddToCart>
+              </PaperStyle>
           </Grid>
         </Grid>
         <Grid item container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '10px' }}>
           <Grid item >
-            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>            <TableContainer>
+            <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "10px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', border: 'none' }}>            <TableContainer>
               <Table aria-label='simple table'>
-                <TableHead>
+                <TableHead style={{ backgroundColor: 'rgb(45, 133, 231, 0.08)', }}>
                   <TableRow>
-                    <TableHeaderCell align="center">Quantity</TableHeaderCell>
-                    <TableHeaderCell align="center">Unit</TableHeaderCell>
-                    <TableHeaderCell align="center">Product Name</TableHeaderCell>
-                    <TableHeaderCell align="center">Unit Price</TableHeaderCell>
-                    <TableHeaderCell align="center">Commission Rate</TableHeaderCell>
-                    <TableHeaderCell align="center">Amount</TableHeaderCell>
+                    <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Quantity</TableHeaderCell>
+                    <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Unit</TableHeaderCell>
+                    <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Product Name</TableHeaderCell>
+                    <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Unit Price</TableHeaderCell>
+                    <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Commission Rate</TableHeaderCell>
+                    <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}>Amount</TableHeaderCell>
+                    <TableHeaderCell align="center" sx={{ color: '#707070', fontWeight: 550 }}></TableHeaderCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {orderedProducts.map((product) => (
-                    <TableRow key={product.product.productid}>
-                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>
-                        <input
+                  {orderedProducts.map((product, index) => (
+                    <TableRow sx={{ backgroundColor: index % 2 === 0 ? 'inherit' : 'rgb(45, 133, 231, 0.08)' }} key={product.product.productid}>
+                      <TableCell align='center' sx={{  color: "#203949" }}>
+                        {/* <input
                           type="number"
                           value={product.quantity}
                           onChange={(e) => {
@@ -448,14 +503,29 @@ export default function DealerOrderForm() {
                               handleUpdateQuantity(product, newValue);
                             }
                           }}
-                        />
+                        /> */}
+                          <StyledNumber
+                            variant="outlined"
+                            
+                            type='number'
+                            value={product.quantity}
+                            style={{width:90}}
+                            onChange={(e) => {
+                              const newValue = Number(e.target.value);
+                              if (newValue < 0) {
+                                handleUpdateQuantity(product, 0);
+                              } else {
+                                handleUpdateQuantity(product, newValue);
+                              }
+                            }}
+                          />
                       </TableCell>
-                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.unit}</TableCell>
-                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.name}</TableCell>
-                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price}</TableCell>
-                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.commissionrate}</TableCell>
-                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}>{product.product.price * product.quantity}</TableCell>
-                      <TableCell align='center' sx={{ color: "#156D94", borderRight: "3px #AFD3E2 solid" }}><Button onClick={() => handleRemoveFromCart(product)}>REMOVE</Button></TableCell>
+                      <TableCell align='center' sx={{ color: "#203949" }}>{product.product.unit}</TableCell>
+                      <TableCell align='center' sx={{ color: "#203949" }}>{product.product.name}</TableCell>
+                      <TableCell align='center' sx={{ color: "#203949" }}>{product.product.price}</TableCell>
+                      <TableCell align='center' sx={{ color: "#203949" }}>{product.product.commissionrate}</TableCell>
+                      <TableCell align='center' sx={{ color: "#203949" }}>{product.product.price * product.quantity}</TableCell>
+                      <TableCell align='center' sx={{ color: "#203949" }}><RemoveButton onClick={() => handleRemoveFromCart(product)}><RemoveCircleIcon/></RemoveButton></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -468,8 +538,7 @@ export default function DealerOrderForm() {
           </Grid>
         </Grid>
 
-        <Button variant='contained' sx={{ background: "#AFD3E2", color: "#146C94", fontSize: 20, paddingLeft: 6, paddingRight: 6, fontWeight: 'bold', borderRadius: 5 }}
-          onClick={handleSaveOrder}>Save</Button>
+        <SaveButton variant='contained' onClick={handleSaveOrder}>Save</SaveButton>
         {/* Alerts */}
         <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{
           vertical: 'top',

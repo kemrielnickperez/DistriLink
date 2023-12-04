@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Autocomplete, Button, Card, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Autocomplete, Box, Button, Card, CircularProgress, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { IEmployee, IOrder } from "../../RestCalls/Interfaces";
 import { auto } from "@popperjs/core";
@@ -19,12 +19,19 @@ function SlideTransitionDown(props: SlideProps) {
 
 const StyledCard = styled(Card)({
   padding: '10px 10px 10px 2px',
-  margin: "50px 28% 20px 10%",
-  width: '85%',
-  height: '600px',
+  margin: "45px 28% 0px 7.2%",
+  width: '90%',
+  height: '580px',
+  background: 'linear-gradient(50deg, rgba(255,255,255,0.4) 12%,rgba(255,255,255,0.1) 77% )',
+  backgroundBlendMode: '',
+  // backgroundColor:'rgb(245, 247, 249,0.4)',
+  backdropFilter: 'blur(5px)',
+  WebkitBackdropFilter: 'blur(5px)',
+  boxShadow: '0 4px 7px 1px rgba(0,0,0,0.28)',
   alignItems: 'center',
-  borderRadius: '25px',
-  justifyContent: 'left'
+  borderRadius: '10px',
+  justifyContent: 'center',
+  position: 'fixed'
 })
 const ContentNameTypography = styled(Typography)({
 
@@ -43,7 +50,10 @@ const LabelTypography = styled(Typography)({
   fontWeight: 'bold',
   textAlign: 'left',
   fontSize: '15px',
-  color: '#707070'
+  color: '#707070',
+  '@media(max-width:900px)': {
+    fontSize: '12px'
+  }
 })
 const StyledButton = styled(Button)({
   marginTop: -5,
@@ -54,13 +64,56 @@ const StyledButton = styled(Button)({
   width: auto,
   height: 40,
   ':hover': {
-    backgroundColor: '#87BAF3',
+    backgroundColor: '#2D85E7',
+    transform: 'scale(1.1)'
+  },
+  transition: 'all 0.4s',
+  '@media(max-width:900px)': {
+    fontSize: '9px'
   }
 })
 
+const StyledButton1 = styled(Button)({
+  backgroundColor: 'rgb(45, 133, 231,0.8)',
+  borderRadius: 20,
+  color: '#FFFFFF',
+  fontFamily: 'Inter, sans-serif',
+  fontSize: '15px',
+  width: '100px',
+  height: 35,
+  ':hover': {
+    backgroundColor: '#2D85E7',
+    transform: 'scale(1.1)'
+  },
+  transition: 'all 0.4s'
+})
+
+const DataGridStyle = styled(DataGrid)({
+  textAlign: 'center',
+  fontSize: 15,
+  color: '#203949',
+  height: '479px',
+  width: '100%',
+  margin: '10px 10px 0px 0px',
+  borderRadius: '5px',
+  border: '0px solid #e0e0e0',
+  '& .MuiDataGrid-columnHeader': {
+    backgroundColor: 'rgb(45, 133, 231, 0.2)',
+    fontWeight: 'bold'
+  },
+
+  '& .MuiDataGrid-row:nth-child(even)': {
+    backgroundColor: 'rgb(45, 133, 231, 0.1)',
+  },
+})
+
 export default function CollectorAssignment() {
-  const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+
   const navigate = useNavigate();
+
+
+  const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
+
 
   {/** useStates */ }
   const [collectors, setCollectors] = useState<IEmployee[]>([]);
@@ -72,20 +125,13 @@ export default function CollectorAssignment() {
   const [alerttitle, setTitle] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('success');
+  const [loading, setLoading] = useState(true);
 
 
-  {/** functions */ }
-  /*  function getAllCollectors() {
-     axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
-       .then((response) => {
-         setCollectors(response.data);
-         
-       })
-       .catch((error) => {
-         console.error('Error retrieving collectors:', error);
-         alert("Error retrieving collectors. Please try again.");
-       });
-   } */
+  const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+ 
+
+
 
 
   {/**Handler for Alert - Function to define the type of alert*/ }
@@ -107,7 +153,7 @@ export default function CollectorAssignment() {
 
 
   function getAllCollectors() {
-    axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
+    axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllCollectorsByDistributorID/${distributorFromStorage.distributorid}`)
       .then((response) => {
         const updatedCollectors = response.data.map((collector) => {
           const assignedOrders = orders.filter((order) => order.collector?.employeeid === collector.employeeid);
@@ -118,17 +164,14 @@ export default function CollectorAssignment() {
       .catch((error) => {
         console.error('Error retrieving collectors:', error);
         headerHandleAlert('Error', "Error retrieving collectors. Please try again..", 'error');
-        // alert("Error retrieving collectors. Please try again.");
+
       });
   }
 
   function getAllOrders() {
-    axios.get<IOrder[]>('http://localhost:8080/order/getAllOrders')
+    axios.get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${distributorFromStorage.distributorid}`)
       .then((response) => {
-        const confirmedOrders = response.data.filter(order => order.confirmed && !order.isclosed);
-
-        setOrders(confirmedOrders);
-
+        setOrders(response.data.filter(order => order.confirmed && !order.isclosed));
       })
       .catch((error) => {
         console.error('Error retrieving collectors:', error);
@@ -137,54 +180,65 @@ export default function CollectorAssignment() {
       });
   }
 
-
   useEffect(() => {
     getAllCollectors();
+    console.log(orders);
     getAllOrders();
 
   }, [orders]);
 
-  {/** Columns for DataGrid */ }
 
-
-  {/** Columns for DataGrid */ }
   const columns: GridColDef[] = [
     { field: 'orderID', headerName: 'Order Transaction ID', width: 200 },
-    { field: 'dealerName', headerName: 'Dealer Name', width: 180 },
-    // { field: 'dueDate', headerName: 'Payment Due Date', width: 160 },
-    { field: 'amountDue', headerName: 'Amount Due', width: 180 },
-    { field: 'collectorStatus', headerName: 'Collector Status', width: 200 },
-    { field: 'collectorName', headerName: 'Collector Name', width: 200 },
-   
+    { field: 'dealerName', headerName: 'Dealer Name', width: 215 },
+    { field: 'amountDue', headerName: 'Amount Due', width: 145 },
     {
-      field: 'unassign', headerName: '', width: 220, renderCell: (params: { row: any; }) => {
+      field: 'collectorStatus',
+      headerName: 'Collector Status',
+      width: 175,
+      renderCell: (params) => (
+        <div style={{
+          color: params.value === 'Assigned' ? '#2A9221' : '#E77D7D'
+        }}>
+          {params.value}
+        </div>
+      ),
+    },
+    { field: 'collectorName', headerName: 'Collector Name', width: 220 },
+
+    {
+      field: 'unassign', headerName: '', width: 165, renderCell: (params: { row: any; }) => {
         return (
-          <Button
+          <StyledButton1
+            sx={{
+              width: 120,
+              backgroundColor: '#E77D7D',
+              ':hover': {
+                backgroundColor: '#DA4747',
+              }
+            }}
             variant="contained"
             color="primary"
             onClick={(event) => {
               handleUnassignCollector(params.row, event);
             }}
             disabled={params.row.collectorStatus === 'Not Assigned'}
-          
-          >
-            Unassign Collector
 
-          </Button>
+          >
+            Unassign
+          </StyledButton1>
         )
       }
     },
     {
-      field: 'actionView', headerName: '', width: 180, renderCell: (params: { row: any; }) => {
+      field: 'actionView', headerName: '', width: 143, renderCell: (params: { row: any; }) => {
         return (
-          <Button
-            variant="contained"
-            color="primary"
+          <StyledButton1
             onClick={() => {
               handleViewButtonClick(params.row.orderID);
             }}>
             View
-          </Button>
+          </StyledButton1>
         )
       }
     }
@@ -238,41 +292,11 @@ export default function CollectorAssignment() {
     })
   }
 
-
-  {/** Handle Assign */ }
-  /*   const handleAssignCollector = () => {
-      if (selectedCollector === null) {
-        alert("Please choose a collector")
-      } else {
-        let count = 0;
-        for (const selectedOrderID of selectedRows) {
-          if (assignedStatus === false) {
-            break;
-          }
-          else {
-            assignCollector(selectedOrderID, selectedCollector)
-            count++;
-          } 
-        }
-  
-  
-        if (count === selectedRows.length) {
-          alert("Collector assigned successfully to all of the selected orders!")
-        }
-        else {
-          alert(`Only ${count}! number of orders was assigned.`)
-        }
-  
-        setSelectedRows([]);
-        setSelectedCollector(null);
-      }
-    }; */
   const handleAssignCollector = () => {
     if (selectedCollector === null) {
-      // alert("Please choose a collector");
       headerHandleAlert('Collector Assignment Required', "To proceed, please assign a collector to the order(s).", 'warning');
     } else if (selectedRows.length === 0) {
-      // alert("Please select at least one order to assign a collector");
+
       headerHandleAlert('Order Selection Required', "Please choose an order before assigning a collector.", 'warning');
     } else {
       assignCollector(selectedCollector.employeeid!, selectedRows);
@@ -296,9 +320,9 @@ export default function CollectorAssignment() {
 
   return (
     <div>
+      
       <StyledCard>
-        <ContentNameTypography>Collector Assignment</ContentNameTypography>
-        <div style={{ display: "flex", flexDirection: "row" }}>
+        <div style={{ display: "flex", flexDirection: "row", paddingTop: 30 }}>
           <LabelTypography>Assign to: </LabelTypography>
           <Autocomplete
             disablePortal
@@ -326,7 +350,7 @@ export default function CollectorAssignment() {
                     ...params.InputProps, disableUnderline: true,
                     style: {
                       fontSize: "15px",
-                      backgroundColor: "#F5F7F9",
+                      backgroundColor: 'rgb(45, 133, 231,0.2)',
                       color: 'black',
                       borderRadius: '5px',
                       height: '35px',
@@ -339,32 +363,57 @@ export default function CollectorAssignment() {
           />
           {/**Assign / Reassign Button */}
           <StyledButton variant="contained" onClick={handleAssignCollector} >
-            Assign / Reassign Collector
+            Assign / Reassign
           </StyledButton>
 
         </div>
+       
+      {/*   {rows.length === 0 ? (
+  // Display circular progress when orders are empty
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    <Typography>No Orders yet.</Typography>
+  </div>
+) :  */}
 
-        {/**DataGrid */}
-        <DataGrid
-          rows={rows}
-          sx={{ textAlign: 'center', color: '#203949', height: '350px', margin: '35px 20px 0 20px', fontWeight: 330 }}
-          columns={columns.map((column) => ({
-            ...column,
-          }))
-          }
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5,
-              },
-            },
-          }}
-          pageSizeOptions={[5]}
-          checkboxSelection
-          onRowSelectionModelChange={(handleRowSelection)}
-          rowSelectionModel={selectedRows}
-        />
-      </StyledCard>
+
+
+{orders.length === 0  && collectors.length === 0 ? (
+  // Display "No Rows" message when rows are empty
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    
+    <Typography>No orders and collectors yet.</Typography>
+  </div>
+
+  
+) : orders.length === 0 ? (
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+<CircularProgress />
+  </div>
+
+) : (
+  // Display the DataGrid when both orders and rows are not empty
+  <Box sx={{ p: 2 }}>
+    <DataGridStyle
+      rows={rows}
+      columns={columns.map((column) => ({
+        ...column,
+      }))}
+      initialState={{
+        pagination: {
+          paginationModel: {
+            pageSize: 10,
+          },
+        },
+      }}
+      pageSizeOptions={[10]}
+      checkboxSelection
+      onRowSelectionModelChange={handleRowSelection}
+      rowSelectionModel={selectedRows}
+    />
+  </Box>
+)}
+ </StyledCard>
+ 
 
 
       {/* Alerts */}

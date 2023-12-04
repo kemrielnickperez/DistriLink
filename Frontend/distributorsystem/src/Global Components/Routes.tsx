@@ -35,33 +35,23 @@ import { EmployeeProfileDetails } from '../Components/Module 4 - Profiles & Appr
 import OrderConfirmation from '../Components/Module 5 - Product Distribution and Confirmation/OrderConfirmationUI';
 import { OrderTransactionDetails } from '../Components/Module 5 - Product Distribution and Confirmation/OrderTransactionDetails';
 import DistributorRegistration from '../Components/Module 2 - Registrations/DistributorRegistrationUI';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import ContentDealer from './ContentsDealer';
-import ContentSalesAssociate from './ContentsSalesAssociate';
-import ContentCashier from './ContentsCashier';
+
 
 export default function MainRoutes() {
+    return (
 
-    const dealer = JSON.parse(localStorage.getItem('user') || 'null');
-    let content;
-
-    if (!dealer || !dealer.tableName) {
-        content = <Navigate to="/SignIn" />;
-    } else {
-        content = (
-            <Routes>
-                <Route path="/" element={<SplashscreenContent />}>
-                    <Route path="/" element={<Navigate replace to="WelcomeScreen" />} />
-                    <Route path="/WelcomeScreen" element={<WelcomeScreen />} />
-                    {/* <SignupScreen/> */}
-                    <Route path="/" element={<SignUpContent />}>
-                        <Route path="/" element={<Navigate replace to="SignUpScreen" />} />
-                        <Route path="/SignUpScreen" element={<SignupScreen />} />
-                        <Route path="/DealerRegistration" element={<DealerRegistration />} />
-                        <Route path="/EmployeeRegistration" element={<EmployeeRegistration />} />
-                        <Route path="/DistributorRegistration" element={<DistributorRegistration />} />
-                    </Route>
+        <Routes>
+            <Route path="/" element={<SplashscreenContent />}>
+                <Route path="/" element={<Navigate replace to="WelcomeScreen" />} />
+                <Route path="/WelcomeScreen" element={<WelcomeScreen />} />
+                {/* <SignupScreen/> */}
+                <Route path="/" element={<SignUpContent />}>
+                    <Route path="/" element={<Navigate replace to="SignUpScreen" />} />
+                    <Route path="/SignUpScreen" element={<SignupScreen />} />
+                    <Route path="/DealerRegistration" element={<DealerRegistration />} />
+                    <Route path="/EmployeeRegistration" element={<EmployeeRegistration />} />
+                    <Route path="/DistributorRegistration" element={<DistributorRegistration />} />
+                </Route>
 
                     {/* <SigninScreen/> */}
                     <Route path="/" element={<SignInContent />}>
@@ -135,5 +125,7 @@ export default function MainRoutes() {
         )
     }
 
-    return content;
+
+
+    );
 }

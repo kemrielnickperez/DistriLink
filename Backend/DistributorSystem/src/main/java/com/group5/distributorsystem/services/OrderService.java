@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +41,9 @@ public class OrderService {
 
     @Autowired
     DistributorRepository distributorRepository;
+
+    @Autowired
+    PaymentTransactionService paymentTransactionService;
 
     public Order createOrder(Order order) {
 
@@ -109,9 +111,14 @@ public class OrderService {
     }
 
     public Optional<Order> getOrderByID(String orderid){
+
         return orderRepository.findById(orderid);
     }
 
+    public Order getOrderByPaymentTransactionID(String paymenttransactionid){
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
+        return orderRepository.findById(paymentTransaction.getOrderid()).get();
+    }
 
     /*public ResponseEntity assignCollector(String orderid, Employee collector) {
         Order order = orderRepository.findById(orderid).get();
@@ -135,6 +142,10 @@ public class OrderService {
         return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
     }
 */
+
+    public List<Order> getAllOrdersByDistributorID(String distributorid) {
+        return orderRepository.findAllByDistributor_Distributorid(distributorid);
+    }
 
     public ResponseEntity assignCollector(String[] orderids, String collectorid) {
         Employee employee = employeeRepository.findById(collectorid).get();
@@ -162,9 +173,6 @@ public class OrderService {
         employeeRepository.save(employee);
         return new ResponseEntity("Collector assigned successfully", HttpStatus.OK);
     }
-
-
-
 
     public ResponseEntity removeCollector(String orderid) {
 
@@ -210,25 +218,22 @@ public class OrderService {
     }
 
     public ResponseEntity updateOrderClosedStatus(String orderId) {
-        Optional<Order> optionalOrder = orderRepository.findById(orderId);
-        if (optionalOrder.isPresent()) {
-            Order order = optionalOrder.get();
-            boolean allPaymentsPaid = true;
+        Order order = orderRepository.findById(orderId).get();
 
-            for (PaymentTransaction transaction : order.getPaymenttransactions()) {
-                if (!transaction.isPaid()) {
-                    allPaymentsPaid = false;
-                    break; // Exit the loop as soon as you find an unpaid transaction
-                }
+        boolean allPaymentsPaid = true;
+
+        List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionService.getAllPaymentTransactionsByOrderID(order.getOrderid(), order.getDistributor().getDistributorid());
+
+        for (PaymentTransaction transaction : paymentTransactionsFromOrder) {
+            if (!transaction.isPaid()) {
+                allPaymentsPaid = false;
+                break; // Exit the loop as soon as you find an unpaid transaction
             }
-
-            order.setIsclosed(allPaymentsPaid);
-            orderRepository.save(order);
-
-            return new ResponseEntity<>("Order closed status updated successfully", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
         }
+
+        order.setIsclosed(allPaymentsPaid);
+        orderRepository.save(order);
+        return new ResponseEntity<>("Order closed status updated successfully", HttpStatus.OK);
     }
 
   /*  @Scheduled(cron = "0 0 0 * * *") // Run every day at midnight
@@ -267,12 +272,17 @@ public class OrderService {
         // Iterate through all orders
         List<Order> orders = orderRepository.findAll();
 
+
+
         for (Order order : orders) {
             // Check if the order is not closed
             if (!order.isIsclosed()) {
-                Set<PaymentTransaction> paymentTransactions = order.getPaymenttransactions();
+               // Set<PaymentTransaction> paymentTransactions = order.getPaymenttransactions();
 
-                for (PaymentTransaction paymentTransaction : paymentTransactions) {
+                List<PaymentTransaction> paymentTransactionsFromOrder = paymentTransactionService.getAllPaymentTransactionsByOrderID(order.getOrderid(), order.getDistributor().getDistributorid());
+
+
+                for (PaymentTransaction paymentTransaction : paymentTransactionsFromOrder) {
                     LocalDate endDate = paymentTransaction.getEnddate();
 
                     if (!paymentTransaction.isPaid() && currentDate.isAfter(endDate)) {
@@ -284,8 +294,9 @@ public class OrderService {
 
                         paymentTransaction.setAmountdue(newAmountDue);
                         paymentTransactionRepository.save(paymentTransaction);
+
                     }
-                    order.setPaymenttransactions(paymentTransactions);
+                    order.getPaymenttransactions().add(paymentTransaction);
                     orderRepository.save(order);
                 }
             }
@@ -293,8 +304,32 @@ public class OrderService {
     }
 
     public List<Order> getAllUnconfirmedOrders() {
+
         return orderRepository.findByIsconfirmedFalse();
     }
+
+    public List<Order> getOrderByDealerId(String dealerId){
+
+        return orderRepository.findByDealer_Dealerid(dealerId);
+    }
+
+    public List<Order> getAllUnconfirmedOrdersByDistributorID(String distributorid) {
+        return orderRepository.findByDistributor_DistributoridAndIsconfirmedFalse(distributorid);
+    }
+
+
+
+    public Order getOrderByIDUnderDistributor(String orderid, String distributorid){
+        boolean exists = orderRepository.existsByOrderidAndDistributor_Distributorid(orderid, distributorid);
+        if(exists) {
+            return orderRepository.findById(orderid).orElse(null);
+        }
+        else
+            return null;
+    }
+
+
+
 
 }
 

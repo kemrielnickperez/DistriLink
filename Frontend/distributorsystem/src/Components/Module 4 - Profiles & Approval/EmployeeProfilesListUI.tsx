@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IEmployee } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Alert, AlertTitle, Button, Card, Slide, SlideProps, Snackbar, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, CircularProgress, Slide, SlideProps, Snackbar, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 
@@ -12,12 +12,19 @@ function SlideTransitionDown(props: SlideProps) {
 
 const StyledCard = styled(Card)({
     padding: '10px 10px 10px 2px',
-    margin: "50px 28% 20px 10%",
-    width: '85%',
+    margin: "50px 28% 0px 7.2%",
+    width: '90%',
     height: '550px',
+    background: 'linear-gradient(50deg, rgba(255,255,255,0.4) 12%,rgba(255,255,255,0.1) 77% )',
+    backgroundBlendMode: '',
+    // backgroundColor:'rgb(245, 247, 249,0.4)',
+    backdropFilter: 'blur(5px)',
+    WebkitBackdropFilter: 'blur(5px)',
+    boxShadow: '0 4px 7px 1px rgba(0,0,0,0.28)',
     alignItems: 'center',
-    borderRadius: '25px',
-    justifyContent: 'center'
+    borderRadius: '10px',
+    justifyContent: 'center',
+    position: 'fixed'
 })
 const ContentNameTypography = styled(Typography)({
     marginTop: 60,
@@ -31,17 +38,38 @@ const ContentNameTypography = styled(Typography)({
 })
 
 const StyledButton = styled(Button)({
-    backgroundColor: '#2D85E7',
+    backgroundColor: 'rgb(45, 133, 231,0.8)',
+    borderRadius: 20,
     color: '#FFFFFF',
     fontFamily: 'Inter, sans-serif',
     fontSize: '15px',
-    width: '50px',
+    width: '100px',
     height: 35,
     ':hover': {
         backgroundColor: '#2D85E7',
         transform: 'scale(1.1)'
     },
     transition: 'all 0.4s'
+})
+
+const DataGridStyle = styled(DataGrid)({
+
+    textAlign: 'center',
+    fontSize: 15,
+    color: '#203949',
+    height: '520px',
+    width: '100%',
+    margin: '10px 10px 0px 0px',
+    borderRadius: '5px',
+    border: '0px solid #e0e0e0',
+    '& .MuiDataGrid-columnHeader': {
+        backgroundColor: 'rgb(45, 133, 231, 0.2)',
+        fontWeight: 'bold'
+    },
+
+    '& .MuiDataGrid-row:nth-child(even)': {
+        backgroundColor: 'rgb(45, 133, 231, 0.1)',
+    },
 })
 
 export default function EmployeeProfileListUI() {
@@ -51,21 +79,27 @@ export default function EmployeeProfileListUI() {
     const [alerttitle, setTitle] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [alertSeverity, setAlertSeverity] = useState('success');
-    
+
+
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+
+
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
-        axios.get<IEmployee[]>('http://localhost:8080/employee/getAllEmployees')
+        axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllEmployeesByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setEmployee(response.data);
-                 // headerHandleAlert('Success', "Employees fetched successfully.", 'success');
+                // headerHandleAlert('Success', "Employees fetched successfully.", 'success');
             })
             .catch((error) => {
                 headerHandleAlert('Error', "Failed to fetch employees. Please check your internet connection.", 'error');
                 //console.error('Error fetching employee:', error);
             });
+
+            console.log(employee);
     }, []);
     {/**Handler for Alert - Function to define the type of alert*/ }
- 
+
     function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
         setTitle(title);
         setAlertMessage(message);
@@ -85,9 +119,9 @@ export default function EmployeeProfileListUI() {
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'Employee ID', width: 300 },
         { field: 'employeeName', headerName: 'Employee Name', width: 300 },
-        { field: 'position', headerName: 'Position', width: 300 },
+        { field: 'position', headerName: 'Position', width: 350 },
         {
-            field: 'action', headerName: '', width: 150,
+            field: 'action', headerName: '', width: 350,
             renderCell: (params: { row: any; }) => {
                 return (
                     <StyledButton
@@ -108,9 +142,9 @@ export default function EmployeeProfileListUI() {
         id: employeeList.employeeid,
         employeeName: `${employeeList.firstname} ${employeeList.middlename} ${employeeList.lastname}`,
         position: [
-            employeeList.is_cashier && "Cashier",
-            employeeList.is_collector && (employeeList.is_cashier ? 'Collector' : 'Collector'),
-            employeeList.is_salesassociate && (employeeList.is_cashier || employeeList.is_collector ? 'Sales Associate' : 'Sales Associate')
+            employeeList.iscashier && "Cashier",
+            employeeList.iscollector && (employeeList.iscashier ? 'Collector' : 'Collector'),
+            employeeList.issalesassociate && (employeeList.iscashier || employeeList.iscollector ? 'Sales Associate' : 'Sales Associate')
         ].filter(Boolean).join(', ')
     }));
 
@@ -122,26 +156,33 @@ export default function EmployeeProfileListUI() {
 
     return (
         <div>
-            <StyledCard>
-                <ContentNameTypography>Employee Profile List</ContentNameTypography>
-
-                <DataGrid
-                    rows={rows}
-                    sx={{ textAlign: 'center', color: '#203949', height: '370px', margin: '45px 30px 0 30px' }}
-                    columns={columns.map((column) => ({
-                        ...column,
-                    }))}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: 5,
-                            },
-                        },
-                    }}
-                    pageSizeOptions={[5]}
-                />
-            </StyledCard>
             
+            <StyledCard>
+                <Box sx={{p:2}}>
+                {employee === null ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' , marginTop: '200px'}}>
+                <CircularProgress />
+              </div>
+            ) : (
+                    <DataGridStyle
+                        rows={rows}
+                        columns={columns.map((column) => ({
+                            ...column,
+                        }))}
+                        initialState={{
+                            pagination: {
+                                paginationModel: {
+                                    pageSize: 10,
+                                },
+                            },
+                        }}
+                        pageSizeOptions={[10]}
+                    />
+
+            )}
+                </Box>
+            </StyledCard>
+
             {/* Alerts */}
             <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
                 vertical: 'top',

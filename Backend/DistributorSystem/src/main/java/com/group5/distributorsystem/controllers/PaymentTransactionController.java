@@ -38,14 +38,35 @@ public class PaymentTransactionController {
         return new ResponseEntity<>(paymentTransactionService.getAllPaymentTransactions(), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllPaymentTransactionsByOrderID/{orderid}/{distributorid}")
+    public ResponseEntity<Object> getAllPaymentTransactionsByOrderID(@PathVariable String orderid, @PathVariable String distributorid){
+        return new ResponseEntity<>(paymentTransactionService.getAllPaymentTransactionsByOrderID(orderid, distributorid), HttpStatus.OK);
+    }
+
+
     @GetMapping("/getPaymentTransactionByID/{paymenttransactionid}")
     public ResponseEntity<Object> getPaymentTransactionByID(@PathVariable String paymenttransactionid){
         return new ResponseEntity<>(paymentTransactionService.getPaymentTransactionByID(paymenttransactionid), HttpStatus.OK);
     }
 
+    @GetMapping("/getTotalPaidAmount/{paymenttransactionid}")
+    public ResponseEntity<Object> getTotalPaidAmount(@PathVariable String paymenttransactionid){
+        return new ResponseEntity<>(paymentTransactionService.getTotalPaidAmount(paymenttransactionid), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/getRemainingPaymentAmount/{paymenttransactionid}")
+    public ResponseEntity<Object> getRemainingPaymentAmount(@PathVariable String paymenttransactionid){
+        return new ResponseEntity<>(paymentTransactionService.getRemainingPaymentAmount(paymenttransactionid), HttpStatus.OK);
+    }
+
+
+
+
     @PutMapping("/updatePaymentTransaction")
     public ResponseEntity<Object> updatePaymentTransaction(@RequestBody PaymentTransaction[] paymentTransaction){
-        return new ResponseEntity<>(paymentTransactionService.updatePaymentTransaction(paymentTransaction), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
+        //return new ResponseEntity<>(paymentTransactionService.updatePaymentTransaction(paymentTransaction), HttpStatus.OK);
 
     }
 

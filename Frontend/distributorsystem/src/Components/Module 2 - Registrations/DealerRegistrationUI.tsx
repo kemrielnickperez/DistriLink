@@ -178,7 +178,7 @@ export default function DealerRegistration() {
     const navigate = useNavigate();
 
     {/**UseStates*/ }
-    const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
+    const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer] = useRestDealer();
     const [selectedGender, setSelectedGender] = useState('');
     const [selectedBusinessOpt, setSelectedBusinessOpt] = useState(false);
     const [selectedBDate, setSelectedBDate] = useState<Dayjs | null>(null);
@@ -245,30 +245,14 @@ export default function DealerRegistration() {
     const tinnumberRef = useRef<TextFieldProps>(null)
 
 
-    const distributorObject: IDistributor = {
 
-        distributorid: "distributor4",
-        firstname: "Junhui",
-        middlename: "",
-        lastname: "Wen",
-        emailaddress: "wenjunhui@gmail.com",
-        password: "moonmoon",
-        birthdate: "1996-06-10",
-        gender: "Male",
-        currentaddress: "Talisay City",
-        permanentaddress: "Talisay City",
-        contactnumber: "09741258963",
-        dealerids: [],
-        employeeids: [],
-        orderids: []
-    }
 
 
     function getAllDistributors() {
         axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
             .then((response) => {
                 setDistributors(response.data);
-                console.log(response.data)
+            
 
             })
             .catch((error) => {
@@ -622,8 +606,7 @@ export default function DealerRegistration() {
                 documentids: []
             }, newDealerDocuments!);
 
-            console.log("mao ni gi selecr")
-            console.log(selectedDistributor)
+          
             handleAlert('Success', 'You are Successfully Registered!', 'success');
 
         } catch (error) {
@@ -647,7 +630,6 @@ useEffect(() => {
     setMaxDate(currentDate);
     getAllDistributors();
 
-    // console.log(selectedDistributor)
 
 }, [distributors]);
 

@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Button, Grid, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Grid, LinearProgress, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
@@ -8,6 +8,8 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { OrderDetailsPrint } from "./OrderDetailsPrint";
+import axios from "axios";
+import logo5 from '../../Global Components/Images/logo5.png';
 
 function SlideTransitionDown(props: SlideProps) {
     return <Slide {...props} direction="down" />;
@@ -110,22 +112,17 @@ const StyledPrintDiv = styled('div')({
 });
 
 export function OrderDetails() {
+    const navigate = useNavigate();
     const { objectId } = useParams();
 
-    const [openAlert, setOpenAlert] = useState(false);
-
-    const [alerttitle, setTitle] = useState('');
-
-    const [alertMessage, setAlertMessage] = useState('');
-
-    const [alertSeverity, setAlertSeverity] = useState('success');
-
-
-
-    const navigate = useNavigate();
-
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+    const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
     const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
+
+    const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alerttitle, setTitle] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertSeverity, setAlertSeverity] = useState('success');
     const [paymentTransactionsObjects, setPaymentTransactionsObjects] = useState<IPaymentTransaction[]>([]);
     const [isMounted, setIsMounted] = useState(false);
 
@@ -145,34 +142,44 @@ export function OrderDetails() {
         setOpenAlert(false);
     };
 
-    //sorting the payment transactions
-    const sortedPaymemtTransactions = order?.paymenttransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+    const getAllPaymentTransactionsByOrderID = () => {
+        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${objectId}/${distributorFromStorage.distributorid}`)
+            .then((response) => {
 
+                setPaymentTransactions(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data: ', error);
+            });
+    }
+
+    //sorting the payment transactions
+    const sortedPaymemtTransactions = paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
+
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+   
     {/*Handlers*/ }
     const handleFindValue = () => {
         try {
-            getOrderByID(objectId!);
+            getOrderByID(objectId!, distributorFromStorage.distributorid);
+            getAllPaymentTransactionsByOrderID();
         } catch (error) {
             headerHandleAlert('Error', "Failed to retrieve order data. Please try again.", 'error');
         }
     };
 
-    {/* useEffects*/ }
+
+
+
+
     useEffect(() => {
+
         handleFindValue();
-    },
-        [order]
-    );
-    useEffect(() => {
+
         setIsMounted(true); // Set the component as mounted when it renders
 
-        // Only make the GET request if the component is mounted
-        if (isMounted) {
-            handleFindValue();
-        }
-        return () => {
-            setIsMounted(false);
-        };
+        console.log(order);
+
 
     },
         [isOrderFound, order, paymentTransactionsObjects]);
@@ -203,7 +210,8 @@ export function OrderDetails() {
     return (
         <div>
             {!printing ? (
-
+                <div>
+                    {order ? (
                 <div>
                     <StyledPrintDiv>
                         < ContentNameTypography > Order Transaction Details
@@ -254,7 +262,7 @@ export function OrderDetails() {
 
                     {/* Payment Transaction Information */}
                     <StyldeInfoHeader>Payment Transaction Information</StyldeInfoHeader>
-                    {order?.paymenttransactions?.length !== 0 ? (
+                    {paymentTransactions?.length !== 0 ? (
                         <div>
                             <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", width: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '-5% 0px 50px 12%' }}>
                                 <TableContainer >
@@ -315,8 +323,8 @@ export function OrderDetails() {
                                     </Table>
                                 </TableContainer>
 
-                                
-                                 {/* Alerts */}              
+
+                                {/* Alerts */}
                                 <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
                                     vertical: 'top',
                                     horizontal: 'center'
@@ -337,15 +345,20 @@ export function OrderDetails() {
                             <h2 style={{ color: 'grey', marginTop: '50px', textDecoration: 'underline black 2px', fontStyle: 'italic' }} onClick={() => handleH2Click()}> No schedules yet. Set Payment Transaction in the Scheduling Page. </h2>
                         </div>
 
-                    )
-
-                    }
-
-
-
+                    )}
+                    </div>
+                      ) : (
+                        <Box sx={{ display: 'flex' , flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', marginTop: '-20px' }}>
+                              <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+                    <LinearProgress sx={{ width: '20%' }} />
+                    {/* You can adjust the width as needed */}
+                </Box>
+       
+                        
+                    )}
                 </div>
             ) : (
-                <OrderDetailsPrint order={order!} />
+                <OrderDetailsPrint order={order!} paymentTransactions={paymentTransactions!} />
             )}
         </div>
 

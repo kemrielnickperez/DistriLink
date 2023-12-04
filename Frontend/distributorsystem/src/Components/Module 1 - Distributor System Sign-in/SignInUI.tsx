@@ -3,10 +3,15 @@ import { Alert, AlertColor, Box, Button, Grid, IconButton, Link, Snackbar, TextF
 import CloseIcon from '@mui/icons-material/Close';
 import signin from "../../Global Components/Images/Group 8 (1).png"
 import { useNavigate } from "react-router-dom"
-import { Fragment, useEffect, useRef, useState } from "react"
+import { Fragment, useContext, useEffect, useRef, useState } from "react"
 import axios from "axios"
 import Dashboard from "../Module 3 - Distributor Dashboard/DashboardUI"
 import React from "react"
+import { useRestDealer } from "../../RestCalls/DealerUseRest";
+import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
+import { useRestDistributor } from "../../RestCalls/DistributorUseRest";
+import { useRestSignIn } from "../../RestCalls/SignInUseRest";
+
 
 const HeaderTypo = styled(Typography)({
     position: "relative",
@@ -102,20 +107,30 @@ export default function SignIn() {
     const [successMessage, setSuccessMessage] = useState("");
     const [severity, setSeverity] = useState<AlertColor | undefined>();
 
+
+    const [signIn] = useRestSignIn();
+
+
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
         event.preventDefault();
         setOpen(true);
-        if (!userid || !password) {
+
+        signIn(userid, password);
+
+
+        /* if (!userid || !password) {
             setSnackbarMessage("Please enter both User ID and Password");
             setSeverity("warning");
             setOpen(true);
             return;
-        }
+        } 
         axios.post('http://localhost:8080/signin/test', {
             userId: userid,
             password: password
         })
-            .then(response => {
+            .then((response) => {
                 if (response.status === 200) {
                     const result = response.data;
                     if (result.tableName === 'Dealer') {
@@ -126,14 +141,20 @@ export default function SignIn() {
                         window.location.assign('Dashboard');
                         setSuccessMessage("Login successful as Dealer");
                         setOpen(true);
+        
+                        //appObjects?.putDealer(dealer!)
                     } else if (result.tableName === 'Distributor') {
                         console.log('Login successful as Distributor');
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result));
-                        // Redirect to the Dealer screen
-                        window.location.assign('Dashboard');
-                        setSuccessMessage("Login successful as Distributor");
-                        setOpen(true);
+                       // Redirect to the Dealer screen
+                       // window.location.assign('Dashboard');
+                       // setSuccessMessage("Login successful as Distributor");
+                       // setOpen(true);
+                        console.log(response.data);
+                        console.log(response.data.distributor);
+                        appObjects?.putDistributor(response.data.distributor);
+                        console.log(appObjects?.distributor);
                     } else if (result.tableName === 'Sales Associate' || result.tableName === 'Cashier') {
                         console.log('Login successful as Employee');
                         localStorage.setItem('user', JSON.stringify(result))
@@ -162,11 +183,14 @@ export default function SignIn() {
                         setOpen(true);
                     }
                 }
-            }).catch(error => {
+            }).catch((error) => {
                 console.log(error);
-            });
+            });*/
+
 
     }
+
+
 
 
     useEffect(() => {
@@ -190,8 +214,11 @@ export default function SignIn() {
     );
 
     return (
+
         <Box component="form" noValidate onSubmit={handleSubmit} >
+
             <SignInGrid item container spacing={1}>
+
                 <Grid item>
                     <SignInFieldsGrid container spacing={8}>
                         <Grid item>
@@ -243,7 +270,7 @@ export default function SignIn() {
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 >
                     <Alert
-                        severity={successMessage ? "success" : severity } // Use "success" for success and "error" for invalid input
+                        severity={successMessage ? "success" : severity} // Use "success" for success and "error" for invalid input
                         onClose={handleClose}
                     >
                         {successMessage || snackbarMessage}

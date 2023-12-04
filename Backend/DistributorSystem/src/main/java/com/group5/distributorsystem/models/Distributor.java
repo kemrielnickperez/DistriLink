@@ -35,19 +35,23 @@ public class Distributor {
 
     private String contactnumber;
 
-
     private Set<String> dealerids = new HashSet<>();
-
 
     private Set<String> employeeids = new HashSet<>();
 
-
     private Set<String> orderids = new HashSet<>();
+
+    private Set<String> paymentreceiptids = new HashSet<>();;
+
+    private Set<String> archiveddealerids = new HashSet<>();
+
+    private Set<String> documentids = new HashSet<>();
 
     public Distributor() {
     }
 
-    public Distributor(String distributorid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, Set<String> dealerids, Set<String> employeeids, Set<String> orderids) {
+
+    public Distributor(String distributorid, String firstname, String middlename, String lastname, String emailaddress, String password, LocalDate birthdate, String gender, String currentaddress, String permanentaddress, String contactnumber, Set<String> dealerids, Set<String> employeeids, Set<String> orderids, Set<String> paymentreceiptids, Set<String> archiveddealerids, Set<String> documentids) {
         this.distributorid = distributorid;
         this.firstname = firstname;
         this.middlename = middlename;
@@ -62,8 +66,10 @@ public class Distributor {
         this.dealerids = dealerids;
         this.employeeids = employeeids;
         this.orderids = orderids;
+        this.paymentreceiptids = paymentreceiptids;
+        this.archiveddealerids = archiveddealerids;
+        this.documentids = documentids;
     }
-
 
     public String getDistributorid() {
         return distributorid;
@@ -175,5 +181,33 @@ public class Distributor {
 
     public void setOrderids(Set<String> orderids) {
         this.orderids = orderids;
+    }
+
+    public Set<String> getPaymentreceiptids() {
+        return paymentreceiptids;
+    }
+
+    public void setPaymentreceiptids(Set<String> paymentreceiptids) {
+        this.paymentreceiptids = paymentreceiptids;
+    }
+
+    public String getFullName(){
+        return firstname + " " + middlename + " " + lastname;
+    }
+
+    public Set<String> getArchiveddealerids() {
+        return archiveddealerids;
+    }
+
+    public void setArchiveddealerids(Set<String> archiveddealerids) {
+        this.archiveddealerids = archiveddealerids;
+    }
+
+    public Set<String> getDocumentids() {
+        return documentids;
+    }
+
+    public void setDocumentids(Set<String> documentids) {
+        this.documentids = documentids;
     }
 }

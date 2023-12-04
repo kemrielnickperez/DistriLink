@@ -114,9 +114,9 @@ export default function OrderConfirmation() {
 
   const {objectId} = useParams();
   
-  const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus, updateOrder] = useRestOrder();
+  const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
 
-  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, updateDealerCreditLimit,  resetDealer,  isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit] = useRestDealer();
 
   const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
@@ -143,7 +143,7 @@ export default function OrderConfirmation() {
   const dealerIDRef = useRef<TextFieldProps>(null);
 
 
-  const orderID = 'fa20eeaf';
+ 
 
   const paymentchoices = [
     {
@@ -178,8 +178,10 @@ export default function OrderConfirmation() {
 
   const [isMounted, setIsMounted] = useState(false);
 
+
+  const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
   const handleFindOrder = () => {
-    getOrderByID(objectId!);
+    getOrderByID(objectId!, distributorFromStorage.distributorid);
   }
 
 
@@ -189,7 +191,6 @@ export default function OrderConfirmation() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
       .then((response) => {
         setProducts(response.data);
-        //console.log(response.data);
       })
       .catch((error) => {
         console.error('Error retrieving products:', error);
@@ -205,15 +206,6 @@ export default function OrderConfirmation() {
       getAllProducts();
       handleFindOrder();
 
-     /*  const newTotalAmount = orderedProducts?.reduce((total, product) => {
-        return total + product.product.price * product.quantity;
-      }, 0); */
-
-     
-
-
-
-
       setDataFetched(true); // Set the flag to true to prevent re-fetching
     }
 
@@ -222,39 +214,9 @@ export default function OrderConfirmation() {
 
     setMinDate(dayjs() as Dayjs);
 
-
-    /* getAllProducts();
-    handleFindOrder();
-  
-    const newTotalAmount = orderedProducts?.reduce((total, product) => {
-      return total + product.product.price * product.quantity;
-    }, 0);
-    
-    setTotalAmount(newTotalAmount); */
-
-    //console.log(orderedProducts)
-
-    // setIsMounted(true); // Set the component as mounted when it renders
-
-    // Only make the GET request if the component is mounted
-    // if (isMounted) {
-
-    //setOrderedProducts(order?.orderedproducts!)
-    //console.log("sa mount")
-    //console.log(orderedProducts)
-    //  }
-    // return () => {
-    //     setIsMounted(false);
-    // }; 
-
-
   }, [order, isDataFetched]);
 
-  /* useLayoutEffect(()=> {
-    setOrderedProducts(order?.orderedproducts!)
-    console.log("sa mount")
-    console.log(orderedProducts)
-  },[]) */
+
 
 
   const handleAddToCart = () => {
@@ -294,7 +256,6 @@ export default function OrderConfirmation() {
       }
     }
 
-    console.log(orderedProducts)
   };
 
 
@@ -334,19 +295,18 @@ export default function OrderConfirmation() {
   }
 
   const handleSaveOrder = () => {
-    console.log(totalAmount)
+    
     if(penaltyRateRef === null || selectedDate === null || paymentTerm === 0){
       alert("Please fill in all the necessary fields.")
     }
     else{
-    console.log("1" + orderedProducts)
+    
     const existingOrderId = order?.orderid
     const existingOrderedProducts = order?.orderedproducts
     // Calculate the total order amount based on orderedProducts
     const orderAmount = orderedProducts.reduce((total, product) => {
       return total + product.product.price * product.quantity;
     }, 0);
-
     // Create an updated order object with the necessary data
     const savedProduct = [...orderedProducts]
     const updatedOrder: IOrder = {
@@ -356,7 +316,7 @@ export default function OrderConfirmation() {
       penaltyrate: Number(penaltyRateRef.current?.value),
       paymentterms: paymentTerm,
       orderamount: totalAmount,
-      distributor: dealer!.distributor,
+      distributor: dealer?.distributor!,
       collector: null,
       dealer: dealer!,
       orderedproducts: orderedProducts,

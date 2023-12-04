@@ -37,33 +37,31 @@ public class PaymentReceiptController {
         return new ResponseEntity<>(paymentReceiptService.getAllPaymentReceipts(), HttpStatus.OK);
     }
 
-    //di rako need ani kay sa list of receipts kay nagsagol raman tanan
- /*   @GetMapping("/getPaymentReceiptsByDiscriminatorValue")
-    public ResponseEntity<Object> getPaymentReceiptsByDiscriminatorValue(@RequestParam String discriminatorvalue){
-        return new ResponseEntity<>(paymentReceiptService.getPaymentReceiptsByDiscriminatorValue(discriminatorvalue), HttpStatus.OK);
-    }*/
-
     @GetMapping("/getPaymentReceiptByID/{paymentreceiptid}")
     public ResponseEntity<Object> getPaymentReceiptByID(@PathVariable String paymentreceiptid){
         return new ResponseEntity<>(paymentReceiptService.getPaymentReceiptByID(paymentreceiptid), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllPaymentReceiptsByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllPaymentReceiptsByDistributorID(@PathVariable String distributorid){
+        return new ResponseEntity<>(paymentReceiptService.getAllPaymentReceiptsByDistributorID(distributorid), HttpStatus.OK);
+    }
 
 
-    @PostMapping("/createDirectPaymentReceipt")
-    public ResponseEntity<Object> createDirectPaymentReceipt(@RequestBody DirectPaymentReceipt directPaymentReceipt){
-        directPaymentReceiptService.createDirectPaymentReceipt(directPaymentReceipt);
+    @PostMapping("directpaymentreceipt/createDirectPaymentReceipt/{receiverid}")
+    public ResponseEntity<Object> createDirectPaymentReceipt(@RequestBody DirectPaymentReceipt directPaymentReceipt, @PathVariable String receiverid){
+        directPaymentReceiptService.createDirectPaymentReceipt(directPaymentReceipt, receiverid);
         return new ResponseEntity<>("Direct Payment Receipt created successfully!", HttpStatus.CREATED);
 
     }
 
 
-    @GetMapping("/getAllDirectPaymentReceipts")
+    @GetMapping("directpaymentreceipt/getAllDirectPaymentReceipts")
     public ResponseEntity<Object> getAllDirectPaymentReceipts(){
         return new ResponseEntity<>(directPaymentReceiptService.getAllDirectPaymentReceipts(), HttpStatus.OK);
     }
 
-    @PostMapping("/createCollectionPaymentReceipt")
+    @PostMapping("collectionpaymentreceipt/createCollectionPaymentReceipt")
     public ResponseEntity<Object> createCollectionPaymentReceipt(
             @ModelAttribute CollectionPaymentReceipt collectionPaymentReceipt,
             @RequestParam("collectorproofid") List<String> collectorproofid, @RequestParam("dealerproofid") List<String> dealerproofid,
@@ -78,9 +76,26 @@ public class PaymentReceiptController {
 
     }
 
-    @PutMapping("/updateCollectionPaymentReceipt/{collectionpaymentreciptid}/{cashierid}")
-    public ResponseEntity<Object> confirmCollectionPaymentReceipt(@PathVariable String collectionpaymentreciptid, @PathVariable String cashierid){
-        return new ResponseEntity<>(collectionPaymentReceiptService.confirmCollectionPaymentReceipt(collectionpaymentreciptid, cashierid), HttpStatus.OK);
+    @PutMapping("collectionpaymentreceipt/updateCollectionPaymentReceipt/{collectionpaymentreciptid}/{receiverid}")
+    public ResponseEntity<Object> confirmCollectionPaymentReceipt(@PathVariable String collectionpaymentreciptid, @PathVariable String receiverid){
+        return new ResponseEntity<>(collectionPaymentReceiptService.confirmCollectionPaymentReceipt(collectionpaymentreciptid, receiverid), HttpStatus.OK);
+    }
+
+
+
+    @GetMapping("collectionpaymentreceipt/getAllCollectionPaymentReceipts")
+    public ResponseEntity<Object> getAllCollectionPaymentReceipts(){
+        return new ResponseEntity<>(collectionPaymentReceiptService.getAllCollectionPaymentReceipts(), HttpStatus.OK);
+    }
+
+    @GetMapping("collectionpaymentreceipt/getAllUnconfirmedCollectionPaymentReceipts")
+    public ResponseEntity<Object> getAllUnconfirmedCollectionPaymentReceipts(){
+        return new ResponseEntity<>(collectionPaymentReceiptService.getAllUnconfirmedCollectionPaymentReceipts(), HttpStatus.OK);
+    }
+
+    @GetMapping("collectionpaymentreceipt/getAllUnconfirmedCollectionPaymentReceiptsByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(@PathVariable String distributorid){
+        return new ResponseEntity<>(collectionPaymentReceiptService.getAllUnconfirmedCollectionPaymentReceiptsByDistributorID(distributorid), HttpStatus.OK);
     }
 
 }
