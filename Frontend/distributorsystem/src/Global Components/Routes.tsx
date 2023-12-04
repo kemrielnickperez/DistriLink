@@ -19,7 +19,7 @@ import DealerApproval from '../Components/Module 4 - Profiles & Approval/DealerA
 import ProductDistributionList from '../Components/Module 5 - Product Distribution and Confirmation/ProductDistributionsListUI';
 import { OrderDetails } from '../Components/Module 6 - Collector Assignment/OrderDetails';
 
-import RecordCollectionPaymentUI from '../Components/Module 8 - Payments/RecordCollectionPaymentUI';
+
 import { PaymentReceiptDetails } from '../Components/Module 8 - Payments/PaymentReceiptDetailsUI';
 
 import SignupScreen from '../Components/B - Registration(SplashScreen)/SignupScreen';
@@ -103,7 +103,6 @@ export default function MainRoutes() {
                             <Route path="/collectorAssignment" element={<CollectorAssignment />} />
                             <Route path="/orderDetails/:objectId" element={<OrderDetails />} />
                             <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails />}></Route>
-                            <Route path="/recordCollectionPayment" element={<RecordCollectionPaymentUI />} />
                         </Route>
                     )}
 
