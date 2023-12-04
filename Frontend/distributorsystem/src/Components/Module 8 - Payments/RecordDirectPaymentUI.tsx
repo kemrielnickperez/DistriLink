@@ -1,4 +1,4 @@
-import { Button, Divider, Input, Paper, Stack, Table, TableRow, TableBody, TableCell, TableContainer, TextField, styled, TableHead, Typography, Card, makeStyles, IconButton, Grid, TextFieldProps, Box, TablePagination, Autocomplete, AutocompleteRenderInputParams, MenuItem, Modal, Tabs, Tab } from "@mui/material";
+import { Button, Divider, Input, Paper, Stack, Table, TableRow, TableBody, TableCell, TableContainer, TextField, styled, TableHead, Typography, Card, makeStyles, IconButton, Grid, TextFieldProps, Box, TablePagination, Autocomplete, AutocompleteRenderInputParams, MenuItem, Modal, Tabs, Tab, Snackbar, Alert, AlertTitle, SlideProps, Slide } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import NavBar from "../../Global Components/NavBar";
 //import { useRestSchedule } from "../../RestCalls/ScheduleUseRest";
@@ -251,6 +251,10 @@ const DataGridStyle = styled(DataGrid)({
     },
 })
 
+function SlideTransitionDown(props: SlideProps) {
+    return <Slide {...props} direction="down" />;
+}
+
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -288,10 +292,10 @@ export default function RecordDirectPayment() {
     const remarksRef = useRef<TextFieldProps>(null);
 
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
-  
+
     const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
 
-    
+
 
     const handleFindPaymentTransactions = () => {
         getOrderByID(orderIDRef.current?.value + "", distributorFromStorage.distributorid);
@@ -355,14 +359,36 @@ export default function RecordDirectPayment() {
 
         }
     }
+    const [alerttitle, setTitle] = useState('');
 
+    const [alertMessage, setAlertMessage] = useState('');
+
+    const [alertSeverity, setAlertSeverity] = useState('success');
+
+    const [openAlert, setOpenAlert] = useState(false);
+
+    function saveHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
+        setTitle(title);
+        setAlertMessage(message);
+        setAlertSeverity(severity);
+        setOpenAlert(true);
+    }
+
+    const handleAlertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpenAlert(false);
+      };
+    
 
 
     const handleSaveDirectPayment = () => {
         const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
 
         if (Number(amountPaidRef.current?.value) > Number(remainingPaymentAmount!.toFixed(2))) {
-            alert("Amount paid is greater than amount due. Please change it to be equal or less than the amount due.")
+            saveHandleAlert('Amount Paid Exceeded Amount Due', "Amount paid is greater than amount due. Please change it to be equal or less than the amount due.", 'warning')
+          
             return;
         }
 
@@ -542,8 +568,8 @@ export default function RecordDirectPayment() {
 
                         >
                             <ModalCard>
-                                
-                                <ContentNameTypography2 sx={{paddingTop: 5}}>Payment Receipts</ContentNameTypography2>
+
+                                <ContentNameTypography2 sx={{ paddingTop: 5 }}>Payment Receipts</ContentNameTypography2>
 
 
                                 <Box sx={{ width: '100%', height: '200px', marginTop: 3, marginLeft: 0.5 }}>
@@ -611,7 +637,7 @@ export default function RecordDirectPayment() {
                                         minWidth: '40px',
                                         backgroundColor: '#FF8080', // Light red color
                                         '&:hover': {
-                                          backgroundColor: '#FF0000', // Blood red color on hover
+                                            backgroundColor: '#FF0000', // Blood red color on hover
                                         },
                                     }}
                                 >
@@ -660,7 +686,7 @@ export default function RecordDirectPayment() {
     useEffect(() => {
 
         getOrderByID(orderIDRef.current?.value + "", distributorFromStorage.distributorid);
-    
+
         if (order && order.paymenttransactions.length !== 0) {
             const allPaid = order.paymenttransactions?.every((transaction) => transaction.paid);
 
@@ -805,6 +831,17 @@ export default function RecordDirectPayment() {
             ) : (
                 <div></div>
             )}
+
+            {/* Alerts */}
+            <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleAlertClose} anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center'
+            }} TransitionComponent={SlideTransitionDown}>
+                <Alert onClose={handleAlertClose} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                    <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                    {alertMessage}
+                </Alert>
+            </Snackbar>
 
             <ToastContainer
                 position="bottom-right"

@@ -44,7 +44,7 @@ import ContentBothSalesCashier from './ContentsBothSalesCashier';
 
 export default function MainRoutes() {
 
-    const dealer = JSON.parse(localStorage.getItem('user')!) || {};
+    const user = JSON.parse(localStorage.getItem('user')!) || {};
 
     return (
         <Routes>
@@ -65,7 +65,7 @@ export default function MainRoutes() {
                     <Route path="/" element={<Navigate replace to="SignIn" />} />
                     <Route path="/SignIn" element={<SignIn />} />
 
-                    {dealer && dealer!.tableName === "Dealer" && (
+                    {user && user!.tableName === "Dealer" && (
                         <Route path="/" element={<ContentDealer />}>
                             <Route path="/" element={<Navigate replace to="dashboard" />} />
                             <Route path="/dashboard" element={<Dashboard />} />
@@ -74,13 +74,13 @@ export default function MainRoutes() {
                         </Route>
                     )}
 
-                    {dealer && dealer!.tableName === "Distributor" && (
+                    {user && user!.tableName === "Distributor" && (
                         <Route path="/" element={<Content />}>
                             <Route path="/" element={<Navigate replace to="dashboard" />} />
                             <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/paymentList" element={<PaymentList />} />
 
-                            <Route path="/dealerOrderForm" element={<DealerOrderForm />} />
+                           {/*  <Route path="/dealerOrderForm" element={<DealerOrderForm />} /> */}
                             <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
                             <Route path="/orderConfirmation/:objectId" element={<OrderConfirmation />} />
                             <Route path="/productDistributionList" element={<ProductDistributionList />} />
@@ -107,7 +107,7 @@ export default function MainRoutes() {
                         </Route>
                     )}
 
-                    {dealer && dealer!.tableName === "Sales Associate" && (
+                    {user && user!.tableName === "Sales Associate" && (
                         <Route path="/" element={<ContentSalesAssociate />}>
                             <Route path="/" element={<Navigate replace to="dashboard" />} />
                             <Route path="/dashboard" element={<Dashboard />} />
@@ -119,7 +119,7 @@ export default function MainRoutes() {
                         </Route>
                     )}
 
-                    {dealer && dealer!.tableName === "Cashier" && (
+                    {user && user!.tableName === "Cashier" && (
                         <Route path="/" element={<ContentCashier />}>
                             <Route path="/" element={<Navigate replace to="dashboard" />} />
                             <Route path="/dashboard" element={<Dashboard />} />
@@ -129,7 +129,7 @@ export default function MainRoutes() {
                         </Route>
                     )}
 
-                    {dealer && dealer!.tableName === "Sales Associate and Cashier" && (
+                    {user && user!.tableName === "Sales Associate and Cashier" && (
                         <Route path="/" element={<ContentBothSalesCashier />}>
                             <Route path="/" element={<Navigate replace to="dashboard" />} />
                             <Route path="/dashboard" element={<Dashboard />} />

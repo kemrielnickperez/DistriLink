@@ -120,7 +120,7 @@ export default function SignIn() {
         signIn(userid, password);
 
 
-        /* if (!userid || !password) {
+         if (!userid || !password) {
             setSnackbarMessage("Please enter both User ID and Password");
             setSeverity("warning");
             setOpen(true);
@@ -181,7 +181,7 @@ export default function SignIn() {
                 }
             }).catch((error) => {
                 console.log(error);
-            });*/
+            });
 
 
     }
