@@ -18,6 +18,7 @@ export default function Content() {
         '/productDistributionList':'Product Distribution List',
         '/paymentList':'Payment Receipts',
         '/distributorOrderForm': 'Product Distribution Form',
+        '/recordDirectPayment':'Record Direct Payment',
     }
     const navpageMapped= navPageNameMapping[path]||'Unknown';
     return navpageMapped;
@@ -34,6 +35,8 @@ const getNavContentPage=()=>{
       '/productDistributionList':'View confirmed & pending product orders from your dealers, awaiting for your confirmation.',
       '/paymentList':"List of Dealer's Payment Receipts",
       '/distributorOrderForm': "Allocate a product to generate a dealer's order.",
+      '/recordDirectPayment':"Set dealer's direct payments to record"
+      
     }
   const navpageMapped= navPageContentMapping[path]||'Unknown';
   return navpageMapped;

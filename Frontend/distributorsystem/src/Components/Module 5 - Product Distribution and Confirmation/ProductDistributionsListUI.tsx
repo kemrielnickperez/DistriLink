@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IOrder } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Alert, AlertTitle, Box, Button, Card, Slide, SlideProps, Snackbar, Tab, Tabs, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, CircularProgress, Slide, SlideProps, Snackbar, Tab, Tabs, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
@@ -62,7 +62,7 @@ const StyledButton = styled(Button)({
 const StyledAddButton = styled(Button)({
     backgroundColor: '#2D85E7',
     display: 'flex',
-    marginTop:26,
+    marginTop: 26,
     marginLeft: 30,
     color: '#FFFFFF',
     fontFamily: 'Inter, sans-serif',
@@ -106,7 +106,7 @@ const DataGridStyle = styled(DataGrid)({
 
 export default function ProductDistributionList() {
     const navigate = useNavigate();
-    
+
     const [order, setOrder] = useState<IOrder[] | null>(null);
     const [openAlert, setOpenAlert] = useState(false);
     const [alerttitle, setTitle] = useState('');
@@ -153,6 +153,8 @@ export default function ProductDistributionList() {
             .catch((error) => {
                 headerHandleAlert('Error', "Failed to fetch orders. Please check your internet connection.", 'error');
             });
+
+        console.log(order)
     }, []);
 
     {/**Handler for Alert - Function to define the type of alert*/ }
@@ -269,7 +271,7 @@ export default function ProductDistributionList() {
                     navigate("/distributorOrderForm");
                 }}>
                     Add new Product Distribution
-                    <AddIcon style={{ marginTop: -5, marginLeft: 3, height: 20, width: 'auto', fontWeight: 'bolder' }}/>
+                    <AddIcon style={{ marginTop: -5, marginLeft: 3, height: 20, width: 'auto', fontWeight: 'bolder' }} />
                 </StyledAddButton>
                 <Box sx={{ width: '100%', marginTop: 2, marginLeft: 0.5 }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -279,39 +281,53 @@ export default function ProductDistributionList() {
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
-                        <DataGrid
-                            rows={rowsConfirmed}
-                            sx={{ textAlign: 'center', color: '#203949', height: '370px', margin: '20px 10px 0px 14px' }}
-                            columns={columnsConfirmed.map((column) => ({
-                                ...column,
-                            }))}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: 5,
-                                    },
-                                },
-                            }}
-                            pageSizeOptions={[5]}
+                        {order === null ? (
 
-                        />
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '200px' }}>
+                                <CircularProgress />
+                            </div>
+                        ) : (
+                            <DataGridStyle
+                                rows={rowsConfirmed}
+                                sx={{ textAlign: 'center', color: '#203949', height: '370px', margin: '20px 10px 0px 14px' }}
+                                columns={columnsConfirmed.map((column) => ({
+                                    ...column,
+                                }))}
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: {
+                                            pageSize: 5,
+                                        },
+                                    },
+                                }}
+                                pageSizeOptions={[5]}
+
+                            />
+                        )}
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
-                        <DataGridStyle
-                            rows={rowsPending}
-                            columns={columnsPending.map((column) => ({
-                                ...column,
-                            }))}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: 10,
-                                    },
-                                },
-                            }}
-                            pageSizeOptions={[10]}
+                        {order === null ? (
 
-                        />
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',  marginTop: '200px'  }}>
+                                <CircularProgress />
+                            </div>
+                        ) : (
+                            <DataGridStyle
+                                rows={rowsPending}
+                                columns={columnsPending.map((column) => ({
+                                    ...column,
+                                }))}
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: {
+                                            pageSize: 10,
+                                        },
+                                    },
+                                }}
+                                pageSizeOptions={[10]}
+
+                            />
+                        )}
                     </CustomTabPanel>
                 </Box>
 
