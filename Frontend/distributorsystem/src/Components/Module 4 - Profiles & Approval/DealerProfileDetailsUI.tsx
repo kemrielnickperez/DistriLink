@@ -226,7 +226,7 @@ const ProfileCard = styled(Card)({
     borderRadius: 22,
     width: 300,
     height: 240,
-    marginTop: 150,
+    marginTop: 75,
     marginLeft: 160
 })
 const ModalCard = styled(Card)({
@@ -532,8 +532,7 @@ export default function DealerProfileDetails() {
     }
     return (
         <div>
-            <Grid container spacing={3}>
-                <ContentNameTypography>Dealer Information</ContentNameTypography>
+            <Grid style={{ position:'relative', justifyContent: "center"}} container spacing={3}>
                 <Grid item style={{ marginRight: -70 }}>
                     <Grid>
                         <ProfileCard onClick={handleOpenProfile} style={{cursor:'pointer'}}>
@@ -613,7 +612,7 @@ export default function DealerProfileDetails() {
                 </Grid>
 
                 <Grid item style={{ marginLeft: 15 }}>
-                    <Grid container style={{ marginTop: 15 }}>
+                    <Grid container style={{ marginTop:-80 }}>
                         <Grid item>
                             <StyleMainLabel>Dealer's Name</StyleMainLabel>
                             <StyleMainInfo style={{ marginTop: 15 }}>{dealer?.firstname} {dealer?.middlename} {dealer?.lastname}</StyleMainInfo>
@@ -664,7 +663,7 @@ export default function DealerProfileDetails() {
                     </Grid>
                     <Grid container>
                         <Grid item>
-                            <Box sx={{ width: '92%', marginLeft: 10, marginTop: 5 }}>
+                            <Box sx={{ width: 920, marginLeft: 10, marginTop: 5 }}>
                                 <Box sx={{ borderBottom: 0.5, borderColor: 'divider' }}>
                                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
                                         <TabStyle icon={<PermIdentityIcon />} iconPosition="start" label="Basic Information" {...a11yProps(0)} />

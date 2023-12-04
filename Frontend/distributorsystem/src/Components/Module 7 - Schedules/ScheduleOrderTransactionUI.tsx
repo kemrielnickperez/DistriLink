@@ -334,9 +334,7 @@ export default function Schedules() {
                     </Grid>
                     <Grid item sx={{ marginTop: '15px' }}>
                         <Paper sx={{ borderRadius: "22px", height: "fit-content", transform: 'translateY(-50%)', border: '1px solid #ccc', boxShadow: 'none' }}>
-                            <TextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true, }} inputRef={orderIDRef} sx={{ width: '300px', height: '50px', '& input': { textAlign: 'left', padding: '12px 12px' } }}
-
-                            />
+                            <TextField id="standard-basic" variant="standard" InputProps={{ disableUnderline: true, }} inputRef={orderIDRef} sx={{ width: '300px', height: '50px', '& input': { textAlign: 'left', padding: '12px 12px' } }}/>
                             <IconButton type="button" aria-label="search" sx={{ backgroundColor: "#2d85e7", height: '50px', width: '50px', borderRadius: "0 41% 41% 0", '&:hover': { backgroundColor: "#2d85e7" } }} onClick={handleFindOrder}>
                                 <SearchIcon sx={{ color: "white" }} />
                             </IconButton>

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate  } from 'react-router-dom'
 import Dashboard from "../Components/Module 3 - Distributor Dashboard/DashboardUI";
 
 import PaymentList from "../Components/Module 8 - Payments/PaymentsListUI";
@@ -40,6 +40,7 @@ export default function MainRoutes() {
     return (
         <Routes>
             <Route path="/" element={<SplashscreenContent />}>
+                
                 <Route path="/" element={<Navigate replace to="WelcomeScreen" />} />
                 <Route path="/WelcomeScreen" element={<WelcomeScreen />} />
                 {/* <SignupScreen/> */}

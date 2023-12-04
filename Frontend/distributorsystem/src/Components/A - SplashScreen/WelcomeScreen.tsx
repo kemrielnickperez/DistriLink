@@ -135,7 +135,7 @@ export default function WelcomeScreen(){
     }, []);
    
     return(
-        <div style={{backgroundColor:'#2D85E7', width: '100vw', height: '100vh', position: 'fixed'}}>
+        <div style={{ background: 'linear-gradient(#004AAD,#5DE0E6  )', width: '100vw', height: '100vh', position: 'fixed', }}>
             {/* <Button variant="contained" onClick={signUpHandler}>Sign up</Button>
             <Button variant="contained" onClick={signInHandler}>Sign in</Button> */}
             {/** Logo*/}

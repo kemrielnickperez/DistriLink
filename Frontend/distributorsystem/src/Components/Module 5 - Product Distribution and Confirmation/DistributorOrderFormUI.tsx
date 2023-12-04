@@ -684,7 +684,7 @@ export default function ProductDistributionList() {
             <br></br>
           </Grid>
         </Grid>
-        <SaveButton variant='contained' onClick={handleSaveOrder}>Save</SaveButton>
+        <SaveButton variant='contained' onClick={handleSaveOrder} disabled={!isDealerFound}>Save</SaveButton>
 
 
         {/* Alerts */}
