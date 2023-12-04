@@ -18,7 +18,7 @@ public class ArchivedDealerService {
         return archivedDealerRepository.findAll();
     }
 
-    public List<Dealer> getAllArchivedDealersByDistributorID(String distributorid) {
+    public List<ArchivedDealer> getAllArchivedDealersByDistributorID(String distributorid) {
         return archivedDealerRepository.findAllByDistributor_Distributorid(distributorid);
     }
 }

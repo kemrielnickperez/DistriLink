@@ -1,10 +1,11 @@
-import { Alert,AlertTitle,  Button, Grid, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
+import { Alert,AlertTitle,  Box,  Button, Grid, LinearProgress, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import { IOrder } from "../../RestCalls/Interfaces";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import OrderTransactionDetailsPrint from "./OrderTransactionDetailsPrint";
+import logo5 from '../../Global Components/Images/logo5.png';
 
 
 function SlideTransitionDown(props: SlideProps) {
@@ -329,13 +330,11 @@ export function OrderTransactionDetails() {
 
 
           ) : (
-            <div >
-              <Grid sx={{ justifyContent: "center", marginTop: '200px' }}>
-                <AutorenewOutlinedIcon />
-                <h4>loading...</h4>
-
-              </Grid>
-            </div>
+            <Box sx={{ display: 'flex' , flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', marginTop: '-20px' }}>
+                              <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+                    <LinearProgress sx={{ width: '20%' }} />
+                    {/* You can adjust the width as needed */}
+                </Box>
           )}
         </div>
       ) : (

@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Autocomplete, Box, Button, Card, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Autocomplete, Box, Button, Card, CircularProgress, LinearProgress, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { IDirectPaymentReceipt, IEmployee, IOrder, IPaymentReceipt } from "../../RestCalls/Interfaces";
 import { auto } from "@popperjs/core";
@@ -128,6 +128,7 @@ export default function PaymentList() {
 
     useEffect(() => {
         getAllPaymentReceipts();
+        console.log(paymentreceipts)
 
 
     }, [[paymentreceipts]]);
@@ -263,9 +264,9 @@ export default function PaymentList() {
 
     return (
         <div>
-             <StyledCard>
-    
-               {/*  <DataGrid
+            <StyledCard>
+
+                {/*  <DataGrid
                     rows={rows}
                     sx={{ textAlign: 'center', color: '#203949', height: '350px', margin: '35px 20px 0 20px', fontWeight: 330 }}
                     columns={columns}
@@ -282,43 +283,51 @@ export default function PaymentList() {
                     rowSelectionModel={selectedRows}
                 /> */}
 
-                  <Box sx={{ pt: 2, pr: 2, pl: 2 }}>
-                <DataGridStyle
-                    rows={rows}
-                    columns={columns.map((column) => ({
-                        ...column,
-                    }))
-                    }
-                    initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: 10,
-                            },
-                        },
-                    }}
-                    pageSizeOptions={[10]}
-                    checkboxSelection
-                    onRowSelectionModelChange={(handleRowSelection)}
-                    rowSelectionModel={selectedRows}
-
-                    isRowSelectable={(params) => {
-                        // Check the payment type of the row and disable the checkbox for direct payment types
-                        return params.row.paymentType !== 'direct';
-                    }}
-                />
-            </Box> 
-
-             <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{ color: '#FFFFFF', marginTop: '20px' }}>
-                Confirm
-            </StyledButton> 
-
-            </StyledCard> 
 
 
-            
+                <><Box sx={{ pt: 2, pr: 2, pl: 2 }}>
+                    {paymentreceipts.length === 0 ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', marginTop: '0', marginLeft: '5vh' }}>
+                          <Typography>No payment receipts.</Typography>
+                          <LinearProgress sx={{ width: '20%', marginTop: '20px' }} />
+                        </Box>
+
+                    ) : (
+
+                        <><DataGridStyle
+                                    rows={rows}
+                                    columns={columns.map((column) => ({
+                                        ...column,
+                                    }))}
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: 10,
+                                            },
+                                        },
+                                    }}
+                                    pageSizeOptions={[10]}
+                                    checkboxSelection
+                                    onRowSelectionModelChange={(handleRowSelection)}
+                                    rowSelectionModel={selectedRows}
+
+                                    isRowSelectable={(params) => {
+                                        // Check the payment type of the row and disable the checkbox for direct payment types
+                                        return params.row.paymentType !== 'direct';
+                                    } } /><StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{ color: '#FFFFFF', marginTop: '20px', justifyContent: "center" }}>
+                                        Confirm
+                                    </StyledButton></>
+                    )}
+
+                </Box></>
+
+            </StyledCard>
+
+
+
 
             {/**DataGrid */}
-           
+
 
             <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
                 vertical: 'top',
