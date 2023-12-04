@@ -34,8 +34,8 @@ const ContentNameTypography = styled(Typography)({
     color: '#203949'
 })
 const ContentNameTypography2 = styled(Typography)({
-    marginTop: 60,
-    marginBottom: 30,
+    marginTop: 30,
+    marginBottom: 10,
     marginLeft: '5%',
     fontFamily: 'Inter, sans-serif',
     fontWeight: 'bold',
@@ -168,17 +168,21 @@ const StyledPaymentTransactionCard = styled(Card)({
 });
 
 const StyledPaymentTransactionCard1 = styled(Card)({
-    borderRadius: "22px",
+    borderRadius: "10px",
     borderColor: 'black',
     border: '20px',
-    width: '85%',
-    padding: '10px 10px 10px 0px',
-    margin: '28px 28% 20px 10%',
-    backgroundColor: '#ffffff',
-
+    width: '90%',
+    margin: "20px 28% 20px 7.2%",
+    background: 'linear-gradient(50deg, rgba(255,255,255,0.4) 12%,rgba(255,255,255,0.1) 77% )',
+    backgroundBlendMode: '',
+    // backgroundColor:'rgb(245, 247, 249,0.4)',
+    backdropFilter: 'blur(5px)',
+    WebkitBackdropFilter: 'blur(5px)',
+    boxShadow: '0 4px 7px 1px rgba(0,0,0,0.28)',
+    justifyContent: 'center',
     flexDirection: 'column',
     alignItems: 'center',
-    color: 'black',
+
 });
 const StyledDatePicker = styled(DatePicker)({
     // marginBottom:'43px',
@@ -227,6 +231,24 @@ const TabStyle = styled(Tab)({
         fontWeight: 'bold',
         fontFamily: 'Inter',
     }
+})
+
+const DataGridStyle = styled(DataGrid)({
+    textAlign: 'center',
+    fontSize: 15,
+    color: '#203949',
+    height: '260px',
+    margin: '2px 10px 0px 0px',
+    borderRadius: '5px',
+    border: '0px solid #e0e0e0',
+    '& .MuiDataGrid-columnHeader': {
+        backgroundColor: 'rgb(45, 133, 231, 0.2)',
+        fontWeight: 'bold'
+    },
+
+    '& .MuiDataGrid-row:nth-child(even)': {
+        backgroundColor: 'rgb(45, 133, 231, 0.1)',
+    },
 })
 
 
@@ -438,8 +460,6 @@ export default function RecordDirectPayment() {
 
 
     const DirectPaymentReceiptrows = directPaymentReceipts.map((pr) => {
-
-
         return {
             id: pr!.paymentreceiptid!,
             paymentReceiptID: pr.paymentreceiptid!,
@@ -495,7 +515,7 @@ export default function RecordDirectPayment() {
 
         {
             field: 'paymentStatus',
-            headerName: 'Payment Status',
+            headerName: 'Payment Status', width: 215,
             renderCell: (params) => (
                 <span style={{ color: params.row.paymentStatus ? 'green' : 'red' }}>
                     {params.row.paymentStatus ? 'Paid' : 'Not Paid'}
@@ -503,7 +523,7 @@ export default function RecordDirectPayment() {
             ),
         },
         {
-            field: 'actionView', headerName: '', width: 220, renderCell: (params: { row: any; }) => {
+            field: 'actionView', headerName: '', width: 397, renderCell: (params: { row: any; }) => {
                 return (
                     <div>
                         <Button
@@ -522,10 +542,11 @@ export default function RecordDirectPayment() {
 
                         >
                             <ModalCard>
-                                <ContentNameTypography2>Payment Receipts</ContentNameTypography2>
+                                
+                                <ContentNameTypography2 sx={{paddingTop: 5}}>Payment Receipts</ContentNameTypography2>
 
 
-                                <Box sx={{ width: '100%', marginTop: 3, marginLeft: 0.5 }}>
+                                <Box sx={{ width: '100%', height: '200px', marginTop: 3, marginLeft: 0.5 }}>
 
                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" style={{ marginLeft: 40 }}>
@@ -536,50 +557,66 @@ export default function RecordDirectPayment() {
 
 
                                     <CustomTabPanel value={value} index={0}>
-                                        <DataGrid
+                                        <DataGridStyle
                                             rows={DirectPaymentReceiptrows}
-                                            sx={{ textAlign: 'center', color: '#203949', height: '350px', width: '1000px', fontWeight: 330, margin: '50px', border: 'none', fontSize: '490' }}
+                                            sx={{ textAlign: 'center', color: '#203949', height: '230px', width: '1000px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
                                             columns={DirectPaymentReceiptcolumns}
 
                                             initialState={{
                                                 pagination: {
                                                     paginationModel: {
-                                                        pageSize: 5,
+                                                        pageSize: 2,
                                                     },
                                                 },
                                             }}
-                                            pageSizeOptions={[5]}
+                                            pageSizeOptions={[2]}
                                         />
                                     </CustomTabPanel>
                                     <CustomTabPanel value={value} index={1}>
 
-                                        <DataGrid
+                                        <DataGridStyle
                                             rows={CollectionPaymentReceiptrows}
-                                            sx={{ textAlign: 'center', color: '#203949', height: '350px', width: '1000px', fontWeight: 330, margin: '50px', border: 'none', fontSize: '490' }}
-                                            columns={CollectionPaymentReceiptcolumns.map((column) => ({
-                                                ...column,
-                                            }))}
+                                            sx={{ textAlign: 'center', color: '#203949', height: '230px', width: '1000px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
+                                            columns={CollectionPaymentReceiptcolumns}
 
                                             initialState={{
                                                 pagination: {
                                                     paginationModel: {
-                                                        pageSize: 5,
+                                                        pageSize: 2,
                                                     },
                                                 },
                                             }}
-                                            pageSizeOptions={[5]}
+                                            pageSizeOptions={[2]}
                                         />
 
                                     </CustomTabPanel>
                                 </Box>
 
-                                <h1>
+                                <Typography sx={{ marginTop: "100px", marginLeft: "50px" }}>
                                     Total Amount Paid: {totalPaidAmount!.toFixed(2)}
-                                </h1>
-                                <h1>
+                                </Typography>
+                                <Typography sx={{ marginBottom: "20px", marginLeft: "50px" }}>
                                     Remaining Payment Amount: {remainingPaymentAmount!.toFixed(2)}
-                                </h1>
-                                <Button variant="contained" onClick={handleClose}>Close </Button>
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    onClick={handleClose}
+                                    sx={{
+                                        position: 'absolute',
+                                        top: 10,
+                                        right: 10,
+                                        borderRadius: '50%', // Make it circular
+                                        width: '40px',
+                                        height: '40px',
+                                        minWidth: '40px',
+                                        backgroundColor: '#FF8080', // Light red color
+                                        '&:hover': {
+                                          backgroundColor: '#FF0000', // Blood red color on hover
+                                        },
+                                    }}
+                                >
+                                    X
+                                </Button>
 
 
                             </ModalCard>
@@ -641,9 +678,7 @@ export default function RecordDirectPayment() {
 
     return (
 
-        <div>
-            <ContentNameTypography>Record Direct Payment</ContentNameTypography>
-
+        <div style={{ paddingTop: 70 }}>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <LabelTypography>Enter Order Transaction ID</LabelTypography>
                 <StyleTextField inputRef={orderIDRef} />
@@ -655,30 +690,37 @@ export default function RecordDirectPayment() {
 
             {order ? (
                 <div>
-                    <StyledPaymentTransactionCard1>
-                        <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
-                        <DataGrid
-                            rows={rows!}
-                            sx={{
-                                textAlign: 'center',
-                                color: '#203949',
-                                height: '350px',
-                                fontWeight: 330,
-                                margin: '50px',
-                                border: 'none',
-                                fontSize: '490',
-                            }}
-                            columns={columns}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: order.paymenttransactions.length,
-                                    },
-                                },
-                            }}
-                            pageSizeOptions={[5]}
-                        />
-                    </StyledPaymentTransactionCard1>
+                    {order.paymenttransactions.length !== 0 ? (
+                        <div>
+
+                            <StyledPaymentTransactionCard1>
+                                <ContentNameTypography2>Payment Transactions</ContentNameTypography2>
+                                <Box sx={{ p: 2 }}>
+                                    <DataGridStyle
+                                        rows={rows!}
+                                        columns={columns}
+
+                                        initialState={{
+                                            pagination: {
+                                                paginationModel: {
+                                                    pageSize: order.paymenttransactions.length,
+                                                },
+                                            },
+                                        }}
+                                        pageSizeOptions={[3]}
+                                    />
+                                </Box>
+                            </StyledPaymentTransactionCard1>
+                        </div>
+
+                    ) : (
+                        <div>
+                            <h2 style={{ color: '#707070', marginTop: '50px' }}> no schedules yet</h2>
+
+                        </div>
+
+                    )
+                    }
                     {order?.isclosed ? (
                         <div>
                             <h1>All payment transactions have been paid. Order is closed.</h1>

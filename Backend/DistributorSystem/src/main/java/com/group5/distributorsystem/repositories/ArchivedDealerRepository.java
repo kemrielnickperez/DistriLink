@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface ArchivedDealerRepository extends MongoRepository<ArchivedDealer, String > {
 
-    List<Dealer> findAllByDistributor_Distributorid(String distributorId);
+    List<ArchivedDealer> findAllByDistributor_Distributorid(String distributorId);
 
 }

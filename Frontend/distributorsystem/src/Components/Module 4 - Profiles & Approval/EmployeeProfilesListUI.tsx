@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IEmployee } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Alert, AlertTitle, Box, Button, Card, Slide, SlideProps, Snackbar, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, CircularProgress, Slide, SlideProps, Snackbar, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 
@@ -95,6 +95,8 @@ export default function EmployeeProfileListUI() {
                 headerHandleAlert('Error', "Failed to fetch employees. Please check your internet connection.", 'error');
                 //console.error('Error fetching employee:', error);
             });
+
+            console.log(employee);
     }, []);
     {/**Handler for Alert - Function to define the type of alert*/ }
 
@@ -154,8 +156,14 @@ export default function EmployeeProfileListUI() {
 
     return (
         <div>
+            
             <StyledCard>
                 <Box sx={{p:2}}>
+                {employee === null ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' , marginTop: '200px'}}>
+                <CircularProgress />
+              </div>
+            ) : (
                     <DataGridStyle
                         rows={rows}
                         columns={columns.map((column) => ({
@@ -170,6 +178,8 @@ export default function EmployeeProfileListUI() {
                         }}
                         pageSizeOptions={[10]}
                     />
+
+            )}
                 </Box>
             </StyledCard>
 

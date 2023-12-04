@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Autocomplete, Box, Button, Card, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Autocomplete, Box, Button, Card, CircularProgress, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { IEmployee, IOrder } from "../../RestCalls/Interfaces";
 import { auto } from "@popperjs/core";
@@ -125,9 +125,11 @@ export default function CollectorAssignment() {
   const [alerttitle, setTitle] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('success');
+  const [loading, setLoading] = useState(true);
 
 
   const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+ 
 
 
 
@@ -180,8 +182,8 @@ export default function CollectorAssignment() {
 
   useEffect(() => {
     getAllCollectors();
+    console.log(orders);
     getAllOrders();
-
 
   }, [orders]);
 
@@ -318,6 +320,7 @@ export default function CollectorAssignment() {
 
   return (
     <div>
+      
       <StyledCard>
         <div style={{ display: "flex", flexDirection: "row", paddingTop: 30 }}>
           <LabelTypography>Assign to: </LabelTypography>
@@ -364,29 +367,53 @@ export default function CollectorAssignment() {
           </StyledButton>
 
         </div>
+       
+      {/*   {rows.length === 0 ? (
+  // Display circular progress when orders are empty
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    <Typography>No Orders yet.</Typography>
+  </div>
+) :  */}
 
-        {/**DataGrid */}
-        <Box sx={{ p: 2 }}>
-          <DataGridStyle
-            rows={rows}
-            columns={columns.map((column) => ({
-              ...column,
-            }))
-            }
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 10,
-                },
-              },
-            }}
-            pageSizeOptions={[10]}
-            checkboxSelection
-            onRowSelectionModelChange={(handleRowSelection)}
-            rowSelectionModel={selectedRows}
-          />
-        </Box>
-      </StyledCard>
+
+
+{orders.length === 0  && collectors.length === 0 ? (
+  // Display "No Rows" message when rows are empty
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    
+    <Typography>No orders and collectors yet.</Typography>
+  </div>
+
+  
+) : orders.length === 0 ? (
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+<CircularProgress />
+  </div>
+
+) : (
+  // Display the DataGrid when both orders and rows are not empty
+  <Box sx={{ p: 2 }}>
+    <DataGridStyle
+      rows={rows}
+      columns={columns.map((column) => ({
+        ...column,
+      }))}
+      initialState={{
+        pagination: {
+          paginationModel: {
+            pageSize: 10,
+          },
+        },
+      }}
+      pageSizeOptions={[10]}
+      checkboxSelection
+      onRowSelectionModelChange={handleRowSelection}
+      rowSelectionModel={selectedRows}
+    />
+  </Box>
+)}
+ </StyledCard>
+ 
 
 
       {/* Alerts */}

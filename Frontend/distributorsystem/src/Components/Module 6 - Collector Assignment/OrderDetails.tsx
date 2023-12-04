@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Button, Grid, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Grid, LinearProgress, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRestOrder } from "../../RestCalls/OrderUseRest";
@@ -9,6 +9,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { OrderDetailsPrint } from "./OrderDetailsPrint";
 import axios from "axios";
+import logo5 from '../../Global Components/Images/logo5.png';
 
 function SlideTransitionDown(props: SlideProps) {
     return <Slide {...props} direction="down" />;
@@ -209,7 +210,8 @@ export function OrderDetails() {
     return (
         <div>
             {!printing ? (
-
+                <div>
+                    {order ? (
                 <div>
                     <StyledPrintDiv>
                         < ContentNameTypography > Order Transaction Details
@@ -343,12 +345,17 @@ export function OrderDetails() {
                             <h2 style={{ color: 'grey', marginTop: '50px', textDecoration: 'underline black 2px', fontStyle: 'italic' }} onClick={() => handleH2Click()}> No schedules yet. Set Payment Transaction in the Scheduling Page. </h2>
                         </div>
 
-                    )
-
-                    }
-
-
-
+                    )}
+                    </div>
+                      ) : (
+                        <Box sx={{ display: 'flex' , flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', marginTop: '-20px' }}>
+                              <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+                    <LinearProgress sx={{ width: '20%' }} />
+                    {/* You can adjust the width as needed */}
+                </Box>
+       
+                        
+                    )}
                 </div>
             ) : (
                 <OrderDetailsPrint order={order!} paymentTransactions={paymentTransactions!} />

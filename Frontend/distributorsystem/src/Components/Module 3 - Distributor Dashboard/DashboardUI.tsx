@@ -1,8 +1,9 @@
-import { Grid, Paper, Autocomplete, Typography, styled, Table, TableContainer, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { Grid, Paper, Autocomplete, Typography, styled, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Box, LinearProgress } from "@mui/material";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { ICollectionPaymentReceipt, IDealer, IDirectPaymentReceipt, IDistributor, IOrder, IPaymentReceipt } from "../../RestCalls/Interfaces";
 import { useNavigate } from "react-router-dom";
+import logo5 from '../../Global Components/Images/logo5.png';
 
 
 const ProductName = styled(Typography)({
@@ -223,89 +224,97 @@ export default function Dashboard() {
 
     return (
         <Grid container>
-            <PendingOrdersGrid item container>
-                <PendingOrdersPaper>
-                    <PendingOrderTypo>Pending Orders</PendingOrderTypo>
-                    <TableContainer>
-                        <Table aria-label='simple table'>
-                            <TableHead>
-                                <TableRow>
-                                    <TableHeaderCell align='center'>Order Transaction ID</TableHeaderCell>
-                                    <TableHeaderCell align='center'>Order Date</TableHeaderCell>
-                                    <TableHeaderCell align='center'>Total Amount</TableHeaderCell>
-                                    <TableHeaderCell align='center'>Dealer Name</TableHeaderCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {unconfirmedOrders?.slice(0, 5).map((order) => (
-                                    <TableRow key={order.orderid}>
-                                        <TableCell align="left">{order.orderid}</TableCell>
-                                        <TableCell align="left">{order.orderdate}</TableCell>
-                                        <TableCell align="left">{order.orderamount}</TableCell>
-                                        <TableCell align="left">{order.dealer.firstname + " " + order.dealer.lastname}</TableCell>
+            
+             {unconfirmedOrders || unconfirmedCollectionPaymentReceipts || unconfirmedDealers ? (
+            <><PendingOrdersGrid item container>
+                        <PendingOrdersPaper>
+                            <PendingOrderTypo>Pending Orders</PendingOrderTypo>
+                            <TableContainer>
+                                <Table aria-label='simple table'>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableHeaderCell align='center'>Order Transaction ID</TableHeaderCell>
+                                            <TableHeaderCell align='center'>Order Date</TableHeaderCell>
+                                            <TableHeaderCell align='center'>Total Amount</TableHeaderCell>
+                                            <TableHeaderCell align='center'>Dealer Name</TableHeaderCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {unconfirmedOrders?.slice(0, 5).map((order) => (
+                                            <TableRow key={order.orderid}>
+                                                <TableCell align="left">{order.orderid}</TableCell>
+                                                <TableCell align="left">{order.orderdate}</TableCell>
+                                                <TableCell align="left">{order.orderamount}</TableCell>
+                                                <TableCell align="left">{order.dealer.firstname + " " + order.dealer.lastname}</TableCell>
 
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <ViewOrdersTypo onClick={() => handleOrdersListClick()}> View all unconfirmed orders </ViewOrdersTypo>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            <ViewOrdersTypo onClick={() => handleOrdersListClick()}> View all unconfirmed orders </ViewOrdersTypo>
 
-                </PendingOrdersPaper>
-            </PendingOrdersGrid>
-            <PendingPaymentsGrid item container>
-                <PendingPaymentsPaper>
-                    <PendingPaymentTypo>Pending Payments</PendingPaymentTypo>
-                    <TableContainer>
-                        <Table aria-label='simple table'>
-                            <TableHead>
-                                <TableRow>
-                                    <TableHeaderCell align="center">Payment Transaction ID</TableHeaderCell>
-                                    <TableHeaderCell align="center">Payment Date</TableHeaderCell>
-                                    <TableHeaderCell align="center">Amount Paid</TableHeaderCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {unconfirmedCollectionPaymentReceipts?.slice(0, 3).map((receipt) => (
-                                    <TableRow key={receipt.paymentreceiptid}>
-                                        <TableCell align="center">{receipt.paymentreceiptid}</TableCell>
-                                        <TableCell align="center">{receipt.remitteddate}</TableCell>
-                                        <TableCell align="center">{receipt.remittedamount}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <ViewPaymentTypo onClick={() => handlePaymentsListClick()}> View all unconfirmed payments </ViewPaymentTypo>
-                </PendingPaymentsPaper>
-            </PendingPaymentsGrid>
-            <PendingDealerGrid item container>
-                <PendingDealerPaper>
-                    <PendingDealerTypo>Pending Dealer Registration</PendingDealerTypo>
-                    <TableContainer>
-                        <Table aria-label='simple table'>
-                            <TableHead>
-                                <TableRow>
-                                    <TableHeaderCell align='left'>Dealer Name</TableHeaderCell>
-                                    <TableHeaderCell align='left'>Submission Date</TableHeaderCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {unconfirmedDealers?.slice(0, 5).map((dealer) => (
-                                    <TableRow key={dealer.dealerid}>
-                                        <TableCell align="left">{dealer.firstname + " " + dealer.lastname}</TableCell>
-                                        <TableCell align="left">{dealer.submissiondate}</TableCell>
+                        </PendingOrdersPaper>
+                    </PendingOrdersGrid><PendingPaymentsGrid item container>
+                            <PendingPaymentsPaper>
+                                <PendingPaymentTypo>Pending Payments</PendingPaymentTypo>
+                                <TableContainer>
+                                    <Table aria-label='simple table'>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableHeaderCell align="center">Payment Transaction ID</TableHeaderCell>
+                                                <TableHeaderCell align="center">Payment Date</TableHeaderCell>
+                                                <TableHeaderCell align="center">Amount Paid</TableHeaderCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {unconfirmedCollectionPaymentReceipts?.slice(0, 3).map((receipt) => (
+                                                <TableRow key={receipt.paymentreceiptid}>
+                                                    <TableCell align="center">{receipt.paymentreceiptid}</TableCell>
+                                                    <TableCell align="center">{receipt.remitteddate}</TableCell>
+                                                    <TableCell align="center">{receipt.remittedamount}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                                <ViewPaymentTypo onClick={() => handlePaymentsListClick()}> View all unconfirmed payments </ViewPaymentTypo>
+                            </PendingPaymentsPaper>
+                        </PendingPaymentsGrid><PendingDealerGrid item container>
+                            <PendingDealerPaper>
+                                <PendingDealerTypo>Pending Dealer Registration</PendingDealerTypo>
+                                <TableContainer>
+                                    <Table aria-label='simple table'>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableHeaderCell align='left'>Dealer Name</TableHeaderCell>
+                                                <TableHeaderCell align='left'>Submission Date</TableHeaderCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {unconfirmedDealers?.slice(0, 5).map((dealer) => (
+                                                <TableRow key={dealer.dealerid}>
+                                                    <TableCell align="left">{dealer.firstname + " " + dealer.lastname}</TableCell>
+                                                    <TableCell align="left">{dealer.submissiondate}</TableCell>
 
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <ViewDealersTypo onClick={() => handleDealersListClick()}> View all unconfirmed dealers </ViewDealersTypo>
-                </PendingDealerPaper>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                                <ViewDealersTypo onClick={() => handleDealersListClick()}> View all unconfirmed dealers </ViewDealersTypo>
+                            </PendingDealerPaper>
 
 
-            </PendingDealerGrid>
+                        </PendingDealerGrid></>
+              ) : (
+                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', marginTop: '0', marginLeft: '90vh' }}>
+                <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+                <LinearProgress sx={{ width: '80%' }} />
+                {/* You can adjust the width as needed */}
+              </Box>
+            )}
+            
         </Grid>
     )
 }
