@@ -44,7 +44,16 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
 
             })
             .catch((error) => {
-                alert("Please try again.");
+                toast.error(`Payment for Payment Transaction ${directpaymentreceipt.paymenttransactionid} not recorded! Please try again.`, {
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                })
             });
     }
 
@@ -81,7 +90,7 @@ export const useRestPaymentReceipt = (): [(directpaymentreceipt: IDirectPaymentR
             })
             .catch((error) => {
 
-                // alert("Cannot update Payment Receipt. Please try again.");
+                
             });
 
     }

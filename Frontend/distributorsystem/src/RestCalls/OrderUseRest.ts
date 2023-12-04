@@ -104,11 +104,11 @@ export const useRestOrder = (): [
         axios.put(`http://localhost:8080/order/updateOrder/${orderID}`, updatedOrder)
             .then((response) => {
 
-                alert("Order updated successfully!");
+              
             })
             .catch((error) => {
 
-                alert("Error updating the order. Please try again.");
+               
             });
     }
 
@@ -128,14 +128,13 @@ export const useRestOrder = (): [
                 else {
                     setIsOrderFound(false);
                     setOrder(undefined);
-                    
-                    //setIsOrderFoundError(false);
+                  
                 }
 
             })
             .catch((error) => {
 
-                // alert("Error finding the order. Please try again.");
+
             });
     }
 
@@ -148,23 +147,11 @@ export const useRestOrder = (): [
             })
             .catch((error) => {
 
-                // alert("Error finding the order. Please try again.");
+                
             });
     }
 
 
-
-    /* 
-        function assignCollector(orderID: string, collector: IEmployee) {
-            axios.put(`http://localhost:8080/order/assignCollector/${orderID}`, collector)
-                .then((response) => {
-                    setAssignedStatus(true);
-                })
-                .catch((error) => {
-                    setAssignedStatus(false);
-                    console.error('Error assigning collector:', error);
-                });
-        } */
     function assignCollector(collectorid: string, orderids: string[]) {
         axios.put(`http://localhost:8080/order/assignCollector/${collectorid}`, orderids)
             .then((response) => {
@@ -172,7 +159,6 @@ export const useRestOrder = (): [
             })
             .catch((error) => {
                 setAssignedStatus(false);
-                console.error('Error assigning collector to multiple orders:', error);
             });
     }
 

@@ -275,7 +275,7 @@ export default function DistributorRegistration() {
                 setSelectedProfilePicture(file);
             } else {
 
-                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+                handleAlert('File Size Exceeded', "Amount paid is greater than amount due. Please change it to be equal or less than the amount due.", 'warning')
             }
         }
 

@@ -108,34 +108,7 @@ export const useRestDealer = (): [
         });
 
 
-        /* const dealerFormData: IDealer = {  
-            dealerid:dealer.dealerid,
-            firstname: dealer.firstname,
-            middlename: dealer.middlename,
-            lastname: dealer.lastname,
-            email :dealer.email,
-            password: dealer.password,
-            birthdate: dealer.birthdate,
-            gender: dealer.gender,
-            currentaddress: dealer.currentaddress,
-            permanentaddress: dealer.permanentaddress,
-            contactnumber: dealer.contactnumber,
-            hasbusiness: dealer.hasbusiness,
-            businessname: dealer.businessname,
-            businessphone: dealer.businessphone,
-            businessaddress: dealer.businessaddress,
-            businesstin: dealer.businesstin,
-            creditlimit: dealer.creditlimit,
-            submissiondate: dealer.submissiondate,
-            confirmed: dealer.confirmed,
-            remarks: dealer.remarks,
-            distributor: dealer.distributor,
-            orderids: dealer.orderids, // naa ta gihapon ni dapat
-            documentids: [], }; */
-
-        /* formData.forEach((value, key) => {
-           console.log(key, value);
-         });  */
+   
 
         axios.post('http://localhost:8080/dealer/registerDealer', formData, {
             headers: {
@@ -146,11 +119,11 @@ export const useRestDealer = (): [
 
 
 
-                alert('Success!');
+
             })
             .catch((error) => {
                 console.log(error)
-                alert('Error creating a new record. Please try again.');
+               
             });
 
 
@@ -165,7 +138,7 @@ export const useRestDealer = (): [
             }
         })
             .then((response) => {
-                // alert('The dealer confirmed successfully!');
+                
                 toast.success('Dealer has now been confirmed!', {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -178,7 +151,7 @@ export const useRestDealer = (): [
                 })
             })
             .catch((error) => {
-                // alert('Error dealer confirmation. Please try again.');
+                
                 toast.error('Unexpected dealer upon confirming dealer. Please try again.', {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -201,7 +174,7 @@ export const useRestDealer = (): [
             }
         })
             .then((response) => {
-                // alert('Dealer status updated to pending successfully!');
+              
                 toast.success("Dealer's status is on pending!", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -214,7 +187,7 @@ export const useRestDealer = (): [
                 })
             })
             .catch((error) => {
-                //alert('Error updating dealer status to pending. Please try again.');
+               
                 toast.error("Unexpected Error pending a dealer. Please try again", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -238,7 +211,7 @@ export const useRestDealer = (): [
             }
         })
             .then((response) => {
-                //alert('Dealer declined successfully!');
+               
                 toast.success("Dealer declined successfully!", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -252,7 +225,7 @@ export const useRestDealer = (): [
             })
             .catch((error) => {
                 console.log(error)
-                //alert('Error declininig dealer. Please try again.');
+                
                 toast.error("Unexpected Error decline a dealer. Please try again", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -273,7 +246,7 @@ export const useRestDealer = (): [
             }
         })
             .then((response) => {
-                // alert('Dealer status updated to pending successfully!');
+              
                 toast.success("Dealer Credit Limit is Updated!", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -286,7 +259,7 @@ export const useRestDealer = (): [
                 })
             })
             .catch((error) => {
-                //alert('Error updating dealer status to pending. Please try again.');
+               
                 toast.error("Unexpected Error Updating Credit Limit. Please try again", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -323,9 +296,7 @@ export const useRestDealer = (): [
                             theme: "colored",
                         })
                     }
-                    else {
-                        alert("wala pa ni siya na confirm, use lain dealer please")
-                    }
+                    
 
                 }
                 else {
@@ -368,9 +339,7 @@ export const useRestDealer = (): [
                         setDealer(response.data);
                         setIsDealerFound(true);
                     }
-                    else {
-                        alert("wala pa ni siya na confirm, use lain dealer please")
-                    }
+                    
 
                 }
                 else {

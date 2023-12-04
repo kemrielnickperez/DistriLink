@@ -119,15 +119,7 @@ const AddToCart = styled(Button)({
   transition: 'all 0.4s'
 })
 const SaveButton= styled(Button)({
-  // position: 'relative',
-  // width: '200px',
-  // height: 50,
-  // left: -30,
-  // ':hover': {
-  //   backgroundColor: '#2D85E7',
-  //   transform: 'scale(1.1)'
-  // },
-  // transition: 'all 0.4s'
+
   backgroundColor: 'rgb(45, 133, 231,0.8)',
   borderRadius: 5,
   color: '#FFFFFF',
@@ -290,7 +282,7 @@ export default function DealerOrderForm() {
       .catch((error) => {
         console.error('Error retrieving products:', error);
         headerHandleAlert('Error', 'Error retrieving products. Please try again.', 'error');
-        // alert("Error retrieving products. Please try again.");
+
       });
   }
 
@@ -303,8 +295,7 @@ export default function DealerOrderForm() {
       );
 
       if (existingProductIndex !== -1) {
-        // alert('Product already added to the cart');
-        // toast
+
         toast.warning(chosenProduct.name + ' is already been added to the cart', {
           position: "bottom-right",
           autoClose: 5000,

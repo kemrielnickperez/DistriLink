@@ -16,7 +16,7 @@ public class SignInController {
     @Autowired
     private SignInService signInService;
 
-    @PostMapping
+    /*@PostMapping
     public ResponseEntity<Map<String, Object>> findEntityInfo(@RequestBody Map<String, String> userIdMap){
         try {
             String userId = userIdMap.get("userId");
@@ -26,8 +26,8 @@ public class SignInController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-    @PostMapping("/test")
+*/
+    @PostMapping
     public ResponseEntity<Map<String, Object>> findEntityInfoLogin(@RequestBody Map<String, String> loginData) {
         try {
             Map<String, Object> result = signInService.findEntityInfoById(loginData);

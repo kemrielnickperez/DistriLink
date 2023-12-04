@@ -126,7 +126,7 @@ export default function SignIn() {
             setOpen(true);
             return;
         } 
-        axios.post('http://localhost:8080/signin/test', {
+        axios.post('http://localhost:8080/signin', {
             userId: userid,
             password: password
         })
@@ -134,7 +134,6 @@ export default function SignIn() {
                 if (response.status === 200) {
                     const result = response.data;
                     if (result.tableName === 'Dealer') {
-                        console.log('Login successful as Dealer');
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result))
                         // Redirect to the Dealer screen
@@ -144,7 +143,7 @@ export default function SignIn() {
         
                         //appObjects?.putDealer(dealer!)
                     } else if (result.tableName === 'Distributor') {
-                        console.log('Login successful as Distributor');
+        
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result));
                         // Redirect to the Dealer screen
@@ -152,7 +151,7 @@ export default function SignIn() {
                         setSuccessMessage("Login successful as Distributor");
                         setOpen(true);
                     } else if (result.tableName === 'Sales Associate' || result.tableName === 'Cashier' || result.tableName === 'Sales Associate and Cashier') {
-                        console.log('Login successful as Employee');
+                       
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result));
                         // Redirect to the Employee screen
@@ -162,18 +161,17 @@ export default function SignIn() {
                         const user = response.data.find(
                             (u: any) => u.dealerid === userid && u.password === password);
                         if (user) {
-                            console.log(userid, password);
-                            console.log("Login successful!");
+                           
                             localStorage.setItem('user', JSON.stringify(result))
                             sessionStorage.setItem('user', JSON.stringify(user));
                             setCode(2);
                             window.location.assign('http://localhost:3000/dashboard');
                         } else {
-                            console.log('Invalid username or password');
+                           
                             setCode(1);
                         }
                     } else {
-                        console.log('Error');
+                      
                         setSnackbarMessage("Invalid User ID or Password");
                         setSeverity("error");
                         setOpen(true);

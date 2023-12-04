@@ -74,11 +74,11 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
         })
             .then((response) => {
             
-                // alert("success!");
+                
             })
             .catch((error) => {
                 
-                // alert("Error creating a new record. Please try again.");
+                
             });
     }
 
@@ -93,7 +93,7 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
             })
             .catch((error) => {
                 console.error('Error finding collector', error);
-                alert("Error finding collector. Please try again.");
+                
             }); 
     }
 
@@ -106,7 +106,7 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
            })
            .catch((error) => {
                console.error('Error finding employee', error);
-               alert("Error finding employee. Please try again.");
+              
            }); 
    }
    

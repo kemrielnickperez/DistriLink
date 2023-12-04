@@ -14,7 +14,7 @@ export const useRestSignIn = (): [(userid: string, password: string) => void] =>
     const navigate = useNavigate();
 
     function signIn(userid: string, password: string) {
-        axios.post('http://localhost:8080/signin/test', {
+        axios.post('http://localhost:8080/signin', {
             userId: userid,
             password: password
         })

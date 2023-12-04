@@ -174,9 +174,9 @@ export default function CollectorAssignment() {
         setOrders(response.data.filter(order => order.confirmed && !order.isclosed));
       })
       .catch((error) => {
-        console.error('Error retrieving collectors:', error);
+       
         headerHandleAlert('Error', "Error retrieving orders. Please try again..", 'error');
-        // alert("Error retrieving collectors. Please try again.");
+        
       });
   }
 
@@ -273,8 +273,7 @@ export default function CollectorAssignment() {
   const handleUnassignCollector = (selectedRow: any, event: React.MouseEvent) => {
     event.stopPropagation(); // Prevent the click event from propagating
     removeCollector(selectedRow.orderID);
-    // alert("Collector Unassigned Successfully!");
-    // toast
+    
     toast(
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <RemoveCircleIcon fontSize='medium' style={{ marginRight: '10px', alignItems: '' }} />
@@ -300,8 +299,7 @@ export default function CollectorAssignment() {
       headerHandleAlert('Order Selection Required', "Please choose an order before assigning a collector.", 'warning');
     } else {
       assignCollector(selectedCollector.employeeid!, selectedRows);
-      // alert("Collector assigned successfully to all of the selected orders!")
-      // toast
+     
       toast.success('Collector successfully assigned to selected orders!', {
         position: "bottom-right",
         autoClose: 5000,

@@ -121,8 +121,7 @@ export default function PaymentList() {
 
             })
             .catch((error) => {
-                // alert("Error retrieving payment receipts. Please try again.");
-                // headerHandleAlert('Error', "Error retrieving payment receipts. Please try again..", 'error');
+               
             });
     }
 
@@ -232,7 +231,7 @@ export default function PaymentList() {
                     count++;
 
                     if (count === selectedRows.length) {
-                        //  alert(count + " Payment Receipts Confirmed Successfully!")
+                        
                         toast.success(count + ' Payment Receipt(s) Confirmed Successfully!', {
                             position: "bottom-right",
                             autoClose: 5000,

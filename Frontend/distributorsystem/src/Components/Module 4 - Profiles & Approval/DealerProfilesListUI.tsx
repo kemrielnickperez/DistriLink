@@ -191,7 +191,6 @@ export default function DealerProfileListUI() {
             })
             .catch((error) => {
 
-                alert("Error retrieving payment receipts. Please try again.");
             });
     }
 
@@ -204,7 +203,7 @@ export default function DealerProfileListUI() {
             })
             .catch((error) => {
 
-                alert("Error retrieving payment receipts. Please try again.");
+
             });
     }
 

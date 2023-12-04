@@ -163,7 +163,7 @@ export function EmployeeProfileDetails() {
         setEmployeeDocuments(response.data);
       })
       .catch((error) => {
-       // alert("Error retrieving employee documents. Please try again.");
+
       
       });
   };

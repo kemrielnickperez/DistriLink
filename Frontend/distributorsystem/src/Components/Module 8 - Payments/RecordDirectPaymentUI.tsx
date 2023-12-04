@@ -391,7 +391,7 @@ export default function RecordDirectPayment() {
         const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
 
         if (Number(amountPaidRef.current?.value) > Number(remainingPaymentAmount!.toFixed(2))) {
-            saveHandleAlert('Amount Paid Exceeded Amount Due', "Amount paid is greater than amount due. Please change it to be equal or less than the amount due.", 'warning')
+            saveHandleAlert('Amount Paid Exceeded Amount Due', "File size exceeds the limit (5 MB). Please choose a smaller file.", 'warning')
           
             return;
         }

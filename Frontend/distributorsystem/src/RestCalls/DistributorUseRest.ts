@@ -108,8 +108,7 @@ export const useRestDistributor=():[(distributorID:string) => void, (distributor
         axios.get(`http://localhost:8080/distributor/getDistributorByID/${distributorID}`)
         .then((response)=>{
             setDistributor(response.data)
-            console.log("naa nis userest nag file!")
-            console.log(response.data);
+           
         })
         .catch((error)=>{
             console.error('Error Finding Distributor', error);

@@ -339,7 +339,7 @@ export default function ProductDistributionList() {
       .catch((error) => {
         console.error('Error retrieving products:', error);
         headerHandleAlert('Error', 'Error retrieving products. Please try again.', 'error');
-        // alert("Error retrieving products. Please try again.");
+
       });
   }
 
@@ -352,8 +352,7 @@ export default function ProductDistributionList() {
       );
 
       if (existingProductIndex !== -1) {
-        // alert('Product already added to the cart');
-        // toast
+        
         toast.info("If you'd like to increase the quantity of products, adjust product quantity as needed.", {
           position: "bottom-right",
           autoClose: 5000,
