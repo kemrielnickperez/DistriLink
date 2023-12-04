@@ -17,7 +17,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import moment from "moment";
 import axios from "axios";
 import { error } from "console";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 
 const StyledTableRow = styled(TableRow)({
@@ -384,6 +384,10 @@ export default function RecordDirectPayment() {
 
 
     const handleSaveDirectPayment = () => {
+        if (!selectedPaymentTransaction || !selectedPaymentTransaction.paymenttransactionid || !selectedDate || !amountPaidRef.current?.value || isNaN(Number(amountPaidRef.current?.value)) || !remarksRef.current?.value) {
+            toast.warning('Please fill all the necessary fields.');
+            return;
+          }
         const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
 
         if (Number(amountPaidRef.current?.value) > Number(remainingPaymentAmount!.toFixed(2))) {

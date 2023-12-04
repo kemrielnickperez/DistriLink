@@ -158,6 +158,11 @@ export default function Schedules() {
 
 
     const handleCreatePaymentTransaction = () => {
+
+        if (!startDate) {
+            toast.warning('Please select a starting date before creating payment schedules.');
+            return;
+          }
         const newPaymentTransactions: IPaymentTransaction[] = [];
         let currentEndDate = dayjs(startDate);
 

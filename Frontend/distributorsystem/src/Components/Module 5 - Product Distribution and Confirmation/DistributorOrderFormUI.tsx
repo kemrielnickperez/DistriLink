@@ -466,6 +466,11 @@ export default function ProductDistributionList() {
       saveHandleAlert('No Ordered Products', "Please add products to your order before saving.", 'warning')
     }
 
+    if (!selectedDate || !penaltyRateRef.current?.value || !paymentTerm) {
+      toast.warning('Please fill all required fields.');
+      return;
+    }
+
 
     // Create an order object with the necessary data
     else if (orderedProducts.length > 0 && isDealerFound) {
