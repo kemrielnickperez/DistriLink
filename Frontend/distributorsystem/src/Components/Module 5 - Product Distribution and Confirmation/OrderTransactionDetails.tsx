@@ -1,10 +1,12 @@
-import { Alert,AlertTitle,  Box,  Button, Grid, LinearProgress, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
+import { Alert,AlertTitle,  Button, Grid, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import { IOrder } from "../../RestCalls/Interfaces";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import OrderTransactionDetailsPrint from "./OrderTransactionDetailsPrint";
+import logo5 from '../../Global Components/Images/logo5.png';
+
 import logo5 from '../../Global Components/Images/logo5.png';
 
 
@@ -40,7 +42,7 @@ const StyledButton = styled(Button)({
 
 
 const StyldeInfoHeader = styled(Typography)({
-  marginTop: '45px',
+  marginTop: '40px',
   marginBottom: '90px',
   marginLeft: '10%',
   fontFamily: 'Inter',
@@ -65,7 +67,7 @@ const StyleLabel = styled(Typography)({
   fontSize: '15px',
   width: 'max-content',
   fontFamily: 'Inter',
-  top: '-45px'
+  top: '5px'
 })
 const StyleData = styled(Typography)({
 
@@ -73,7 +75,7 @@ const StyleData = styled(Typography)({
   textAlign: 'left',
   width: 200,
   left: '-140px',
-  top: '-15px',
+  top: '25px',
   color: '#203949',
   fontSize: '15px',
   fontFamily: 'Inter',
@@ -146,7 +148,7 @@ const StyledPrintDiv = styled('div')({
 
 export function OrderTransactionDetails() {
   const [order, setOrder] = useState<IOrder | null>(null);
-  
+
   const [openAlert, setOpenAlert] = useState(false);
 
   const [alerttitle, setTitle] = useState('');
@@ -249,7 +251,7 @@ export function OrderTransactionDetails() {
                 <StyleLabel>Current Address</StyleLabel>
                 <StyleData>{order?.dealer.currentaddress}</StyleData>
               </StackStyle>
-              
+
               <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader>
               {/* set style left and top manually here in stack */}
               <StackStyle sx={{ left: '30%', top: '350px' }}>
@@ -259,15 +261,15 @@ export function OrderTransactionDetails() {
               <StackStyle sx={{ left: '43%', top: '350px' }}>
                 <StyleLabel>Order Date</StyleLabel>
                 <StyleData>{order?.orderdate}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '60%', top: '350px' }}>
+              </StackStyle>
+              <StackStyle sx={{ left: '60%', top: '350px' }}>
                 <StyleLabel>Distribution Date</StyleLabel>
                 <StyleData>{order?.distributiondate}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '75%', top: '350px' }}>
+              </StackStyle>
+              <StackStyle sx={{ left: '75%', top: '350px' }}>
                 <StyleLabel>Total Ordered Amount</StyleLabel>
                 <StyleData>Php {order?.orderamount}</StyleData>
-            </StackStyle>
+              </StackStyle>
               <StackStyle sx={{ left: '92%', top: '350px' }}>
                 <StyleLabel>Payment Terms</StyleLabel>
                 <StyleData>{order?.paymentterms} Gives</StyleData>
@@ -313,16 +315,16 @@ export function OrderTransactionDetails() {
                   </Paper>
                 </Grid>
 
-                
+
                 {/* Alerts */}
                 <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center'
+                  vertical: 'top',
+                  horizontal: 'center'
                 }} TransitionComponent={SlideTransitionDown}>
-                    <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
-                        <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
-                        {alertMessage}
-                    </Alert>
+                  <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                    <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                    {alertMessage}
+                  </Alert>
                 </Snackbar>
               </Grid>
 
@@ -330,11 +332,11 @@ export function OrderTransactionDetails() {
 
 
           ) : (
-            <Box sx={{ display: 'flex' , flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', marginTop: '-20px' }}>
-                              <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
-                    <LinearProgress sx={{ width: '20%' }} />
-                    {/* You can adjust the width as needed */}
-                </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
+              <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+              <LinearProgress sx={{ width: '20%' }} />
+              {/* You can adjust the width as needed */}
+            </Box>
           )}
         </div>
       ) : (

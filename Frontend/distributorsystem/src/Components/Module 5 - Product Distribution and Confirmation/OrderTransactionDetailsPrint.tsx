@@ -38,19 +38,19 @@ const StyleLabel = styled(Typography)({
     fontSize: '15px',
     width: 'max-content',
     fontFamily: 'Inter',
-    top: '-45px'
-})
-const StyleData = styled(Typography)({
-
+    top: '5px'
+  })
+  const StyleData = styled(Typography)({
+  
     position: 'absolute',
     textAlign: 'left',
     width: 200,
     left: '-140px',
-    top: '-15px',
+    top: '25px',
     color: '#203949',
     fontSize: '15px',
     fontFamily: 'Inter',
-})
+  })
 
 const StyleTotalLabel = styled(Typography)({
     position: 'absolute',
