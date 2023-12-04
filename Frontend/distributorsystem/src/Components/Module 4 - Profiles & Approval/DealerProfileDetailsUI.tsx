@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import { IDealer, IDealerDocument, IDealerPaymentProof, IOrder } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Button, Card, Grid, Icon, Modal, Paper, Stack, Typography, styled, Tab, Box, Tabs, Snackbar, Alert, AlertTitle, SlideProps, Slide, TextFieldProps, TextField } from "@mui/material";
+import { Button, Card, Grid, Icon, Modal, Paper, Stack, Typography, styled, Tab, Box, Tabs, Snackbar, Alert, AlertTitle, SlideProps, Slide, TextFieldProps, TextField, LinearProgress } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
@@ -18,6 +18,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import logo5 from '../../Global Components/Images/logo5.png';
 
 
 
@@ -430,7 +431,7 @@ export default function DealerProfileDetails() {
                 setDealerDocuments(response.data);
             })
             .catch((error) => {
-                alert("Error retrieving dealer documents. Please try again.");
+                console.error("Error retrieving dealer documents. Please try again.");
             });
     };
 
@@ -640,6 +641,7 @@ export default function DealerProfileDetails() {
 
     return (
         <div>
+            {dealer?(
             <Grid container spacing={3}>
                 <ContentNameTypography>Dealer Information </ContentNameTypography>
                 <Grid item style={{ marginRight: -70 }}>
@@ -851,10 +853,13 @@ export default function DealerProfileDetails() {
                     </Alert>
                 </Snackbar>
             </Grid>
-
-
-
-
+        ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
+                <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+                <LinearProgress sx={{ width: '20%' }} />
+                {/* You can adjust the width as needed */}
+            </Box>
+        )}
         </div>
     );
 }
