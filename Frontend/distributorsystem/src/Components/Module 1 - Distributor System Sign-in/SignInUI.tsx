@@ -138,7 +138,7 @@ export default function SignIn() {
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result))
                         // Redirect to the Dealer screen
-                        window.location.assign('Dashboard');
+                        window.location.assign('dashboard');
                         setSuccessMessage("Login successful as Dealer");
                         setOpen(true);
         
@@ -147,20 +147,16 @@ export default function SignIn() {
                         console.log('Login successful as Distributor');
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result));
-                       // Redirect to the Dealer screen
-                       // window.location.assign('Dashboard');
-                       // setSuccessMessage("Login successful as Distributor");
-                       // setOpen(true);
-                        console.log(response.data);
-                        console.log(response.data.distributor);
-                        appObjects?.putDistributor(response.data.distributor);
-                        console.log(appObjects?.distributor);
-                    } else if (result.tableName === 'Sales Associate' || result.tableName === 'Cashier') {
+                        // Redirect to the Dealer screen
+                        window.location.assign('dashboard');
+                        setSuccessMessage("Login successful as Distributor");
+                        setOpen(true);
+                    } else if (result.tableName === 'Sales Associate' || result.tableName === 'Cashier' || result.tableName === 'Sales Associate and Cashier') {
                         console.log('Login successful as Employee');
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result));
                         // Redirect to the Employee screen
-                        window.location.assign('Dashboard');
+                        window.location.assign('dashboard');
                         setSuccessMessage('Login successful as Employee');
                         setOpen(true);
                         const user = response.data.find(

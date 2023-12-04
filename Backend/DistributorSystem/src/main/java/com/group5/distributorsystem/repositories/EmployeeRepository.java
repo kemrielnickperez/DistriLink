@@ -14,6 +14,9 @@ import java.util.Set;
 
 @Repository
 public interface EmployeeRepository extends MongoRepository<Employee, String> {
+
+    Optional<Employee> findById(String id);
+
     Employee findByEmployeeidAndPassword(String employeeid, String password);
 
     List<Employee> findAllByDistributor_Distributorid(String distributorId);

@@ -35,11 +35,18 @@ import { EmployeeProfileDetails } from '../Components/Module 4 - Profiles & Appr
 import OrderConfirmation from '../Components/Module 5 - Product Distribution and Confirmation/OrderConfirmationUI';
 import { OrderTransactionDetails } from '../Components/Module 5 - Product Distribution and Confirmation/OrderTransactionDetails';
 import DistributorRegistration from '../Components/Module 2 - Registrations/DistributorRegistrationUI';
-
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import ContentDealer from './ContentsDealer';
+import ContentSalesAssociate from './ContentsSalesAssociate';
+import ContentCashier from './ContentsCashier';
+import ContentBothSalesCashier from './ContentsBothSalesCashier';
 
 export default function MainRoutes() {
-    return (
 
+    const dealer = JSON.parse(localStorage.getItem('user')!) || {};
+
+    return (
         <Routes>
             <Route path="/" element={<SplashscreenContent />}>
                 <Route path="/" element={<Navigate replace to="WelcomeScreen" />} />
@@ -53,79 +60,91 @@ export default function MainRoutes() {
                     <Route path="/DistributorRegistration" element={<DistributorRegistration />} />
                 </Route>
 
-                    {/* <SigninScreen/> */}
-                    <Route path="/" element={<SignInContent />}>
-                        <Route path="/" element={<Navigate replace to="SignIn" />} />
-                        <Route path="/SignIn" element={<SignIn />} />
+                {/* <SigninScreen/> */}
+                <Route path="/" element={<SignInContent />}>
+                    <Route path="/" element={<Navigate replace to="SignIn" />} />
+                    <Route path="/SignIn" element={<SignIn />} />
 
-                        {dealer!.tableName === "Dealer" && (
-                            <Route path="/" element={<ContentDealer />}>
-                                <Route path="/" element={<Navigate replace to="dashboard" />} />
-                                <Route path="/dealerProfile" element={<DealerProfile />} />
-                                <Route path="/dealerOrderForm" element={<DealerOrderForm />} />
-                            </Route>
-                        )}
+                    {dealer && dealer!.tableName === "Dealer" && (
+                        <Route path="/" element={<ContentDealer />}>
+                            <Route path="/" element={<Navigate replace to="dashboard" />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/dealerProfile" element={<DealerProfile />} />
+                            <Route path="/dealerOrderForm" element={<DealerOrderForm />} />
+                        </Route>
+                    )}
 
-                        {dealer!.tableName === "Distributor" && (
-                            <Route path="/" element={<Content />}>
-                                <Route path="/" element={<Navigate replace to="dashboard" />} />
-                                <Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/paymentList" element={<PaymentList />} />
+                    {dealer && dealer!.tableName === "Distributor" && (
+                        <Route path="/" element={<Content />}>
+                            <Route path="/" element={<Navigate replace to="dashboard" />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/paymentList" element={<PaymentList />} />
 
-                                <Route path="/dealerOrderForm" element={<DealerOrderForm />} />
-                                <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
-                                <Route path="/orderConfirmation/:objectId" element={<OrderConfirmation />} />
-                                <Route path="/productDistributionList" element={<ProductDistributionList />} />
-                                <Route path="/orderTransactionDetails/:objectId" element={<OrderTransactionDetails />} />
+                            <Route path="/dealerOrderForm" element={<DealerOrderForm />} />
+                            <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
+                            <Route path="/orderConfirmation/:objectId" element={<OrderConfirmation />} />
+                            <Route path="/productDistributionList" element={<ProductDistributionList />} />
+                            <Route path="/orderTransactionDetails/:objectId" element={<OrderTransactionDetails />} />
 
-                                <Route path="/dealerProfileList" element={<DealerProfileListUI />} />
-                                <Route path="/dealerProfileDetails/:objectId" element={<DealerProfileDetails />}></Route>
-                                <Route path="/dealerRegistration" element={<DealerRegistration />} />
+                            <Route path="/dealerProfileList" element={<DealerProfileListUI />} />
+                            <Route path="/dealerProfileDetails/:objectId" element={<DealerProfileDetails />}></Route>
+                            <Route path="/dealerRegistration" element={<DealerRegistration />} />
 
-                                <Route path="/employeeProfileList" element={<EmployeeProfileListUI />} />
-                                <Route path="/employeeProfileDetails/:objectId" element={<EmployeeProfileDetails />}></Route>
-                                <Route path="/employeeRegistrationn" element={<EmployeeRegistration />} />
+                            <Route path="/employeeProfileList" element={<EmployeeProfileListUI />} />
+                            <Route path="/employeeProfileDetails/:objectId" element={<EmployeeProfileDetails />}></Route>
+                            <Route path="/employeeRegistrationn" element={<EmployeeRegistration />} />
 
-                                <Route path="/schedules/:objectId" element={<Schedules />} />
+                            <Route path="/schedules/:objectId" element={<Schedules />} />
 
-                                <Route path="/signin" element={<SignIn />} />
-                                <Route path="/recordDirectPayment" element={<RecordDirectPayment />} />
-                                <Route path="/dealerApproval" element={<DealerApproval />} />
-                                <Route path="/employeeRegistration" element={<EmployeeRegistration />} />
+                            <Route path="/recordDirectPayment" element={<RecordDirectPayment />} />
+                            <Route path="/dealerApproval" element={<DealerApproval />} />
+                            <Route path="/employeeRegistration" element={<EmployeeRegistration />} />
 
-                                <Route path="/collectorAssignment" element={<CollectorAssignment />} />
-                                <Route path="/orderDetails/:objectId" element={<OrderDetails />} />
-                                <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails />}></Route>
-                                <Route path="/recordCollectionPayment" element={<RecordCollectionPaymentUI />} />
-                            </Route>
-                        )}
+                            <Route path="/collectorAssignment" element={<CollectorAssignment />} />
+                            <Route path="/orderDetails/:objectId" element={<OrderDetails />} />
+                            <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails />}></Route>
+                            <Route path="/recordCollectionPayment" element={<RecordCollectionPaymentUI />} />
+                        </Route>
+                    )}
 
-                        {dealer!.tableName === "Sales Associate" && (
-                            <Route path="/" element={<ContentSalesAssociate />}>
-                                <Route path="/" element={<Navigate replace to="dashboard" />} />
-                                <Route path="/employeeProfile" element={<EmployeeProfileDetails />} />
-                                <Route path="/productDistributionList" element={<ProductDistributionList />} />
-                                <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
-                                <Route path="/collectorAssignment" element={<CollectorAssignment />} />
-                                <Route path="/schedules/:objectId" element={<Schedules />} />
-                            </Route>
-                        )}
+                    {dealer && dealer!.tableName === "Sales Associate" && (
+                        <Route path="/" element={<ContentSalesAssociate />}>
+                            <Route path="/" element={<Navigate replace to="dashboard" />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/employeeProfile" element={<EmployeeProfileDetails />} />
+                            <Route path="/productDistributionList" element={<ProductDistributionList />} />
+                            <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
+                            <Route path="/collectorAssignment" element={<CollectorAssignment />} />
+                            <Route path="/schedules/:objectId" element={<Schedules />} />
+                        </Route>
+                    )}
 
-                        {dealer!.tableName === "Cashier" && (
-                            <Route path="/" element={<ContentCashier />}>
-                                <Route path="/" element={<Navigate replace to="dashboard" />} />
-                                <Route path="/employeeProfile" element={<EmployeeProfileDetails />} />
-                                <Route path="/paymentList" element={<PaymentList />} />
-                                <Route path="/recordDirectPayment" element={<RecordDirectPayment />} />
-                            </Route>
-                        )}
-                    </Route>
+                    {dealer && dealer!.tableName === "Cashier" && (
+                        <Route path="/" element={<ContentCashier />}>
+                            <Route path="/" element={<Navigate replace to="dashboard" />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/employeeProfile" element={<EmployeeProfileDetails />} />
+                            <Route path="/paymentList" element={<PaymentList />} />
+                            <Route path="/recordDirectPayment" element={<RecordDirectPayment />} />
+                        </Route>
+                    )}
+
+                    {dealer && dealer!.tableName === "Sales Associate and Cashier" && (
+                        <Route path="/" element={<ContentBothSalesCashier />}>
+                            <Route path="/" element={<Navigate replace to="dashboard" />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/employeeProfile" element={<EmployeeProfileDetails />} />
+                            <Route path="/productDistributionList" element={<ProductDistributionList />} />
+                            <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
+                            <Route path="/collectorAssignment" element={<CollectorAssignment />} />
+                            <Route path="/schedules/:objectId" element={<Schedules />} />
+                            <Route path="/paymentList" element={<PaymentList />} />
+                            <Route path="/recordDirectPayment" element={<RecordDirectPayment />} />
+                        </Route>
+                    )}
+
                 </Route>
-            </Routes>
-        )
-    }
-
-
-
-    );
+            </Route>
+        </Routes>
+    )
 }
