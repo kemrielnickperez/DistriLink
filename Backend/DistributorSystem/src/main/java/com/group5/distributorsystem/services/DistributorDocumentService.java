@@ -3,6 +3,7 @@ package com.group5.distributorsystem.services;
 
 import com.group5.distributorsystem.models.DealerDocument;
 import com.group5.distributorsystem.models.DistributorDocument;
+import com.group5.distributorsystem.models.EmployeeDocument;
 import com.group5.distributorsystem.repositories.DealerDocumentRepository;
 import com.group5.distributorsystem.repositories.DistributorDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,4 +33,7 @@ public class DistributorDocumentService {
         return distributorDocumentRepository.save(document);
     }
 
+    public Iterable<DistributorDocument> findAllDocumentsByDistributorId(String distributorid){
+        return distributorDocumentRepository.findByDistributor_Distributorid(distributorid);
+    }
 }

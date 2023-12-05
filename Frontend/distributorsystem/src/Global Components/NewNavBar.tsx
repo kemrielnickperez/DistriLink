@@ -2,7 +2,7 @@ import { Box, Button, Collapse, Drawer, List, ListItem, ListItemIcon, ListItemTe
 
 import { ExpandLess, ExpandMore, Height, StarBorder } from '@mui/icons-material/';
 import { useEffect, useState }from "react"
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 // import logo from "./logo.png"
 import logo1 from ".Images/logo1.png"
 import logo2 from ".Images/logo2.png"
@@ -101,6 +101,8 @@ const StyledButton1 = styled(Button)<StyledButtonProps1>(({selected1})=>({
 
 
 export default function NewNavBar(){
+
+    const navigate = useNavigate();
     const route = useLocation();
     {/** For Payments Drop Down */}
     const [dropDownPayments, setDropDownPayments] = useState(false);
@@ -136,6 +138,13 @@ export default function NewNavBar(){
 
     const handleButtonClick =(buttonId:number)=>{
         setSelectedButton(buttonId===selectedButton ? buttonId : buttonId);
+
+        if(buttonId === 7){
+            localStorage.clear();
+            navigate("/SignIn")
+        }
+
+            
     }
     const handleButtonClick1 =(buttonId1:number)=>{
         setSelectedButton1(buttonId1===selectedButton1 ? null : buttonId1);

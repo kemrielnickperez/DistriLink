@@ -21,7 +21,7 @@ export const useRestDealer = (): [
     (dealerID: string, creditLimit: number) => void,
     boolean | undefined,
     boolean | undefined,
-    IDealer | undefined, 
+    IDealer | undefined,
     number | undefined,
     (dealerID: string) => void] => {
 
@@ -108,7 +108,7 @@ export const useRestDealer = (): [
         });
 
 
-   
+
 
         axios.post('http://localhost:8080/dealer/registerDealer', formData, {
             headers: {
@@ -123,7 +123,7 @@ export const useRestDealer = (): [
             })
             .catch((error) => {
                 console.log(error)
-               
+
             });
 
 
@@ -138,7 +138,7 @@ export const useRestDealer = (): [
             }
         })
             .then((response) => {
-                
+
                 toast.success('Dealer has now been confirmed!', {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -151,7 +151,7 @@ export const useRestDealer = (): [
                 })
             })
             .catch((error) => {
-                
+
                 toast.error('Unexpected dealer upon confirming dealer. Please try again.', {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -174,7 +174,7 @@ export const useRestDealer = (): [
             }
         })
             .then((response) => {
-              
+
                 toast.success("Dealer's status is on pending!", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -187,7 +187,7 @@ export const useRestDealer = (): [
                 })
             })
             .catch((error) => {
-               
+
                 toast.error("Unexpected Error pending a dealer. Please try again", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -211,7 +211,7 @@ export const useRestDealer = (): [
             }
         })
             .then((response) => {
-               
+
                 toast.success("Dealer declined successfully!", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -225,7 +225,7 @@ export const useRestDealer = (): [
             })
             .catch((error) => {
                 console.log(error)
-                
+
                 toast.error("Unexpected Error decline a dealer. Please try again", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -246,7 +246,7 @@ export const useRestDealer = (): [
             }
         })
             .then((response) => {
-              
+
                 toast.success("Dealer Credit Limit is Updated!", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -259,7 +259,7 @@ export const useRestDealer = (): [
                 })
             })
             .catch((error) => {
-               
+
                 toast.error("Unexpected Error Updating Credit Limit. Please try again", {
                     position: "bottom-right",
                     autoClose: 5000,
@@ -296,7 +296,7 @@ export const useRestDealer = (): [
                             theme: "colored",
                         })
                     }
-                    
+
 
                 }
                 else {
@@ -335,12 +335,8 @@ export const useRestDealer = (): [
         axios.get(`http://localhost:8080/dealer/getDealerByID/${dealerID}`)
             .then((response) => {
                 if (response.data !== null) {
-                    if (response.data.isconfirmed !== false) {
-                        setDealer(response.data);
-                        setIsDealerFound(true);
-                    }
-                    
-
+                    setDealer(response.data);
+                    setIsDealerFound(true);
                 }
                 else {
                     setIsDealerFound(false);

@@ -41,6 +41,7 @@ import ContentDealer from './ContentsDealer';
 import ContentSalesAssociate from './ContentsSalesAssociate';
 import ContentCashier from './ContentsCashier';
 import ContentBothSalesCashier from './ContentsBothSalesCashier';
+import { DistributorProfileDetails } from '../Components/Module 4 - Profiles & Approval/DistributorProfileDetailsUI';
 
 export default function MainRoutes() {
 
@@ -103,6 +104,8 @@ export default function MainRoutes() {
                             <Route path="/collectorAssignment" element={<CollectorAssignment />} />
                             <Route path="/orderDetails/:objectId" element={<OrderDetails />} />
                             <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails />}></Route>
+                        
+                            <Route path="/distributorProfileDetails/:objectId" element={<DistributorProfileDetails />}></Route>
                         </Route>
                     )}
 

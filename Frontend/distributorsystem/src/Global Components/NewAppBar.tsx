@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const settings = ['Profile', 'Dashboard', 'Logout'];
 
 const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
- 
+
 
 type navProps = {
     moduleName: string;
@@ -48,6 +48,7 @@ const TypeTypography = styled(Typography)({
 })
 
 export default function NewAppBar(props: navProps) {
+    const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
 
@@ -58,6 +59,23 @@ export default function NewAppBar(props: navProps) {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const handleSettingsClick = (choice: string) => {
+        console.log(choice)
+        const objectId = distributorFromStorage.distributorid;
+        if (choice === 'Dashboard')
+            navigate("/dashboard")
+        else if (choice === 'Profile') {
+            navigate(`/distributorProfileDetails/${objectId}`)
+            console.log("hey");
+        }
+        else {
+            localStorage.clear();
+            navigate("/SignIn")
+        }
+
+
+    }
     return (
         <div>
             <header>
@@ -77,7 +95,7 @@ export default function NewAppBar(props: navProps) {
                             <Box sx={{ flexGrow: 0.1, display: { xs: 'none', md: 'flex' }, paddingTop: 1 }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: 8 }}>
                                     <NameTypography>
-                                        {distributorFromStorage.firstname +" " +  distributorFromStorage.lastname}
+                                        {distributorFromStorage.firstname + " " + distributorFromStorage.lastname}
                                     </NameTypography>
                                     <TypeTypography>
                                         Distributor
@@ -105,7 +123,7 @@ export default function NewAppBar(props: navProps) {
                                 >
                                     {settings.map((setting) => (
                                         <MenuItem>
-                                            <Typography textAlign='center'>{setting}</Typography>
+                                            <Typography textAlign='center' onClick={() => handleSettingsClick(setting)}>{setting}</Typography>
                                         </MenuItem>
                                     ))}
                                 </Menu>

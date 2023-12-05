@@ -215,7 +215,7 @@ export default function DealerProfileListUI() {
         getAllDealers();
        
         getAllArchivedDealers();
-        console.log(dealers);
+      
 
 
     }, []);

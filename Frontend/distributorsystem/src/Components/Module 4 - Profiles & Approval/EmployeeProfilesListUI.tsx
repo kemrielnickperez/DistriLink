@@ -74,7 +74,7 @@ const DataGridStyle = styled(DataGrid)({
 
 export default function EmployeeProfileListUI() {
     const navigate = useNavigate();
-    const [employee, setEmployee] = useState<IEmployee[] | null>(null);
+    const [employees, setEmployees] = useState<IEmployee[] | null>(null);
     const [openAlert, setOpenAlert] = useState(false);
     const [alerttitle, setTitle] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
@@ -84,19 +84,21 @@ export default function EmployeeProfileListUI() {
     const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
 
 
-    useEffect(() => {
-        // Make an Axios GET request to fetch all orders
+    function getAllEmployees() {
         axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllEmployeesByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
-                setEmployee(response.data);
-                // headerHandleAlert('Success', "Employees fetched successfully.", 'success');
+                setEmployees(response.data);
+               
             })
             .catch((error) => {
                 headerHandleAlert('Error', "Failed to fetch employees. Please check your internet connection.", 'error');
-                //console.error('Error fetching employee:', error);
+               
             });
+    }
 
-            console.log(employee);
+
+    useEffect(() => {
+       getAllEmployees();
     }, []);
     {/**Handler for Alert - Function to define the type of alert*/ }
 
@@ -138,7 +140,7 @@ export default function EmployeeProfileListUI() {
 
     ]
     {/** Rows for DataGrid */ }
-    const rows = (employee || []).map((employeeList) => ({
+    const rows = (employees || []).map((employeeList) => ({
         id: employeeList.employeeid,
         employeeName: `${employeeList.firstname} ${employeeList.middlename} ${employeeList.lastname}`,
         position: [
@@ -159,7 +161,7 @@ export default function EmployeeProfileListUI() {
             
             <StyledCard>
                 <Box sx={{p:2}}>
-                {employee === null ? (
+                {employees === null ? (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' , marginTop: '200px'}}>
                 <CircularProgress />
               </div>

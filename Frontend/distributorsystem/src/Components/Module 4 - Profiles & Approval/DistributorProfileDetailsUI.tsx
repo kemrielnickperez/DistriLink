@@ -2,7 +2,7 @@ import { Alert, AlertTitle, Box, Button, Card, Grid, Icon, LinearProgress, Modal
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import profilepicture from "../../Global Components/Images/profilepicture.png"
-import { IEmployee, IEmployeeDocument } from "../../RestCalls/Interfaces";
+import { IDistributorDocument, IEmployee, IEmployeeDocument } from "../../RestCalls/Interfaces";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -10,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
 import logo5 from '../../Global Components/Images/logo5.png';
+import { useRestDistributor } from "../../RestCalls/DistributorUseRest";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -141,10 +142,10 @@ const ButtonClose = styled(Button)({
 
 
 
-export function EmployeeProfileDetails() {
-  const [newEmployee, getEmployeeByID, getCollectorByID, employee] = useRestEmployee();
+export function DistributorProfileDetails() {
+  const  [getDistributorByID, newDistributor,distributor] = useRestDistributor();
   //const [employee, setEmployee] = useState<IEmployee | null>(null);
-  const [employeeDocuments, setEmployeeDocuments] = useState<IEmployeeDocument[]>([]);
+  const [distributorDocuments, setDistributorDocuments] = useState<IDistributorDocument[]>([]);
   const [value, setValue] = useState(0);
   const [openProfile, setOpenProfile] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
@@ -153,14 +154,20 @@ export function EmployeeProfileDetails() {
   const [alertSeverity, setAlertSeverity] = useState('success');
   // Use useParams to get the employee from the URL
   const { objectId } = useParams();
-  const handleFindEmployee = () => {
-    getEmployeeByID(objectId!);
+
+
+
+
+  const handleFindDistributor = () => {
+    getDistributorByID(objectId!);
+   
   };
 
-  function getAllEmployeeDocuments() {
-    axios.get<IEmployeeDocument[]>(`http://localhost:8080/employeeDocument/findAllDocumentsByEmployeeId/${objectId!}`)
+
+  function getAllDistributorDocuments() {
+    axios.get<IDistributorDocument[]>(`http://localhost:8080/distributorDocument/findAllDocumentsByDistributorId/${objectId!}`)
       .then((response) => {
-        setEmployeeDocuments(response.data);
+        setDistributorDocuments(response.data);
       })
       .catch((error) => {
 
@@ -216,12 +223,12 @@ export function EmployeeProfileDetails() {
   useEffect(() => {
     
     if (objectId !== null) {
-      handleFindEmployee();
-      getAllEmployeeDocuments();
+      handleFindDistributor();
+      getAllDistributorDocuments();
     }
-  }, [objectId, employee, employeeDocuments]);
+  }, [objectId, distributor, distributorDocuments]);
 
-  const profilePic = employeeDocuments.find(image => image.name === employee?.lastname + '_profilepicture');
+  const profilePic = distributorDocuments.find(image => image.name === distributor?.lastname + '_profilepicture');
   const imageSource = profilePic ? `data:${profilePic?.type} ;base64,${profilePic?.content}`
     : profilepicture
   const handleOpenProfile = () => {
@@ -232,9 +239,9 @@ export function EmployeeProfileDetails() {
 }
   return (
     <div>
-       {employee?(
+       {distributor?(
       <Grid container spacing={3}>
-        <ContentNameTypography>Employee Information</ContentNameTypography>
+        <ContentNameTypography>Distributor Information</ContentNameTypography>
         <Grid item style={{ marginRight: -70 }}>
           <Grid>
             <ProfileCard onClick={handleOpenProfile} style={{cursor:'pointer'}}>
@@ -258,21 +265,14 @@ export function EmployeeProfileDetails() {
         <Grid item>
           <Grid container style={{ marginTop: 15 }}>
             <Grid item>
-              <StyleMainLabel>Employee's Name</StyleMainLabel>
-              <StyleMainInfo style={{ marginTop: 15 }}>{employee?.firstname} {employee?.middlename} {employee?.lastname}</StyleMainInfo>
+              <StyleMainLabel>Distributor's Name</StyleMainLabel>
+              <StyleMainInfo style={{ marginTop: 15 }}>{distributor?.firstname} {distributor?.middlename} {distributor?.lastname}</StyleMainInfo>
             </Grid>
             <Grid item>
-              <StyleMainLabel style={{marginLeft:70}}>Employee ID</StyleMainLabel>
-              <StyleMainInfo style={{ marginTop: 15, marginLeft: 90}}>{employee?.employeeid}</StyleMainInfo>
+              <StyleMainLabel style={{marginLeft:70}}>Distributor ID</StyleMainLabel>
+              <StyleMainInfo style={{ marginTop: 15, marginLeft: 90}}>{distributor?.distributorid}</StyleMainInfo>
             </Grid>
-            <Grid item>
-              <StyleMainLabel style={{marginLeft:70}}>Position</StyleMainLabel>
-              <StyleMainInfo style={{ marginTop: 15, marginLeft: 90 }}>
-                {employee?.iscashier && "Cashier"}
-                {employee?.iscollector && (employee!.iscashier ? ', Collector' : 'Collector')}
-                {employee?.issalesassociate && (employee?.iscashier || employee?.iscollector ? ', Sales Associate' : 'Sales Associate')}
-              </StyleMainInfo>
-            </Grid>
+            
           </Grid>
 
           <Grid container>
@@ -287,34 +287,31 @@ export function EmployeeProfileDetails() {
                 <Grid container>
                   <Grid item style={{  marginLeft: 80  }}>
                     <StyleLabel>Gender</StyleLabel>
-                    <StyleData>{employee?.gender}</StyleData>
+                    <StyleData>{distributor?.gender}</StyleData>
                   </Grid>
                   <Grid item>
                     <StyleLabel style={{ marginLeft: -100 }}>Birthdate</StyleLabel>
-                    <StyleData style={{ marginLeft: -90 }}>{employee?.birthdate}</StyleData>
+                    <StyleData style={{ marginLeft: -90 }}>{distributor?.birthdate}</StyleData>
                   </Grid>
                   <Grid item>
                     <StyleLabel style={{ marginLeft: -80 }}>Contact Information</StyleLabel>
-                    <StyleData style={{ marginLeft: -70 }}>{employee?.contactnumber}</StyleData>
+                    <StyleData style={{ marginLeft: -70 }}>{distributor?.contactnumber}</StyleData>
                   </Grid>
                   <Grid item>
                     <StyleLabel style={{ marginLeft: -20 }}>Email Address</StyleLabel>
-                    <StyleData style={{ marginLeft: -10 }}>{employee?.emailaddress}</StyleData>
+                    <StyleData style={{ marginLeft: -10 }}>{distributor?.emailaddress}</StyleData>
                   </Grid>
                 </Grid>
                 <Grid container style={{ marginTop: 25, marginLeft: 80 }}>
                   <Grid item>
                     <StyleLabel>Current Address</StyleLabel>
-                    <StyleData>{employee?.currentaddress}</StyleData>
+                    <StyleData>{distributor?.currentaddress}</StyleData>
                   </Grid>
                   <Grid item>
                     <StyleLabel>Permanent Address</StyleLabel>
-                    <StyleData>{employee?.permanentaddress}</StyleData>
+                    <StyleData>{distributor?.permanentaddress}</StyleData>
                   </Grid>
-                  <Grid item>
-                    <StyleLabel style={{ marginLeft: 50 }}>TIN Number</StyleLabel>
-                    <StyleData style={{ marginLeft: 60 }}>{employee?.tinnumber}</StyleData>
-                  </Grid>
+                  
                 </Grid>
               </CustomTabPanel>
 
