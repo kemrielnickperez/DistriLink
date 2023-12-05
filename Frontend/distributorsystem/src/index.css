@@ -10,6 +10,7 @@ body {
   background-size:contain;
   width: 100vw;
   height: 200vh;
+  overflow-x: hidden;
 }
 
 code {

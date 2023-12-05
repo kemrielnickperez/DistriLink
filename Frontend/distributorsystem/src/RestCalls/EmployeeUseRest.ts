@@ -44,7 +44,7 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
         formData.append('distributor.currentaddress', employee.distributor.currentaddress);
         formData.append('distributor.permanentaddress', employee.distributor.permanentaddress);
         formData.append('distributor.contactnumber', employee.distributor.contactnumber);
-
+        formData.append('tinnumber', employee.tinnumber.toString());
         employee.distributor.dealerids.forEach((dealerid) => {
             formData.append(`distributor.dealer`, dealerid);
         });

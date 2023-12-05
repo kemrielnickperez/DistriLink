@@ -237,7 +237,7 @@ const DataGridStyle = styled(DataGrid)({
     textAlign: 'center',
     fontSize: 15,
     color: '#203949',
-    height: '260px',
+    height: '267px',
     margin: '2px 10px 0px 0px',
     borderRadius: '5px',
     border: '0px solid #e0e0e0',
@@ -484,8 +484,6 @@ export default function RecordDirectPayment() {
         { field: 'receiverName', headerName: 'Receiver Name', width: 160 },
         { field: 'remarks', headerName: 'Remarks', width: 160 },
         { field: 'datePaid', headerName: 'Date Paid', width: 180 },
-        { field: 'receivedAmount', headerName: 'Received Amount', width: 180 },
-        { field: 'dateRecorded', headerName: 'Date Recorded', width: 180 },
     ]
 
 
@@ -589,7 +587,7 @@ export default function RecordDirectPayment() {
                                     <CustomTabPanel value={value} index={0}>
                                         <DataGridStyle
                                             rows={DirectPaymentReceiptrows}
-                                            sx={{ textAlign: 'center', color: '#203949', height: '230px', width: '1000px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
+                                            sx={{ textAlign: 'center', color: '#203949', height: '230px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
                                             columns={DirectPaymentReceiptcolumns}
 
                                             initialState={{
@@ -606,7 +604,7 @@ export default function RecordDirectPayment() {
 
                                         <DataGridStyle
                                             rows={CollectionPaymentReceiptrows}
-                                            sx={{ textAlign: 'center', color: '#203949', height: '230px', width: '1000px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
+                                            sx={{ textAlign: 'center', color: '#203949', height: '230px', width: '1245px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
                                             columns={CollectionPaymentReceiptcolumns}
 
                                             initialState={{

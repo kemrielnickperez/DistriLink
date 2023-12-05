@@ -508,120 +508,7 @@ export default function DistributorRegistration() {
                     <div style={{ padding: '1px 1px 1px 30px', display: 'flex', flexDirection: 'column' }}>
                         <ContentNameTypography>Sign Up as Distributor</ContentNameTypography>
                         <ScrollStyle id="scrollContainer">
-                            {/* Account Creation */}
-                            <div style={{ paddingTop: 30, paddingBottom: 30 }}>
-                                <GridField container spacing={3}>
-                                    {/**Textfield For Email Address*/}
-                                    <Grid item>
-                                        <StyledTextField variant="outlined" label="Email Address" style={{ width: '700px' }} inputRef={emailladdressRef} onChange={() => handleInputChange('email')} />
-                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
-                                            {fieldWarning.email}
-                                        </FormHelperText>
-                                    </Grid>
-                                </GridField>
-
-                                <GridField container spacing={3}>
-                                    {/**Textfield For Password*/}
-                                    <Grid item>
-                                        <StyledTextField
-                                            type={isshowPassword ? 'text' : 'password'}
-                                            variant="outlined"
-                                            required
-                                            label='Password'
-
-                                            style={{ width: '700px' }}
-                                            value={password}
-                                            onChange={handlePasswordChange}
-                                            inputRef={passwordRef}
-                                            InputProps={{
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        <IconButton onClick={handleShowPassword} onMouseDown={handleMouseDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
-                                                            {isshowPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
-                                                        </IconButton>
-                                                    </InputAdornment>
-                                                )
-                                            }}
-                                        />
-                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
-                                            {fieldWarning.password}
-                                        </FormHelperText>
-                                    </Grid>
-                                </GridField>
-                                <GridField container spacing={3}>
-                                    {/**Textfield For Password Confirmation*/}
-                                    <Grid item>
-                                        <StyledTextField
-                                            type={isshowConfirmPassword ? 'text' : 'password'}
-                                            variant="outlined"
-                                            required label="Confirm Password"
-                                            style={{ width: '700px' }}
-                                            value={confirmPassword}
-                                            onChange={handleConfirmPasswordChange}
-                                            error={passwordError !== ''}
-                                            helperText={passwordError}
-                                            inputRef={confirmpasswordRef}
-                                            InputProps={{
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        <IconButton onClick={handleShowConfirmPassword} onMouseDown={handleMouseConfirmDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
-                                                            {isshowConfirmPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
-
-                                                        </IconButton>
-                                                    </InputAdornment>
-                                                )
-                                            }}
-                                        />
-                                    </Grid>
-                                </GridField>
-                                {/* Insert Button for Profile Pic here  */}
-                                <GridField container spacing={8} >
-
-                                    {/**Button For Valid ID File*/}
-                                    <Grid item>
-                                        <label htmlFor="profilepicture-input">
-
-                                            <Button variant="contained" component="span" aria-required
-                                                sx={{
-                                                    backgroundColor: '#2D85E7',
-                                                    width: '700px',
-                                                    margin: '15px 0 0 -35px',
-                                                    height: '40px',
-
-                                                    ':hover': {
-                                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
-                                                        // transform: 'scale(1.1)'
-                                                    },
-                                                    transition: 'all 0.4s'
-                                                }}>
-                                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
-                                                    <input hidden accept=".jpeg,.jpg,.png" type="file"
-                                                        onChange={handleProfilePictureFileChange}
-                                                        style={{ display: 'none' }}
-                                                        id="profilepicture-input" />
-                                                    <UploadIcon />
-                                                </Icon>
-                                                <TypographyLabelC >
-                                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile Picture' : selectedProfilePicture?.name}
-                                                </TypographyLabelC>
-                                            </Button>
-
-                                        </label>
-                                        <FormHelperText style={{ marginLeft:5, color: '#BD9F00' }}>
-                                            {fieldWarning.selectedprofile}
-                                        </FormHelperText>
-                                    </Grid>
-
-
-
-                                </GridField>
-
-
-
-
-
-                            </div>
-                            <div style={{ paddingTop: 0, paddingBottom: 100 }}>
+                        <div style={{ paddingTop: 10, paddingBottom: 10 }}>
                                 {/**Textfield For First Name*/}
                                 <GridField container spacing={3}>
                                     <Grid item>
@@ -732,6 +619,120 @@ export default function DistributorRegistration() {
                                 </GridField>
 
                             </div>
+                            {/* Account Creation */}
+                            <div style={{ paddingTop: 1, paddingBottom: 90 }}>
+                                <GridField container spacing={3}>
+                                    {/**Textfield For Email Address*/}
+                                    <Grid item>
+                                        <StyledTextField variant="outlined" label="Email Address" style={{ width: '700px' }} inputRef={emailladdressRef} onChange={() => handleInputChange('email')} />
+                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                            {fieldWarning.email}
+                                        </FormHelperText>
+                                    </Grid>
+                                </GridField>
+
+                                <GridField container spacing={3}>
+                                    {/**Textfield For Password*/}
+                                    <Grid item>
+                                        <StyledTextField
+                                            type={isshowPassword ? 'text' : 'password'}
+                                            variant="outlined"
+                                            required
+                                            label='Password'
+
+                                            style={{ width: '700px' }}
+                                            value={password}
+                                            onChange={handlePasswordChange}
+                                            inputRef={passwordRef}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <IconButton onClick={handleShowPassword} onMouseDown={handleMouseDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
+                                                            {isshowPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                )
+                                            }}
+                                        />
+                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                            {fieldWarning.password}
+                                        </FormHelperText>
+                                    </Grid>
+                                </GridField>
+                                <GridField container spacing={3}>
+                                    {/**Textfield For Password Confirmation*/}
+                                    <Grid item>
+                                        <StyledTextField
+                                            type={isshowConfirmPassword ? 'text' : 'password'}
+                                            variant="outlined"
+                                            required label="Confirm Password"
+                                            style={{ width: '700px' }}
+                                            value={confirmPassword}
+                                            onChange={handleConfirmPasswordChange}
+                                            error={passwordError !== ''}
+                                            helperText={passwordError}
+                                            inputRef={confirmpasswordRef}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <IconButton onClick={handleShowConfirmPassword} onMouseDown={handleMouseConfirmDownPassword} style={{ position: 'absolute', marginLeft: -43 }} >
+                                                            {isshowConfirmPassword ? <Visibility style={{ color: '#203949', fontSize: 27 }} /> : <VisibilityOff style={{ color: '#203949', fontSize: 27 }} />}
+
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                )
+                                            }}
+                                        />
+                                    </Grid>
+                                </GridField>
+                                {/* Insert Button for Profile Pic here  */}
+                                <GridField container spacing={8} >
+
+                                    {/**Button For Valid ID File*/}
+                                    <Grid item>
+                                        <label htmlFor="profilepicture-input">
+
+                                            <Button variant="contained" component="span" aria-required
+                                                sx={{
+                                                    backgroundColor: '#2D85E7',
+                                                    width: '700px',
+                                                    margin: '15px 0 0 0px',
+                                                    height: '40px',
+
+                                                    ':hover': {
+                                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                                        // transform: 'scale(1.1)'
+                                                    },
+                                                    transition: 'all 0.4s'
+                                                }}>
+                                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                                    <input hidden accept=".jpeg,.jpg,.png" type="file"
+                                                        onChange={handleProfilePictureFileChange}
+                                                        style={{ display: 'none' }}
+                                                        id="profilepicture-input" />
+                                                    <UploadIcon />
+                                                </Icon>
+                                                <TypographyLabelC >
+                                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile Picture' : selectedProfilePicture?.name}
+                                                </TypographyLabelC>
+                                            </Button>
+
+                                        </label>
+                                        <FormHelperText style={{ marginLeft:5, color: '#BD9F00' }}>
+                                            {fieldWarning.selectedprofile}
+                                        </FormHelperText>
+                                    </Grid>
+
+
+
+                                </GridField>
+
+
+
+
+
+                            </div>
+                            
                             {/* Contact Info
                             <div style={{ paddingTop: 5, paddingBottom: 110 }}>
                                                            </div> */}

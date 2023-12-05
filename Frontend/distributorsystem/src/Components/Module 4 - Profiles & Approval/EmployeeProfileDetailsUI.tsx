@@ -313,7 +313,7 @@ export function EmployeeProfileDetails() {
                   </Grid>
                   <Grid item>
                     <StyleLabel style={{ marginLeft: 50 }}>TIN Number</StyleLabel>
-                    <StyleData style={{ marginLeft: 60 }}>{employee?.tinnumber}</StyleData>
+                    <StyleData style={{ marginLeft: 60 }}>{employee.tinnumber}</StyleData>
                   </Grid>
                 </Grid>
               </CustomTabPanel>

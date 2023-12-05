@@ -112,7 +112,7 @@ const TypographyLabel = styled(Typography)({
     color: '#707070',
 })
 const TypographyLabelB = styled(Typography)({
-    marginTop:10,
+    marginTop: 10,
     marginLeft: "80px",
     textAlign: 'center',
     justifyContent: 'center',
@@ -375,19 +375,19 @@ export default function EmployeeRegistration() {
     const handleCashierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsCashierSelected(event.target.checked);
 
-     
+
     };
 
     const handleSalesAssociateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsSalesAssociateSelected(event.target.checked);
 
-     
+
     };
 
     const handleCollectorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsCollectorSelected(event.target.checked);
 
-       
+
     };
 
     const handlePositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -395,7 +395,7 @@ export default function EmployeeRegistration() {
             handleInputChange('position')
         }
         setSelectedPosition(event.target.value);
-       
+
     };
 
 
@@ -405,7 +405,7 @@ export default function EmployeeRegistration() {
 
         if (file) {
             const maxSize = 1024 * 1024 * 5; // 5 MB 
-           
+
             if (file.size <= maxSize) {
                 setSelectedProfilePicture(file);
             } else {
@@ -597,8 +597,152 @@ export default function EmployeeRegistration() {
                     <div style={{ padding: '1px 1px 1px 30px', display: 'flex', flexDirection: 'column' }}>
                         <ContentNameTypography>Sign Up as Employee</ContentNameTypography>
                         <ScrollStyle id="scrollContainer">
+
+                            <div style={{ paddingTop: 60, paddingBottom: 80 }}>
+                                {/**Textfield For First Name*/}
+                                <GridField container spacing={3}>
+                                    <Grid item>
+                                        <StyledTextField variant="outlined" label="First Name" required inputRef={firstnameRef} onChange={() => handleInputChange('firstname')} />
+                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                            {fieldWarning.firstname}
+                                        </FormHelperText>
+                                    </Grid>
+                                    {/**Textfield For Middle Name*/}
+                                    <Grid item>
+                                        <StyledTextField variant="outlined" label="Middle Name" inputRef={middlenameRef} />
+                                    </Grid>
+                                </GridField>
+                                <GridField container spacing={3}>
+                                    {/**Textfield For Last Name*/}
+                                    <Grid item>
+                                        <StyledTextField variant="outlined" label="Last Name" required inputRef={lastnameRef} onChange={() => handleInputChange('lastname')} />
+                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                            {fieldWarning.lastname}
+                                        </FormHelperText>
+                                    </Grid>
+                                    <Grid item>
+                                        {/**Radio Group Button For Gender*/}
+                                        <TypographyLabel>Gender:
+                                            <div style={{ margin: '-7px 0 0 0px' }}>
+                                                <RadioStyle
+                                                    row
+                                                    name="genderRadioGroup"
+                                                    aria-required
+                                                    value={selectedGender1}
+                                                    onChange={handleGender}
+                                                >
+                                                    <FormControlLabel style={{ marginLeft: '20px' }} value='Male' control={<Radio />} label={<RadioLabel>Male</RadioLabel>} />
+                                                    <FormControlLabel style={{ marginLeft: '20px' }} value='Female' control={<Radio />} label={<RadioLabel>Female</RadioLabel>} />
+                                                </RadioStyle>
+                                            </div>
+                                        </TypographyLabel>
+                                        <FormHelperText style={{ marginLeft: 9, color: '#BD9F00' }}>
+                                            {fieldWarning.gender}
+                                        </FormHelperText>
+                                    </Grid>
+                                </GridField>
+                                <GridField container spacing={3}>
+                                    {/**DatePicker For Birthdate*/}
+                                    <Grid item>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <StyledDatePicker
+                                                slotProps={{
+                                                    textField: {
+                                                        variant: 'outlined',
+                                                        label: <span style={labelStyle}>Birthdate</span>,
+
+                                                        style: labelStyle
+                                                    }
+                                                }}
+                                                value={selectedBDate}
+                                                maxDate={maxDate}
+                                                onChange={(date) => {
+                                                    setSelectedBDate(date as Dayjs | null);
+                                                    handleInputChange('birthdate');
+                                                }}
+                                            />
+                                        </LocalizationProvider>
+                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                            {fieldWarning.birthdate}
+                                        </FormHelperText>
+                                    </Grid>
+                                </GridField>
+                                <div style={{ paddingTop: 10, paddingBottom: 30 }}>
+                                    <GridField container spacing={3} >
+                                        <Grid item>
+                                            <StyledTextField variant="outlined" label="TIN Number" required style={{ width: '700px' }} inputRef={tinnumberRef} onChange={() => handleInputChange('tinnum')} />
+                                            <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                                {fieldWarning.tinnum}
+                                            </FormHelperText>
+                                        </Grid>
+                                    </GridField>
+                                </div>
+                            </div>
+                            {/* Contact Info */}
+                            <div style={{ paddingTop: 60, paddingBottom: 110 }}>
+                                <GridField container spacing={3}>
+                                    {/**Textfield For Contact Number*/}
+                                    <Grid item>
+                                        <StyledTextField variant="outlined" label="Contact Number" required style={{ width: '700px' }} inputRef={contactnumberRef} onChange={() => handleInputChange('contactnum')} />
+                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                            {fieldWarning.contactnum}
+                                        </FormHelperText>
+                                    </Grid>
+                                </GridField>
+                                <GridField container spacing={3}>
+                                    {/**Textfield For Current Addrress*/}
+                                    <Grid item>
+                                        <StyledTextField variant="outlined" label="Current Address" required style={{ width: '700px', }} inputRef={currentaddressRef} onChange={handleCurrentAddressChange} />
+                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                            {fieldWarning.currentadd}
+                                        </FormHelperText>
+                                    </Grid>
+                                </GridField>
+                                <GridField container spacing={3}>
+                                    {/**Textfield For Permanent Address*/}
+                                    <Grid item>
+                                        <StyledTextField variant="outlined" label="Permanent Address"
+                                            required
+                                            style={{ width: '700px' }}
+                                            inputRef={permanentaddressRef}
+                                            value={permanentAddress}
+                                            onChange={(e) => { setPermanentAddress(e.target.value); handleInputChange('permanentadd') }}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <Button variant='contained' style={{ height: 40, marginRight: -13 }} onClick={handleCopyAddress}>Copy Current Address</Button>
+                                                    </InputAdornment>
+                                                )
+                                            }}
+                                        />
+                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
+                                            {fieldWarning.permanentadd}
+                                        </FormHelperText>
+                                    </Grid>
+                                </GridField>
+                                <GridField container spacing={0}>
+                                    <Grid item>
+                                        <TypographyLabelB>Apply As:
+                                            <FormGroup row style={{ marginTop: '-9px' }} aria-required onChange={handlePositionChange}>
+                                                <FormControlLabel style={{ marginLeft: '20px' }} control={<Checkbox checked={isCashierSelected}
+                                                    onChange={handleCashierChange}
+                                                    name="isCashier" />} label={<CheckLabel>Cashier</CheckLabel>} />
+                                                <FormControlLabel style={{ marginLeft: '20px' }} control={<Checkbox checked={isSalesAssociateSelected}
+                                                    onChange={handleSalesAssociateChange}
+                                                    name="isSalesAssociate" />} label={<CheckLabel>Sales Associate</CheckLabel>} />
+                                                <FormControlLabel style={{ marginLeft: '20px' }} control={<Checkbox checked={isCollectorSelected}
+                                                    onChange={handleCollectorChange}
+                                                    name="isCollector" />} label={<CheckLabel>Collector</CheckLabel>} />
+                                            </FormGroup>
+                                        </TypographyLabelB>
+                                        <FormHelperText style={{ marginLeft: 285, color: '#BD9F00' }}>
+                                            {fieldWarning.position}
+                                        </FormHelperText>
+                                    </Grid>
+                                </GridField>
+                            </div>
                             {/* Account Creation */}
-                            <div style={{ paddingTop: 30, paddingBottom: 30 }}>
+                            <div style={{ paddingTop: 30, paddingBottom: 40 }}>
                                 <GridField container spacing={3}>
                                     {/**Textfield For Email Address*/}
                                     <Grid item>
@@ -732,149 +876,6 @@ export default function EmployeeRegistration() {
                             </div>
 
 
-                            <div style={{ paddingTop: 60, paddingBottom: 80 }}>
-                                {/**Textfield For First Name*/}
-                                <GridField container spacing={3}>
-                                    <Grid item>
-                                        <StyledTextField variant="outlined" label="First Name" required inputRef={firstnameRef} onChange={() => handleInputChange('firstname')} />
-                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
-                                            {fieldWarning.firstname}
-                                        </FormHelperText>
-                                    </Grid>
-                                    {/**Textfield For Middle Name*/}
-                                    <Grid item>
-                                        <StyledTextField variant="outlined" label="Middle Name" inputRef={middlenameRef} />
-                                    </Grid>
-                                </GridField>
-                                <GridField container spacing={3}>
-                                    {/**Textfield For Last Name*/}
-                                    <Grid item>
-                                        <StyledTextField variant="outlined" label="Last Name" required inputRef={lastnameRef} onChange={() => handleInputChange('lastname')} />
-                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
-                                            {fieldWarning.lastname}
-                                        </FormHelperText>
-                                    </Grid>
-                                    <Grid item>
-                                        {/**Radio Group Button For Gender*/}
-                                        <TypographyLabel>Gender:
-                                            <div style={{ margin: '-7px 0 0 0px' }}>
-                                                <RadioStyle
-                                                    row
-                                                    name="genderRadioGroup"
-                                                    aria-required
-                                                    value={selectedGender1}
-                                                    onChange={handleGender}
-                                                >
-                                                    <FormControlLabel style={{ marginLeft: '20px' }} value='Male' control={<Radio />} label={<RadioLabel>Male</RadioLabel>} />
-                                                    <FormControlLabel style={{ marginLeft: '20px' }} value='Female' control={<Radio />} label={<RadioLabel>Female</RadioLabel>} />
-                                                </RadioStyle>
-                                            </div>
-                                        </TypographyLabel>
-                                        <FormHelperText style={{ marginLeft: 9, color: '#BD9F00' }}>
-                                            {fieldWarning.gender}
-                                        </FormHelperText>
-                                    </Grid>
-                                </GridField>
-                                <GridField container spacing={3}>
-                                    {/**DatePicker For Birthdate*/}
-                                    <Grid item>
-                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                            <StyledDatePicker
-                                                slotProps={{
-                                                    textField: {
-                                                        variant: 'outlined',
-                                                        label: <span style={labelStyle}>Birthdate</span>,
-
-                                                        style: labelStyle
-                                                    }
-                                                }}
-                                                value={selectedBDate}
-                                                maxDate={maxDate}
-                                                onChange={(date) => {
-                                                    setSelectedBDate(date as Dayjs | null);
-                                                    handleInputChange('birthdate');
-                                                }}
-                                            />
-                                        </LocalizationProvider>
-                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
-                                            {fieldWarning.birthdate}
-                                        </FormHelperText>
-                                    </Grid>
-                                </GridField>
-                                <div style={{ paddingTop: 10, paddingBottom: 30 }}>
-                                    <GridField container spacing={3} >
-                                        <Grid item>
-                                            <StyledTextField variant="outlined" label="TIN Number" required style={{ width: '700px' }} inputRef={tinnumberRef} onChange={() => handleInputChange('tinnum')} />
-                                            <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
-                                                {fieldWarning.tinnum}
-                                            </FormHelperText>
-                                        </Grid>
-                                    </GridField>
-                                </div>
-                            </div>
-                            {/* Contact Info */}
-                            <div style={{ paddingTop: 5, paddingBottom: 110 }}>
-                                <GridField container spacing={3}>
-                                    {/**Textfield For Contact Number*/}
-                                    <Grid item>
-                                        <StyledTextField variant="outlined" label="Contact Number" required style={{ width: '700px' }} inputRef={contactnumberRef} onChange={() => handleInputChange('contactnum')} />
-                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
-                                            {fieldWarning.contactnum}
-                                        </FormHelperText>
-                                    </Grid>
-                                </GridField>
-                                <GridField container spacing={3}>
-                                    {/**Textfield For Current Addrress*/}
-                                    <Grid item>
-                                        <StyledTextField variant="outlined" label="Current Address" required style={{ width: '700px', }} inputRef={currentaddressRef} onChange={handleCurrentAddressChange} />
-                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
-                                            {fieldWarning.currentadd}
-                                        </FormHelperText>
-                                    </Grid>
-                                </GridField>
-                                <GridField container spacing={3}>
-                                    {/**Textfield For Permanent Address*/}
-                                    <Grid item>
-                                        <StyledTextField variant="outlined" label="Permanent Address"
-                                           required
-                                           style={{ width:'700px'}}
-                                            inputRef={permanentaddressRef}
-                                            value={permanentAddress}
-                                            onChange={(e) => { setPermanentAddress(e.target.value); handleInputChange('permanentadd') }}
-                                            InputProps={{
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        <Button variant='contained' style={{ height: 40, marginRight: -13 }} onClick={handleCopyAddress}>Copy Current Address</Button>
-                                                    </InputAdornment>
-                                                )
-                                            }}
-                                        />
-                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
-                                            {fieldWarning.permanentadd}
-                                        </FormHelperText>
-                                    </Grid>
-                                </GridField>
-                                <GridField container spacing={0}>
-                                    <Grid item>
-                                        <TypographyLabelB>Apply As:
-                                            <FormGroup row style={{ marginTop: '-9px' }} aria-required onChange={handlePositionChange}>
-                                                <FormControlLabel style={{ marginLeft: '20px' }} control={<Checkbox checked={isCashierSelected}
-                                                    onChange={handleCashierChange}
-                                                    name="isCashier" />} label={<CheckLabel>Cashier</CheckLabel>} />
-                                                <FormControlLabel style={{ marginLeft: '20px' }} control={<Checkbox checked={isSalesAssociateSelected}
-                                                    onChange={handleSalesAssociateChange}
-                                                    name="isSalesAssociate" />} label={<CheckLabel>Sales Associate</CheckLabel>} />
-                                                <FormControlLabel style={{ marginLeft: '20px' }} control={<Checkbox checked={isCollectorSelected}
-                                                    onChange={handleCollectorChange}
-                                                    name="isCollector" />} label={<CheckLabel>Collector</CheckLabel>} />
-                                            </FormGroup>
-                                        </TypographyLabelB>
-                                        <FormHelperText style={{ marginLeft: 285, color: '#BD9F00' }}>
-                                            {fieldWarning.position}
-                                        </FormHelperText>
-                                    </Grid>
-                                </GridField>                  
-                            </div>
                         </ScrollStyle>
                         <div>
                             <Button variant="contained" style={{ height: 50, width: 170, borderRadius: 50 }} onClick={handleNewEmployee}>

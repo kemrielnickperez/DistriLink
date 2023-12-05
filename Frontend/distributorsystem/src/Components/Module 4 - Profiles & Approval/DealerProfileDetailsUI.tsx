@@ -585,20 +585,20 @@ export default function DealerProfileDetails() {
 
     // Define columns for the orders table
     const columnsOrder: GridColDef[] = [
-        { field: 'id', headerName: 'Order ID', width: 150 },
+        { field: 'id', headerName: 'Order ID', width: 140 },
         { field: 'orderDate', headerName: 'Order Date', width: 180 },
-        { field: 'distributionDate', headerName: 'Distribution Date', width: 180 },
-        { field: 'orderAmount', headerName: 'Order Amount', width: 180 },
+        { field: 'distributionDate', headerName: 'Distribution Date', width: 170 },
+        { field: 'orderAmount', headerName: 'Order Amount', width: 170 },
         {
             field: 'orderStatus',
             headerName: 'Order Status',
-            width: 120,
+            width: 110,
             renderCell: (params: { row: any; }) => {
                 const dealer = params.row;
                 const isClosed = params.row.orderStatus;
                 return (
                     <div>
-                        {isClosed ? <span>Closed</span> : <span>Open</span>}
+                        {isClosed ? <span style={{color:'#E77D7D'}}>Closed</span> : <span style={{color:'#2A9221'}}>Open</span>}
                     </div>
                 );
             }
@@ -825,6 +825,7 @@ export default function DealerProfileDetails() {
                                     <div>
                                         {/* Your other components for displaying order-related information */}
                                         <DataGrid
+                                            sx={{height:370, overflowX:'hidden'}}
                                             rows={rowsOrder} columns={columnsOrder}
                                             initialState={{
                                                 pagination: {

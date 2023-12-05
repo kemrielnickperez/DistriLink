@@ -43,6 +43,7 @@ import ContentCashier from './ContentsCashier';
 import ContentBothSalesCashier from './ContentsBothSalesCashier';
 import ThankYouScreen from '../Components/A - SplashScreen/ThankYouScreen';
 import { DistributorProfileDetails } from '../Components/Module 4 - Profiles & Approval/DistributorProfileDetailsUI';
+import ScrollToTop from './ScrollToTop';
 
 export default function MainRoutes() {
 
@@ -73,41 +74,41 @@ export default function MainRoutes() {
                     {user && user!.tableName === "Dealer" && (
                         <Route path="/" element={<ContentDealer />}>
                             <Route path="/" element={<Navigate replace to="dashboard" />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/dealerProfile" element={<DealerProfile />} />
-                            <Route path="/dealerOrderForm" element={<DealerOrderForm />} />
+                            <Route path="/dashboard" element={<><ScrollToTop/><Dashboard /></>} />
+                            <Route path="/dealerProfile" element={<><ScrollToTop/><DealerProfile /></>} />
+                            <Route path="/dealerOrderForm" element={<><ScrollToTop/><DealerOrderForm /></>} />
                         </Route>
                     )}
 
                     {user && user!.tableName === "Distributor" && (
                         <Route path="/" element={<Content />}>
                             <Route path="/" element={<Navigate replace to="dashboard" />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/dashboard" element={<><ScrollToTop/><Dashboard /></>} />
                             <Route path="/paymentList" element={<PaymentList />} />
 
                            {/*  <Route path="/dealerOrderForm" element={<DealerOrderForm />} /> */}
-                            <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
-                            <Route path="/orderConfirmation/:objectId" element={<OrderConfirmation />} />
+                            <Route path="/distributorOrderForm" element={<><ScrollToTop/><DistributorOrderForm/></>} />
+                            <Route path="/orderConfirmation/:objectId" element={<><ScrollToTop/><OrderConfirmation /></>} />
                             <Route path="/productDistributionList" element={<ProductDistributionList />} />
-                            <Route path="/orderTransactionDetails/:objectId" element={<OrderTransactionDetails />} />
+                            <Route path="/orderTransactionDetails/:objectId" element={<><ScrollToTop/><OrderTransactionDetails /></>} />
 
                             <Route path="/dealerProfileList" element={<DealerProfileListUI />} />
-                            <Route path="/dealerProfileDetails/:objectId" element={<DealerProfileDetails />}></Route>
-                            <Route path="/dealerRegistration" element={<DealerRegistration />} />
+                            <Route path="/dealerProfileDetails/:objectId" element={<><ScrollToTop/><DealerProfileDetails /></>}></Route>
+                            <Route path="/dealerRegistration" element={<DealerRegistration/>} />
 
                             <Route path="/employeeProfileList" element={<EmployeeProfileListUI />} />
-                            <Route path="/employeeProfileDetails/:objectId" element={<EmployeeProfileDetails />}></Route>
+                            <Route path="/employeeProfileDetails/:objectId" element={<><ScrollToTop/><EmployeeProfileDetails /></>}></Route>
                             <Route path="/employeeRegistrationn" element={<EmployeeRegistration />} />
 
-                            <Route path="/schedules/:objectId" element={<Schedules />} />
+                            <Route path="/schedules/:objectId" element={<><ScrollToTop/><Schedules /></>} />
 
-                            <Route path="/recordDirectPayment" element={<RecordDirectPayment />} />
+                            <Route path="/recordDirectPayment" element={<><ScrollToTop/><RecordDirectPayment /></>} />
                             <Route path="/dealerApproval" element={<DealerApproval />} />
                             <Route path="/employeeRegistration" element={<EmployeeRegistration />} />
 
                             <Route path="/collectorAssignment" element={<CollectorAssignment />} />
-                            <Route path="/orderDetails/:objectId" element={<OrderDetails />} />
-                            <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails />}></Route>
+                            <Route path="/orderDetails/:objectId" element={<><ScrollToTop/><OrderDetails /></>} />
+                            <Route path="/paymentReceiptDetails/:objectId" element={<><ScrollToTop/><PaymentReceiptDetails /></>}></Route>
                         
                             <Route path="/distributorProfileDetails/:objectId" element={<DistributorProfileDetails />}></Route>
                         </Route>
@@ -116,12 +117,12 @@ export default function MainRoutes() {
                     {user && user!.tableName === "Sales Associate" && (
                         <Route path="/" element={<ContentSalesAssociate />}>
                             <Route path="/" element={<Navigate replace to="dashboard" />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/employeeProfile" element={<EmployeeProfileDetails />} />
+                            <Route path="/dashboard" element={<><ScrollToTop/><Dashboard /></>} />
+                            <Route path="/employeeProfile" element={<><ScrollToTop/><EmployeeProfileDetails /></>} />
                             <Route path="/productDistributionList" element={<ProductDistributionList />} />
-                            <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
+                            <Route path="/distributorOrderForm" element={<><ScrollToTop/><DistributorOrderForm /></>} />
                             <Route path="/collectorAssignment" element={<CollectorAssignment />} />
-                            <Route path="/schedules/:objectId" element={<Schedules />} />
+                            <Route path="/schedules/:objectId" element={<><ScrollToTop/><Schedules /></>} />
                         </Route>
                     )}
 
@@ -138,14 +139,14 @@ export default function MainRoutes() {
                     {user && user!.tableName === "Sales Associate and Cashier" && (
                         <Route path="/" element={<ContentBothSalesCashier />}>
                             <Route path="/" element={<Navigate replace to="dashboard" />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/employeeProfile" element={<EmployeeProfileDetails />} />
+                            <Route path="/dashboard" element={<><ScrollToTop/><Dashboard/></>} />
+                            <Route path="/employeeProfile" element={<><ScrollToTop/><EmployeeProfileDetails /></>} />
                             <Route path="/productDistributionList" element={<ProductDistributionList />} />
-                            <Route path="/distributorOrderForm" element={<DistributorOrderForm />} />
+                            <Route path="/distributorOrderForm" element={<><ScrollToTop/><DistributorOrderForm /></>} />
                             <Route path="/collectorAssignment" element={<CollectorAssignment />} />
-                            <Route path="/schedules/:objectId" element={<Schedules />} />
+                            <Route path="/schedules/:objectId" element={<><ScrollToTop/><Schedules /></>} />
                             <Route path="/paymentList" element={<PaymentList />} />
-                            <Route path="/recordDirectPayment" element={<RecordDirectPayment />} />
+                            <Route path="/recordDirectPayment" element={<><ScrollToTop/><RecordDirectPayment /></>} />
                         </Route>
                     )}
 

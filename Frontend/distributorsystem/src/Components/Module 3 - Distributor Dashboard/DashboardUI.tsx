@@ -29,7 +29,7 @@ const PendingOrdersPaper = styled(Paper)({
     left: -280,
     backgroundColor: '#ffffff',
     borderRadius: "22px",
-    height: "300px",
+    height: "400px",
     justifyContent: 'center',
     display: 'flex',
     alignItems: 'center',
@@ -51,6 +51,7 @@ const PendingOrderTypo = styled(Typography)({
 const ViewOrdersTypo = styled(Typography)({
     position: 'absolute',
     top: '85%',
+    cursor:'pointer',
     left: '50%',
     transform: 'translateX(-50%)',
     fontFamily: 'Inter, sans - serif',
@@ -58,7 +59,11 @@ const ViewOrdersTypo = styled(Typography)({
     fontSize: '15px',
     color: "#203949",
     textDecoration: 'underline black 2px',
-    fontStyle: 'italic'
+    ':hover': {
+        color: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s',
 })
 
 const TableHeaderCell = styled(TableCell)({
@@ -74,7 +79,7 @@ const PendingPaymentsPaper = styled(Paper)({
     left: -280,
     backgroundColor: '#ffffff',
     borderRadius: "22px",
-    height: "300px",
+    height: "400px",
     justifyContent: 'center',
     display: 'flex',
     alignItems: 'center',
@@ -85,6 +90,7 @@ const PendingPaymentsPaper = styled(Paper)({
 const PendingPaymentTypo = styled(Typography)({
     position: 'absolute',
     top: '8%',
+    botton:8,
     left: '20%',
     transform: 'translateX(-50%)',
     fontFamily: 'Inter, sans - serif',
@@ -96,14 +102,18 @@ const PendingPaymentTypo = styled(Typography)({
 const ViewPaymentTypo = styled(Typography)({
     position: 'absolute',
     top: '85%',
-    left: '50%',
-    transform: 'translateX(-50%)',
+    cursor:'pointer',
+    left: '30%',
     fontFamily: 'Inter, sans - serif',
     fontWeight: 'bold',
     fontSize: '15px',
     color: "#203949",
     textDecoration: 'underline black 2px',
-    fontStyle: 'italic'
+    ':hover': {
+        color: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s',
 })
 
 const PendingPaymentsGrid = styled(Grid)({
@@ -113,11 +123,11 @@ const PendingPaymentsGrid = styled(Grid)({
 })
 
 const PendingDealerPaper = styled(Paper)({
-    top: -540,
+    top: -735,
     left: 420,
     backgroundColor: '#ffffff',
     borderRadius: "22px",
-    height: "628px",
+    height: "800px",
     justifyContent: 'center',
     display: 'flex',
     alignItems: 'center',
@@ -140,14 +150,18 @@ const PendingDealerTypo = styled(Typography)({
 const ViewDealersTypo = styled(Typography)({
     position: 'absolute',
     top: '90%',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    fontFamily: 'Inter, sans - serif',
+    cursor:'pointer',
+    left: '30%',
+    fontFamily: 'Inter',
     fontWeight: 'bold',
     fontSize: '15px',
     color: "#203949",
-    textDecoration: 'underline black 2px',
-    fontStyle: 'italic'
+    textDecoration: 'underline #203949 2px',
+    ':hover': {
+        color: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s',
 })
 
 
@@ -230,7 +244,7 @@ export default function Dashboard() {
                         <PendingOrdersPaper>
                             <PendingOrderTypo>Pending Orders</PendingOrderTypo>
                             <TableContainer>
-                                <Table aria-label='simple table'>
+                                <Table style={{ position: 'absolute', top: 90, left: 0, right: 0 }} aria-label='simple table'>
                                     <TableHead>
                                         <TableRow>
                                             <TableHeaderCell align='center'>Order Transaction ID</TableHeaderCell>
@@ -255,7 +269,8 @@ export default function Dashboard() {
                             <ViewOrdersTypo onClick={() => handleOrdersListClick()}> View all unconfirmed orders </ViewOrdersTypo>
 
                         </PendingOrdersPaper>
-                    </PendingOrdersGrid><PendingPaymentsGrid item container>
+                    </PendingOrdersGrid>
+                    <PendingPaymentsGrid item container>
                             <PendingPaymentsPaper>
                                 <PendingPaymentTypo>Pending Payments</PendingPaymentTypo>
                                 <TableContainer>
@@ -283,8 +298,8 @@ export default function Dashboard() {
                         </PendingPaymentsGrid><PendingDealerGrid item container>
                             <PendingDealerPaper>
                                 <PendingDealerTypo>Pending Dealer Registration</PendingDealerTypo>
-                                <TableContainer>
-                                    <Table aria-label='simple table'>
+                                <TableContainer >
+                                    <Table style={{ position: 'absolute', top: 90, left: 0, right: 0 }} aria-label='simple table'>
                                         <TableHead>
                                             <TableRow>
                                                 <TableHeaderCell align='left'>Dealer Name</TableHeaderCell>
@@ -308,9 +323,9 @@ export default function Dashboard() {
 
                         </PendingDealerGrid></>
               ) : (
-                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', marginTop: '0', marginLeft: '90vh' }}>
-                <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
-                <LinearProgress sx={{ width: '80%' }} />
+                <Box sx={{position:'fixed', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', marginTop: '0', marginLeft: '90vh' }}>
+                <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px', marginTop:-250, marginLeft:-50 }} />
+                <LinearProgress sx={{ width: '80%',marginLeft:-6 }} />
                 {/* You can adjust the width as needed */}
               </Box>
             )}
