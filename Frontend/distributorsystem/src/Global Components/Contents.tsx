@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
 import NewNavBar from './NewNavBar';
 import { AppBar, Container, Toolbar } from '@mui/material';
 import NewAppBar from './NewAppBar';
@@ -7,6 +7,7 @@ import NewAppBar from './NewAppBar';
 
 export default function Content() {
   const location = useLocation();
+  const {objectId} = useParams();
 
   const getNavNamePage=()=>{
     const path=location.pathname;
@@ -19,6 +20,8 @@ export default function Content() {
         '/paymentList':'Payment Receipts',
         '/distributorOrderForm': 'Product Distribution Form',
         '/recordDirectPayment':'Record Direct Payment',
+        [`/distributorProfileDetails/${objectId}`] :'Distributor Information',
+
     }
     const navpageMapped= navPageNameMapping[path]||'Unknown';
     return navpageMapped;
