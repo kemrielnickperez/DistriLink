@@ -51,7 +51,8 @@ const getNavContentPage=()=>{
       [`/orderTransactionDetails/${objectId}`] : `View dealer's order transaction details - Order Transaction ID:  ${objectId}`  ,
       [`/paymentReceiptDetails/${objectId}`] : `View payment receipt details - Receipt ID : ${objectId}`,
       [`/schedules/${objectId}`] : `Set schedule of due date/s on dealer's order transaction`,
-      '/recordDirectPayment':'View, Update and Record Direct Payment from your dealer/s'
+      '/recordDirectPayment':'View, Update and Record Direct Payment from your dealer/s',
+      [`/distributorProfileDetails/${objectId}`] : `View distributor profile details - ${objectId}`,
     }
   const navpageMapped= navPageContentMapping[path]||'Unknown';
   return navpageMapped;
