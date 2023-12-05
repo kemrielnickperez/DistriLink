@@ -119,15 +119,7 @@ const AddToCart = styled(Button)({
   transition: 'all 0.4s'
 })
 const SaveButton= styled(Button)({
-  // position: 'relative',
-  // width: '200px',
-  // height: 50,
-  // left: -30,
-  // ':hover': {
-  //   backgroundColor: '#2D85E7',
-  //   transform: 'scale(1.1)'
-  // },
-  // transition: 'all 0.4s'
+
   backgroundColor: 'rgb(45, 133, 231,0.8)',
   borderRadius: 5,
   color: '#FFFFFF',
@@ -178,11 +170,9 @@ transition: 'all 0.4s'
 })
 export default function DealerOrderForm() {
 
-  const [newOrder] = useRestOrder();
+  const  [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit] = useRestDealer();
 
-  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
-
-  const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
   const [products, setProducts] = useState<IProduct[]>([]);
 
@@ -206,7 +196,7 @@ export default function DealerOrderForm() {
 
   const [open, setOpen] = useState(false);
 
-   const [toastShown, setToastShown] = useState(false);
+
 
   const penaltyRateRef = useRef<TextFieldProps>(null);
 
@@ -243,9 +233,19 @@ export default function DealerOrderForm() {
     }
   ];
 
+  const isMounted = useRef(false);
+
   useEffect(() => {
-    findDealer();
+    if (!isMounted.current) {
+      // Your code to be executed once after component mounts
+      findDealer();
+
+      // Set isMounted to true to prevent this block from running again
+      isMounted.current = true;
+    }
+
     getAllProducts();
+
     const newTotalAmount = orderedProducts.reduce((total, product) => {
       return total + product.product.price * product.quantity;
     }, 0);
@@ -253,15 +253,9 @@ export default function DealerOrderForm() {
     // Update the total amount state
     setTotalAmount(newTotalAmount);
 
-  }, [isDealerFound, products, orderedProducts]);
-  /* 
-    function createOrderedProduct(product: IProduct, quantity: number, subtotal:number): IOrderedProducts {
-      return {
-        product: product,
-        quantity: quantity,
-        subtotal: product.price * quantity
-      };
-    } */
+
+  }, [orderedProducts, products]); // Include only the dependencies that are used inside the useEffect
+
 
   {/**Handler for Alert - Function to define the type of alert*/ }
   function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
@@ -284,13 +278,11 @@ export default function DealerOrderForm() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
       .then((response) => {
         setProducts(response.data);
-        //console.log(response.data);
-        // headerHandleAlert('Success', 'Products have been successfully added for distribution.', 'success');
       })
       .catch((error) => {
         console.error('Error retrieving products:', error);
         headerHandleAlert('Error', 'Error retrieving products. Please try again.', 'error');
-        // alert("Error retrieving products. Please try again.");
+
       });
   }
 
@@ -303,8 +295,7 @@ export default function DealerOrderForm() {
       );
 
       if (existingProductIndex !== -1) {
-        // alert('Product already added to the cart');
-        // toast
+
         toast.warning(chosenProduct.name + ' is already been added to the cart', {
           position: "bottom-right",
           autoClose: 5000,
@@ -324,7 +315,6 @@ export default function DealerOrderForm() {
           quantity: Number(quantity),
           subtotal: chosenProduct.price * Number(quantity),
         };
-        console.log(chosenProduct.price * Number(quantity))
         setOrderedProducts([...orderedProducts, newOrderedProduct]);
         setChosenProduct(null);
         setQuantity('');
@@ -392,7 +382,7 @@ export default function DealerOrderForm() {
 
   const findDealer = () => {
 
-    getDealerByID("6d6abfe8")
+    getDealerByID("343317e8")
 
     //Problematic pa siya ngari na part kay on loop sya
     // isDealerFound ? headerHandleAlert('Dealer located in the System.', "The dealer ID has been found and is ready for product distribution.", 'success')
@@ -411,28 +401,30 @@ export default function DealerOrderForm() {
       const orderAmount = orderedProducts.reduce((total, product) => {
         return total + product.product.price * product.quantity;
       }, 0);
-      const uuid = uuidv4();
-      const orderuuid = uuid.slice(0, 8)
-      console.log(orderedProducts)
-      newOrder({
-        orderid: orderuuid,
-        distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-        //moment ang gamit ani para maka generate og date today
-        orderdate: moment().format('YYYY-MM-DD'),
-        penaltyrate: Number(penaltyRateRef.current?.value),
-        paymentterms: paymentTerm,
-        orderamount: orderAmount,
-        distributor: dealer!.distributor,
-        collector: null,
-        dealer: dealer!,
-        orderedproducts: orderedProducts,
-        paymenttransactions: [],
-        confirmed: false,
-        isclosed: false
-      });
-      //if possible kay ara na siya mo clear after sa snackbar
-      headerHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
-      clearInputValues();
+      if (orderAmount < dealerRemainingCredit!) {
+        newOrder({
+          orderid: uuidv4().slice(0, 8),
+          distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
+          //moment ang gamit ani para maka generate og date today
+          orderdate: moment().format('YYYY-MM-DD'),
+          penaltyrate: Number(penaltyRateRef.current?.value),
+          paymentterms: paymentTerm,
+          orderamount: orderAmount,
+          distributor: dealer!.distributor!,
+          collector: null,
+          dealer: dealer!,
+          orderedproducts: orderedProducts,
+          paymenttransactions: [],
+          confirmed: false,
+          isclosed: false
+        });
+        //if possible kay ara na siya mo clear after sa snackbar
+        headerHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
+        clearInputValues();
+      }
+      else {
+        headerHandleAlert('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust ToT.", 'warning')
+      }
     }
 
     else {

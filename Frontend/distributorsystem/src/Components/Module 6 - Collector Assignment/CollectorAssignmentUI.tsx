@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Autocomplete, Box, Button, Card, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Autocomplete, Box, Button, Card, CircularProgress, Slide, SlideProps, Snackbar, TextField, Typography, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { IEmployee, IOrder } from "../../RestCalls/Interfaces";
 import { auto } from "@popperjs/core";
@@ -108,8 +108,12 @@ const DataGridStyle = styled(DataGrid)({
 })
 
 export default function CollectorAssignment() {
-  const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
+
   const navigate = useNavigate();
+
+
+  const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
+
 
   {/** useStates */ }
   const [collectors, setCollectors] = useState<IEmployee[]>([]);
@@ -121,20 +125,13 @@ export default function CollectorAssignment() {
   const [alerttitle, setTitle] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('success');
+  const [loading, setLoading] = useState(true);
 
 
-  {/** functions */ }
-  /*  function getAllCollectors() {
-     axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
-       .then((response) => {
-         setCollectors(response.data);
-         
-       })
-       .catch((error) => {
-         console.error('Error retrieving collectors:', error);
-         alert("Error retrieving collectors. Please try again.");
-       });
-   } */
+  const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+ 
+
+
 
 
   {/**Handler for Alert - Function to define the type of alert*/ }
@@ -156,7 +153,7 @@ export default function CollectorAssignment() {
 
 
   function getAllCollectors() {
-    axios.get<IEmployee[]>('http://localhost:8080/employee/getAllCollectors')
+    axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllCollectorsByDistributorID/${distributorFromStorage.distributorid}`)
       .then((response) => {
         const updatedCollectors = response.data.map((collector) => {
           const assignedOrders = orders.filter((order) => order.collector?.employeeid === collector.employeeid);
@@ -167,48 +164,41 @@ export default function CollectorAssignment() {
       .catch((error) => {
         console.error('Error retrieving collectors:', error);
         headerHandleAlert('Error', "Error retrieving collectors. Please try again..", 'error');
-        // alert("Error retrieving collectors. Please try again.");
+
       });
   }
 
   function getAllOrders() {
-    axios.get<IOrder[]>('http://localhost:8080/order/getAllOrders')
+    axios.get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${distributorFromStorage.distributorid}`)
       .then((response) => {
-        const confirmedOrders = response.data.filter(order => order.confirmed && !order.isclosed);
-
-        setOrders(confirmedOrders);
-
+        setOrders(response.data.filter(order => order.confirmed && !order.isclosed));
       })
       .catch((error) => {
-        console.error('Error retrieving collectors:', error);
+       
         headerHandleAlert('Error', "Error retrieving orders. Please try again..", 'error');
-        // alert("Error retrieving collectors. Please try again.");
+        
       });
   }
 
-
   useEffect(() => {
     getAllCollectors();
+    console.log(orders);
     getAllOrders();
 
   }, [orders]);
 
-  {/** Columns for DataGrid */ }
 
-
-  {/** Columns for DataGrid */ }
   const columns: GridColDef[] = [
     { field: 'orderID', headerName: 'Order Transaction ID', width: 200 },
     { field: 'dealerName', headerName: 'Dealer Name', width: 215 },
-    // { field: 'dueDate', headerName: 'Payment Due Date', width: 160 },
     { field: 'amountDue', headerName: 'Amount Due', width: 145 },
     {
       field: 'collectorStatus',
       headerName: 'Collector Status',
       width: 175,
       renderCell: (params) => (
-        <div style={{ 
-          color: params.value === 'Assigned' ? '#2A9221' : '#E77D7D'  
+        <div style={{
+          color: params.value === 'Assigned' ? '#2A9221' : '#E77D7D'
         }}>
           {params.value}
         </div>
@@ -283,8 +273,7 @@ export default function CollectorAssignment() {
   const handleUnassignCollector = (selectedRow: any, event: React.MouseEvent) => {
     event.stopPropagation(); // Prevent the click event from propagating
     removeCollector(selectedRow.orderID);
-    // alert("Collector Unassigned Successfully!");
-    // toast
+    
     toast(
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <RemoveCircleIcon fontSize='medium' style={{ marginRight: '10px', alignItems: '' }} />
@@ -302,46 +291,15 @@ export default function CollectorAssignment() {
     })
   }
 
-
-  {/** Handle Assign */ }
-  /*   const handleAssignCollector = () => {
-      if (selectedCollector === null) {
-        alert("Please choose a collector")
-      } else {
-        let count = 0;
-        for (const selectedOrderID of selectedRows) {
-          if (assignedStatus === false) {
-            break;
-          }
-          else {
-            assignCollector(selectedOrderID, selectedCollector)
-            count++;
-          } 
-        }
-  
-  
-        if (count === selectedRows.length) {
-          alert("Collector assigned successfully to all of the selected orders!")
-        }
-        else {
-          alert(`Only ${count}! number of orders was assigned.`)
-        }
-  
-        setSelectedRows([]);
-        setSelectedCollector(null);
-      }
-    }; */
   const handleAssignCollector = () => {
     if (selectedCollector === null) {
-      // alert("Please choose a collector");
       headerHandleAlert('Collector Assignment Required', "To proceed, please assign a collector to the order(s).", 'warning');
     } else if (selectedRows.length === 0) {
-      // alert("Please select at least one order to assign a collector");
+
       headerHandleAlert('Order Selection Required', "Please choose an order before assigning a collector.", 'warning');
     } else {
       assignCollector(selectedCollector.employeeid!, selectedRows);
-      // alert("Collector assigned successfully to all of the selected orders!")
-      // toast
+     
       toast.success('Collector successfully assigned to selected orders!', {
         position: "bottom-right",
         autoClose: 5000,
@@ -360,6 +318,7 @@ export default function CollectorAssignment() {
 
   return (
     <div>
+      
       <StyledCard>
         <div style={{ display: "flex", flexDirection: "row", paddingTop: 30 }}>
           <LabelTypography>Assign to: </LabelTypography>
@@ -406,29 +365,53 @@ export default function CollectorAssignment() {
           </StyledButton>
 
         </div>
+       
+      {/*   {rows.length === 0 ? (
+  // Display circular progress when orders are empty
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    <Typography>No Orders yet.</Typography>
+  </div>
+) :  */}
 
-        {/**DataGrid */}
-        <Box sx={{ p: 2 }}>
-          <DataGridStyle
-            rows={rows}
-            columns={columns.map((column) => ({
-              ...column,
-            }))
-            }
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 10,
-                },
-              },
-            }}
-            pageSizeOptions={[10]}
-            checkboxSelection
-            onRowSelectionModelChange={(handleRowSelection)}
-            rowSelectionModel={selectedRows}
-          />
-        </Box>
-      </StyledCard>
+
+
+{orders.length === 0  && collectors.length === 0 ? (
+  // Display "No Rows" message when rows are empty
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    
+    <Typography>No orders and collectors yet.</Typography>
+  </div>
+
+  
+) : orders.length === 0 ? (
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+<CircularProgress />
+  </div>
+
+) : (
+  // Display the DataGrid when both orders and rows are not empty
+  <Box sx={{ p: 2 }}>
+    <DataGridStyle
+      rows={rows}
+      columns={columns.map((column) => ({
+        ...column,
+      }))}
+      initialState={{
+        pagination: {
+          paginationModel: {
+            pageSize: 10,
+          },
+        },
+      }}
+      pageSizeOptions={[10]}
+      checkboxSelection
+      onRowSelectionModelChange={handleRowSelection}
+      rowSelectionModel={selectedRows}
+    />
+  </Box>
+)}
+ </StyledCard>
+ 
 
 
       {/* Alerts */}

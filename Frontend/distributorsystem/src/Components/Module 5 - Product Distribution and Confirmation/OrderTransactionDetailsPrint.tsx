@@ -4,7 +4,7 @@ import { IOrder } from "../../RestCalls/Interfaces";
 
 const ContentNameTypography = styled(Typography)({
     marginTop: 60,
-    marginLeft: '8%',
+    marginLeft: '9%',
     fontFamily: 'Inter',
     fontWeight: 'bold',
     textAlign: 'left',
@@ -49,7 +49,7 @@ const StyleData = styled(Typography)({
     color: '#203949',
     fontSize: '15px',
     fontFamily: 'Inter',
-})
+  })
 
 const StyleTotalLabel = styled(Typography)({
     position: 'absolute',
@@ -166,7 +166,7 @@ export default function OrderTransactionDetailsPrint({ order}: { order: IOrder})
                                             <TableCell align='center'>{op.product.name}</TableCell>
                                             <TableCell align='center'>{op.product.price}</TableCell>
                                             <TableCell align='center'>{op.product.commissionrate}</TableCell>
-                                            <TableCell align='center'>{op.product.price * op.quantity}</TableCell>
+                                            <TableCell align='center'>Php {op.product.price * op.quantity}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

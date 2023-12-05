@@ -276,22 +276,7 @@ export default function EmployeeRegistration() {
     const [distributors, setDistributors] = useState<IDistributor[]>([]);
 
 
-    const distributorObject: IDistributor = {
-        distributorid: "distributor1",
-        firstname: "Junhui",
-        middlename: "",
-        lastname: "Wen",
-        emailaddress: "wenjunhui@gmail.com",
-        password: "moonmoon",
-        birthdate: "1996-06-10",
-        gender: "Male",
-        currentaddress: "Talisay City",
-        permanentaddress: "Talisay City",
-        contactnumber: "09741258963",
-        dealerids: [],
-        employeeids: [],
-        orderids: []
-    }
+
 
 
 
@@ -390,20 +375,19 @@ export default function EmployeeRegistration() {
     const handleCashierChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsCashierSelected(event.target.checked);
 
-        console.log(event.target.checked);
-        console.log(isCashierSelected);
+     
     };
 
     const handleSalesAssociateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsSalesAssociateSelected(event.target.checked);
 
-        console.log(event.target.checked);
+     
     };
 
     const handleCollectorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setIsCollectorSelected(event.target.checked);
 
-        console.log(event.target.checked);
+       
     };
 
     const handlePositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -411,21 +395,22 @@ export default function EmployeeRegistration() {
             handleInputChange('position')
         }
         setSelectedPosition(event.target.value);
-        console.log(event.target.checked);
-        console.log(isCashierSelected);
+       
     };
+
+
 
     const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
 
         if (file) {
             const maxSize = 1024 * 1024 * 5; // 5 MB 
-            console.log(file.size)
+           
             if (file.size <= maxSize) {
                 setSelectedProfilePicture(file);
             } else {
 
-                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+                handleAlert('File Size Exceeded', "Amount paid is greater than amount due. Please change it to be equal or less than the amount due.", 'warning')
             }
         }
 
@@ -549,15 +534,15 @@ export default function EmployeeRegistration() {
                 permanentaddress: String(permanentaddressRef.current?.value),
                 contactnumber: String(contactnumberRef.current?.value),
                 tinnumber: String(tinnumberRef.current?.value),
-                is_cashier: isCashierSelected,
-                is_salesassociate: isSalesAssociateSelected,
-                is_collector: isCollectorSelected,
+                iscashier: isCashierSelected,
+                issalesassociate: isSalesAssociateSelected,
+                iscollector: isCollectorSelected,
                 submissiondate: moment().format('YYYY-MM-DD'),
                 distributor: selectedDistributor!,
                 orderids: [],
                 paymentreceiptids: [],
                 collectionpaymentids: [],
-                documentids: []
+                documentids: [],
             }, newEmployeeDocuments!);
 
             handleAlert('Success', 'You are Successfully Registered!', 'success');
@@ -734,7 +719,7 @@ export default function EmployeeRegistration() {
                                                     <UploadIcon />
                                                 </Icon>
                                                 <TypographyLabelC >
-                                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name}
+                                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile Picture' : selectedProfilePicture?.name}
                                                 </TypographyLabelC>
                                             </Button>
 

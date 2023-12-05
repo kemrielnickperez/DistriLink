@@ -1,11 +1,11 @@
-import { Alert, AlertTitle, Button, Grid, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle,  Box, Button, Grid, LinearProgress, Paper, Slide, SlideProps, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import { IOrder } from "../../RestCalls/Interfaces";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import OrderTransactionDetailsPrint from "./OrderTransactionDetailsPrint";
-
+import logo5 from '../../Global Components/Images/logo5.png';
 
 function SlideTransitionDown(props: SlideProps) {
   return <Slide {...props} direction="down" />;
@@ -44,7 +44,7 @@ const StyledButton = styled(Button)({
 
 
 const StyldeInfoHeader = styled(Typography)({
-  marginTop: '45px',
+  marginTop: '40px',
   marginBottom: '90px',
   marginLeft: '10%',
   fontFamily: 'Inter',
@@ -253,6 +253,8 @@ export function OrderTransactionDetails() {
     <div>
       {!printing ? (
         <div>
+          {order ? (
+            <div>
           <Grid container style={{ position: 'relative', justifyContent: "center", alignItems: "center" }} >
             <Grid>
               <div style={{ display: "flex", flexDirection: 'row', paddingTop: 7, paddingLeft: 20 }}>
@@ -272,7 +274,7 @@ export function OrderTransactionDetails() {
             <Grid container style={{ display: 'flex', justifyContent: "center", alignItems: "center" }}>
               <StyleLabelData style={{ paddingTop: 75, marginLeft: -890 }}>Dealer Contact Information</StyleLabelData>
             </Grid>
-            <Grid container style={{ position: 'relative', justifyContent: "center", alignItems: "center" }}>
+            <Grid container style={{ position: 'relative', justifyContent: "center", alignItems: "center" }}>  
               <Grid item>
                 <StyleLabel>Dealer Name</StyleLabel>
                 <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
@@ -374,18 +376,28 @@ export function OrderTransactionDetails() {
               
 
 
-              {/* Alerts */}
-              <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'center'
-              }} TransitionComponent={SlideTransitionDown}>
-                <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
-                  <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
-                  {alertMessage}
-                </Alert>
-              </Snackbar>
-            </Grid>
-          </Grid>
+                {/* Alerts */}
+                <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center'
+                }} TransitionComponent={SlideTransitionDown}>
+                  <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                    <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                    {alertMessage}
+                  </Alert>
+                </Snackbar>
+              </Grid>
+              </Grid>
+            </div>
+
+
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
+              <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+              <LinearProgress sx={{ width: '20%' }} />
+              {/* You can adjust the width as needed */}
+            </Box>
+          )}
         </div>
       ) : (
         <OrderTransactionDetailsPrint order={order!} />

@@ -13,12 +13,15 @@ import { IDistributor, IOrderedProducts, IProduct } from '../../RestCalls/Interf
 import { v4 as uuidv4 } from 'uuid';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 //Imports for Toastify
 //Please Install npm i react-toastify or if doesn't work, install npm i react-toastify
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+
+import { useNavigate } from 'react-router';
+
 
 
 
@@ -206,14 +209,11 @@ transition: 'all 0.4s'
 
 export default function ProductDistributionList() {
 
-  const [newOrder] = useRestOrder();
+  const navigate = useNavigate();
 
+  const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile]  = useRestDealer();
 
-
-  const [getDealerByID, newDealer, confirmDealer, markDealerAsPending, declineDealer, isDealerFound, dealer,] = useRestDealer();
-
-
-  const [tableData, setTableData] = useState<{ quantity: number; productName: string; productPrice: number; productUnit: string; productCommissionRate: number; productAmount: number; }[]>([]);
 
   const [products, setProducts] = useState<IProduct[]>([]);
 
@@ -239,33 +239,16 @@ export default function ProductDistributionList() {
 
   const [open, setOpen] = useState(false);
 
-
-
+  
   const penaltyRateRef = useRef<TextFieldProps>(null);
   const dealerIDRef = useRef<TextFieldProps>(null);
 
 
+  const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+ 
 
 
 
-
-  const distributorObject: IDistributor = {
-
-    distributorid: "distributor1",
-    firstname: "Junhui",
-    middlename: "",
-    lastname: "Wen",
-    emailaddress: "wenjunhui@gmail.com",
-    password: "moonmoon",
-    birthdate: "1996-06-10",
-    gender: "Male",
-    currentaddress: "Talisay City",
-    permanentaddress: "Talisay City",
-    contactnumber: "09741258963",
-    dealerids: [],
-    employeeids: [],
-    orderids: []
-  }
 
 
   const paymentchoices = [
@@ -356,7 +339,7 @@ export default function ProductDistributionList() {
       .catch((error) => {
         console.error('Error retrieving products:', error);
         headerHandleAlert('Error', 'Error retrieving products. Please try again.', 'error');
-        // alert("Error retrieving products. Please try again.");
+
       });
   }
 
@@ -369,8 +352,7 @@ export default function ProductDistributionList() {
       );
 
       if (existingProductIndex !== -1) {
-        // alert('Product already added to the cart');
-        // toast
+        
         toast.info("If you'd like to increase the quantity of products, adjust product quantity as needed.", {
           position: "bottom-right",
           autoClose: 5000,
@@ -403,7 +385,6 @@ export default function ProductDistributionList() {
           quantity: Number(quantity),
           subtotal: chosenProduct.price * Number(quantity),
         };
-        console.log(chosenProduct.price * Number(quantity))
         setOrderedProducts([...orderedProducts, newOrderedProduct]);
         setChosenProduct(null);
         setQuantity('');
@@ -468,6 +449,7 @@ export default function ProductDistributionList() {
     setSelectedDate(null);
     setPaymentTerm(0);
     setTotalAmount(0);
+    resetDealer();
 
 
     if (dealerIDRef.current || penaltyRateRef.current?.value) {
@@ -483,33 +465,43 @@ export default function ProductDistributionList() {
       saveHandleAlert('No Ordered Products', "Please add products to your order before saving.", 'warning')
     }
 
+    if (!selectedDate || !penaltyRateRef.current?.value || !paymentTerm) {
+      toast.warning('Please fill all required fields.');
+      return;
+    }
+
+
     // Create an order object with the necessary data
     else if (orderedProducts.length > 0 && isDealerFound) {
       const orderAmount = orderedProducts.reduce((total, product) => {
         return total + product.product.price * product.quantity;
       }, 0);
-      const uuid = uuidv4();
-      const orderuuid = uuid.slice(0, 8)
-      console.log(orderedProducts)
-      newOrder({
-        orderid: orderuuid,
-        distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
-        //moment ang gamit ani para maka generate og date today
-        orderdate: moment().format('YYYY-MM-DD'),
-        penaltyrate: Number(penaltyRateRef.current?.value),
-        paymentterms: paymentTerm,
-        orderamount: orderAmount,
-        distributor: dealer!.distributor,
-        collector: null,
-        dealer: dealer!,
-        orderedproducts: orderedProducts,
-        paymenttransactions: [],
-        confirmed: true,
-        isclosed: false
-      });
-      //if possible kay ara na siya mo clear after sa snackbar
-      saveHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
-      clearInputValues();
+
+      if (orderAmount < dealerRemainingCredit!) {
+        newOrder({
+          orderid: uuidv4().slice(0, 8),
+          distributiondate: selectedDate?.format('YYYY-MM-DD') || '',
+          //moment ang gamit ani para maka generate og date today
+          orderdate: moment().format('YYYY-MM-DD'),
+          penaltyrate: Number(penaltyRateRef.current?.value),
+          paymentterms: paymentTerm,
+          orderamount: orderAmount,
+          distributor: dealer!.distributor,
+          collector: null,
+          dealer: dealer!,
+          orderedproducts: orderedProducts,
+          paymenttransactions: [],
+          confirmed: true,
+          isclosed: false
+        });
+        //if possible kay ara na siya mo clear after sa snackbar
+        saveHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
+        clearInputValues();
+
+      }
+      else {
+        saveHandleAlert('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust order amount accordingly.", 'warning')
+      }
     }
 
     else {
@@ -520,13 +512,11 @@ export default function ProductDistributionList() {
 
 
 
-  const handleFindDealer = () => {
-    getDealerByID(dealerIDRef.current?.value + "")
-    // //Problematic pa siya ngari na part kay kaduha pa ka dapat mo click aron ma sakto iya i display nga snackbar
-    // isDealerFound ? saveHandleAlert('Dealer located in the System.', "The dealer ID has been found and is ready for product distribution.", 'success')
-    //   : saveHandleAlert('Dealer Not Found in the System.', "The dealer ID you're looking for does not exist in the records.", 'error')
-
+  const handleFindDealer = ()  => {
+    getDealerByDistributor(dealerIDRef.current?.value + "", distributorFromStorage.distributorid!)
+    
   };
+
 
 
   return (

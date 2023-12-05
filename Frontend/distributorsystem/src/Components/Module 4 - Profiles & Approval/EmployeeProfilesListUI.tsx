@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IEmployee } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Alert, AlertTitle, Box, Button, Card, Slide, SlideProps, Snackbar, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, CircularProgress, Slide, SlideProps, Snackbar, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 
@@ -80,9 +80,13 @@ export default function EmployeeProfileListUI() {
     const [alertMessage, setAlertMessage] = useState('');
     const [alertSeverity, setAlertSeverity] = useState('success');
 
+
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+
+
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
-        axios.get<IEmployee[]>('http://localhost:8080/employee/getAllEmployees')
+        axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllEmployeesByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setEmployee(response.data);
                 // headerHandleAlert('Success', "Employees fetched successfully.", 'success');
@@ -91,6 +95,8 @@ export default function EmployeeProfileListUI() {
                 headerHandleAlert('Error', "Failed to fetch employees. Please check your internet connection.", 'error');
                 //console.error('Error fetching employee:', error);
             });
+
+            console.log(employee);
     }, []);
     {/**Handler for Alert - Function to define the type of alert*/ }
 
@@ -136,9 +142,9 @@ export default function EmployeeProfileListUI() {
         id: employeeList.employeeid,
         employeeName: `${employeeList.firstname} ${employeeList.middlename} ${employeeList.lastname}`,
         position: [
-            employeeList.is_cashier && "Cashier",
-            employeeList.is_collector && (employeeList.is_cashier ? 'Collector' : 'Collector'),
-            employeeList.is_salesassociate && (employeeList.is_cashier || employeeList.is_collector ? 'Sales Associate' : 'Sales Associate')
+            employeeList.iscashier && "Cashier",
+            employeeList.iscollector && (employeeList.iscashier ? 'Collector' : 'Collector'),
+            employeeList.issalesassociate && (employeeList.iscashier || employeeList.iscollector ? 'Sales Associate' : 'Sales Associate')
         ].filter(Boolean).join(', ')
     }));
 
@@ -150,8 +156,14 @@ export default function EmployeeProfileListUI() {
 
     return (
         <div>
+            
             <StyledCard>
                 <Box sx={{p:2}}>
+                {employee === null ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' , marginTop: '200px'}}>
+                <CircularProgress />
+              </div>
+            ) : (
                     <DataGridStyle
                         rows={rows}
                         columns={columns.map((column) => ({
@@ -166,6 +178,8 @@ export default function EmployeeProfileListUI() {
                         }}
                         pageSizeOptions={[10]}
                     />
+
+            )}
                 </Box>
             </StyledCard>
 

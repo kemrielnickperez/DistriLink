@@ -116,7 +116,7 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
             </StackStyle>
             <StackStyle sx={{ left: '27%' }}>
                 <StyleLabel>Payment Transaction ID</StyleLabel>
-                <StyleData>{paymentReceipt?.paymenttransaction.paymenttransactionid}</StyleData>
+                <StyleData>{paymentReceipt?.paymenttransactionid}</StyleData>
             </StackStyle>
             <StackStyle sx={{ left: '44%' }}>
                 <StyleLabel>Dealer ID</StyleLabel>
@@ -144,7 +144,7 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
                     </StackStyle>
                     <StackStyle sx={{ top: '30%', left: '44%' }}>
                         <StyleLabel>Receiver Name</StyleLabel>
-                        <StyleData>{collectionPaymentReceipt?.confirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
+                        <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.receivername
                             : 'NA'} </StyleData>
                     </StackStyle>
                     <StackStyle sx={{ top: '30%', left: '60%' }}>
@@ -178,7 +178,7 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
                     </StackStyle>
                     <StackStyle sx={{ top: '47%', left: '12%' }}>
                         <StyleLabel>Payment Status</StyleLabel>
-                        <StyleData>{collectionPaymentReceipt?.confirmed ? "Confirmed" : "Unconfirmed"}</StyleData>
+                        <StyleData>{collectionPaymentReceipt?.isconfirmed ? "Confirmed" : "Unconfirmed"}</StyleData>
                     </StackStyle>
 
                     <StackStyle sx={{ top: '47%', left: '27%' }}>
@@ -188,7 +188,7 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
 
                     <StackStyle sx={{ top: '47%', left: '44%' }}>
                         <StyleLabel>Receiver Name</StyleLabel>
-                        <StyleData>{collectionPaymentReceipt?.confirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
+                        <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.receivername
                             : 'NA'}</StyleData>
                     </StackStyle>
 

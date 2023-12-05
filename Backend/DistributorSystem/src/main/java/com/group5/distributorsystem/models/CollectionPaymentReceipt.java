@@ -14,11 +14,11 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
 
     private LocalDate collectiondate;
 
-    private String collectionamount;
+    private double collectionamount;
 
     private LocalDate remitteddate;
 
-    private String remittedamount;
+    private double remittedamount;
 
     private LocalDate confirmationdate;
 
@@ -31,7 +31,7 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
     public CollectionPaymentReceipt() {
     }
 
-    public CollectionPaymentReceipt(LocalDate collectiondate, String collectionamount, LocalDate remitteddate, String remittedamount, LocalDate confirmationdate, boolean isconfirmed, Set<String> collectorremittanceproofids, Set<String> dealerpaymentproofids) {
+    public CollectionPaymentReceipt(LocalDate collectiondate, double collectionamount, LocalDate remitteddate, double remittedamount, LocalDate confirmationdate, boolean isconfirmed, Set<String> collectorremittanceproofids, Set<String> dealerpaymentproofids) {
         this.collectiondate = collectiondate;
         this.collectionamount = collectionamount;
         this.remitteddate = remitteddate;
@@ -42,8 +42,8 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
         this.dealerpaymentproofids = dealerpaymentproofids;
     }
 
-    public CollectionPaymentReceipt(String paymentreceiptid, String remarks, double amountpaid, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier, LocalDate collectiondate, String collectionamount, LocalDate remitteddate, String remittedamount, LocalDate confirmationdate, boolean isconfirmed, Set<String> collectorremittanceproofids, Set<String> dealerpaymentproofids) {
-        super(paymentreceiptid, remarks, amountpaid, paymenttype, paymenttransaction, cashier);
+    public CollectionPaymentReceipt(String paymentreceiptid, String remarks, double amountpaid, String paymenttype, String paymenttransactionid, String receiverID, String receivername, LocalDate collectiondate, double collectionamount, LocalDate remitteddate, double remittedamount, LocalDate confirmationdate, boolean isconfirmed, Set<String> collectorremittanceproofids, Set<String> dealerpaymentproofids) {
+        super(paymentreceiptid, remarks, amountpaid, paymenttype, paymenttransactionid, receiverID, receivername);
         this.collectiondate = collectiondate;
         this.collectionamount = collectionamount;
         this.remitteddate = remitteddate;
@@ -62,11 +62,11 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
         this.collectiondate = collectiondate;
     }
 
-    public String getCollectionamount() {
+    public double getCollectionamount() {
         return collectionamount;
     }
 
-    public void setCollectionamount(String collectionamount) {
+    public void setCollectionamount(double collectionamount) {
         this.collectionamount = collectionamount;
     }
 
@@ -78,11 +78,11 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
         this.remitteddate = remitteddate;
     }
 
-    public String getRemittedamount() {
+    public double getRemittedamount() {
         return remittedamount;
     }
 
-    public void setRemittedamount(String remittedamount) {
+    public void setRemittedamount(double remittedamount) {
         this.remittedamount = remittedamount;
     }
 

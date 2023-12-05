@@ -23,12 +23,26 @@ public class DistributorController {
     DistributorService distributorService;
 
 
+
     @PostMapping("/registerDistributor")
+    public ResponseEntity<Object> registerDistributor(
+            @ModelAttribute Distributor distributor,
+            @RequestParam("documentid") List<String> documentIds,
+            @RequestParam("name") List<String> documentNames,
+            @RequestParam("type") List<String> documentTypes,
+            @RequestParam("content") List<MultipartFile> documentContents
+    )  {
+
+        distributorService.registerDistributor(distributor, documentIds, documentNames, documentTypes, documentContents);
+        return new ResponseEntity<>("Distributor registered successfully!", HttpStatus.CREATED);
+    }
+
+    /*@PostMapping("/registerDistributor")
     public ResponseEntity<Object> registerDistributor(@RequestBody Distributor distributor)  {
         distributorService.registerDistributor(distributor);
 
         return new ResponseEntity<>("Distributor registered successfully!", HttpStatus.CREATED);
-    }
+    }*/
 
 
     @GetMapping("/getAllDistributors")

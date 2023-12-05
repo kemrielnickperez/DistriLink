@@ -13,12 +13,12 @@ import moment from "moment";
 import { v4 as uuidv4 } from 'uuid';
 import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
-// import Autosuggest, { SuggestionSelectedEventData, SuggestionsFetchRequestedParams, } from 'react-autosuggest';
+//// import Autosuggest, { SuggestionSelectedEventData, SuggestionsFetchRequestedParams, } from 'react-autosuggest';
 
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import { error } from "console";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { es } from "date-fns/locale";
+
 {/**Grids Body*/ }
 
 
@@ -53,7 +53,7 @@ const StyleGrid = styled(Grid)({
 const ImageStyle = styled(Typography)({
     display: 'flex',
     alignItems: 'center',
-    marginRight: '-50px',
+    marginRight: '-1px',
     marginTop: '-30px'
 })
 const ContentNameTypography = styled(Typography)({
@@ -150,7 +150,7 @@ const RadioLabel = styled(Typography)({
     fontSize: '17px',
     fontWeight: '550',
     color: '#707070',
-    fontFamily: 'inter',
+    fontFamily: 'Inter',
 
 });
 const RadioStyle = styled(RadioGroup)({
@@ -179,6 +179,7 @@ const StyledTextField = styled(TextField)({
         fontFamily: 'Inter',
     },
 });
+
 
 const StyledDatePicker = styled(DatePicker)({
     width: '700px',
@@ -230,6 +231,7 @@ const SignUpButton = styled(Button)({
     },
     transition: 'all 0.4s'
 })
+
 const SignInTypo = styled(Typography)({
     display: 'flex',
     position: "relative",
@@ -248,17 +250,11 @@ const SignInTypo = styled(Typography)({
     zIndex: 3
 
 })
-
-
-
 const GridField = styled(Grid)({
-    // position: "relative",
-    // display: "flex",
-    // justifyContent: "center",
+
+
 })
 
-{/* <Steppers/> */ }
-const steps = ['Basic Information', 'Contact Information', 'Business Information', 'Document Verification', 'Account Creation']
 
 export default function DealerRegistration() {
 
@@ -266,7 +262,7 @@ export default function DealerRegistration() {
     const navigate = useNavigate();
 
     {/**UseStates*/ }
-    const [getDealerByID, newDealer, isDealerFound, dealer] = useRestDealer();
+    const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, isDealerFound, isDealerConfirmed, dealer] = useRestDealer();
     const [selectedGender, setSelectedGender] = useState('');
     const [selectedBusinessOpt, setSelectedBusinessOpt] = useState(false);
     const [selectedBDate, setSelectedBDate] = useState<Dayjs | null>(null);
@@ -315,9 +311,6 @@ export default function DealerRegistration() {
         bussinesscontract: '',
         bussinessdoc: '',
     })
-    {/* <UseState Steppers/> */ }
-    const [activeStep, setActiveStep] = useState(0);
-
 
 
     {/**UseRefs*/ }
@@ -337,35 +330,17 @@ export default function DealerRegistration() {
 
 
 
-    const distributorObject: IDistributor = {
-
-        distributorid: "distributor4",
-        firstname: "Junhui",
-        middlename: "",
-        lastname: "Wen",
-        emailaddress: "wenjunhui@gmail.com",
-        password: "moonmoon",
-        birthdate: "1996-06-10",
-        gender: "Male",
-        currentaddress: "Talisay City",
-        permanentaddress: "Talisay City",
-        contactnumber: "09741258963",
-        dealerids: [],
-        employeeids: [],
-        orderids: []
-    }
-
 
     function getAllDistributors() {
         axios.get<IDistributor[]>('http://localhost:8080/distributor/getAllDistributors')
             .then((response) => {
                 setDistributors(response.data);
-                console.log(response.data)
+
 
             })
             .catch((error) => {
 
-                // alert("Error retrieving payment receipts. Please try again.");
+                alert("Error retrieving payment receipts. Please try again.");
             });
     }
 
@@ -386,6 +361,11 @@ export default function DealerRegistration() {
         setOpen(true);
     }
 
+    const navigateThank = useNavigate();
+
+    const signUpHandler = () => {
+        navigate(`/WelcomeScreen`)
+    }
 
 
 
@@ -457,6 +437,7 @@ export default function DealerRegistration() {
     const handleGender = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedGender(event.target.value);
         handleInputChange('gender');
+        handleInputChange('gender');
     };
 
 
@@ -470,7 +451,7 @@ export default function DealerRegistration() {
                 setSelectedProfilePicture(file);
             } else {
 
-                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+                handleAlert('File Size Exceeded', "Amount paid is greater than amount due. Please change it to be equal or less than the amount due.", 'warning')
             }
         }
 
@@ -620,6 +601,7 @@ export default function DealerRegistration() {
         contactnum: !contactnumberRef.current?.value ? 'Contact Number is required' : '',
         selectedprofile: !selectedProfilePicture ? 'Please attach your Profile Picture' : '',
         selectedvalidid: !selectedValidID ? 'Please attach your Valid ID' : '',
+
         tinnum: !tinnumberRef.current?.value ? 'TIN Number is required' : '',
         distributor: !selectedDistributor ? 'Please choose a Distributor' : '',
     }
@@ -662,8 +644,6 @@ export default function DealerRegistration() {
                 setFieldWarning(helperWarning);
                 return;
             }
-
-
             if (selectedBusinessOpt) {
                 if (
                     !businessnameRef.current?.value ||
@@ -707,9 +687,9 @@ export default function DealerRegistration() {
                 documentids: []
             }, newDealerDocuments!);
 
-            console.log("mao ni gi selecr")
-            console.log(selectedDistributor)
+
             handleAlert('Success', 'You are Successfully Registered!', 'success');
+            navigateThank(`/ThankYou`)
 
         } catch (error) {
             handleAlert('Error', 'An Error Occured, Please Check your Connection', 'error')
@@ -913,7 +893,7 @@ export default function DealerRegistration() {
                                                     <UploadIcon />
                                                 </Icon>
                                                 <TypographyLabelC >
-                                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile ID' : selectedProfilePicture?.name}
+                                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile Picture' : selectedProfilePicture?.name}
                                                 </TypographyLabelC>
                                             </Button>
 

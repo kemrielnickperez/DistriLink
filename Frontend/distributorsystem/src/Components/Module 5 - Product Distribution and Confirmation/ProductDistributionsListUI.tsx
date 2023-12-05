@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IOrder } from "../../RestCalls/Interfaces";
 import axios from "axios";
-import { Alert, AlertTitle, Box, Button, Card, Slide, SlideProps, Snackbar, Tab, Tabs, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, CircularProgress, Slide, SlideProps, Snackbar, Tab, Tabs, Typography, styled } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import AddIcon from '@mui/icons-material/Add';
@@ -62,7 +62,7 @@ const StyledButton = styled(Button)({
 const StyledAddButton = styled(Button)({
     backgroundColor: '#2D85E7',
     display: 'flex',
-    marginTop:26,
+    marginTop: 26,
     marginLeft: 30,
     color: '#FFFFFF',
     fontFamily: 'Inter, sans-serif',
@@ -106,12 +106,15 @@ const DataGridStyle = styled(DataGrid)({
 
 export default function ProductDistributionList() {
     const navigate = useNavigate();
+
     const [order, setOrder] = useState<IOrder[] | null>(null);
     const [openAlert, setOpenAlert] = useState(false);
     const [alerttitle, setTitle] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [alertSeverity, setAlertSeverity] = useState('success');
     const [value, setValue] = useState(0);
+
+
     {/*Tabs*/ }
     function CustomTabPanel(props: TabPanelProps) {
         const { children, value, index, ...other } = props;
@@ -138,17 +141,20 @@ export default function ProductDistributionList() {
         };
     }
 
+    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
 
     useEffect(() => {
         // Make an Axios GET request to fetch all orders
         axios
-            .get<IOrder[]>('http://localhost:8080/order/getAllOrders')
+            .get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${distributorFromStorage.distributorid}`)
             .then((response) => {
                 setOrder(response.data);
             })
             .catch((error) => {
                 headerHandleAlert('Error', "Failed to fetch orders. Please check your internet connection.", 'error');
             });
+
+        console.log(order)
     }, []);
 
     {/**Handler for Alert - Function to define the type of alert*/ }
@@ -182,7 +188,6 @@ export default function ProductDistributionList() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.orderId);
                             if (params.row.confirmed === false) {
 
                                 handleViewButtonFalse(params.row.orderId);
@@ -209,7 +214,7 @@ export default function ProductDistributionList() {
     }));
 
     {/** Rows for DataGrid */ }
-    const rowsConfirmed = (order || []).filter((order) => (order.confirmed)).map((orderItem) => ({
+    const rowsConfirmed = (order || []).filter((order) => (order.confirmed && !order.isclosed)).map((orderItem) => ({
         id: orderItem.orderid,
         dealerId: orderItem.dealer.dealerid,
         dealerName: `${orderItem.dealer.firstname} ${orderItem.dealer.middlename} ${orderItem.dealer.lastname}`,
@@ -230,7 +235,45 @@ export default function ProductDistributionList() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                            console.log('Button clicked for row:', params.row.orderId);
+                            if (params.row.confirmed === false) {
+
+                                handleViewButtonFalse(params.row.orderId);
+                            } else {
+                                handleViewButtonClick(params.row.orderId);
+                            }
+                        }}
+                    >
+                        View
+                    </StyledButton>
+                )
+            }
+        }
+
+    ]
+
+
+    const rowsClosed = (order || []).filter((order) => (order.isclosed)).map((orderItem) => ({
+        id: orderItem.orderid,
+        dealerId: orderItem.dealer.dealerid,
+        dealerName: `${orderItem.dealer.firstname} ${orderItem.dealer.middlename} ${orderItem.dealer.lastname}`,
+        orderId: orderItem.orderid,
+        orderDate: orderItem.orderdate,
+        confirmed: orderItem.confirmed
+    }));
+
+    {/** Columns for DataGrid */ }
+    const columnsClosed: GridColDef[] = [
+        { field: 'dealerId', headerName: 'Dealer ID', width: 235 },
+        { field: 'dealerName', headerName: 'Dealer Name', width: 255 },
+        { field: 'orderId', headerName: 'Order Transaction ID', width: 235 },
+        { field: 'orderDate', headerName: 'Order Date', width: 235 },
+        {
+            field: 'action', headerName: '', width: 350,
+            renderCell: (params: { row: any; }) => {
+                return (
+                    <StyledButton
+                        onClick={() => {
+                            // Handle button click for this row here
                             if (params.row.confirmed === false) {
 
                                 handleViewButtonFalse(params.row.orderId);
@@ -248,7 +291,6 @@ export default function ProductDistributionList() {
     ]
 
     const handleViewButtonClick = (objectId: string) => {
-        console.log(objectId);
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
 
         navigate(`/orderTransactionDetails/${objectId}`);
@@ -265,52 +307,92 @@ export default function ProductDistributionList() {
         <div>
             <StyledCard>
                 <StyledAddButton onClick={() => {
-                    console.log('Button clicked for adding a new order');
                     navigate("/distributorOrderForm");
                 }}>
                     Add new Product Distribution
-                    <AddIcon style={{ marginTop: -5, marginLeft: 3, height: 20, width: 'auto', fontWeight: 'bolder' }}/>
+                    <AddIcon style={{ marginTop: -5, marginLeft: 3, height: 20, width: 'auto', fontWeight: 'bolder' }} />
                 </StyledAddButton>
                 <Box sx={{ width: '100%', marginTop: 2, marginLeft: 0.5 }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" style={{ marginLeft: 40 }}>
                             <TabStyle label="Confirmed Orders" {...a11yProps(0)} />
                             <TabStyle label="Pending Orders" {...a11yProps(1)} />
+                            <TabStyle label="Closed Orders" {...a11yProps(2)} />
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
-                        <DataGridStyle
-                            rows={rowsConfirmed}
-                            columns={columnsConfirmed.map((column) => ({
-                                ...column,
-                            }))}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: 10,
-                                    },
-                                },
-                            }}
-                            pageSizeOptions={[10]}
+                        {order === null ? (
 
-                        />
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '200px' }}>
+                                <CircularProgress />
+                            </div>
+                        ) : (
+                            <DataGridStyle
+                                rows={rowsConfirmed}
+                                sx={{ textAlign: 'center', color: '#203949', height: '370px', margin: '20px 10px 0px 14px' }}
+                                columns={columnsConfirmed.map((column) => ({
+                                    ...column,
+                                }))}
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: {
+                                            pageSize: 5,
+                                        },
+                                    },
+                                }}
+                                pageSizeOptions={[5]}
+
+                            />
+                        )}
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
-                        <DataGridStyle
-                            rows={rowsPending}
-                            columns={columnsPending.map((column) => ({
-                                ...column,
-                            }))}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: 10,
-                                    },
-                                },
-                            }}
-                            pageSizeOptions={[10]}
+                        {order === null ? (
 
-                        />
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '200px' }}>
+                                <CircularProgress />
+                            </div>
+                        ) : (
+                            <DataGridStyle
+                                rows={rowsPending}
+                                columns={columnsPending.map((column) => ({
+                                    ...column,
+                                }))}
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: {
+                                            pageSize: 10,
+                                        },
+                                    },
+                                }}
+                                pageSizeOptions={[10]}
+
+                            />
+                        )}
+                    </CustomTabPanel>
+
+                    <CustomTabPanel value={value} index={2}>
+                        {order === null ? (
+
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '200px' }}>
+                                <CircularProgress />
+                            </div>
+                        ) : (
+                            <DataGridStyle
+                                rows={rowsClosed}
+                                columns={columnsClosed.map((column) => ({
+                                    ...column,
+                                }))}
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: {
+                                            pageSize: 10,
+                                        },
+                                    },
+                                }}
+                                pageSizeOptions={[10]}
+
+                            />
+                        )}
                     </CustomTabPanel>
                 </Box>
 

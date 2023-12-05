@@ -20,7 +20,7 @@ import SignIn from "../Components/Module 1 - Distributor System Sign-in/SignInUI
 import DealerApproval from "../Components/Module 4 - Profiles & Approval/DealerApproval";
 import { OrderDetails } from "../Components/Module 6 - Collector Assignment/OrderDetails";
 import { PaymentReceiptDetails } from "../Components/Module 8 - Payments/PaymentReceiptDetailsUI";
-import RecordCollectionPaymentUI from "../Components/Module 8 - Payments/RecordCollectionPaymentUI";
+
 import SignInContent from "./ContentsSignIn";
 import CollectorAssignment from "../Components/Module 6 - Collector Assignment/CollectorAssignmentUI";
 
@@ -54,7 +54,7 @@ export default function SignUpRoutes(){
                             <Route path="/collectorAssignment" element={<CollectorAssignment/>}/>
                             <Route path="/orderDetails/:objectId" element={<OrderDetails/>}/>
                             <Route path="/paymentReceiptDetails/:objectId" element={<PaymentReceiptDetails/>}></Route>
-                            <Route path="/recordCollectionPayment" element={<RecordCollectionPaymentUI/>}/>
+
                     </Route>
             </Route>  
         </Routes>

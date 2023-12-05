@@ -5,6 +5,9 @@ import { useLocation } from 'react-router-dom';
 
 const settings = ['Profile', 'Dashboard', 'Logout'];
 
+const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+ 
+
 type navProps = {
     moduleName: string;
     moduleContent: string
@@ -74,7 +77,7 @@ export default function NewAppBar(props: navProps) {
                             <Box sx={{ flexGrow: 0.1, display: { xs: 'none', md: 'flex' }, paddingTop: 1 }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: 8 }}>
                                     <NameTypography>
-                                        Remy Sharp
+                                        {distributorFromStorage.firstname +" " +  distributorFromStorage.lastname}
                                     </NameTypography>
                                     <TypeTypography>
                                         Distributor

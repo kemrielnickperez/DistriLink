@@ -1,14 +1,16 @@
-import { Alert, AlertTitle, Button, Card, FormControlLabel, FormHelperText, Grid, IconButton, InputAdornment, Radio, RadioGroup, Snackbar, TextField, TextFieldProps, Typography, styled } from "@mui/material"
+import { Alert, AlertTitle, Button, Card, FormControlLabel, FormHelperText, Grid, Icon, IconButton, InputAdornment, Radio, RadioGroup, Snackbar, TextField, TextFieldProps, Typography, styled } from "@mui/material"
 import distributorpic from '../../Global Components/Images/distributor1.png'
 import { ChangeEvent, useRef, useState } from "react"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
+import UploadIcon from '@mui/icons-material/Upload';
 import { Dayjs } from "dayjs"
 import { v4 as uuidv4 } from 'uuid';
 import { useRestDistributor } from "../../RestCalls/DistributorUseRest"
 import logo4 from '../../Global Components/Images/logo4.png'
 import distributor1 from '../../Global Components/Images/distributor1-1.png'
+import { IDistributorDocument } from "../../RestCalls/Interfaces"
 
 const SignInTypo = styled(Typography)({
     display: 'flex',
@@ -239,8 +241,11 @@ export default function DistributorRegistration() {
         currentadd: '',
         permanentadd: '',
         contactnum: '',
+        selectedprofile: '',
     })
 
+    const [selectedProfilePicture, setSelectedProfilePicture] = useState<File>();
+    const [distributorDocuments, setDistributorDocuments] = useState<IDistributorDocument[]>([]);
 
     {/**Handler Change to determine fieldname*/ }
     const handleInputChange = (fieldName: string) => {
@@ -320,22 +325,81 @@ export default function DistributorRegistration() {
         setOpen(false);
     };
 
+
+    const handleProfilePictureFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            if (file.size <= maxSize) {
+                setSelectedProfilePicture(file);
+            } else {
+
+                handleAlert('File Size Exceeded', "Amount paid is greater than amount due. Please change it to be equal or less than the amount due.", 'warning')
+            }
+        }
+
+
+        handleInputChange('selectedprofile')
+    };
+
     {/**HelperWarning for defining Helper Text*/ }
-    const helperWarning = {
-        firstname: !firstnameRef.current?.value ? 'First Name is required' : '',
-        lastname: !lastnameRef.current?.value ? 'Last Name is required' : '',
-        email: !emailladdressRef.current?.value ? 'Email Address is required' : '',
-        password: !passwordRef.current?.value ? 'Password is required' : '',
-        birthdate: !selectedBDate ? 'Birthdate is required' : '',
-        gender: !selectedGender ? 'Gender is required' : '',
-        currentadd: !currentaddressRef.current?.value ? 'Current Address is required' : '',
-        permanentadd: !permanentAddressRef.current?.value ? 'Permanent Address is required' : '',
-        contactnum: !contactnumberRef.current?.value ? 'Contact Number is required' : '',
-    }
+
+
+    const createDocument = async (file: File | null, name: string) => {
+        if (file) {
+            // Create a Promise to read the file as an array buffer
+            const readFileAsArrayBuffer = (file: File) =>
+                new Promise<ArrayBuffer>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        if (event.target && event.target.result instanceof ArrayBuffer) {
+                            resolve(event.target.result);
+                        } else {
+                            resolve(new ArrayBuffer(0));
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                });
+
+            // Read the file content as an array buffer
+            const fileContentArrayBuffer = await readFileAsArrayBuffer(file);
+
+            // Create a Uint8Array from the array buffer
+            const content = new Uint8Array(fileContentArrayBuffer);
+
+            return {
+                documentid: uuidv4().slice(0, 8),
+                name: name,
+                type: file.type,
+                content,
+                distributor: null,
+            };
+        }
+        return null;
+    };
+
+    const handleFiles = async () => {
+
+        const profilepictureDocument = await createDocument(selectedProfilePicture!, String(lastnameRef.current?.value) + "_profilepicture");
+
+
+        // Create an array with the new documents and update the state
+        const newDistributorDocuments: IDistributorDocument[] = [];
+        if (profilepictureDocument) newDistributorDocuments.push(profilepictureDocument);
+
+        setDistributorDocuments((prevDistributorDocuments) => [...prevDistributorDocuments, ...newDistributorDocuments]);
+
+        // You can access the updated dealerDocuments state after this update
+
+
+        return newDistributorDocuments;
+    };
+    {/**HelperWarning fo
 
     {/**HandlerNewDealer*/ }
     const handleNewDistributor = async () => {
-
+        const newDistributorDocuments = await handleFiles();
         try {
             if (
                 !firstnameRef.current?.value ||
@@ -347,7 +411,8 @@ export default function DistributorRegistration() {
                 !selectedGender ||
                 !contactnumberRef.current?.value ||
                 !currentaddressRef.current?.value ||
-                !permanentAddressRef.current?.value
+                !permanentAddressRef.current?.value ||
+                !selectedProfilePicture
             ) {
                 handleAlert('Warning', 'Please fill in all required fields', 'warning');
                 setFieldWarning(helperWarning);
@@ -372,7 +437,10 @@ export default function DistributorRegistration() {
                 dealerids: [],
                 employeeids: [],
                 orderids: [],
-            })
+                paymentreceiptids: [],
+                archiveddealerids: [],
+                documentids: []
+            }, newDistributorDocuments);
             handleAlert('Success', 'You are Successfully Registered!', 'success');
         } catch (error) {
             handleAlert('Error', 'An Error Occured, Please Check your Connection', 'error')
@@ -385,11 +453,24 @@ export default function DistributorRegistration() {
     }
     {/**Handler Sign Up*/ }
     const handleSignUp = () => {
-        //handleFiles
+
         handleNewDistributor();
-        // navigate(`/dashboard`);
+
     };
 
+
+    const helperWarning = {
+        firstname: !firstnameRef.current?.value ? 'First Name is required' : '',
+        lastname: !lastnameRef.current?.value ? 'Last Name is required' : '',
+        email: !emailladdressRef.current?.value ? 'Email Address is required' : '',
+        password: !passwordRef.current?.value ? 'Password is required' : '',
+        birthdate: !selectedBDate ? 'Birthdate is required' : '',
+        gender: !selectedGender ? 'Gender is required' : '',
+        currentadd: !currentaddressRef.current?.value ? 'Current Address is required' : '',
+        permanentadd: !permanentAddressRef.current?.value ? 'Permanent Address is required' : '',
+        contactnum: !contactnumberRef.current?.value ? 'Contact Number is required' : '',
+        selectedprofile: !selectedProfilePicture ? 'Please attach your Profile Picture' : '',
+    }
 
 
     {/**Return Statement*/ }
@@ -494,6 +575,47 @@ export default function DistributorRegistration() {
                                     </Grid>
                                 </GridField>
                                 {/* Insert Button for Profile Pic here  */}
+                                <GridField container spacing={8} >
+
+                                    {/**Button For Valid ID File*/}
+                                    <Grid item>
+                                        <label htmlFor="profilepicture-input">
+
+                                            <Button variant="contained" component="span" aria-required
+                                                sx={{
+                                                    backgroundColor: '#2D85E7',
+                                                    width: '700px',
+                                                    margin: '15px 0 0 -35px',
+                                                    height: '40px',
+
+                                                    ':hover': {
+                                                        backgroundColor: 'rgba(45, 133, 231, 0.9)',
+                                                        // transform: 'scale(1.1)'
+                                                    },
+                                                    transition: 'all 0.4s'
+                                                }}>
+                                                <Icon style={{ color: '#ffffff', display: 'flex', marginRight: '15px' }}>
+                                                    <input hidden accept=".jpeg,.jpg,.png" type="file"
+                                                        onChange={handleProfilePictureFileChange}
+                                                        style={{ display: 'none' }}
+                                                        id="profilepicture-input" />
+                                                    <UploadIcon />
+                                                </Icon>
+                                                <TypographyLabelC >
+                                                    {selectedProfilePicture?.name === undefined ? 'Upload Profile Picture' : selectedProfilePicture?.name}
+                                                </TypographyLabelC>
+                                            </Button>
+
+                                        </label>
+                                        <FormHelperText style={{ marginLeft:5, color: '#BD9F00' }}>
+                                            {fieldWarning.selectedprofile}
+                                        </FormHelperText>
+                                    </Grid>
+
+
+
+                                </GridField>
+
 
 
 

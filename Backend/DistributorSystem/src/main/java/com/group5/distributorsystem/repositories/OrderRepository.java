@@ -1,6 +1,7 @@
 package com.group5.distributorsystem.repositories;
 
 import com.group5.distributorsystem.models.CollectionPaymentReceipt;
+import com.group5.distributorsystem.models.Dealer;
 import com.group5.distributorsystem.models.Employee;
 import com.group5.distributorsystem.models.Order;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -14,4 +15,15 @@ import java.util.List;
 public interface OrderRepository extends MongoRepository<Order, String> {
 
     List<Order> findByIsconfirmedFalse();
+    List<Order> findByDealer_Dealerid(String dealerId);
+
+    List<Order> findByDistributor_DistributoridAndIsconfirmedFalse(String distributorId);
+
+    List<Order> findAllByDistributor_Distributorid(String distributorId);
+
+
+
+    Order findByDistributor_Distributorid(String distributorId);
+
+    boolean existsByOrderidAndDistributor_Distributorid(String orderId, String distributorId);
 }

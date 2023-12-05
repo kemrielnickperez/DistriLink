@@ -229,11 +229,7 @@ export default function NewNavBar(){
                                         <StyledText1 selected1={selectedButton1===4} sx={{marginLeft: 3}} primary="Distributor Order Form"/>
                                     </StyledButton1>
                                 </Link>
-                                <Link to ="/dealerOrderForm">
-                                <StyledButton1 onClick={() => handleButtonClick1(5)} selected1={selectedButton1 === 5}>
-                                    <StyledText1 selected1={selectedButton1===5} sx={{marginLeft: -2}} primary="Dealer Order Form"/>
-                                </StyledButton1>
-                                </Link>
+                                
                             </List>
                         </Collapse>
                          {/** Collector Assignment */}

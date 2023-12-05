@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Outlet, useLocation, useParams} from 'react-router-dom';
+import { Outlet, useLocation , useParams} from 'react-router-dom';
 import NewNavBar from './NewNavBar';
 import { AppBar, Container, Toolbar } from '@mui/material';
 import NewAppBar from './NewAppBar';

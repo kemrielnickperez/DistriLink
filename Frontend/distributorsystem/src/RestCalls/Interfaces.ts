@@ -1,6 +1,6 @@
 //Interfaces for models
 
-export interface IDistributor {
+export interface IDistributor{
     distributorid:string,
     firstname: string,
     middlename: string,
@@ -15,6 +15,18 @@ export interface IDistributor {
     dealerids: string[],
     employeeids: string[],
     orderids: string[],
+    paymentreceiptids: string[],
+    archiveddealerids: string[],
+    documentids: string[],
+}
+
+
+export interface IDistributorDocument {
+    documentid: string;
+    name: string;
+    type: string;
+    content: Uint8Array; // You can specify the correct data type for the 'content' property.
+    distributor: IDistributor | null; // You can reference the 'IDealer' interface you've already defined.
 }
 
 
@@ -80,7 +92,7 @@ export interface IDealerDocument {
     dealer: IDealer | null; // You can reference the 'IDealer' interface you've already defined.
 }
 
-export interface IEmployee {
+export interface IEmployee{
     employeeid:string,
     firstname: string,
     middlename: string,
@@ -93,9 +105,9 @@ export interface IEmployee {
     permanentaddress: string,
     contactnumber: string,
     tinnumber: String,
-    is_cashier: boolean,
-    is_salesassociate: boolean,
-    is_collector: boolean,
+    iscashier: boolean,
+    issalesassociate: boolean,
+    iscollector: boolean,
     submissiondate: string,
     distributor: IDistributor,
     orderids: string[],
@@ -131,7 +143,7 @@ export interface IOrder {
     collector: IEmployee | null,
     dealer: IDealer,
     orderedproducts: IOrderedProducts[],
-    paymenttransactions: IPaymentTransaction[] | null,
+    paymenttransactions: IPaymentTransaction[] ,
     confirmed: boolean,
     isclosed: boolean
     
@@ -156,7 +168,7 @@ export interface IPaymentTransaction {
     installmentnumber: number;
     paid: boolean;
     orderid: string;
-    paymentreceiptid: string | null;
+    paymentreceipts: IPaymentReceipt[];
 }
 
 export interface IPaymentReceipt {
@@ -164,15 +176,17 @@ export interface IPaymentReceipt {
     remarks: string,
     amountpaid: number,
     paymenttype: string,
-    paymenttransaction: IPaymentTransaction, 
-    cashier: IEmployee | null
+    paymenttransactionid: string, 
+    receiverID: string,
+    receivername: string
 }
 
 export interface IDirectPaymentReceipt extends IPaymentReceipt{
     remarks: string,
     datepaid: string,  
     receivedamount: number,
-    daterecorded: string,   
+    daterecorded: string, 
+      
 }
 
 export interface ICollectionPaymentReceipt extends IPaymentReceipt{
@@ -181,7 +195,7 @@ export interface ICollectionPaymentReceipt extends IPaymentReceipt{
     remitteddate: string,
     remittedamount: number,  
     confirmationdate: string,
-    confirmed: boolean,  
+    isconfirmed: boolean,  
 }
 
 export interface ICollectorRemittanceProof {

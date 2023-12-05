@@ -1,4 +1,4 @@
-import { Button, Card, Grid, Modal, Stack, Typography, styled } from "@mui/material";
+import { Box, Button, Card, Grid, LinearProgress, Modal, Stack, Typography, styled } from "@mui/material";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRestPaymentReceipt } from "../../RestCalls/PaymentReceiptUseRest";
@@ -7,6 +7,9 @@ import { ICollectionPaymentReceipt, ICollectorRemittanceProof, IDealerPaymentPro
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import axios from "axios";
 import { PaymentReceiptDetailsPrint } from "./PaymentReceiptDetailsPrint";
+import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
+import logo5 from '../../Global Components/Images/logo5.png';
+
 
 const ContentNameTypography = styled(Typography)({
     marginTop: 40,
@@ -151,9 +154,9 @@ export function PaymentReceiptDetails() {
 
     const { objectId } = useParams();
 
+    const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
-    const [newOrder, getOrderByID, assignCollector, removeCollector, order, isOrderFound, assignedStatus, removeStatus] = useRestOrder();
-
+    const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
 
     const [collectorRemittanceProofs, setCollectorRemittanceProofs] = useState<ICollectorRemittanceProof[]>([]);
     const [dealerPaymentProofs, setDealerPaymentProofs] = useState<IDealerPaymentProof[]>([]);
@@ -188,12 +191,14 @@ export function PaymentReceiptDetails() {
 
     const handleFindPaymentReceipt = () => {
         getPaymentReceiptByID(objectId!)
-        //console.log(isOrderFoundError + "error")
+
     };
 
 
     const handleFindOrder = () => {
-        getOrderByID(paymentReceipt?.paymenttransaction.orderid!)
+        getPaymentTransactionByID(paymentReceipt?.paymenttransactionid!);
+        getOrderByPaymentTransactionID(paymentReceipt?.paymenttransactionid!);
+
     };
 
 
@@ -204,7 +209,7 @@ export function PaymentReceiptDetails() {
 
             })
             .catch((error) => {
-                alert("Error retrieving collector remittance proofs. Please try again.");
+                console.error("Error retrieving collector remittance proofs. Please try again.");
             });
     }
 
@@ -215,7 +220,7 @@ export function PaymentReceiptDetails() {
 
             })
             .catch((error) => {
-                alert("Error retrieving dealer payment proofs. Please try again.");
+                console.error("Error retrieving dealer payment proofs. Please try again.");
             });
     }
 
@@ -225,6 +230,8 @@ export function PaymentReceiptDetails() {
         handleFindOrder();
         getAllCollectorRemittanceProofDocuments();
         getAllDealerPaymentProofDocuments();
+
+        console.log(paymentReceipt?.receivername)
 
     }, [paymentReceipt]);
 
@@ -339,49 +346,50 @@ export function PaymentReceiptDetails() {
         <div>
             {!printing ? (
                 <div>
-                    <Grid container style={{ position: 'relative', justifyContent: "center", alignItems: "center" }} >
-                        <Grid>
-                            <div style={{ display: "flex", flexDirection: 'row', paddingTop: 7, paddingLeft: 20 }}>
+                    {order ? (
+                        <Grid container style={{ position: 'relative', justifyContent: "center", alignItems: "center" }} >
+                            <Grid>
+                                <div style={{ display: "flex", flexDirection: 'row', paddingTop: 7, paddingLeft: 20 }}>
+                                    <Grid item>
+                                        <ContentNameTypography>Payment Receipt Details </ContentNameTypography >
+                                    </Grid>
+                                    <Grid item>
+                                        <StyledPrintDiv>
+                                            <Button variant="outlined" onClick={handlePrint} >
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
+                                                </svg>
+                                            </Button >
+                                        </StyledPrintDiv>
+                                    </Grid>
+                                </div>
+                            </Grid>
+                            <Grid container style={{ display: 'flex', justifyContent: "center", alignItems: "center" }}>
                                 <Grid item>
-                                    <ContentNameTypography>Payment Receipt Details </ContentNameTypography >
+                                    <StyleLabel>Receipt ID</StyleLabel>
+                                    <StyleData>{paymentReceipt?.paymentreceiptid}</StyleData>
                                 </Grid>
                                 <Grid item>
-                                    <StyledPrintDiv>
-                                        <Button variant="outlined" onClick={handlePrint} >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
-                                            </svg>
-                                        </Button >
-                                    </StyledPrintDiv>
+                                    <StyleLabel style={{ marginLeft: -40 }}>Payment Transaction ID</StyleLabel>
+                                    <StyleData style={{ marginLeft: -20 }}>{paymentReceipt?.paymenttransactionid}</StyleData>
                                 </Grid>
-                            </div>
-                        </Grid>
-                        <Grid container style={{ display: 'flex', justifyContent: "center", alignItems: "center" }}>
-                            <Grid item>
-                                <StyleLabel>Receipt ID</StyleLabel>
-                                <StyleData>{paymentReceipt?.paymentreceiptid}</StyleData>
-                            </Grid>
-                            <Grid item>
-                                <StyleLabel style={{ marginLeft: -40 }}>Payment Transaction ID</StyleLabel>
-                                <StyleData style={{ marginLeft: -20 }}>{paymentReceipt?.paymenttransaction.paymenttransactionid}</StyleData>
-                            </Grid>
-                            <Grid item>
-                                <StyleLabel style={{ marginLeft: 40 }}>Dealer ID</StyleLabel>
-                                <StyleData style={{ marginLeft: 60 }}>{order?.dealer.dealerid}</StyleData>
-                            </Grid>
-                            <Grid item>
-                                <StyleLabel style={{ marginLeft: 0 }}>Dealer Name</StyleLabel>
-                                <StyleData style={{ marginLeft: 20 }}>{order?.dealer.firstname! + " " + order?.dealer.lastname!}</StyleData>
-                            </Grid>
-                            <Grid item>
-                                <StyleLabel style={{ marginLeft: 0 }}>Payment Type</StyleLabel>
-                                <StyleData style={{ marginLeft: 20 }}>{paymentReceipt?.paymenttype}</StyleData>
-                            </Grid>
+                                <Grid item>
+                                    <StyleLabel style={{ marginLeft: 40 }}>Dealer ID</StyleLabel>
+                                    <StyleData style={{ marginLeft: 60 }}>{order?.dealer.dealerid}</StyleData>
+                                </Grid>
+                                <Grid item>
+                                    <StyleLabel style={{ marginLeft: 0 }}>Dealer Name</StyleLabel>
+                                    <StyleData style={{ marginLeft: 20 }}>{order?.dealer.firstname! + " " + order?.dealer.lastname!}</StyleData>
+                                </Grid>
+                                <Grid item>
+                                    <StyleLabel style={{ marginLeft: 0 }}>Payment Type</StyleLabel>
+                                    <StyleData style={{ marginLeft: 20 }}>{paymentReceipt?.paymenttype}</StyleData>
+                                </Grid>
 
 
-                        </Grid>
+                            </Grid>
 
-                        {/* <StackStyle sx={{ left: '12%' }}>
+                            {/* <StackStyle sx={{ left: '12%' }}>
                             <StyleLabel>Receipt ID</StyleLabel>
                             <StyleData>{paymentReceipt?.paymentreceiptid}</StyleData>
                         </StackStyle>
@@ -402,28 +410,27 @@ export function PaymentReceiptDetails() {
                             <StyleData>{paymentReceipt?.paymenttype}</StyleData>
                         </StackStyle> */}
 
-                        {paymentReceipt && paymentReceipt?.paymenttype === 'direct' ? (
-                            <div>
-                                <Grid container style={{ marginTop: 60, display: 'flex', justifyContent: "center", alignItems: "center" }}>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: -90 }}>Date Paid</StyleLabel>
-                                        <StyleData style={{marginLeft:-70}}>{new Date(directPaymentReceipt?.datepaid!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
+                            {paymentReceipt && paymentReceipt?.paymenttype === 'direct' ? (
+                                <div>
+                                    <Grid container style={{ marginTop: 60, display: 'flex', justifyContent: "center", alignItems: "center" }}>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: -90 }}>Date Paid</StyleLabel>
+                                            <StyleData style={{ marginLeft: -70 }}>{new Date(directPaymentReceipt?.datepaid!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
+                                        </Grid>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: 0 }}>Amount Collected</StyleLabel>
+                                            <StyleData style={{ marginLeft: 20 }}>{directPaymentReceipt?.amountpaid}</StyleData>
+                                        </Grid>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: 0 }}>Receiver Name</StyleLabel>
+                                            <StyleData style={{ marginLeft: 20 }}>{paymentReceipt.receivername} </StyleData>
+                                        </Grid>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: 0 }}>Remarks</StyleLabel>
+                                            <StyleData style={{ marginLeft: 20 }}>{paymentReceipt?.remarks}</StyleData>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: 0 }}>Amount Collected</StyleLabel>
-                                        <StyleData style={{ marginLeft: 20 }}>{directPaymentReceipt?.amountpaid}</StyleData>
-                                    </Grid>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: 0 }}>Receiver Name</StyleLabel>
-                                        <StyleData style={{ marginLeft: 20 }}>{collectionPaymentReceipt?.confirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
-                                            : 'NA'} </StyleData>
-                                    </Grid>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: 0 }}>Remarks</StyleLabel>
-                                        <StyleData style={{ marginLeft: 20 }}>{paymentReceipt?.remarks}</StyleData>
-                                    </Grid>
-                                </Grid>
-                                {/* <StackStyle sx={{ top: '40%', left: '12%' }}>
+                                    {/* <StackStyle sx={{ top: '40%', left: '12%' }}>
                                     <StyleLabel>Date Paid</StyleLabel>
                                     <StyleData>{new Date(directPaymentReceipt?.datepaid!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
                                 </StackStyle>
@@ -441,268 +448,158 @@ export function PaymentReceiptDetails() {
                                     <StyleData>{paymentReceipt?.remarks}</StyleData>
                                 </StackStyle> */}
 
-                            </div>
-
-
-                        ) : (
-                            <div>
-                                <Grid container style={{ display: 'flex', justifyContent: "center", alignItems: "center" }}>
-                                    <Grid item>
-                                        <StyleLabel>Date Collected</StyleLabel>
-                                        <StyleData>{new Date(collectionPaymentReceipt?.collectiondate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
-                                    </Grid>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: 0 }}>Amount Collected</StyleLabel>
-                                        <StyleData style={{ marginLeft: 20 }}>{collectionPaymentReceipt?.collectionamount}</StyleData>
-                                    </Grid>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: 0 }}>Date Remitted</StyleLabel>
-                                        <StyleData style={{ marginLeft: 20 }}>{new Date(collectionPaymentReceipt?.remitteddate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} </StyleData>
-                                    </Grid>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: 0 }}>Amount Remitted</StyleLabel>
-                                        <StyleData style={{ marginLeft: 20 }}>{collectionPaymentReceipt?.remittedamount} </StyleData>
-                                    </Grid>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: 0 }}>Collector Name</StyleLabel>
-                                        <StyleData style={{ marginLeft: 20 }}>{order?.collector!.firstname + " " + order?.collector!.lastname}</StyleData>
-                                    </Grid>
-                                </Grid>
-                                <Grid container style={{ display: 'flex', justifyContent: "center", alignItems: "center" }}>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: -90 }}>Payment Status</StyleLabel>
-                                        <StyleData style={{ marginLeft: -70 }}>{collectionPaymentReceipt?.confirmed ? "Confirmed" : "Unconfirmed"}</StyleData>
-                                    </Grid>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: 0 }}>Date Received</StyleLabel>
-                                        <StyleData style={{ marginLeft: 20 }}>{new Date(collectionPaymentReceipt?.confirmationdate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
-                                    </Grid>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: 0 }}>Receiver Name</StyleLabel>
-                                        <StyleData style={{ marginLeft: 20 }}>{collectionPaymentReceipt?.confirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
-                                            : 'NA'}</StyleData>
-                                    </Grid>
-                                    <Grid item>
-                                        <StyleLabel style={{ marginLeft: 0 }}>Remarks</StyleLabel>
-                                        <StyleData style={{ marginLeft: 20 }}>{paymentReceipt?.remarks}</StyleData>
-                                    </Grid>
-
-                                </Grid>
-                                <Grid container style={{ display: 'flex', justifyContent: "center", alignItems: "center" }}>
-                                    <StyledCollectorHeader>Proof of Payment</StyledCollectorHeader>
-                                </Grid>
-                                <Grid container style={{ marginTop: 40, marginLeft: -150, display: 'flex', justifyContent: "center", alignItems: "center" }}>
-                                    <Grid item>
-                                        <Card style={{ width: 120, borderRadius: 20, height: 40, padding: 20 }}>
-                                            <StyleLabel1>Dealer's Proof</StyleLabel1>
-                                        </Card>
-                                        <Card style={{ width: 350, borderRadius: 20, height: 80, padding: 10, marginTop: -30 }}>
-                                            {/* not sure if dri ba sya ibutang sud sa card huhu */}
-                                            {dealerPaymentProofs!.map((document) => (
-                                                <div key={document.dealerpaymentproofid}>
-                                                    {displayDealerPaymentProofs(document.content, document.type, document.name, document.dealerpaymentproofid, document.collectionPaymentReceipt!)}
-
-                                                </div>
-                                            ))}
-                                            <Modal
-                                                open={openDealerProof}
-                                                onClose={handleCloseDealerProof} >
-                                                <div>
-                                                    <button onClick={handleCloseDealerProof}>Close</button>
-                                                    {selectedDealerProof && (
-                                                        <div>
-                                                            {selectedDealerProof.type === 'application/pdf' ? (
-                                                                <iframe
-                                                                    title="PDF Document"
-                                                                    src={`data:application/pdf;base64,${selectedDealerProof.content}`}
-                                                                    width="100%"
-                                                                    height="1000px"
-                                                                />
-                                                            ) : selectedDealerProof.type.startsWith("image") ? (
-                                                                <img
-                                                                    src={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`}
-                                                                    alt="Document"
-                                                                    style={{ maxWidth: '100%', maxHeight: '10000px' }}
-                                                                />
-                                                            ) : (
-                                                                <a href={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`} download={`document.${selectedDealerProof.type}`}>
-                                                                    Download Document
-                                                                </a>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </Modal>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item>
-                                        <Card style={{ marginTop: 0, marginLeft: 100, width: 120, borderRadius: 20, height: 40, padding: 20 }}>
-                                            <StyleLabel1>Collector's Proof</StyleLabel1>
-                                        </Card>
-                                        <Card style={{ width: 350, marginLeft: 100, borderRadius: 20, height: 80, padding: 10, marginTop: -30 }}>
-                                            {collectorRemittanceProofs!.map((document) => (
-                                                <div key={document.collectorremittanceproofid}>
-                                                    {displayCollectorRemittanceProofs(document.content, document.type, document.name, document.collectorremittanceproofid, document.collectionPaymentReceipt!)}
-                                                </div>
-                                            ))}
-                                            <Modal
-                                                open={openCollectorProof}
-                                                onClose={handleCloseCollectorProof} >
-                                                <div>
-                                                    <button onClick={handleCloseCollectorProof}>Close</button>
-                                                    {selectedCollectorProof && (
-                                                        <div>
-                                                            {selectedCollectorProof.type === 'application/pdf' ? (
-                                                                <iframe
-                                                                    title="PDF Document"
-                                                                    src={`data:application/pdf;base64,${selectedCollectorProof.content}`}
-                                                                    width="100%"
-                                                                    height="1000px"
-                                                                />
-                                                            ) : selectedCollectorProof.type.startsWith("image") ? (
-                                                                <img
-                                                                    src={`data:${selectedCollectorProof.type};base64,${selectedCollectorProof.content}`}
-                                                                    alt="Document"
-                                                                    style={{ maxWidth: '100%', maxHeight: '10000px' }}
-                                                                />
-                                                            ) : (
-                                                                <a href={`data:${selectedCollectorProof.type};base64,${selectedCollectorProof.content}`} download={`document.${selectedCollectorProof.type}`}>
-                                                                    Download Document
-                                                                </a>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </Modal>
-                                        </Card>
-                                    </Grid>
-
-                                </Grid>
-
-
-                                {/* <StackStyle sx={{ top: '40%', left: '12%' }}>
-                                    <StyleLabel>Date Collected</StyleLabel>
-                                    <StyleData>{new Date(collectionPaymentReceipt?.collectiondate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
-                                </StackStyle>
-                                <StackStyle sx={{ top: '40%', left: '26%' }}>
-                                    <StyleLabel>Amount Collected</StyleLabel>
-                                    <StyleData>{collectionPaymentReceipt?.collectionamount}</StyleData>
-                                </StackStyle>
-                                <StackStyle sx={{ top: '40%', left: '44%' }}>
-                                    <StyleLabel>22Date Remitted</StyleLabel>
-                                    <StyleData>{new Date(collectionPaymentReceipt?.remitteddate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} </StyleData>
-                                </StackStyle>
-                                <StackStyle sx={{ top: '40%', left: '60%' }}>
-                                    <StyleLabel>Amount Remitted</StyleLabel>
-                                    <StyleData>{collectionPaymentReceipt?.remittedamount}</StyleData>
-                                </StackStyle>
-                                <StackStyle sx={{ top: '40%', left: '74%' }}>
-                                    <StyleLabel>Collector Name</StyleLabel>
-                                    <StyleData>{order?.collector!.firstname + " " + order?.collector!.lastname}</StyleData>
-                                </StackStyle>
-                                <StackStyle sx={{ top: '60%', left: '12%' }}>
-                                    <StyleLabel>Payment Status</StyleLabel>
-                                    <StyleData>{collectionPaymentReceipt?.confirmed ? "Confirmed" : "Unconfirmed"}</StyleData>
-                                </StackStyle>
-
-                                <StackStyle sx={{ top: '60%', left: '27%' }}>
-                                    <StyleLabel>Date Received</StyleLabel>
-                                    <StyleData>{new Date(collectionPaymentReceipt?.confirmationdate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
-                                </StackStyle>
-
-                                <StackStyle sx={{ top: '60%', left: '43%' }}>
-                                    <StyleLabel>Receiver Name</StyleLabel>
-                                    <StyleData>{collectionPaymentReceipt?.confirmed ? paymentReceipt?.cashier?.firstname + " " + paymentReceipt?.cashier?.lastname
-                                        : ''}</StyleData>
-                                </StackStyle>
-
-                                <StackStyle sx={{ top: '60%', left: '60%' }}>
-                                    <StyleLabel>Remarks</StyleLabel>
-                                    <StyleData>{paymentReceipt?.remarks}</StyleData>
-                                </StackStyle>
-
-                                <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }}>
-                                    <StyledCollectorHeader>Collector Proofs </StyledCollectorHeader>
-                                    {collectorRemittanceProofs!.map((document) => (
-                                        <div key={document.collectorremittanceproofid}>
-                                            {displayCollectorRemittanceProofs(document.content, document.type, document.name, document.collectorremittanceproofid, document.collectionPaymentReceipt!)}
-                                        </div>
-                                    ))}
                                 </div>
-                                <Modal
-                                    open={openCollectorProof}
-                                    onClose={handleCloseCollectorProof} >
-                                    <div>
-                                        <button onClick={handleCloseCollectorProof}>Close</button>
-                                        {selectedCollectorProof && (
-                                            <div>
-                                                {selectedCollectorProof.type === 'application/pdf' ? (
-                                                    <iframe
-                                                        title="PDF Document"
-                                                        src={`data:application/pdf;base64,${selectedCollectorProof.content}`}
-                                                        width="100%"
-                                                        height="1000px"
-                                                    />
-                                                ) : selectedCollectorProof.type.startsWith("image") ? (
-                                                    <img
-                                                        src={`data:${selectedCollectorProof.type};base64,${selectedCollectorProof.content}`}
-                                                        alt="Document"
-                                                        style={{ maxWidth: '100%', maxHeight: '10000px' }}
-                                                    />
-                                                ) : (
-                                                    <a href={`data:${selectedCollectorProof.type};base64,${selectedCollectorProof.content}`} download={`document.${selectedCollectorProof.type}`}>
-                                                        Download Document
-                                                    </a>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                </Modal>
 
 
-                                <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }}>
-                                    <StyledDealerHeader>Dealer Payment Proofs </StyledDealerHeader>
-                                    {dealerPaymentProofs!.map((document) => (
-                                        <div key={document.dealerpaymentproofid}>
-                                            {displayDealerPaymentProofs(document.content, document.type, document.name, document.dealerpaymentproofid, document.collectionPaymentReceipt!)}
+                            ) : (
+                                <div>
+                                    <Grid container style={{ display: 'flex', justifyContent: "center", alignItems: "center" }}>
+                                        <Grid item>
+                                            <StyleLabel>Date Collected</StyleLabel>
+                                            <StyleData>{new Date(collectionPaymentReceipt?.collectiondate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
+                                        </Grid>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: 0 }}>Amount Collected</StyleLabel>
+                                            <StyleData style={{ marginLeft: 20 }}>{collectionPaymentReceipt?.collectionamount}</StyleData>
+                                        </Grid>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: 0 }}>Date Remitted</StyleLabel>
+                                            <StyleData style={{ marginLeft: 20 }}>{new Date(collectionPaymentReceipt?.remitteddate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} </StyleData>
+                                        </Grid>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: 0 }}>Amount Remitted</StyleLabel>
+                                            <StyleData style={{ marginLeft: 20 }}>{collectionPaymentReceipt?.remittedamount} </StyleData>
+                                        </Grid>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: 0 }}>Collector Name</StyleLabel>
+                                            <StyleData style={{ marginLeft: 20 }}>{order?.collector!.firstname + " " + order?.collector!.lastname}</StyleData>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container style={{ display: 'flex', justifyContent: "center", alignItems: "center" }}>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: -90 }}>Payment Status</StyleLabel>
+                                            <StyleData style={{ marginLeft: -70 }}>{collectionPaymentReceipt?.isconfirmed ? "Confirmed" : "Unconfirmed"}</StyleData>
+                                        </Grid>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: 0 }}>Date Received</StyleLabel>
+                                            <StyleData style={{ marginLeft: 20 }}>{new Date(collectionPaymentReceipt?.confirmationdate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
+                                        </Grid>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: 0 }}>Receiver Name</StyleLabel>
+                                            <StyleData style={{ marginLeft: 20 }}>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.receivername + " "
+                                                : 'NA'}</StyleData>
+                                        </Grid>
+                                        <Grid item>
+                                            <StyleLabel style={{ marginLeft: 0 }}>Remarks</StyleLabel>
+                                            <StyleData style={{ marginLeft: 20 }}>{paymentReceipt?.remarks}</StyleData>
+                                        </Grid>
 
-                                        </div>
-                                    ))}
-                                </div>
-                                <Modal
-                                    open={openDealerProof}
-                                    onClose={handleCloseDealerProof} >
-                                    <div>
-                                        <button onClick={handleCloseDealerProof}>Close</button>
-                                        {selectedDealerProof && (
-                                            <div>
-                                                {selectedDealerProof.type === 'application/pdf' ? (
-                                                    <iframe
-                                                        title="PDF Document"
-                                                        src={`data:application/pdf;base64,${selectedDealerProof.content}`}
-                                                        width="100%"
-                                                        height="1000px"
-                                                    />
-                                                ) : selectedDealerProof.type.startsWith("image") ? (
-                                                    <img
-                                                        src={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`}
-                                                        alt="Document"
-                                                        style={{ maxWidth: '100%', maxHeight: '10000px' }}
-                                                    />
-                                                ) : (
-                                                    <a href={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`} download={`document.${selectedDealerProof.type}`}>
-                                                        Download Document
-                                                    </a>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                </Modal> */}
-                            </div >
-                        )
-                        }
-                    </Grid>
+                                    </Grid>
+                                    <Grid container style={{ display: 'flex', justifyContent: "center", alignItems: "center" }}>
+                                        <StyledCollectorHeader>Proof of Payment</StyledCollectorHeader>
+                                    </Grid>
+                                    <Grid container style={{ marginTop: 40, marginLeft: -150, display: 'flex', justifyContent: "center", alignItems: "center" }}>
+                                        <Grid item>
+                                            <Card style={{ width: 120, borderRadius: 20, height: 40, padding: 20 }}>
+                                                <StyleLabel1>Dealer's Proof</StyleLabel1>
+                                            </Card>
+                                            <Card style={{ width: 350, borderRadius: 20, height: 80, padding: 10, marginTop: -30 }}>
+                                                {/* not sure if dri ba sya ibutang sud sa card huhu */}
+                                                {dealerPaymentProofs!.map((document) => (
+                                                    <div key={document.dealerpaymentproofid}>
+                                                        {displayDealerPaymentProofs(document.content, document.type, document.name, document.dealerpaymentproofid, document.collectionPaymentReceipt!)}
+
+                                                    </div>
+                                                ))}
+                                                <Modal
+                                                    open={openDealerProof}
+                                                    onClose={handleCloseDealerProof} >
+                                                    <div>
+                                                        <button onClick={handleCloseDealerProof}>Close</button>
+                                                        {selectedDealerProof && (
+                                                            <div>
+                                                                {selectedDealerProof.type === 'application/pdf' ? (
+                                                                    <iframe
+                                                                        title="PDF Document"
+                                                                        src={`data:application/pdf;base64,${selectedDealerProof.content}`}
+                                                                        width="100%"
+                                                                        height="1000px"
+                                                                    />
+                                                                ) : selectedDealerProof.type.startsWith("image") ? (
+                                                                    <img
+                                                                        src={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`}
+                                                                        alt="Document"
+                                                                        style={{ maxWidth: '100%', maxHeight: '10000px' }}
+                                                                    />
+                                                                ) : (
+                                                                    <a href={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`} download={`document.${selectedDealerProof.type}`}>
+                                                                        Download Document
+                                                                    </a>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </Modal>
+                                            </Card>
+                                        </Grid>
+                                        <Grid item>
+                                            <Card style={{ marginTop: 0, marginLeft: 100, width: 120, borderRadius: 20, height: 40, padding: 20 }}>
+                                                <StyleLabel1>Collector's Proof</StyleLabel1>
+                                            </Card>
+                                            <Card style={{ width: 350, marginLeft: 100, borderRadius: 20, height: 80, padding: 10, marginTop: -30 }}>
+                                                {collectorRemittanceProofs!.map((document) => (
+                                                    <div key={document.collectorremittanceproofid}>
+                                                        {displayCollectorRemittanceProofs(document.content, document.type, document.name, document.collectorremittanceproofid, document.collectionPaymentReceipt!)}
+                                                    </div>
+                                                ))}
+                                                <Modal
+                                                    open={openCollectorProof}
+                                                    onClose={handleCloseCollectorProof} >
+                                                    <div>
+                                                        <button onClick={handleCloseCollectorProof}>Close</button>
+                                                        {selectedCollectorProof && (
+                                                            <div>
+                                                                {selectedCollectorProof.type === 'application/pdf' ? (
+                                                                    <iframe
+                                                                        title="PDF Document"
+                                                                        src={`data:application/pdf;base64,${selectedCollectorProof.content}`}
+                                                                        width="100%"
+                                                                        height="1000px"
+                                                                    />
+                                                                ) : selectedCollectorProof.type.startsWith("image") ? (
+                                                                    <img
+                                                                        src={`data:${selectedCollectorProof.type};base64,${selectedCollectorProof.content}`}
+                                                                        alt="Document"
+                                                                        style={{ maxWidth: '100%', maxHeight: '10000px' }}
+                                                                    />
+                                                                ) : (
+                                                                    <a href={`data:${selectedCollectorProof.type};base64,${selectedCollectorProof.content}`} download={`document.${selectedCollectorProof.type}`}>
+                                                                        Download Document
+                                                                    </a>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </Modal>
+                                            </Card>
+                                        </Grid>
+
+                                    </Grid>
+                                </div >
+                            )
+                            }
+
+                        </Grid>
+                   ) : (
+                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
+                        <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+                        <LinearProgress sx={{ width: '20%' }} />
+                        {/* You can adjust the width as needed */}
+                    </Box>
+                )}     
                 </div >
+
+                // 
             ) : (
                 <PaymentReceiptDetailsPrint paymentReceipt={paymentReceipt!} directPaymentReceipt={directPaymentReceipt!} collectionPaymentReceipt={collectionPaymentReceipt!} order={order!} />
             )
