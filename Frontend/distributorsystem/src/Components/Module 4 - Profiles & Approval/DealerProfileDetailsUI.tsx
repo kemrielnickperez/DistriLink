@@ -641,7 +641,7 @@ export default function DealerProfileDetails() {
 
     return (
         <div>
-            {/* {dealer?( */}
+             {dealer?( 
           
             <Grid style={{ position:'relative', justifyContent: "center"}} container spacing={3}>
                 <Grid item style={{ marginRight: -70 }}>
@@ -854,12 +854,12 @@ export default function DealerProfileDetails() {
                 </Snackbar>
             </Grid>
         
-        {/* ) : (
+         ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
                 <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
                 <LinearProgress sx={{ width: '20%' }} />
             </Box>
-        )} */}
+        )} 
        </div>
     );
 }
