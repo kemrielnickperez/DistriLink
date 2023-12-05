@@ -293,12 +293,11 @@ export default function RecordDirectPayment() {
 
     const [maxDate, setMaxDate] = useState<Dayjs | null>(null);
 
-    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
-
+    const userFromStorage = JSON.parse(localStorage.getItem("user")!);
 
 
     const handleFindPaymentTransactions = () => {
-        getOrderByID(orderIDRef.current?.value + "", distributorFromStorage.distributorid);
+        getOrderByID(orderIDRef.current?.value + "", userFromStorage.distributor.distributorid);
 
     };
 
@@ -689,7 +688,7 @@ export default function RecordDirectPayment() {
 
     useEffect(() => {
 
-        getOrderByID(orderIDRef.current?.value + "", distributorFromStorage.distributorid);
+        getOrderByID(orderIDRef.current?.value + "", userFromStorage.distributor.distributorid);
 
         if (order && order.paymenttransactions.length !== 0) {
             const allPaid = order.paymenttransactions?.every((transaction) => transaction.paid);

@@ -417,7 +417,7 @@ export default function DealerProfileDetails() {
     const getOrderByDealerId = (dealerID: string) => {
         axios.get(`http://localhost:8080/order/getOrderByDealerId/${dealerID}`)
             .then((response) => {
-                console.log("Getting Order by Dealer is Successful!");
+               
                 setOrders(response.data);
             })
             .catch((error) => {
@@ -549,7 +549,7 @@ export default function DealerProfileDetails() {
             updateDealerCreditLimit(objectId, newCreditLimit);
             setIsEditing(false); // Assuming you want to exit editing mode after updating
             setIsEditIcon(!isEditIcon);
-            console.log("Dealer Credit Limit is Updated!");
+           
         } else {
             // Handle the case where the input is not a valid number
             // You may want to display an error message or take other appropriate action
@@ -565,14 +565,14 @@ export default function DealerProfileDetails() {
     };
 
     const handleViewButtonClick = (objectId: string) => {
-        console.log(objectId);
+
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
 
         navigate(`/orderTransactionDetails/${objectId}`);
     };
 
     const handleViewButtonFalse = (objectId: string) => {
-        console.log(objectId);
+ 
         navigate(`/orderConfirmation/${objectId}`);
     }
 
@@ -611,7 +611,7 @@ export default function DealerProfileDetails() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                            console.log('Button clicked for row:', order.id);
+                           
                             if (order.confirmed === false) {
                                 handleViewButtonFalse(order.id);
                             } else {

@@ -179,9 +179,11 @@ export default function OrderConfirmation() {
   const [isMounted, setIsMounted] = useState(false);
 
 
-  const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+  const userFromStorage = JSON.parse(localStorage.getItem("user")!);
+
+  
   const handleFindOrder = () => {
-    getOrderByID(objectId!, distributorFromStorage.distributorid);
+    getOrderByID(objectId!, userFromStorage.distributor.distributorid);
   }
 
 

@@ -81,11 +81,11 @@ export default function EmployeeProfileListUI() {
     const [alertSeverity, setAlertSeverity] = useState('success');
 
 
-    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
-
+    const userFromStorage = JSON.parse(localStorage.getItem("user")!);
+    //userFromStorage.distributor.
 
     function getAllEmployees() {
-        axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllEmployeesByDistributorID/${distributorFromStorage.distributorid}`)
+        axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllEmployeesByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setEmployees(response.data);
                

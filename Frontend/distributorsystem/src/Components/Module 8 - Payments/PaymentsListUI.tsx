@@ -100,7 +100,9 @@ export default function PaymentList() {
 
     const navigate = useNavigate();
 
-    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+    const userFromStorage = JSON.parse(localStorage.getItem("user")!);
+
+    
     const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
 
 
@@ -115,7 +117,7 @@ export default function PaymentList() {
     const [alertSeverity, setAlertSeverity] = useState('success');
 
     function getAllPaymentReceipts() {
-        axios.get<IDirectPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${distributorFromStorage.distributorid}`)
+        axios.get<IDirectPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setPaymentReceipts(response.data);
 

@@ -244,9 +244,7 @@ export default function ProductDistributionList() {
   const dealerIDRef = useRef<TextFieldProps>(null);
 
 
-  const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
- 
-
+  const userFromStorage = JSON.parse(localStorage.getItem("user")!);
 
 
 
@@ -513,7 +511,7 @@ export default function ProductDistributionList() {
 
 
   const handleFindDealer = ()  => {
-    getDealerByDistributor(dealerIDRef.current?.value + "", distributorFromStorage.distributorid!)
+    getDealerByDistributor(dealerIDRef.current?.value + "", userFromStorage.distributor.distributorid!)
     
   };
 

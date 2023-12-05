@@ -108,7 +108,7 @@ export default function SignIn() {
     const [severity, setSeverity] = useState<AlertColor | undefined>();
 
 
-    const [signIn] = useRestSignIn();
+   
 
 
 
@@ -117,8 +117,7 @@ export default function SignIn() {
         event.preventDefault();
         setOpen(true);
 
-        signIn(userid, password);
-
+     
 
          if (!userid || !password) {
             setSnackbarMessage("Please enter both User ID and Password");
