@@ -25,7 +25,7 @@ export default function Content() {
         [`/orderTransactionDetails/${objectId}`] : 'Order Transaction Details',
         [`/paymentReceiptDetails/${objectId}`] : 'Payment Receipt Details',
         [`/schedules/${objectId}`] : 'Schedule',
-        '/recordDirectPayment':'Record Direct Payment'
+        '/recordDirectPayment':'Record Direct Payment',
         [`/distributorProfileDetails/${objectId}`] :'Distributor Information',
 
     }
