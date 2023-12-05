@@ -13,9 +13,9 @@ const ContentNameTypography = styled(Typography)({
 })
 
 const StyldeInfoHeader = styled(Typography)({
-    marginTop: '45px',
-    marginBottom: '90px',
-    marginLeft: '10%',
+    marginTop: '35px',
+    marginBottom: '130px',
+    marginLeft: 120,
     fontFamily: 'Inter',
     fontWeight: 'bold',
     textAlign: 'left',
@@ -33,20 +33,19 @@ const StyleLabel = styled(Typography)({
     position: 'absolute',
     textAlign: 'left',
     fontWeight: '550',
-    left: '-165px',
+    left: '32px',
     color: '#707070',
     fontSize: '15px',
     width: 'max-content',
     fontFamily: 'Inter',
-    top: '5px'
-  })
-  const StyleData = styled(Typography)({
-  
+    top:-80,
+})
+const StyleData = styled(Typography)({
     position: 'absolute',
     textAlign: 'left',
     width: 200,
-    left: '-140px',
-    top: '25px',
+    left: '50px',
+    top: '-50px',
     color: '#203949',
     fontSize: '15px',
     fontFamily: 'Inter',
@@ -98,62 +97,58 @@ export default function OrderTransactionDetailsPrint({ order}: { order: IOrder})
     
     return (
         <div>
-            < ContentNameTypography > Order Transaction Details 
-            </ContentNameTypography >
-
             <StyldeInfoHeader>Dealer Contact Information</StyldeInfoHeader>
-            <StackStyle sx={{ left: '27%' }}>
-                <StyleLabel>Dealer ID</StyleLabel>
-                <StyleData>{order?.dealer.dealerid}</StyleData>
-              </StackStyle>
-              <StackStyle sx={{ left: '38%' }}>
+            <StackStyle sx={{ left: '8%' }}>
                 <StyleLabel>Dealer Name</StyleLabel>
                 <StyleData>{order?.dealer.firstname} {order?.dealer.middlename} {order?.dealer.lastname}</StyleData>
-              </StackStyle>
-              <StackStyle sx={{ left: '57%' }}>
+            </StackStyle>
+            <StackStyle sx={{ left: '28%' }}>
+                <StyleLabel>Dealer ID</StyleLabel>
+                <StyleData>{order?.dealer.dealerid}</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '42%' }}>
                 <StyleLabel>Contact Number</StyleLabel>
                 <StyleData>{order?.dealer.contactnumber}</StyleData>
-              </StackStyle>
-              <StackStyle sx={{ left: '72%' }}>
+            </StackStyle>
+            <StackStyle sx={{ left: '59%' }}>
                 <StyleLabel>Email Address</StyleLabel>
                 <StyleData>{order?.dealer.emailaddress}</StyleData>
-              </StackStyle>
-              <StackStyle sx={{ left: '96%' }}>
+            </StackStyle>
+            <StackStyle sx={{ left: '76%' }}>
                 <StyleLabel>Current Address</StyleLabel>
                 <StyleData>{order?.dealer.currentaddress}</StyleData>
-              </StackStyle>
-            
+            </StackStyle>
             <StyldeInfoHeader>Order Transaction Information</StyldeInfoHeader>
             {/* set style left and top manually here in stack */}
-            <StackStyle sx={{ left: '27%', top: '350px' }}>
+            <StackStyle sx={{ left: '8%', top: '390px' }}>
                 <StyleLabel>Order Transaction ID</StyleLabel>
                 <StyleData>{order?.orderid}</StyleData>
             </StackStyle>
-            <StackStyle sx={{ left: '47%', top: '350px' }}>
-                <StyleLabel>Order Date</StyleLabel>
+            <StackStyle sx={{ left: '25%', top: '390px' }}>
+                <StyleLabel>Order Distribution Date</StyleLabel>
                 <StyleData>{order?.orderdate}</StyleData>
             </StackStyle>
-            <StackStyle sx={{ left: '59%', top: '350px' }}>
-                <StyleLabel>Distribution Date</StyleLabel>
-                <StyleData>{order?.distributiondate}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '75%', top: '350px' }}>
+            <StackStyle sx={{ left: '45%', top: '390px' }}>
                 <StyleLabel>Total Ordered Amount</StyleLabel>
                 <StyleData>Php {order?.orderamount}</StyleData>
             </StackStyle>
-            <StackStyle sx={{ left: '96%', top: '350px' }}>
+            <StackStyle sx={{ left: '63%', top: '390px' }}>
+                <StyleLabel>Penalty Rate</StyleLabel>
+                <StyleData>{order?.penaltyrate} %</StyleData>
+            </StackStyle>
+            <StackStyle sx={{ left: '76%', top: '390px' }}>
                 <StyleLabel>Payment Terms</StyleLabel>
                 <StyleData>{order?.paymentterms} Gives</StyleData>
             </StackStyle>
-            <StyldeInfoHeader>Order Breakdown</StyldeInfoHeader>
+            <StyldeInfoHeader sx={{marginTop: '24px',}}>Order Breakdown</StyldeInfoHeader>
 
-            <Grid item container spacing={2} sx={{ display: "flex", justifyContent: "center", marginTop: '-90px' }}>
+            <Grid container sx={{ display: "flex", justifyContent: "center", marginTop: '-100px' }}>
                 <Grid item >
-                    <Paper sx={{ backgroundColor: '#ffffff', borderRadius: "22px", height: "215px", justifyContent: 'center', display: 'flex', alignItems: 'left', position: 'relative', width: '800px' }}>
+                    <Paper sx={{ marginLeft:9,backgroundColor: '#ffffff', borderRadius: "22px", height: "215px", justifyContent: 'center', display: 'flex', alignItems: 'left', position: 'relative', width: '950px' }}>
 
                         <TableContainer>
                             <Table aria-label='simple table'>
-                                <TableHead>
+                                <TableHead >
                                     <TableRow>
                                         <TableHeaderCell align="center">Quantity</TableHeaderCell>
                                         <TableHeaderCell align="center">Unit</TableHeaderCell>

@@ -42,6 +42,7 @@ const StackStyle = styled(Stack)({
     //left: '32%'
 })
 const StyleLabel = styled(Typography)({
+    paddingTop: 40,
     position: 'absolute',
     textAlign: 'left',
     fontWeight: '550',
@@ -52,6 +53,7 @@ const StyleLabel = styled(Typography)({
     fontFamily: 'Inter',
 })
 const StyleData = styled(Typography)({
+    paddingTop: 45,
     fontWeight: '550',
     position: 'absolute',
     textAlign: 'left',
@@ -107,16 +109,16 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
 
     return (
         <div>
-            <ContentNameTypography>Payment Summary</ContentNameTypography>
+            <ContentNameTypography>Payment Receipt Details</ContentNameTypography>
             <StackStyle sx={{ left: '12%' }}>
                 <StyleLabel>Receipt ID</StyleLabel>
                 <StyleData>{paymentReceipt?.paymentreceiptid}</StyleData>
             </StackStyle>
-            <StackStyle sx={{ left: '24%' }}>
+            <StackStyle sx={{ left: '27%' }}>
                 <StyleLabel>Payment Transaction ID</StyleLabel>
                 <StyleData>{paymentReceipt?.paymenttransactionid}</StyleData>
             </StackStyle>
-            <StackStyle sx={{ left: '42%' }}>
+            <StackStyle sx={{ left: '44%' }}>
                 <StyleLabel>Dealer ID</StyleLabel>
                 <StyleData>{order?.dealer.dealerid}</StyleData>
             </StackStyle>
@@ -132,20 +134,20 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
             {paymentReceipt && paymentReceipt?.paymenttype === 'direct' ? (
                 <div>
 
-                    <StackStyle sx={{ top: '40%', left: '12%' }}>
+                    <StackStyle sx={{ top: '30%', left: '12%' }}>
                         <StyleLabel>Date Paid</StyleLabel>
                         <StyleData>{new Date(directPaymentReceipt?.datepaid!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
                     </StackStyle>
-                    <StackStyle sx={{ top: '40%', left: '26%' }}>
+                    <StackStyle sx={{ top: '30%', left: '28%' }}>
                         <StyleLabel>Amount Collected</StyleLabel>
                         <StyleData>{directPaymentReceipt?.amountpaid}</StyleData>
                     </StackStyle>
-                    <StackStyle sx={{ top: '40%', left: '44%' }}>
+                    <StackStyle sx={{ top: '30%', left: '44%' }}>
                         <StyleLabel>Receiver Name</StyleLabel>
                         <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.receivername
-                            : ''} </StyleData>
+                            : 'NA'} </StyleData>
                     </StackStyle>
-                    <StackStyle sx={{ top: '40%', left: '60%' }}>
+                    <StackStyle sx={{ top: '30%', left: '60%' }}>
                         <StyleLabel>Remarks</StyleLabel>
                         <StyleData>{paymentReceipt?.remarks}</StyleData>
                     </StackStyle>
@@ -154,43 +156,43 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
 
             ) : (
                 <div>
-                    <StackStyle sx={{ top: '40%', left: '12%' }}>
+                    <StackStyle sx={{ top: '30%', left: '12%' }}>
                         <StyleLabel>Date Collected</StyleLabel>
                         <StyleData>{new Date(collectionPaymentReceipt?.collectiondate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
                     </StackStyle>
-                    <StackStyle sx={{ top: '40%', left: '26%' }}>
+                    <StackStyle sx={{ top: '30%', left: '28%' }}>
                         <StyleLabel>Amount Collected</StyleLabel>
                         <StyleData>{collectionPaymentReceipt?.collectionamount}</StyleData>
                     </StackStyle>
-                    <StackStyle sx={{ top: '40%', left: '44%' }}>
+                    <StackStyle sx={{ top: '30%', left: '44%' }}>
                         <StyleLabel>Date Remitted</StyleLabel>
                         <StyleData>{new Date(collectionPaymentReceipt?.remitteddate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} </StyleData>
                     </StackStyle>
-                    <StackStyle sx={{ top: '40%', left: '60%' }}>
+                    <StackStyle sx={{ top: '30%', left: '60%' }}>
                         <StyleLabel>Amount Remitted</StyleLabel>
                         <StyleData>{collectionPaymentReceipt?.remittedamount}</StyleData>
                     </StackStyle>
-                    <StackStyle sx={{ top: '40%', left: '74%' }}>
+                    <StackStyle sx={{ top: '30%', left: '74%' }}>
                         <StyleLabel>Collector Name</StyleLabel>
                         <StyleData>{order?.collector!.firstname + " " + order?.collector!.lastname}</StyleData>
                     </StackStyle>
-                    <StackStyle sx={{ top: '60%', left: '12%' }}>
+                    <StackStyle sx={{ top: '47%', left: '12%' }}>
                         <StyleLabel>Payment Status</StyleLabel>
                         <StyleData>{collectionPaymentReceipt?.isconfirmed ? "Confirmed" : "Unconfirmed"}</StyleData>
                     </StackStyle>
 
-                    <StackStyle sx={{ top: '60%', left: '27%' }}>
+                    <StackStyle sx={{ top: '47%', left: '27%' }}>
                         <StyleLabel>Date Received</StyleLabel>
                         <StyleData>{new Date(collectionPaymentReceipt?.confirmationdate!).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</StyleData>
                     </StackStyle>
 
-                    <StackStyle sx={{ top: '60%', left: '43%' }}>
+                    <StackStyle sx={{ top: '47%', left: '44%' }}>
                         <StyleLabel>Receiver Name</StyleLabel>
                         <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.receivername
-                            : ''}</StyleData>
+                            : 'NA'}</StyleData>
                     </StackStyle>
 
-                    <StackStyle sx={{ top: '60%', left: '60%' }}>
+                    <StackStyle sx={{ top: '47%', left: '60%' }}>
                         <StyleLabel>Remarks</StyleLabel>
                         <StyleData>{paymentReceipt?.remarks}</StyleData>
                     </StackStyle>

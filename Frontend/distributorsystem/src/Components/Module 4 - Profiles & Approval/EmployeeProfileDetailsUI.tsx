@@ -45,7 +45,7 @@ const ProfileCard = styled(Card)({
   borderRadius: 22,
   width: 300,
   height: 240,
-  marginTop: 150,
+  marginTop: 60,
   marginLeft: 160
 })
 const StyleMainInfo = styled(Typography)({
@@ -233,8 +233,8 @@ export function EmployeeProfileDetails() {
   return (
     <div>
        {employee?(
-      <Grid container spacing={3}>
-        <ContentNameTypography>Employee Information</ContentNameTypography>
+        
+      <Grid  style={{ position:'relative', justifyContent: "center"}} container spacing={3}>
         <Grid item style={{ marginRight: -70 }}>
           <Grid>
             <ProfileCard onClick={handleOpenProfile} style={{cursor:'pointer'}}>
@@ -256,7 +256,7 @@ export function EmployeeProfileDetails() {
           </div>
         </Modal>
         <Grid item>
-          <Grid container style={{ marginTop: 15 }}>
+          <Grid container style={{ marginTop: -80 }}>
             <Grid item>
               <StyleMainLabel>Employee's Name</StyleMainLabel>
               <StyleMainInfo style={{ marginTop: 15 }}>{employee?.firstname} {employee?.middlename} {employee?.lastname}</StyleMainInfo>
@@ -277,7 +277,7 @@ export function EmployeeProfileDetails() {
 
           <Grid container>
             <Grid item>
-              <Box sx={{ width: '92%', marginLeft: 10, marginTop: 5 }}>
+              <Box sx={{ width: 920, marginLeft: 10, marginTop: 5 }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
                   <TabStyle icon={<PermIdentityIcon />} iconPosition="start" label="Basic Information" {...a11yProps(0)} />
                 </Tabs>

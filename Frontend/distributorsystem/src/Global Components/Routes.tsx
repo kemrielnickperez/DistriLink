@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate  } from 'react-router-dom'
 import Dashboard from "../Components/Module 3 - Distributor Dashboard/DashboardUI";
 
 import PaymentList from "../Components/Module 8 - Payments/PaymentsListUI";
@@ -41,6 +41,7 @@ import ContentDealer from './ContentsDealer';
 import ContentSalesAssociate from './ContentsSalesAssociate';
 import ContentCashier from './ContentsCashier';
 import ContentBothSalesCashier from './ContentsBothSalesCashier';
+import ThankYouScreen from '../Components/A - SplashScreen/ThankYouScreen';
 import { DistributorProfileDetails } from '../Components/Module 4 - Profiles & Approval/DistributorProfileDetailsUI';
 
 export default function MainRoutes() {
@@ -50,8 +51,10 @@ export default function MainRoutes() {
     return (
         <Routes>
             <Route path="/" element={<SplashscreenContent />}>
+                
                 <Route path="/" element={<Navigate replace to="WelcomeScreen" />} />
-                <Route path="/WelcomeScreen" element={<WelcomeScreen />} />
+                <Route path="/WelcomeScreen" element={<WelcomeScreen />} /> 
+                
                 {/* <SignupScreen/> */}
                 <Route path="/" element={<SignUpContent />}>
                     <Route path="/" element={<Navigate replace to="SignUpScreen" />} />
@@ -59,6 +62,7 @@ export default function MainRoutes() {
                     <Route path="/DealerRegistration" element={<DealerRegistration />} />
                     <Route path="/EmployeeRegistration" element={<EmployeeRegistration />} />
                     <Route path="/DistributorRegistration" element={<DistributorRegistration />} />
+                    <Route path="/ThankYou" element={<ThankYouScreen />} />
                 </Route>
 
                 {/* <SigninScreen/> */}

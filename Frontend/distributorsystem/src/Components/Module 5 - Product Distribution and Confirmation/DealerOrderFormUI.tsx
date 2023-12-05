@@ -529,7 +529,7 @@ export default function DealerOrderForm() {
           </Grid>
         </Grid>
 
-        <SaveButton variant='contained' onClick={handleSaveOrder}>Save</SaveButton>
+        <SaveButton variant='contained' onClick={handleSaveOrder} disabled={!isDealerFound}>Save</SaveButton>
         {/* Alerts */}
         <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{
           vertical: 'top',
