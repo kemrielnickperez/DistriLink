@@ -156,7 +156,7 @@ export function PaymentReceiptDetails() {
 
     const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
     const [createDirectPaymentReceipt, getPaymentReceiptByID, confirmCollectionPaymentReceipt, paymentReceipt, directPaymentReceipt, collectionPaymentReceipt, isPaymentReceiptFound] = useRestPaymentReceipt();
-    const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, paymentTransaction] = useRestPaymentTransaction();
+    const [createPaymentTransaction, getPaymentTransactionByID, updatePaymentTransaction, getRemainingPaymentAmount, getTotalPaidAmount, paymentTransaction, totalPaidAmount, remainingPaymentAmount] = useRestPaymentTransaction();
 
     const [collectorRemittanceProofs, setCollectorRemittanceProofs] = useState<ICollectorRemittanceProof[]>([]);
     const [dealerPaymentProofs, setDealerPaymentProofs] = useState<IDealerPaymentProof[]>([]);
@@ -191,12 +191,14 @@ export function PaymentReceiptDetails() {
 
     const handleFindPaymentReceipt = () => {
         getPaymentReceiptByID(objectId!)
-
     };
 
+    const handleFindPaymentTransaction = () => {
+        getPaymentTransactionByID(paymentReceipt?.paymenttransactionid!);
+        
+    };
 
     const handleFindOrder = () => {
-        getPaymentTransactionByID(paymentReceipt?.paymenttransactionid!);
         getOrderByPaymentTransactionID(paymentReceipt?.paymenttransactionid!);
 
     };
@@ -227,11 +229,11 @@ export function PaymentReceiptDetails() {
 
     useEffect(() => {
         handleFindPaymentReceipt();
+        handleFindPaymentTransaction();
         handleFindOrder();
         getAllCollectorRemittanceProofDocuments();
         getAllDealerPaymentProofDocuments();
 
-        console.log(paymentReceipt?.receivername)
 
     }, [paymentReceipt]);
 
@@ -346,7 +348,7 @@ export function PaymentReceiptDetails() {
         <div>
             {!printing ? (
                 <div>
-                    {order ? (
+                    {paymentReceipt? (
                         <Grid container style={{ position: 'relative', justifyContent: "center", alignItems: "center" }} >
                             <Grid>
                                 <div style={{ display: "flex", flexDirection: 'row', paddingTop: 7, paddingLeft: 20 }}>
@@ -375,11 +377,11 @@ export function PaymentReceiptDetails() {
                                 </Grid>
                                 <Grid item>
                                     <StyleLabel style={{ marginLeft: 40 }}>Dealer ID</StyleLabel>
-                                    <StyleData style={{ marginLeft: 60 }}>{order?.dealer.dealerid}</StyleData>
+                                    <StyleData style={{ marginLeft: 60 }}>{orderFromPaymentTransaction?.dealer.dealerid !== undefined ? orderFromPaymentTransaction?.dealer.dealerid : '' }</StyleData>
                                 </Grid>
                                 <Grid item>
                                     <StyleLabel style={{ marginLeft: 0 }}>Dealer Name</StyleLabel>
-                                    <StyleData style={{ marginLeft: 20 }}>{order?.dealer.firstname! + " " + order?.dealer.lastname!}</StyleData>
+                                    <StyleData style={{ marginLeft: 20 }}>{orderFromPaymentTransaction?.dealer.firstname! !== undefined ? orderFromPaymentTransaction?.dealer.firstname! + " " + orderFromPaymentTransaction?.dealer.lastname! : '' }</StyleData>
                                 </Grid>
                                 <Grid item>
                                     <StyleLabel style={{ marginLeft: 0 }}>Payment Type</StyleLabel>
@@ -590,13 +592,13 @@ export function PaymentReceiptDetails() {
                             }
 
                         </Grid>
-                   ) : (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
-                        <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
-                        <LinearProgress sx={{ width: '20%' }} />
-                        {/* You can adjust the width as needed */}
-                    </Box>
-                )}     
+                    ) : (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
+                            <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+                            <LinearProgress sx={{ width: '20%' }} />
+                            {/* You can adjust the width as needed */}
+                        </Box>
+                    )}
                 </div >
 
                 // 

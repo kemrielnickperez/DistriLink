@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 const settings = ['Profile', 'Dashboard', 'Logout'];
 
-const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+const userFromStorage = JSON.parse(localStorage.getItem("user")!);
 
 
 type navProps = {
@@ -62,7 +62,7 @@ export default function NewAppBar(props: navProps) {
 
     const handleSettingsClick = (choice: string) => {
         console.log(choice)
-        const objectId = distributorFromStorage.distributorid;
+        const objectId = userFromStorage.distributor.distributorid;
         if (choice === 'Dashboard')
             navigate("/dashboard")
         else if (choice === 'Profile') {
@@ -95,7 +95,7 @@ export default function NewAppBar(props: navProps) {
                             <Box sx={{ flexGrow: 0.1, display: { xs: 'none', md: 'flex' }, paddingTop: 1 }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: 8 }}>
                                     <NameTypography>
-                                        {distributorFromStorage.firstname + " " + distributorFromStorage.lastname}
+                                        {userFromStorage.distributor.firstname + " " + userFromStorage.distributor.lastname}
                                     </NameTypography>
                                     <TypeTypography>
                                         Distributor

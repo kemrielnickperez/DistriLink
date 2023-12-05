@@ -155,7 +155,8 @@ export default function DealerProfileListUI() {
     const pendingReasonRef = useRef<TextFieldProps>(null);
     const declineReasonRef = useRef<TextFieldProps>(null);
 
-    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+    const userFromStorage = JSON.parse(localStorage.getItem("user")!);
+    //userFromStorage.distributor.
 
 
     function CustomTabPanel(props: TabPanelProps) {
@@ -184,7 +185,7 @@ export default function DealerProfileListUI() {
     }
 
     function getAllDealers() {
-        axios.get<IDealer[]>(`http://localhost:8080/dealer/getAllDealersByDistributorID/${distributorFromStorage.distributorid}`)
+        axios.get<IDealer[]>(`http://localhost:8080/dealer/getAllDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setDealers(response.data);
 
@@ -195,10 +196,10 @@ export default function DealerProfileListUI() {
     }
 
     function getAllArchivedDealers() {
-        axios.get<IArchivedDealer[]>(`http://localhost:8080/archived/getAllArchivedDealersByDistributorID/${distributorFromStorage.distributorid}`)
+        axios.get<IArchivedDealer[]>(`http://localhost:8080/archived/getAllArchivedDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setArchivedDealer(response.data);
-                console.log(response.data);
+               
 
             })
             .catch((error) => {

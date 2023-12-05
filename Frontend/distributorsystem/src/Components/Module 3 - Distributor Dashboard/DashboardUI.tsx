@@ -182,11 +182,11 @@ export default function Dashboard() {
     const [unconfirmedCollectionPaymentReceipts, setUnconfirmedCollectionPaymentReceipts] = useState<ICollectionPaymentReceipt[]>();
 
 
-    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
- 
+    const userFromStorage = JSON.parse(localStorage.getItem("user")!);
+    //userFromStorage.distributor.
 
     const getAllUnconfirmedDealers = () => {
-        axios.get(`http://localhost:8080/dealer/getAllUnconfirmedDealersByDistributorID/${distributorFromStorage.distributorid}`)
+        axios.get(`http://localhost:8080/dealer/getAllUnconfirmedDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setUnconfirmedDealers(response.data);
             })
@@ -196,7 +196,7 @@ export default function Dashboard() {
     }
 
     const getAllUnconfirmedOrders = () => {
-        axios.get(`http://localhost:8080/order/getAllUnconfirmedOrdersByDistributorID/${distributorFromStorage.distributorid}`)
+        axios.get(`http://localhost:8080/order/getAllUnconfirmedOrdersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setUnconfirmedOrders(response.data);
             })
@@ -206,7 +206,7 @@ export default function Dashboard() {
     }
 
     const getAllUnconfirmedCollectionPaymentReceipts = () => {
-        axios.get(`http://localhost:8080/paymentreceipt/collectionpaymentreceipt/getAllUnconfirmedCollectionPaymentReceiptsByDistributorID/${distributorFromStorage.distributorid}`)
+        axios.get(`http://localhost:8080/paymentreceipt/collectionpaymentreceipt/getAllUnconfirmedCollectionPaymentReceiptsByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setUnconfirmedCollectionPaymentReceipts(response.data);
             })

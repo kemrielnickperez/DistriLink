@@ -141,12 +141,11 @@ export default function ProductDistributionList() {
         };
     }
 
-    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+    const userFromStorage = JSON.parse(localStorage.getItem("user")!);
 
-    useEffect(() => {
-        // Make an Axios GET request to fetch all orders
+    function getAllOrders() {
         axios
-            .get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${distributorFromStorage.distributorid}`)
+            .get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setOrder(response.data);
             })
@@ -154,7 +153,12 @@ export default function ProductDistributionList() {
                 headerHandleAlert('Error', "Failed to fetch orders. Please check your internet connection.", 'error');
             });
 
-        console.log(order)
+    }
+
+    useEffect(() => {
+        // Make an Axios GET request to fetch all orders
+        getAllOrders();
+
     }, []);
 
     {/**Handler for Alert - Function to define the type of alert*/ }

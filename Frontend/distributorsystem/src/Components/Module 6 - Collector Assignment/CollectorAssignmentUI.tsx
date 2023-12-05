@@ -128,9 +128,7 @@ export default function CollectorAssignment() {
   const [loading, setLoading] = useState(true);
 
 
-  const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
- 
-
+  const userFromStorage = JSON.parse(localStorage.getItem("user")!);
 
 
 
@@ -153,7 +151,7 @@ export default function CollectorAssignment() {
 
 
   function getAllCollectors() {
-    axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllCollectorsByDistributorID/${distributorFromStorage.distributorid}`)
+    axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllCollectorsByDistributorID/${userFromStorage.distributor.distributorid}`)
       .then((response) => {
         const updatedCollectors = response.data.map((collector) => {
           const assignedOrders = orders.filter((order) => order.collector?.employeeid === collector.employeeid);
@@ -169,7 +167,7 @@ export default function CollectorAssignment() {
   }
 
   function getAllOrders() {
-    axios.get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${distributorFromStorage.distributorid}`)
+    axios.get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${userFromStorage.distributor.distributorid}`)
       .then((response) => {
         setOrders(response.data.filter(order => order.confirmed && !order.isclosed));
       })
@@ -182,7 +180,6 @@ export default function CollectorAssignment() {
 
   useEffect(() => {
     getAllCollectors();
-    console.log(orders);
     getAllOrders();
 
   }, [orders]);

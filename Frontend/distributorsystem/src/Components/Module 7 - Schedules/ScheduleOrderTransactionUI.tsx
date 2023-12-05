@@ -153,8 +153,8 @@ export default function Schedules() {
 
 
 
-    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
-
+    const userFromStorage = JSON.parse(localStorage.getItem("user")!);
+  
 
 
     const handleCreatePaymentTransaction = () => {
@@ -294,7 +294,7 @@ export default function Schedules() {
     useEffect(() => {
 
   
-        getOrderByID(displayedValue!, distributorFromStorage.distributorid);
+        getOrderByID(displayedValue!, userFromStorage.distributor.distributorid);
      
         setInitialMinDate(dayjs() as Dayjs);
        

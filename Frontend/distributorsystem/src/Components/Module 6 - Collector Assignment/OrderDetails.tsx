@@ -192,7 +192,7 @@ export function OrderDetails() {
     };
 
     const getAllPaymentTransactionsByOrderID = () => {
-        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${objectId}/${distributorFromStorage.distributorid}`)
+        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${objectId}/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
 
                 setPaymentTransactions(response.data);
@@ -205,12 +205,13 @@ export function OrderDetails() {
     //sorting the payment transactions
     const sortedPaymemtTransactions = paymentTransactions?.sort((a, b) => a.installmentnumber - b.installmentnumber);
 
-    const distributorFromStorage = JSON.parse(localStorage.getItem("distributor")!);
+    const userFromStorage = JSON.parse(localStorage.getItem("user")!);
+
 
     {/*Handlers*/ }
     const handleFindValue = () => {
         try {
-            getOrderByID(objectId!, distributorFromStorage.distributorid);
+            getOrderByID(objectId!, userFromStorage.distributor.distributorid);
             getAllPaymentTransactionsByOrderID();
         } catch (error) {
             headerHandleAlert('Error', "Failed to retrieve order data. Please try again.", 'error');
@@ -227,7 +228,7 @@ export function OrderDetails() {
 
         setIsMounted(true); // Set the component as mounted when it renders
 
-        console.log(order);
+
 
 
     },
