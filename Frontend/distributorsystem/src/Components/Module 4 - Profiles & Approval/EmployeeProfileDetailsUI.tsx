@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, Button, Card, Grid, Icon, Modal, Slide, SlideProps, Snackbar, Stack, Tab, Tabs, Typography, styled } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Card, Grid, Icon, LinearProgress, Modal, Slide, SlideProps, Snackbar, Stack, Tab, Tabs, Typography, styled } from "@mui/material";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import profilepicture from "../../Global Components/Images/profilepicture.png"
@@ -9,6 +9,8 @@ import { useParams } from "react-router-dom";
 import CloseIcon from '@mui/icons-material/Close';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
+import logo5 from '../../Global Components/Images/logo5.png';
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -43,7 +45,7 @@ const ProfileCard = styled(Card)({
   borderRadius: 22,
   width: 300,
   height: 240,
-  marginTop: 150,
+  marginTop: 60,
   marginLeft: 160
 })
 const StyleMainInfo = styled(Typography)({
@@ -161,8 +163,8 @@ export function EmployeeProfileDetails() {
         setEmployeeDocuments(response.data);
       })
       .catch((error) => {
-       // alert("Error retrieving employee documents. Please try again.");
-       console.log(error)
+
+      
       });
   };
 
@@ -212,18 +214,8 @@ export function EmployeeProfileDetails() {
 
 
   useEffect(() => {
-    // Make an Axios GET request to fetch the employee data using the objectId
-    axios
-      .get<IEmployee>(`http://localhost:8080/employee/getEmployeeByID/${objectId}`)
-      .then((response) => {
-        // setEmployee(response.data);
-        // headerHandleAlert('Success', "Employee records retrieved successfully.", 'success');    
-      })
-      .catch((error) => {
-        headerHandleAlert('Error', "Failed to retrieve employee information. Please try again.", 'error');
-        // console.error("Error fetching employee data:", error);
-      });
-    if (objectId) {
+    
+    if (objectId !== null) {
       handleFindEmployee();
       getAllEmployeeDocuments();
     }
@@ -240,8 +232,9 @@ export function EmployeeProfileDetails() {
 }
   return (
     <div>
-      <Grid container spacing={3}>
-        <ContentNameTypography>Employee Information</ContentNameTypography>
+       {employee?(
+        
+      <Grid  style={{ position:'relative', justifyContent: "center"}} container spacing={3}>
         <Grid item style={{ marginRight: -70 }}>
           <Grid>
             <ProfileCard onClick={handleOpenProfile} style={{cursor:'pointer'}}>
@@ -263,7 +256,7 @@ export function EmployeeProfileDetails() {
           </div>
         </Modal>
         <Grid item>
-          <Grid container style={{ marginTop: 15 }}>
+          <Grid container style={{ marginTop: -80 }}>
             <Grid item>
               <StyleMainLabel>Employee's Name</StyleMainLabel>
               <StyleMainInfo style={{ marginTop: 15 }}>{employee?.firstname} {employee?.middlename} {employee?.lastname}</StyleMainInfo>
@@ -275,16 +268,16 @@ export function EmployeeProfileDetails() {
             <Grid item>
               <StyleMainLabel style={{marginLeft:70}}>Position</StyleMainLabel>
               <StyleMainInfo style={{ marginTop: 15, marginLeft: 90 }}>
-                {employee?.is_cashier && "Cashier"}
-                {employee?.is_collector && (employee!.is_cashier ? ', Collector' : 'Collector')}
-                {employee?.is_salesassociate && (employee?.is_cashier || employee?.is_collector ? ', Sales Associate' : 'Sales Associate')}
+                {employee?.iscashier && "Cashier"}
+                {employee?.iscollector && (employee!.iscashier ? ', Collector' : 'Collector')}
+                {employee?.issalesassociate && (employee?.iscashier || employee?.iscollector ? ', Sales Associate' : 'Sales Associate')}
               </StyleMainInfo>
             </Grid>
           </Grid>
 
           <Grid container>
             <Grid item>
-              <Box sx={{ width: '92%', marginLeft: 10, marginTop: 5 }}>
+              <Box sx={{ width: 920, marginLeft: 10, marginTop: 5 }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
                   <TabStyle icon={<PermIdentityIcon />} iconPosition="start" label="Basic Information" {...a11yProps(0)} />
                 </Tabs>
@@ -320,7 +313,7 @@ export function EmployeeProfileDetails() {
                   </Grid>
                   <Grid item>
                     <StyleLabel style={{ marginLeft: 50 }}>TIN Number</StyleLabel>
-                    <StyleData style={{ marginLeft: 60 }}>{employee?.tinnumber}</StyleData>
+                    <StyleData style={{ marginLeft: 60 }}>{employee.tinnumber}</StyleData>
                   </Grid>
                 </Grid>
               </CustomTabPanel>
@@ -341,72 +334,13 @@ export function EmployeeProfileDetails() {
           </Alert>
         </Snackbar>
       </Grid>
-      {/* 
-      {employee ? (
-        <div>
-          <Grid item>
-            <Grid item>
-              <ContentNameTypography>Employee Profile Details</ContentNameTypography>
-              <img src={profilepic} style={{ height: '250px', margin: '30px 500px 0px -550px' }}></img>
-            </Grid>
-          </Grid>
-       
-          <StackStyle sx={{ left: '40%' , top: '200px'}}>
-            <StyleLabel>Employee Name</StyleLabel>
-            <StyleMainInfo>{employee?.firstname} {employee?.middlename} {employee?.lastname}</StyleMainInfo>
-          </StackStyle>
-          <StackStyle sx={{ left: '60%', top: '200px' }}>
-            <StyleLabel>Employee ID</StyleLabel>
-            <StyleMainInfo>{employee?.employeeid}</StyleMainInfo>
-          </StackStyle>
-          <StackStyle sx={{ left: '80%', top: '200px' }}>
-            <StyleLabel>Position</StyleLabel>
-            <StyleMainInfo>
-              {employee.is_cashier && "Cashier"}
-              {employee.is_collector && (employee.is_cashier ? ', Collector' : 'Collector')}
-              {employee.is_salesassociate && (employee.is_cashier || employee.is_collector ? ', Sales Associate' : 'Sales Associate')}
-            </StyleMainInfo>
-          </StackStyle>
-          <StyldeInfoHeader>
-            <Icon style={{ color: '#203949', marginTop: '25px', marginRight: '15px' }}>
-            <PersonIcon /></Icon> Basic Information
-            </StyldeInfoHeader>
-          <StackStyle sx={{ left: '40%', top: '420px' }}>
-            <StyleLabel>Gender</StyleLabel>
-            <StyleData>{employee?.gender}</StyleData>
-          </StackStyle>
-          <StackStyle sx={{ left: '60%', top: '420px' }}>
-            <StyleLabel>Birthdate</StyleLabel>
-            <StyleData>{employee?.birthdate}</StyleData>
-          </StackStyle>
-          <StackStyle sx={{ left: '80%', top: '420px' }}>
-            <StyleLabel>Contact Number</StyleLabel>
-            <StyleData>{employee?.contactnumber}</StyleData>
-          </StackStyle>
-          <StackStyle sx={{ left: '40%', top: '520px' }}>
-            <StyleLabel>Current Address</StyleLabel>
-            <StyleData>{employee?.currentaddress}</StyleData>
-          </StackStyle>
-          <StackStyle sx={{ left: '60%', top: '520px' }}>
-            <StyleLabel>Permanent Address</StyleLabel>
-            <StyleData>Php {employee?.permanentaddress}</StyleData>
-          </StackStyle>
-
-
-        </div>
-
       ) : (
-        <Grid sx={{ justifyContent: "center", marginTop: '200px' }}>
-          {employee === null ? (
-            <>
-              <AutorenewOutlinedIcon />
-              <h4>Loading...</h4>
-            </>
-          ) : (
-            <p>Employee not found.</p>
-          )}
-        </Grid>
-      )} */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
+            <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+            <LinearProgress sx={{ width: '20%' }} />
+            {/* You can adjust the width as needed */}
+        </Box>
+    )}
     </div>
   );
 

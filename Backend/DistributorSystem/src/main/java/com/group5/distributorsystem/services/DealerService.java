@@ -1,14 +1,8 @@
 package com.group5.distributorsystem.services;
 
 
-import com.group5.distributorsystem.models.ArchivedDealer;
-import com.group5.distributorsystem.models.Dealer;
-import com.group5.distributorsystem.models.DealerDocument;
-import com.group5.distributorsystem.models.Distributor;
-import com.group5.distributorsystem.repositories.ArchivedDealerRepository;
-import com.group5.distributorsystem.repositories.DealerDocumentRepository;
-import com.group5.distributorsystem.repositories.DealerRepository;
-import com.group5.distributorsystem.repositories.DistributorRepository;
+import com.group5.distributorsystem.models.*;
+import com.group5.distributorsystem.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -42,6 +36,9 @@ public class DealerService {
 
     @Autowired
     ArchivedDealerRepository archivedDealerRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -120,23 +117,63 @@ public class DealerService {
 
     }*/
 
+
+    public Dealer getDealerByDistributor(String dealerid, String distributorid) {
+        Distributor distributor = distributorRepository.findById(distributorid).orElse(null);
+
+        Dealer dealer = dealerRepository.findById(dealerid).orElse(null);
+
+            if (dealer != null) {
+                for (String distributor_dealer : distributor.getDealerids()) {
+                    if (distributor_dealer.equals(dealer.getDealerid())) {
+                        return dealer; // Dealer found, return the dealer
+                    }
+                }
+
+                // Dealer not found in the distributor's list
+                return null;
+            } else {
+                // Dealer with the given ID not found
+                return null;
+            }
+    }
+
+    public List<Dealer> getAllDealersByDistributorID(String distributorid) {
+        return dealerRepository.findAllByDistributor_Distributorid(distributorid);
+    }
+
     public Dealer findByDealeridAndPassword(String dealerid, String password){
         return dealerRepository.findByDealeridAndPassword(dealerid, password);
     }
 
-    public void updateDealerCreditLimit(String dealerId, double newCreditLimit) {
-        Optional<Dealer> optionalDealer = dealerRepository.findById(dealerId);
-        if (optionalDealer.isPresent()) {
-            Dealer dealer = optionalDealer.get();
-            dealer.setCreditlimit(newCreditLimit);
-            dealerRepository.save(dealer);
-        } else {
-            // Handle the case where the dealer doesn't exist.
-        }
+    public void updateDealerCreditLimit(String dealerId, double creditlimit) {
+        Dealer optionalDealer = dealerRepository.findById(dealerId).get();
+        double previousCreditLmit = optionalDealer.getCreditlimit();
+        // Get the dealer's information
+
+        String subject = "Dealer Account Status Update";
+        String content =
+                "Dealer Name: " + optionalDealer.getFirstname() +" "+  optionalDealer.getMiddlename() +" "+ optionalDealer.getLastname() + "\n" +
+                        "Dealer ID: " + optionalDealer.getDealerid()+ "\n" +
+                        "Your Credit Limit is Updated.\n" +
+                        "Previous Credit Limit: "+ previousCreditLmit + "\n" +
+                        "Updated Credit Limit: " + creditlimit;
+
+        // Use the EmailService to send the email using the dealer's email address
+        dealerEmailService.sendUpdatedCreditLimitEmail(optionalDealer, subject, content);
+
+        // Save the updated "confirmed" property back to the database
+        optionalDealer.setCreditlimit(creditlimit);
+        dealerRepository.save(optionalDealer);
+
     }
 
     public List<Dealer> getAllUnconfirmedDealers() {
         return dealerRepository.findByIsconfirmedFalse();
+    }
+
+    public List<Dealer> getAllUnconfirmedDealersByDistributorID(String distributorid) {
+        return dealerRepository.findByDistributor_DistributoridAndIsconfirmedFalse(distributorid);
     }
 
     public void updateDealerConfirmation(String dealerId, Double creditlimit) {
@@ -188,6 +225,7 @@ public class DealerService {
 
     public void updateArchivedDealer(String dealerId, String remarks, LocalDate datearchived){
         Dealer optionalDealer = dealerRepository.findById(dealerId).get();
+        Distributor distributor = distributorRepository.findById(optionalDealer.getDistributor().getDistributorid()).get();
 
         String subject = "Dealer Account Status Update";
         String content =
@@ -203,10 +241,33 @@ public class DealerService {
         archivedDealerRepository.save(archivedDealer);
         dealerRepository.delete(optionalDealer);
 
+        distributor.getDealerids().remove(optionalDealer.getDealerid());
+        distributor.getArchiveddealerids().add(archivedDealer.getDealerid());
+        distributorRepository.save(distributor);
     }
 
 
+    public double getTotalOrderAmountByDealerID(String dealerid){
+        Dealer dealer = dealerRepository.findById(dealerid).get();
+
+        double  totalOrderAmount = 0;
+
+        for (String orderid: dealer.getOrderids()) {
+            Order order = orderRepository.findById(orderid).get();
+            if(order.isIsclosed()){
+                continue;
+            }
+            else {
+                totalOrderAmount += order.getOrderamount();
+            }
+        }
+
+
+        return totalOrderAmount;
     }
+
+
+}
 
 
 

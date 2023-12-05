@@ -52,4 +52,14 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeService.getCollectorByID(employeeid), HttpStatus.OK);
     }
 
+    @GetMapping("/getAllEmployeesByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllEmployeesByDistributorID(@PathVariable String distributorid) {
+        return new ResponseEntity<>(employeeService.getAllEmployeesByDistributorID(distributorid), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllCollectorsByDistributorID/{distributorid}")
+    public ResponseEntity<Object> getAllCollectorsByDistributorID(@PathVariable String distributorid) {
+        return new ResponseEntity<>(employeeService.getAllCollectorsByDistributorID(distributorid), HttpStatus.OK);
+    }
+
 }

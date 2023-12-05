@@ -42,8 +42,8 @@ public class CollectionPaymentReceipt extends PaymentReceipt {
         this.dealerpaymentproofids = dealerpaymentproofids;
     }
 
-    public CollectionPaymentReceipt(String paymentreceiptid, String remarks, double amountpaid, String paymenttype, PaymentTransaction paymenttransaction, Employee cashier, LocalDate collectiondate, double collectionamount, LocalDate remitteddate, double remittedamount, LocalDate confirmationdate, boolean isconfirmed, Set<String> collectorremittanceproofids, Set<String> dealerpaymentproofids) {
-        super(paymentreceiptid, remarks, amountpaid, paymenttype, paymenttransaction, cashier);
+    public CollectionPaymentReceipt(String paymentreceiptid, String remarks, double amountpaid, String paymenttype, String paymenttransactionid, String receiverID, String receivername, LocalDate collectiondate, double collectionamount, LocalDate remitteddate, double remittedamount, LocalDate confirmationdate, boolean isconfirmed, Set<String> collectorremittanceproofids, Set<String> dealerpaymentproofids) {
+        super(paymentreceiptid, remarks, amountpaid, paymenttype, paymenttransactionid, receiverID, receivername);
         this.collectiondate = collectiondate;
         this.collectionamount = collectionamount;
         this.remitteddate = remitteddate;

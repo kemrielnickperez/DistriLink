@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,6 +23,8 @@ public class PaymentTransactionService {
     @Autowired
     OrderRepository orderRepository;
 
+
+
     public void createPaymentTransaction(PaymentTransaction[] paymentTransactions, String orderid) {
 
         Order order = orderRepository.findById(orderid).get();
@@ -29,7 +32,7 @@ public class PaymentTransactionService {
         //for(int i=0; i<= paymentTransaction.length; i++){
         for(PaymentTransaction pt :paymentTransactions) {
 
-                PaymentTransaction newpt = new PaymentTransaction(pt.getPaymenttransactionid(), pt.getAmountdue(), pt.getStartingdate(), pt.getEnddate(), pt.getInstallmentnumber(), pt.isPaid(),  orderid, pt.getPaymentreceiptid());
+                PaymentTransaction newpt = new PaymentTransaction(pt.getPaymenttransactionid(), pt.getAmountdue(), pt.getStartingdate(), pt.getEnddate(), pt.getInstallmentnumber(), pt.isPaid(),  order.getOrderid(), pt.getPaymentreceipts());
                 newpt = paymentTransactionRepository.save(newpt);
 
                 order.getPaymenttransactions().add(newpt);
@@ -59,11 +62,30 @@ public class PaymentTransactionService {
         return paymentTransactionRepository.findAll();
     }
 
+
+    public List<PaymentTransaction> getAllPaymentTransactionsByOrderID(String orderid, String distributorid) {
+
+        Order order;
+        boolean exists = orderRepository.existsByOrderidAndDistributor_Distributorid(orderid, distributorid);
+        if(exists) {
+            order = orderRepository.findById(orderid).get();
+            List<PaymentTransaction> paymentTransactions = new ArrayList<>();
+            for (PaymentTransaction pt : order.getPaymenttransactions()) {
+                paymentTransactions.add(pt);
+            }
+            return paymentTransactions;
+        }
+        else
+            return null;
+
+    }
+
+
     public Optional<PaymentTransaction> getPaymentTransactionByID(String paymenttransactionid){
         return paymentTransactionRepository.findById(paymenttransactionid);
     }
 
-    public ResponseEntity updatePaymentTransaction(PaymentTransaction[] paymentTransaction) {
+    /*public ResponseEntity updatePaymentTransaction(PaymentTransaction[] paymentTransaction) {
 
         for(int i=0; i<paymentTransaction.length; i++) {
 
@@ -75,7 +97,7 @@ public class PaymentTransactionService {
 
             PaymentTransaction updated2 = paymentTransactionRepository.save(updatedPaymentTransaction);
 
-            for(PaymentTransaction pt : order.getPaymenttransactions()) {
+            for(PaymentTransaction pt : order.getPaymenttransactionids()) {
                 if (pt.getPaymenttransactionid().equals(updated2.getPaymenttransactionid())) {
                     pt.setEnddate(updated2.getEnddate());
                     pt.setStartingdate(updated2.getStartingdate());
@@ -85,47 +107,90 @@ public class PaymentTransactionService {
         }
 
         return new ResponseEntity("Payment Transaction Updated Successfully!", HttpStatus.OK);
-    }
+    }*/
+
+
     public ResponseEntity updatePaymentTransaction(String paymenttransactionid, PaymentTransaction paymentTransaction) {
         PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
 
-        Order order = orderRepository.findById(paymentTransaction.getOrderid()).get();
-        //07-18-23 - I removed the feature of changing the amount due for each installment/gives kay lisod, might change later if maka gets ko unsaon ni
-        //  updatedPaymentTransaction.setAmountdue(paymentTransaction.getAmountdue());
         updatedPaymentTransaction.setEnddate(paymentTransaction.getEnddate());
-        updatedPaymentTransaction.setStartingdate(paymentTransaction.getStartingdate());
 
-        PaymentTransaction updated2 =paymentTransactionRepository.save(updatedPaymentTransaction);
-        for(PaymentTransaction pt : order.getPaymenttransactions())
-            if(pt.getPaymenttransactionid().equals(updated2.getPaymenttransactionid())){
-                pt.setEnddate(updated2.getEnddate());
-                pt.setStartingdate(updated2.getStartingdate());
-            }
+        updatedPaymentTransaction = paymentTransactionRepository.save(updatedPaymentTransaction);
+
+        UpdatePaymentTransactionInOrder(updatedPaymentTransaction.getPaymenttransactionid());
 
         paymentTransactionRepository.save(updatedPaymentTransaction);
-        orderRepository.save(order);
         return new ResponseEntity("Payment Transaction Updated Successfully!", HttpStatus.OK);
     }
+
+    public double getTotalPaidAmount(String paymenttransactionid){
+
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
+
+        double totalAmountPaid =0;
+
+        for (PaymentReceipt pr: paymentTransaction.getPaymentreceipts()) {
+
+            totalAmountPaid += pr.getAmountpaid();
+        }
+
+        return  totalAmountPaid;
+    }
+
+    public double getRemainingPaymentAmount(String paymenttransactionid){
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
+       return Math.round( (paymentTransaction.getAmountdue() - getTotalPaidAmount(paymentTransaction.getPaymenttransactionid())) * 100.0) / 100.0;
+
+    }
+
+
+    public void UpdatePaymentTransactionInOrder(String paymenttransactionid){
+        PaymentTransaction paymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
+        Order order = orderRepository.findById(paymentTransaction.getOrderid()).get();
+
+        for (PaymentTransaction pt: order.getPaymenttransactions()) {
+            if(pt.getPaymenttransactionid().equals(paymentTransaction.getPaymenttransactionid())){
+                order.getPaymenttransactions().remove(pt);
+                order.getPaymenttransactions().add(paymentTransaction);
+                orderRepository.save(order);
+                break;
+            }
+        }
+    }
+
+
+
+
 
     public PaymentTransaction updatePaidPaymentTransaction(String paymenttransactionid) {
         PaymentTransaction updatedPaymentTransaction = paymentTransactionRepository.findById(paymenttransactionid).get();
 
         Order order = orderRepository.findById(updatedPaymentTransaction.getOrderid()).get();
 
-        updatedPaymentTransaction.setPaid(true);
+        double totalAmountPaid = getTotalPaidAmount(updatedPaymentTransaction.getPaymenttransactionid());
 
-        for(PaymentTransaction pt : order.getPaymenttransactions()) {
-            if (pt.getPaymenttransactionid().equals(updatedPaymentTransaction.getPaymenttransactionid())) {
-                pt.setPaid(updatedPaymentTransaction.isPaid());
-                pt.setPaymentreceiptid(updatedPaymentTransaction.getPaymentreceiptid());
+
+        if(totalAmountPaid == updatedPaymentTransaction.getAmountdue()){
+            updatedPaymentTransaction.setPaid(true);
+
+            List<PaymentTransaction> paymentTransactionsFromOrder = getAllPaymentTransactionsByOrderID(order.getOrderid(), order.getDistributor().getDistributorid());
+
+            for(PaymentTransaction pt : paymentTransactionsFromOrder) {
+                if (pt.getPaymenttransactionid().equals(updatedPaymentTransaction.getPaymenttransactionid())) {
+                    pt.setPaid(updatedPaymentTransaction.isPaid());
+                }
             }
+
+            orderRepository.save(order);
         }
 
-        orderRepository.save(order);
 
         return paymentTransactionRepository.save(updatedPaymentTransaction);
 
 
     }
+
+
+
 }
 

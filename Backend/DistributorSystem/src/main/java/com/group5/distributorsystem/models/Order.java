@@ -7,6 +7,7 @@ import org.springframework.data.annotation.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class Order {
 
     private Set<OrderedProduct> orderedproducts;
 
-    private Set<PaymentTransaction> paymenttransactions;
+    private Set<PaymentTransaction> paymenttransactions = new HashSet<>();;
 
     private boolean isconfirmed;
 

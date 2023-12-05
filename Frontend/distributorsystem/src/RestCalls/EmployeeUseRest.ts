@@ -30,9 +30,9 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
         formData.append('permanentaddress', employee.permanentaddress);
         formData.append('contactnumber', employee.contactnumber);
         formData.append('submissiondate', employee.submissiondate);
-        formData.append('is_cashier', employee.is_cashier.toString());
-        formData.append('is_salesassociate', employee.is_salesassociate.toString());
-        formData.append('is_collector', employee.is_collector.toString());
+        formData.append('iscashier', employee.iscashier.toString());
+        formData.append('issalesassociate', employee.issalesassociate.toString());
+        formData.append('iscollector', employee.iscollector.toString());
         formData.append('distributor.distributorid', employee.distributor.distributorid);
         formData.append('distributor.firstname', employee.distributor.firstname.toString());
         formData.append('distributor.middlename', employee.distributor.middlename.toString());
@@ -44,7 +44,7 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
         formData.append('distributor.currentaddress', employee.distributor.currentaddress);
         formData.append('distributor.permanentaddress', employee.distributor.permanentaddress);
         formData.append('distributor.contactnumber', employee.distributor.contactnumber);
-
+        formData.append('tinnumber', employee.tinnumber.toString());
         employee.distributor.dealerids.forEach((dealerid) => {
             formData.append(`distributor.dealer`, dealerid);
         });
@@ -74,11 +74,11 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
         })
             .then((response) => {
             
-                // alert("success!");
+                
             })
             .catch((error) => {
                 
-                // alert("Error creating a new record. Please try again.");
+                
             });
     }
 
@@ -93,7 +93,7 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
             })
             .catch((error) => {
                 console.error('Error finding collector', error);
-                alert("Error finding collector. Please try again.");
+                
             }); 
     }
 
@@ -106,7 +106,7 @@ export const useRestEmployee = (): [(employee: IEmployee, employeeDocuments: IEm
            })
            .catch((error) => {
                console.error('Error finding employee', error);
-               alert("Error finding employee. Please try again.");
+              
            }); 
    }
    
