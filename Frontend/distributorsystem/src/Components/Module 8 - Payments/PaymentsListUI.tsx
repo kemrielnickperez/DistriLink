@@ -127,10 +127,7 @@ export default function PaymentList() {
 
     useEffect(() => {
         getAllPaymentReceipts();
-        console.log(paymentreceipts)
-
-
-    }, [[paymentreceipts]]);
+    }, [paymentreceipts]);
     {/**Handler for Alert - Function to define the type of alert*/ }
 
     function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
