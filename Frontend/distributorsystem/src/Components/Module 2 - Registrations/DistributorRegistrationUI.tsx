@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useRestDistributor } from "../../RestCalls/DistributorUseRest"
 import { IDistributorDocument } from "../../RestCalls/Interfaces"
 import UploadIcon from '@mui/icons-material/Upload';
+import { useNavigate } from "react-router-dom"
 
 
 const GridBody = styled(Grid)({
@@ -170,6 +171,10 @@ export default function DistributorRegistration() {
     const [alerttitle, setTitle] = useState('')
     const [alertMessage, setAlertMessage] = useState('');
     const [alertSeverity, setAlertSeverity] = useState('success');
+    const navigate = useNavigate();
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
+
+
     const [fieldWarning, setFieldWarning] = useState({
         firstname: '',
         lastname: '',
@@ -256,6 +261,17 @@ export default function DistributorRegistration() {
         setAlertSeverity(severity);
         setOpen(true);
     }
+    
+    const handleAlertAndNavigate = async (type: string, message: string, variant: "success" | "warning" | "error") => {
+        handleAlert(type, message, variant);
+        await new Promise(resolve => setTimeout(resolve, 3000)); 
+        setIsAlertVisible(true);
+      };
+    
+      const handleAlertAcknowledged = () => {
+        setIsAlertVisible(false);
+        navigate(`/SignIn`);
+      };
 
     {/**Handler to Close Alert Snackbar*/ }
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -381,9 +397,11 @@ export default function DistributorRegistration() {
                 archiveddealerids: [],
                 documentids: []
             }, newDistributorDocuments);
-            handleAlert('Success', 'You are Successfully Registered!', 'success');
+            await handleAlertAndNavigate('Success', 'You are Successfully Registered!', 'success');
+            handleAlertAcknowledged();
+            
         } catch (error) {
-            handleAlert('Error', 'An Error Occured, Please Check your Connection', 'error')
+            await handleAlertAndNavigate('Error', 'An Error Occured, Please Check your Connection', 'error')
         }
 
 

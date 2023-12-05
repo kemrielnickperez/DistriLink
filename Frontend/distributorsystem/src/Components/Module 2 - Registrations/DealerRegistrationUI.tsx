@@ -176,6 +176,8 @@ export default function DealerRegistration() {
 
 
     const navigate = useNavigate();
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
+
 
     {/**UseStates*/ }
     const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer,  isDealerFound, isDealerConfirmed, dealer] = useRestDealer();
@@ -276,6 +278,16 @@ export default function DealerRegistration() {
         setAlertSeverity(severity);
         setOpen(true);
     }
+    const handleAlertAndNavigate = async (type: string, message: string, variant: "success" | "warning" | "error") => {
+        handleAlert(type, message, variant);
+        await new Promise(resolve => setTimeout(resolve, 3000)); 
+        setIsAlertVisible(true);
+      };
+    
+      const handleAlertAcknowledged = () => {
+        setIsAlertVisible(false);
+        navigate(`/SignIn`);
+      };
 
 
     {/**Handler to Close Alert Snackbar*/ }
@@ -606,11 +618,12 @@ export default function DealerRegistration() {
                 documentids: []
             }, newDealerDocuments!);
 
-          
-            handleAlert('Success', 'You are Successfully Registered!', 'success');
-
+            
+            await handleAlertAndNavigate('Success', 'You are Successfully Registered!', 'success');
+            
+            handleAlertAcknowledged();
         } catch (error) {
-            handleAlert('Error', 'An Error Occured, Please Check your Connection', 'error')
+           await handleAlertAndNavigate('Error', 'An Error Occured, Please Check your Connection', 'error')
         }
 
     };
@@ -620,7 +633,7 @@ export default function DealerRegistration() {
     const handleSignUp = () => {
         //handleFiles
         handleNewDealer();
-        // navigate(`/dashboard`);
+        
     };
 
 
