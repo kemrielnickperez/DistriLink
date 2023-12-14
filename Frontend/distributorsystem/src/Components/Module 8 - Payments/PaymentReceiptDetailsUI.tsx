@@ -195,7 +195,7 @@ export function PaymentReceiptDetails() {
 
     const handleFindPaymentTransaction = () => {
         getPaymentTransactionByID(paymentReceipt?.paymenttransactionid!);
-        
+
     };
 
     const handleFindOrder = () => {
@@ -235,9 +235,12 @@ export function PaymentReceiptDetails() {
         getAllDealerPaymentProofDocuments();
 
 
+
+
     }, [paymentReceipt]);
 
     const displayCollectorRemittanceProofs = (base64Content: Uint8Array | null, fileType: string, docname: string, collectorproofid: string, collectionpaymentreceiptparam: ICollectionPaymentReceipt) => {
+
         if (base64Content) {
             // Determine the appropriate way to display the file based on the file type
 
@@ -348,7 +351,7 @@ export function PaymentReceiptDetails() {
         <div>
             {!printing ? (
                 <div>
-                    {paymentReceipt? (
+                    {paymentReceipt ? (
                         <Grid container style={{ position: 'relative', justifyContent: "center", alignItems: "center" }} >
                             <Grid>
                                 <div style={{ display: "flex", flexDirection: 'row', paddingTop: 7, paddingLeft: 20 }}>
@@ -377,11 +380,11 @@ export function PaymentReceiptDetails() {
                                 </Grid>
                                 <Grid item>
                                     <StyleLabel style={{ marginLeft: 40 }}>Dealer ID</StyleLabel>
-                                    <StyleData style={{ marginLeft: 60 }}>{orderFromPaymentTransaction?.dealer.dealerid !== undefined ? orderFromPaymentTransaction?.dealer.dealerid : '' }</StyleData>
+                                    <StyleData style={{ marginLeft: 60 }}>{orderFromPaymentTransaction?.dealer.dealerid !== undefined ? orderFromPaymentTransaction?.dealer.dealerid : ''}</StyleData>
                                 </Grid>
                                 <Grid item>
                                     <StyleLabel style={{ marginLeft: 0 }}>Dealer Name</StyleLabel>
-                                    <StyleData style={{ marginLeft: 20 }}>{orderFromPaymentTransaction?.dealer.firstname! !== undefined ? orderFromPaymentTransaction?.dealer.firstname! + " " + orderFromPaymentTransaction?.dealer.lastname! : '' }</StyleData>
+                                    <StyleData style={{ marginLeft: 20 }}>{orderFromPaymentTransaction?.dealer.firstname! !== undefined ? orderFromPaymentTransaction?.dealer.firstname! + " " + orderFromPaymentTransaction?.dealer.lastname! : ''}</StyleData>
                                 </Grid>
                                 <Grid item>
                                     <StyleLabel style={{ marginLeft: 0 }}>Payment Type</StyleLabel>
@@ -474,7 +477,7 @@ export function PaymentReceiptDetails() {
                                         </Grid>
                                         <Grid item>
                                             <StyleLabel style={{ marginLeft: 0 }}>Collector Name</StyleLabel>
-                                            <StyleData style={{ marginLeft: 20 }}>{order?.collector!.firstname + " " + order?.collector!.lastname}</StyleData>
+                                            <StyleData style={{ marginLeft: 20 }}>{orderFromPaymentTransaction?.collector!.firstname + " " + orderFromPaymentTransaction?.collector!.lastname}</StyleData>
                                         </Grid>
                                     </Grid>
                                     <Grid container style={{ display: 'flex', justifyContent: "center", alignItems: "center" }}>
@@ -506,43 +509,46 @@ export function PaymentReceiptDetails() {
                                                 <StyleLabel1>Dealer's Proof</StyleLabel1>
                                             </Card>
                                             <Card style={{ width: 350, borderRadius: 20, height: 80, padding: 10, marginTop: -30 }}>
-                                                {/* not sure if dri ba sya ibutang sud sa card huhu */}
-                                                {dealerPaymentProofs!.map((document) => (
-                                                    <div key={document.dealerpaymentproofid}>
-                                                        {displayDealerPaymentProofs(document.content, document.type, document.name, document.dealerpaymentproofid, document.collectionPaymentReceipt!)}
+               
+                                                    {/* not sure if dri ba sya ibutang sud sa card huhu */}
+                                                    {dealerPaymentProofs!.map((document) => (
+                                                        <div key={document.dealerpaymentproofid}>
+                                                            {displayDealerPaymentProofs(document.content, document.type, document.name, document.dealerpaymentproofid, document.collectionPaymentReceipt!)}
 
-                                                    </div>
-                                                ))}
-                                                <Modal
-                                                    open={openDealerProof}
-                                                    onClose={handleCloseDealerProof} >
-                                                    <div>
-                                                        <button onClick={handleCloseDealerProof}>Close</button>
-                                                        {selectedDealerProof && (
-                                                            <div>
-                                                                {selectedDealerProof.type === 'application/pdf' ? (
-                                                                    <iframe
-                                                                        title="PDF Document"
-                                                                        src={`data:application/pdf;base64,${selectedDealerProof.content}`}
-                                                                        width="100%"
-                                                                        height="1000px"
-                                                                    />
-                                                                ) : selectedDealerProof.type.startsWith("image") ? (
-                                                                    <img
-                                                                        src={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`}
-                                                                        alt="Document"
-                                                                        style={{ maxWidth: '100%', maxHeight: '10000px' }}
-                                                                    />
-                                                                ) : (
-                                                                    <a href={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`} download={`document.${selectedDealerProof.type}`}>
-                                                                        Download Document
-                                                                    </a>
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </Modal>
+                                                        </div>
+                                                    ))}
+
+
                                             </Card>
+                                            <Modal
+                                                open={openDealerProof}
+                                                onClose={handleCloseDealerProof} >
+                                                <div>
+                                                    <button onClick={handleCloseDealerProof}>Close</button>
+                                                    {selectedDealerProof && (
+                                                        <div>
+                                                            {selectedDealerProof.type === 'application/pdf' ? (
+                                                                <iframe
+                                                                    title="PDF Document"
+                                                                    src={`data:application/pdf;base64,${selectedDealerProof.content}`}
+                                                                    width="100%"
+                                                                    height="1000px"
+                                                                />
+                                                            ) : selectedDealerProof.type.startsWith("image") ? (
+                                                                <img
+                                                                    src={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`}
+                                                                    alt="Document"
+                                                                    style={{ maxWidth: '100%', maxHeight: '10000px' }}
+                                                                />
+                                                            ) : (
+                                                                <a href={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`} download={`document.${selectedDealerProof.type}`}>
+                                                                    Download Document
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </Modal>
                                         </Grid>
                                         <Grid item>
                                             <Card style={{ marginTop: 0, marginLeft: 100, width: 120, borderRadius: 20, height: 40, padding: 20 }}>
@@ -603,7 +609,7 @@ export function PaymentReceiptDetails() {
 
                 // 
             ) : (
-                <PaymentReceiptDetailsPrint paymentReceipt={paymentReceipt!} directPaymentReceipt={directPaymentReceipt!} collectionPaymentReceipt={collectionPaymentReceipt!} order={order!} />
+                <PaymentReceiptDetailsPrint paymentReceipt={paymentReceipt!} directPaymentReceipt={directPaymentReceipt!} collectionPaymentReceipt={collectionPaymentReceipt!} order={orderFromPaymentTransaction!} />
             )
             }
         </div >
