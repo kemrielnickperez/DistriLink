@@ -117,6 +117,28 @@ export default function PaymentList() {
     const [alertSeverity, setAlertSeverity] = useState('success');
 
     function getAllPaymentReceipts() {
+
+        if(userFromStorage && userFromStorage.tableName==='Cashier'){
+            axios.get<IDirectPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${userFromStorage.cashier.distributor.distributorid}`)
+            .then((response) => {
+                setPaymentReceipts(response.data);
+
+            })
+            .catch((error) => {
+               
+            });
+        }
+        else if(userFromStorage && userFromStorage.tableName==='Sales Associate and Cashier'){
+            axios.get<IDirectPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${userFromStorage.salesAssociateAndCashier.distributor.distributorid}`)
+            .then((response) => {
+                setPaymentReceipts(response.data);
+
+            })
+            .catch((error) => {
+               
+            });
+        }
+        else{
         axios.get<IDirectPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setPaymentReceipts(response.data);
@@ -125,6 +147,7 @@ export default function PaymentList() {
             .catch((error) => {
                
             });
+        }
     }
 
     useEffect(() => {

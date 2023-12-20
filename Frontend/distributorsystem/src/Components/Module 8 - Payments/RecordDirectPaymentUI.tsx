@@ -70,7 +70,7 @@ const StyleData = styled(Typography)({
     top: 20,
 })
 const LabelTypography = styled(Typography)({
-    marginLeft: '30%',
+    marginLeft: '-10%',
     top: '200px',
     fontFamily: 'Inter, sans-serif',
     fontWeight: '550',
@@ -297,8 +297,17 @@ export default function RecordDirectPayment() {
 
 
     const handleFindPaymentTransactions = () => {
-        getOrderByID(orderIDRef.current?.value + "", userFromStorage.distributor.distributorid);
+        if (userFromStorage && userFromStorage.tableName === 'Cashier') {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.cashier.distributor.distributorid);
 
+        }
+        else if (userFromStorage && userFromStorage.tableName === 'Sales Associate and Cashier') {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.salesAssociateAndCashier.distributor.distributorid);
+
+        }
+        else {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.distributor.distributorid);
+        }
     };
 
     const cashierObject: IEmployee = {
@@ -375,23 +384,23 @@ export default function RecordDirectPayment() {
 
     const handleAlertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
-          return;
+            return;
         }
         setOpenAlert(false);
-      };
-    
+    };
+
 
 
     const handleSaveDirectPayment = () => {
         if (!selectedPaymentTransaction || !selectedPaymentTransaction.paymenttransactionid || !selectedDate || !amountPaidRef.current?.value || isNaN(Number(amountPaidRef.current?.value)) || !remarksRef.current?.value) {
             toast.warning('Please fill all the necessary fields.');
             return;
-          }
+        }
         const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
 
         if (Number(amountPaidRef.current?.value) > Number(remainingPaymentAmount!.toFixed(2))) {
             saveHandleAlert('Amount Paid Exceeded Amount Due', "File size exceeds the limit (5 MB). Please choose a smaller file.", 'warning')
-          
+
             return;
         }
 
@@ -674,7 +683,6 @@ export default function RecordDirectPayment() {
 
 
     /*  
-    
     e1d92cab
     393349ba
     1adfd341
@@ -685,9 +693,17 @@ export default function RecordDirectPayment() {
  */
 
     useEffect(() => {
+        if (userFromStorage && userFromStorage.tableName === 'Cashier') {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.cashier.distributor.distributorid);
 
-        getOrderByID(orderIDRef.current?.value + "", userFromStorage.distributor.distributorid);
+        }
+        else if (userFromStorage && userFromStorage.tableName === 'Sales Associate and Cashier') {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.salesAssociateAndCashier.distributor.distributorid);
 
+        }
+        else {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.distributor.distributorid);
+        }
         if (order && order.paymenttransactions.length !== 0) {
             const allPaid = order.paymenttransactions?.every((transaction) => transaction.paid);
 
@@ -707,12 +723,13 @@ export default function RecordDirectPayment() {
 
         <div style={{ paddingTop: 70 }}>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <Grid container style={{display: "flex", justifyContent: "center",}}>
                 <LabelTypography>Enter Order Transaction ID</LabelTypography>
                 <StyleTextField inputRef={orderIDRef} />
                 <SearchButton type="button" aria-label="search" onClick={handleFindPaymentTransactions}>
                     <SearchIcon sx={{ color: "white" }} />
                 </SearchButton>
-
+                </Grid>
             </div>
 
             {order ? (
@@ -754,7 +771,7 @@ export default function RecordDirectPayment() {
                         </div>
                     ) : order.paymenttransactions.length !== 0 ? (
                         <div>
-                            <Grid container>
+                            <Grid container style={{display: "flex", justifyContent: "center", marginLeft:'-10%'}}>
                                 <Grid item>
                                     <StyleLabel>Payment Transaction ID</StyleLabel>
                                     <Autocomplete
