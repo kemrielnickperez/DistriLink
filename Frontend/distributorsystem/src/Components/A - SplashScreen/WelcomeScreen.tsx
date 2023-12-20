@@ -90,7 +90,7 @@ const SignInButton = styled(Button)({
     justifyContent:'center' ,
     textDecorationLine: 'underline',
     ':hover': {
-        backgroundColor: 'rgba(45, 133, 231, 0.5)',
+        backgroundColor: 'rgba(45, 133, 231, 0)',
         transform: 'scale(1.1)'
     },
     transition: 'all 0.4s'

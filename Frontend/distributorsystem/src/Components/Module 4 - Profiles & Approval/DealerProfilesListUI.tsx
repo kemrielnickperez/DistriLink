@@ -185,7 +185,8 @@ export default function DealerProfileListUI() {
     }
 
     function getAllDealers() {
-        axios.get<IDealer[]>(`http://localhost:8080/dealer/getAllDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
+       
+            axios.get<IDealer[]>(`http://localhost:8080/dealer/getAllDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setDealers(response.data);
 
@@ -193,9 +194,11 @@ export default function DealerProfileListUI() {
             .catch((error) => {
 
             });
+        
     }
 
     function getAllArchivedDealers() {
+       
         axios.get<IArchivedDealer[]>(`http://localhost:8080/archived/getAllArchivedDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setArchivedDealer(response.data);
@@ -206,6 +209,7 @@ export default function DealerProfileListUI() {
 
 
             });
+        
     }
 
     const handleConfirmOpen = () => setCreditLimitModalOpen(true);

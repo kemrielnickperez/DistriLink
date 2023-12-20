@@ -81,11 +81,14 @@ export default function SignupScreen(){
     const signInHandler=()=>{
         navigate(`/SignIn`)
     }
-       
+    const welcomehandler=()=>{
+        navigate(`/WelcomeScreen`)
+    }
+   
     return(
         <div>
             {/** Logo*/}
-            <Logo>
+            <Logo onClick={welcomehandler} sx={{cursor:'pointer'}}>
                     <img src={logo5} style={{height:'150px',width:'270px',marginTop:'-5%'}}/>
             {/** Sign-In*/}
                     <ButtonStyle onClick={signInHandler}>Sign In</ButtonStyle>
