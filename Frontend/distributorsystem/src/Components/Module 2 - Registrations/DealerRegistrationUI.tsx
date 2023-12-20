@@ -701,8 +701,9 @@ export default function DealerRegistration() {
 
             
             await handleAlertAndNavigate('Success', 'You are Successfully Registered!', 'success');
+            navigateThank(`/ThankYou`)
             
-            handleAlertAcknowledged();
+            
         } catch (error) {
            await handleAlertAndNavigate('Error', 'An Error Occured, Please Check your Connection', 'error')
         }
