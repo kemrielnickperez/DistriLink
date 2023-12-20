@@ -19,7 +19,7 @@ public class DealerEmailService {
             mailMessage.setText(content); // Use the content parameter
 
             javaMailSender.send(mailMessage);
-            System.out.println("Confirmed Successfully!");
+           
         }
     public void sendPendingEmail(Dealer dealer, String subject, String content) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
