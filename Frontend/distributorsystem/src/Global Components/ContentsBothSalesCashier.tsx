@@ -26,7 +26,7 @@ export default function ContentBothSalesCashier() {
     const getNavNamePage=()=>{
       const path=location.pathname;
       const navPageNameMapping: Record<string,string>={
-          '/dashboard':'Dashboard',
+          '/sales&cashierDashboard':'Dashboard',
           '/collectorAssignment':'Collector Assignment',
           '/dealerProfileList': 'Dealer Profiles List',
           '/employeeProfileList': 'Employee Profiles List',
@@ -52,7 +52,7 @@ export default function ContentBothSalesCashier() {
     const path=location.pathname;
   
     const navPageContentMapping: Record<string,string>={
-        '/dashboard':'Your pendings overview',
+        '/sales&cashierDashboard':'Your pendings overview',
         '/collectorAssignment':'Assign, reassign, or unassign collector to your order',
         '/dealerProfileList': 'View unconfirmed & confirmed Dealers, awaiting for your confirmation.',
         '/employeeProfileList': 'List of your emplooyes',
@@ -78,7 +78,9 @@ export default function ContentBothSalesCashier() {
         <div>
             <NewAppBar moduleName={getNavNamePage()} moduleContent={getNavContentPage()}/>
             <NewNavBarBothSalesCashier moduleName={getNavPage()} />
+            <div style={{paddingTop:60}}>
             <Outlet />
+            </div>
         </div>
     );
 }
