@@ -210,6 +210,7 @@ transition: 'all 0.4s'
 export default function ProductDistributionList() {
 
   const navigate = useNavigate();
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
 
   const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
   const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile]  = useRestDealer();
@@ -326,7 +327,18 @@ export default function ProductDistributionList() {
     setAlertMessage(message);
     setAlertSeverity(severity);
     setOpen(true);
+
   }
+  const handleAlertAndNavigate = async (type: string, message: string, variant: "success" | "warning" | "error") => {
+    saveHandleAlert(type, message, variant);
+    await new Promise(resolve => setTimeout(resolve, 3000)); 
+    setIsAlertVisible(true);
+  };
+
+  const handleAlertAcknowledged = () => {
+    setIsAlertVisible(false);
+    navigate(`/productDistributionList`);
+  };
 
   function getAllProducts() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
@@ -457,10 +469,10 @@ export default function ProductDistributionList() {
 
   }
 
-  const handleSaveOrder = () => {
+  const handleSaveOrder =  async () => {
     // Calculate the total order amount based on orderedProducts
     if (orderedProducts.length === 0) {
-      saveHandleAlert('No Ordered Products', "Please add products to your order before saving.", 'warning')
+      await handleAlertAndNavigate('No Ordered Products', "Please add products to your order before saving.", 'warning')
     }
 
     if (!selectedDate || !penaltyRateRef.current?.value || !paymentTerm) {
@@ -493,17 +505,19 @@ export default function ProductDistributionList() {
           isclosed: false
         });
         //if possible kay ara na siya mo clear after sa snackbar
-        saveHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
+        await handleAlertAndNavigate('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
         clearInputValues();
+        handleAlertAcknowledged();
+
 
       }
       else {
-        saveHandleAlert('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust order amount accordingly.", 'warning')
+       await handleAlertAndNavigate('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust order amount accordingly.", 'warning')
       }
     }
 
     else {
-      saveHandleAlert('Error Saving Order', "Your order hasn't been saved due to an unexpected error.", 'error')
+     await handleAlertAndNavigate('Error Saving Order', "Your order hasn't been saved due to an unexpected error.", 'error')
     }
 
   };

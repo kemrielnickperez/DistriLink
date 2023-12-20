@@ -13,6 +13,7 @@ import axios from "axios";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import logo4 from '../../Global Components/Images/logo4.png'
 import employee1 from '../../Global Components/Images/employee1-1.png'
+import { useNavigate } from "react-router-dom";
 const StyleGrid = styled(Grid)({
     position: "relative",
     display: "flex",
@@ -242,6 +243,9 @@ export default function EmployeeRegistration() {
     const [currentAddress, setCurrentAddress] = useState('');
     const [isshowPassword, setisShowPassword] = useState(false);
     const [isshowConfirmPassword, setisShowConfirmPassword] = useState(false);
+    const navigate = useNavigate();
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
+
     const [fieldWarning, setFieldWarning] = useState({
         firstname: '',
         lastname: '',
@@ -346,6 +350,18 @@ export default function EmployeeRegistration() {
         setAlertSeverity(severity);
         setOpen(true);
     }
+
+    const handleAlertAndNavigate = async (type: string, message: string, variant: "success" | "warning" | "error") => {
+        handleAlert(type, message, variant);
+        await new Promise(resolve => setTimeout(resolve, 3000)); 
+        setIsAlertVisible(true);
+      };
+    
+      const handleAlertAcknowledged = () => {
+        setIsAlertVisible(false);
+        navigate(`/SignIn`);
+      };
+    
 
     {/**Handler to Close Alert Snackbar*/ }
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -513,12 +529,12 @@ export default function EmployeeRegistration() {
                 !selectedPosition
             ) {
 
-                handleAlert('Warning', 'Please fill in all required fields', 'warning');
+                handleAlertAndNavigate('Warning', 'Please fill in all required fields', 'warning');
                 setFieldWarning(helperWarning);
                 return;
             }
             if (passwordError) {
-                handleAlert('Error', 'Passwords do not match', 'error');
+                handleAlertAndNavigate('Error', 'Passwords do not match', 'error');
                 return;
             }
             newEmployee({
@@ -534,7 +550,7 @@ export default function EmployeeRegistration() {
                 permanentaddress: String(permanentaddressRef.current?.value),
                 contactnumber: String(contactnumberRef.current?.value),
                 tinnumber: String(tinnumberRef.current?.value),
-                iscashier: isCashierSelected,
+                iscashier: isCashierSelected, 
                 issalesassociate: isSalesAssociateSelected,
                 iscollector: isCollectorSelected,
                 submissiondate: moment().format('YYYY-MM-DD'),
@@ -544,10 +560,11 @@ export default function EmployeeRegistration() {
                 collectionpaymentids: [],
                 documentids: [],
             }, newEmployeeDocuments!);
+            await handleAlertAndNavigate('Success', 'You are Successfully Registered!', 'success');
 
-            handleAlert('Success', 'You are Successfully Registered!', 'success');
+            handleAlertAcknowledged();
         } catch (error) {
-            handleAlert('Error', "Registration failed. Check your internet connection.", 'error');
+            await handleAlertAndNavigate('Error', "Registration failed. Check your internet connection.", 'error');
             return;
         }
     }
