@@ -122,13 +122,13 @@ const TitleBox = styled(Box)({
   left: -350,
 })
 
-const StyledNumber=styled(TextField)({
+const StyledNumber = styled(TextField)({
   '& fieldset': {
     borderColor: 'rgb(0,0,0,0)', // Change 'your-color' to the desired color
   },
 })
 
-const SaveButton= styled(Button)({
+const SaveButton = styled(Button)({
   // position: 'relative',
   // width: '200px',
   // height: 50,
@@ -146,8 +146,8 @@ const SaveButton= styled(Button)({
   width: '200px',
   height: 50,
   ':hover': {
-      backgroundColor: '#2D85E7',
-      transform: 'scale(1.1)'
+    backgroundColor: '#2D85E7',
+    transform: 'scale(1.1)'
   },
   transition: 'all 0.4s'
 })
@@ -182,7 +182,7 @@ const StyleLabel = styled(Typography)({
   fontFamily: 'Inter',
 })
 
-const PaperStyle = styled(Paper)({  
+const PaperStyle = styled(Paper)({
   background: 'linear-gradient(50deg, rgba(255,255,255,0.4) 12%,rgba(255,255,255,0.1) 77% )',
   backgroundBlendMode: '',
   // backgroundColor:'rgb(245, 247, 249,0.4)',
@@ -199,21 +199,20 @@ const PaperStyle = styled(Paper)({
   marginTop: 30
 })
 
-const RemoveButton =styled(Button)({
-  ":hover":{
+const RemoveButton = styled(Button)({
+  ":hover": {
 
     transform: 'scale(1.4)'
-},
-transition: 'all 0.4s'
+  },
+  transition: 'all 0.4s'
 })
 
 export default function ProductDistributionList() {
 
   const navigate = useNavigate();
-  const [isAlertVisible, setIsAlertVisible] = useState(false);
 
   const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
-  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile]  = useRestDealer();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile] = useRestDealer();
 
 
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -240,7 +239,7 @@ export default function ProductDistributionList() {
 
   const [open, setOpen] = useState(false);
 
-  
+
   const penaltyRateRef = useRef<TextFieldProps>(null);
   const dealerIDRef = useRef<TextFieldProps>(null);
 
@@ -327,18 +326,7 @@ export default function ProductDistributionList() {
     setAlertMessage(message);
     setAlertSeverity(severity);
     setOpen(true);
-
   }
-  const handleAlertAndNavigate = async (type: string, message: string, variant: "success" | "warning" | "error") => {
-    saveHandleAlert(type, message, variant);
-    await new Promise(resolve => setTimeout(resolve, 3000)); 
-    setIsAlertVisible(true);
-  };
-
-  const handleAlertAcknowledged = () => {
-    setIsAlertVisible(false);
-    navigate(`/productDistributionList`);
-  };
 
   function getAllProducts() {
     axios.get<IProduct[]>('http://localhost:8080/product/getAllProducts')
@@ -362,7 +350,7 @@ export default function ProductDistributionList() {
       );
 
       if (existingProductIndex !== -1) {
-        
+
         toast.info("If you'd like to increase the quantity of products, adjust product quantity as needed.", {
           position: "bottom-right",
           autoClose: 5000,
@@ -469,10 +457,10 @@ export default function ProductDistributionList() {
 
   }
 
-  const handleSaveOrder =  async () => {
+  const handleSaveOrder = () => {
     // Calculate the total order amount based on orderedProducts
     if (orderedProducts.length === 0) {
-      await handleAlertAndNavigate('No Ordered Products', "Please add products to your order before saving.", 'warning')
+      saveHandleAlert('No Ordered Products', "Please add products to your order before saving.", 'warning')
     }
 
     if (!selectedDate || !penaltyRateRef.current?.value || !paymentTerm) {
@@ -505,28 +493,33 @@ export default function ProductDistributionList() {
           isclosed: false
         });
         //if possible kay ara na siya mo clear after sa snackbar
-        await handleAlertAndNavigate('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
+        saveHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
         clearInputValues();
-        handleAlertAcknowledged();
-
 
       }
       else {
-       await handleAlertAndNavigate('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust order amount accordingly.", 'warning')
+        saveHandleAlert('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust order amount accordingly.", 'warning')
       }
     }
 
     else {
-     await handleAlertAndNavigate('Error Saving Order', "Your order hasn't been saved due to an unexpected error.", 'error')
+      saveHandleAlert('Error Saving Order', "Your order hasn't been saved due to an unexpected error.", 'error')
     }
 
   };
 
 
 
-  const handleFindDealer = ()  => {
-    getDealerByDistributor(dealerIDRef.current?.value + "", userFromStorage.distributor.distributorid!)
-    
+  const handleFindDealer = () => {
+    if (userFromStorage && userFromStorage.tableName === 'Sales Associate') {
+      getDealerByDistributor(dealerIDRef.current?.value + "", userFromStorage.salesAssociate.distributor.distributorid!)
+    }
+    else if (userFromStorage && userFromStorage.tableName === 'Sales Associate and Cashier') {
+      getDealerByDistributor(dealerIDRef.current?.value + "", userFromStorage.salesAssociateAndCashier.distributor.distributorid!)
+    }
+    else {
+      getDealerByDistributor(dealerIDRef.current?.value + "", userFromStorage.distributor.distributorid!)
+    }
   };
 
 
@@ -655,10 +648,10 @@ export default function ProductDistributionList() {
                           /> */}
                           <StyledNumber
                             variant="outlined"
-                            
+
                             type='number'
                             value={product.quantity}
-                            style={{width:90}}
+                            style={{ width: 90 }}
                             onChange={(e) => {
                               const newValue = Number(e.target.value);
                               if (newValue < 0) {
@@ -674,7 +667,7 @@ export default function ProductDistributionList() {
                         <TableCell align='center' sx={{ color: "#203949" }}>{product.product.price}</TableCell>
                         <TableCell align='center' sx={{ color: "#203949" }}>{product.product.commissionrate}</TableCell>
                         <TableCell align='center' sx={{ color: "#203949" }}>{product.product.price * product.quantity}</TableCell>
-                        <TableCell align='center' sx={{ color: "#203949" }}><RemoveButton onClick={() => handleRemoveFromCart(product)}><RemoveCircleIcon/></RemoveButton></TableCell>
+                        <TableCell align='center' sx={{ color: "#203949" }}><RemoveButton onClick={() => handleRemoveFromCart(product)}><RemoveCircleIcon /></RemoveButton></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
