@@ -146,7 +146,7 @@ export default function Schedules() {
     const [startDateModified, setStartDateModified] = useState(false);
     const [endDateModified, setEndDateModified] = useState(false);
     const [paymentTransactionsObjects, setPaymentTransactionsObjects] = useState<IPaymentTransaction[]>([]);
-  
+
     // const [paymentTransactions, setPaymentTransactions] = useState<IPaymentTransaction[]>();
     const [initialMinDate, setInitialMinDate] = useState<Dayjs | null>(null);
 
@@ -154,7 +154,7 @@ export default function Schedules() {
 
 
     const userFromStorage = JSON.parse(localStorage.getItem("user")!);
-  
+
 
 
     const handleCreatePaymentTransaction = () => {
@@ -162,7 +162,7 @@ export default function Schedules() {
         if (!startDate) {
             toast.warning('Please select a starting date before creating payment schedules.');
             return;
-          }
+        }
         const newPaymentTransactions: IPaymentTransaction[] = [];
         let currentEndDate = dayjs(startDate);
 
@@ -228,7 +228,7 @@ export default function Schedules() {
         const updatedStartingDate = selectedStartDate || startingDateFromDB;
         const updatedEndDate = selectedEndDate || endDateFromDB;
 
-      
+
         if (updatedEndDate?.toString() === 'Invalid Date') {
             alert('Please select an end date.');
             return;
@@ -262,7 +262,7 @@ export default function Schedules() {
                 progress: undefined,
                 theme: "colored",
             }) */
-            
+
         } catch (error) {
             toast.error('Unexpected error updating payment transaction.', {
                 position: "bottom-right",
@@ -290,14 +290,20 @@ export default function Schedules() {
         setDisplayedValue(inputValue);
     };
 
-    
+
     useEffect(() => {
 
-  
-        getOrderByID(displayedValue!, userFromStorage.distributor.distributorid);
-     
+        if (userFromStorage && userFromStorage.tableName === 'Sales Associate') {
+            getOrderByID(displayedValue!, userFromStorage.salesAssociate.distributor.distributorid);
+        }
+        else if (userFromStorage && userFromStorage.tableName === 'Sales Associate and Cashier') {
+            getOrderByID(displayedValue!, userFromStorage.salesAssociateAndCashier.distributor.distributorid);
+        }
+        else {
+            getOrderByID(displayedValue!, userFromStorage.distributor.distributorid);
+        }
         setInitialMinDate(dayjs() as Dayjs);
-       
+
 
         //displayedValue kay para sa pag search sa orderids nga di mag disco's, niya mo render dayun
         //order.paymenttransactions kay para ika create og payment transaction kay mo render/reflect dayun
@@ -307,7 +313,7 @@ export default function Schedules() {
 
     return (
         <div>
-          
+
             <Grid container spacing={4} sx={{ display: "flex", justifyContent: "center", marginTop: '50px' }}>
                 <Grid item container sx={{ width: '1000px', borderRadius: '22px', }} justifyContent={"center"}  >
                     <Grid item xs={4} sx={{ marginTop: '15px' }}>
@@ -388,48 +394,48 @@ export default function Schedules() {
                                                         {order?.paymenttransactions!.sort((a, b) => {
                                                             return a.installmentnumber - (b.installmentnumber);
                                                         }).map((transaction) => (
-                                                                <TableRow key={transaction.paymenttransactionid}>
-                                                                    <TableCell align="center">
-                                                                        {transaction.paymenttransactionid}
-                                                                    </TableCell>
-                                                                    <TableCell align="center">
-                                                                        Installment {transaction.installmentnumber}
-                                                                    </TableCell>
-                                                                    <TableCell align="center">
-                                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                            <Typography>{dayjs(transaction.startingdate).format('MM/DD/YYYY')}</Typography>
-                                                                        </LocalizationProvider>
-                                                                    </TableCell>
-                                                                    <TableCell align="center">
-                                                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                            <DatePicker
-                                                                                slotProps={{
-                                                                                    textField: {
-                                                                                        InputProps: {
-                                                                                            disableUnderline: true
-                                                                                        },
-                                                                                        variant: "standard",
-                                                                                        style: { width: '50%', padding: '0 10px 0 10px' }
-                                                                                    }
-                                                                                }}
-                                                                                value={dayjs(transaction.enddate)}
-                                                                                minDate={dayjs(transaction.enddate)}
-                                                                                onChange={(newValue) => handleEndDateUpdate(newValue)}
-                                                                                disabled={transaction.paid}
-                                                                            />
-                                                                        </LocalizationProvider>
-                                                                    </TableCell>
-                                                                    <TableCell>
-                                                                        Php {transaction.amountdue.toFixed(2)}
-                                                                    </TableCell>
-                                                                    <TableCell>
-                                                                        <StyledButton
-                                                                            onClick={() => handleSaveClick(transaction)}
+                                                            <TableRow key={transaction.paymenttransactionid}>
+                                                                <TableCell align="center">
+                                                                    {transaction.paymenttransactionid}
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    Installment {transaction.installmentnumber}
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                                        <Typography>{dayjs(transaction.startingdate).format('MM/DD/YYYY')}</Typography>
+                                                                    </LocalizationProvider>
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                                        <DatePicker
+                                                                            slotProps={{
+                                                                                textField: {
+                                                                                    InputProps: {
+                                                                                        disableUnderline: true
+                                                                                    },
+                                                                                    variant: "standard",
+                                                                                    style: { width: '50%', padding: '0 10px 0 10px' }
+                                                                                }
+                                                                            }}
+                                                                            value={dayjs(transaction.enddate)}
+                                                                            minDate={dayjs(transaction.enddate)}
+                                                                            onChange={(newValue) => handleEndDateUpdate(newValue)}
                                                                             disabled={transaction.paid}
-                                                                        > Update </StyledButton>
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                            ))}
+                                                                        />
+                                                                    </LocalizationProvider>
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    Php {transaction.amountdue.toFixed(2)}
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    <StyledButton
+                                                                        onClick={() => handleSaveClick(transaction)}
+                                                                        disabled={transaction.paid}
+                                                                    > Update </StyledButton>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
                                                     </TableBody>
                                                 </Table>
                                             </TableContainer>
