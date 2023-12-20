@@ -5,7 +5,7 @@ import signin from "../../Global Components/Images/Group 8 (1).png"
 import { useNavigate } from "react-router-dom"
 import { Fragment, useContext, useEffect, useRef, useState } from "react"
 import axios from "axios"
-import Dashboard from "../Module 3 - Distributor Dashboard/DashboardUI"
+import Dashboard from "../Module 3 - Dashboards/DashboardUI"
 import React from "react"
 import { useRestDealer } from "../../RestCalls/DealerUseRest";
 import { useRestEmployee } from "../../RestCalls/EmployeeUseRest";
@@ -136,7 +136,7 @@ export default function SignIn() {
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result))
                         // Redirect to the Dealer screen
-                        window.location.assign('dashboard');
+                        window.location.assign('dealerOrderForm');
                         setSuccessMessage("Login successful as Dealer");
                         setOpen(true);
         
@@ -149,12 +149,11 @@ export default function SignIn() {
                         window.location.assign('dashboard');
                         setSuccessMessage("Login successful as Distributor");
                         setOpen(true);
-                    } else if (result.tableName === 'Sales Associate' || result.tableName === 'Cashier' || result.tableName === 'Sales Associate and Cashier') {
-                       
+                    } else if (result.tableName === 'Cashier') {
                         localStorage.setItem('user', JSON.stringify(result))
                         sessionStorage.setItem('user', JSON.stringify(result));
                         // Redirect to the Employee screen
-                        window.location.assign('dashboard');
+                        window.location.assign('cashierDashboard');
                         setSuccessMessage('Login successful as Employee');
                         setOpen(true);
                         const user = response.data.find(
@@ -164,12 +163,53 @@ export default function SignIn() {
                             localStorage.setItem('user', JSON.stringify(result))
                             sessionStorage.setItem('user', JSON.stringify(user));
                             setCode(2);
-                            window.location.assign('http://localhost:3000/dashboard');
+                            window.location.assign('http://localhost:3000/cashierDashboard');
                         } else {
-                           
                             setCode(1);
                         }
-                    } else {
+                    }
+                    else if (result.tableName === 'Sales Associate') {
+                       
+                        localStorage.setItem('user', JSON.stringify(result))
+                        sessionStorage.setItem('user', JSON.stringify(result));
+                        // Redirect to the Employee screen
+                        window.location.assign('salesAssociateDashboard');
+                        setSuccessMessage('Login successful as Employee');
+                        setOpen(true);
+                        const user = response.data.find(
+                            (u: any) => u.dealerid === userid && u.password === password);
+                        if (user) {
+                           
+                            localStorage.setItem('user', JSON.stringify(result))
+                            sessionStorage.setItem('user', JSON.stringify(user));
+                            setCode(2);
+                            window.location.assign('http://localhost:3000/salesAssociateDashboard');
+                        } else {
+                            setCode(1);
+                        }
+                    }
+                    else if (result.tableName === 'Sales Associate and Cashier') {
+                       
+                        localStorage.setItem('user', JSON.stringify(result))
+                        sessionStorage.setItem('user', JSON.stringify(result));
+                        // Redirect to the Employee screen
+                        window.location.assign('sales&cashierDashboard');
+                        setSuccessMessage('Login successful as Employee');
+                        setOpen(true);
+                        const user = response.data.find(
+                            (u: any) => u.dealerid === userid && u.password === password);
+                        if (user) {
+                           
+                            localStorage.setItem('user', JSON.stringify(result))
+                            sessionStorage.setItem('user', JSON.stringify(user));
+                            setCode(2);
+                            window.location.assign('http://localhost:3000/sales&cashierDashboard');
+                        } else {
+                            setCode(1);
+                        }
+                    }
+                    
+                    else {
                       
                         setSnackbarMessage("Invalid User ID or Password");
                         setSeverity("error");

@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate  } from 'react-router-dom'
-import Dashboard from "../Components/Module 3 - Distributor Dashboard/DashboardUI";
+import Dashboard from "../Components/Module 3 - Dashboards/DashboardUI";
 
 import PaymentList from "../Components/Module 8 - Payments/PaymentsListUI";
 // import DealerProfileList from "./Components/Profiles/DealerProfiles/DealerProfileList";
