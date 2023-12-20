@@ -131,7 +131,7 @@ export default function NewNavBarDealer(props: navProps) {
         <div>
             <Drawer open={true} variant="permanent">
                 <ColorBox onMouseLeave={handleCloseDropDownList}>
-                    <AppNameTypography><img src={logo7} style={{ height: '230px', width: '410px' }} /></AppNameTypography>
+                    <AppNameTypography><img src={logo7} onClick={homeHandler} style={{ cursor:'pointer', height: '230px', width: '410px' }} /></AppNameTypography>
                     <List>
                         {/** Dealer Order Form */}
                         <Link to="/dealerOrderForm">

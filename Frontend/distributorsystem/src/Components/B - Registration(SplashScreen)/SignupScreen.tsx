@@ -88,8 +88,8 @@ export default function SignupScreen(){
     return(
         <div>
             {/** Logo*/}
-            <Logo onClick={welcomehandler} sx={{cursor:'pointer'}}>
-                    <img src={logo5} style={{height:'150px',width:'270px',marginTop:'-5%'}}/>
+            <Logo sx={{cursor:'pointer'}}>
+                    <img onClick={welcomehandler} src={logo5} style={{height:'150px',width:'270px',marginTop:'-5%'}}/>
             {/** Sign-In*/}
                     <ButtonStyle onClick={signInHandler}>Sign In</ButtonStyle>
             </Logo>

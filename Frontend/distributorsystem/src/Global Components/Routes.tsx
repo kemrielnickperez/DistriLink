@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate  } from 'react-router-dom'
-import Dashboard from "../Components/Module 3 - Dashboards/DashboardUI";
+
 
 import PaymentList from "../Components/Module 8 - Payments/PaymentsListUI";
 // import DealerProfileList from "./Components/Profiles/DealerProfiles/DealerProfileList";
@@ -44,6 +44,7 @@ import ContentBothSalesCashier from './ContentsBothSalesCashier';
 import ThankYouScreen from '../Components/A - SplashScreen/ThankYouScreen';
 import { DistributorProfileDetails } from '../Components/Module 4 - Profiles & Approval/DistributorProfileDetailsUI';
 import ScrollToTop from './ScrollToTop';
+import Dashboard from "../Components/Module 3 - Dashboards/DashboardUI";
 import CashierDashboard from '../Components/Module 3 - Dashboards/CashierDashboardUI';
 import SalesAndCashierDashboard from '../Components/Module 3 - Dashboards/SalesAndCashierDashboardUI';
 import SalesAssociateDashboard from '../Components/Module 3 - Dashboards/SalesAssociateDashboardUI';
@@ -66,13 +67,13 @@ export default function MainRoutes() {
                     <Route path="/DealerRegistration" element={<DealerRegistration />} />
                     <Route path="/EmployeeRegistration" element={<EmployeeRegistration />} />
                     <Route path="/DistributorRegistration" element={<DistributorRegistration />} />
-                    <Route path="/ThankYou" element={<ThankYouScreen />} />
+                    <Route path="/ThankYou" element={<><ScrollToTop/><ThankYouScreen /></>} />
                 </Route>
 
                 {/* <SigninScreen/> */}
                 <Route path="/" element={<SignInContent />}>
                     <Route path="/" element={<Navigate replace to="SignIn" />} />
-                    <Route path="/SignIn" element={<SignIn />} />
+                    <Route path="/SignIn" element={<><ScrollToTop/><SignIn /></>} />
 
                     {user && user!.tableName === "Dealer" && (
                         <Route path="/" element={<ContentDealer/>}>

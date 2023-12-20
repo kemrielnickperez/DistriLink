@@ -185,8 +185,7 @@ export default function DealerProfileListUI() {
     }
 
     function getAllDealers() {
-       
-            axios.get<IDealer[]>(`http://localhost:8080/dealer/getAllDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
+        axios.get<IDealer[]>(`https://distrilinkserver.azurewebsites.net/dealer/getAllDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setDealers(response.data);
 
@@ -198,8 +197,7 @@ export default function DealerProfileListUI() {
     }
 
     function getAllArchivedDealers() {
-       
-        axios.get<IArchivedDealer[]>(`http://localhost:8080/archived/getAllArchivedDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
+        axios.get<IArchivedDealer[]>(`https://distrilinkserver.azurewebsites.net/archived/getAllArchivedDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setArchivedDealer(response.data);
                
@@ -358,8 +356,10 @@ export default function DealerProfileListUI() {
                 const dealer = params.row;
                 return (
                     <>
-                        <StyledButton
+                        <StyledButton 
+                            style={{width:120}}
                             onClick={handleDeclinedOpen} >
+                            <CloseIcon style={{ marginTop: -3, paddingLeft: -8, height: 20, width: 'auto', color: 'rgb(227, 80, 155)', fontWeight: 'bolder' }} />
                             Decline
                         </StyledButton>
                         <Grid item>
