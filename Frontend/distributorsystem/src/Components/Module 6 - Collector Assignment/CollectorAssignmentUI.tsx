@@ -151,6 +151,37 @@ export default function CollectorAssignment() {
 
 
   function getAllCollectors() {
+    if(userFromStorage && userFromStorage.tableName==='Sales Associate'){
+      axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllCollectorsByDistributorID/${userFromStorage.salesAssociate.distributor.distributorid}`)
+      .then((response) => {
+        const updatedCollectors = response.data.map((collector) => {
+          const assignedOrders = orders.filter((order) => order.collector?.employeeid === collector.employeeid);
+          return { ...collector, orderids: assignedOrders.map((order) => order.orderid) };
+        });
+        setCollectors(updatedCollectors);
+      })
+      .catch((error) => {
+        console.error('Error retrieving collectors:', error);
+        headerHandleAlert('Error', "Error retrieving collectors. Please try again..", 'error');
+
+      });
+    }
+    else if(userFromStorage && userFromStorage.tableName==='Sales Associate and Cashier'){
+      axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllCollectorsByDistributorID/${userFromStorage.salesAssociateAndCashier.distributor.distributorid}`)
+      .then((response) => {
+        const updatedCollectors = response.data.map((collector) => {
+          const assignedOrders = orders.filter((order) => order.collector?.employeeid === collector.employeeid);
+          return { ...collector, orderids: assignedOrders.map((order) => order.orderid) };
+        });
+        setCollectors(updatedCollectors);
+      })
+      .catch((error) => {
+        console.error('Error retrieving collectors:', error);
+        headerHandleAlert('Error', "Error retrieving collectors. Please try again..", 'error');
+
+      });
+    }
+    else{
     axios.get<IEmployee[]>(`http://localhost:8080/employee/getAllCollectorsByDistributorID/${userFromStorage.distributor.distributorid}`)
       .then((response) => {
         const updatedCollectors = response.data.map((collector) => {
@@ -164,9 +195,33 @@ export default function CollectorAssignment() {
         headerHandleAlert('Error', "Error retrieving collectors. Please try again..", 'error');
 
       });
+    }
   }
 
   function getAllOrders() {
+    if(userFromStorage && userFromStorage.tableName==='Sales Associate'){
+      axios.get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${userFromStorage.salesAssociate.distributor.distributorid}`)
+      .then((response) => {
+        setOrders(response.data.filter(order => order.confirmed && !order.isclosed));
+      })
+      .catch((error) => {
+       
+        headerHandleAlert('Error', "Error retrieving orders. Please try again..", 'error');
+        
+      });
+    }
+    else if(userFromStorage && userFromStorage.tableName==='Sales Associate and Cashier'){
+      axios.get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${userFromStorage.salesAssociateAndCashier.distributor.distributorid}`)
+      .then((response) => {
+        setOrders(response.data.filter(order => order.confirmed && !order.isclosed));
+      })
+      .catch((error) => {
+       
+        headerHandleAlert('Error', "Error retrieving orders. Please try again..", 'error');
+        
+      });
+    }
+    else{
     axios.get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${userFromStorage.distributor.distributorid}`)
       .then((response) => {
         setOrders(response.data.filter(order => order.confirmed && !order.isclosed));
@@ -176,6 +231,7 @@ export default function CollectorAssignment() {
         headerHandleAlert('Error', "Error retrieving orders. Please try again..", 'error');
         
       });
+    }
   }
 
   useEffect(() => {

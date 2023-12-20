@@ -192,7 +192,18 @@ export function OrderDetails() {
     };
 
     const getAllPaymentTransactionsByOrderID = () => {
-        axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${objectId}/${userFromStorage.distributor.distributorid}`)
+        if (userFromStorage && userFromStorage.tableName === 'Sales Associate') {
+            axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${objectId}/${userFromStorage.salesAssociate.distributor.distributorid}`)
+                .then((response) => {
+
+                    setPaymentTransactions(response.data);
+                })
+                .catch((error) => {
+                    console.error('Error fetching data: ', error);
+                });
+        }
+        else{
+            axios.get(`http://localhost:8080/paymenttransaction/getAllPaymentTransactionsByOrderID/${objectId}/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
 
                 setPaymentTransactions(response.data);
@@ -200,6 +211,7 @@ export function OrderDetails() {
             .catch((error) => {
                 console.error('Error fetching data: ', error);
             });
+        }
     }
 
     //sorting the payment transactions
@@ -211,7 +223,12 @@ export function OrderDetails() {
     {/*Handlers*/ }
     const handleFindValue = () => {
         try {
+        if(userFromStorage && userFromStorage.tableName === 'Sales Associate'){
+            getOrderByID(objectId!, userFromStorage.salesAssociate.distributor.distributorid);
+        }
+        else{
             getOrderByID(objectId!, userFromStorage.distributor.distributorid);
+        }
             getAllPaymentTransactionsByOrderID();
         } catch (error) {
             headerHandleAlert('Error', "Failed to retrieve order data. Please try again.", 'error');
@@ -443,6 +460,5 @@ export function OrderDetails() {
     );
 
 }
-
 
 
