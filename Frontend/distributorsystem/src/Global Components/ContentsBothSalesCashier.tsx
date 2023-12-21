@@ -18,6 +18,7 @@ export default function ContentBothSalesCashier() {
             '/distributorOrderForm': 'Distributor Order Form',
             '/collectorAssignment': 'Collector Assignment',
             '/schedules/:objectId': 'Schedules',
+            [`/orderConfirmation/${objectId}`] : `Order Confirmation Details`,
         };
         const navpage = navPageMapping[path] || 'Unknown';
         return navpage;
@@ -42,7 +43,7 @@ export default function ContentBothSalesCashier() {
           [`/schedules/${objectId}`] : 'Schedule',
           '/recordDirectPayment':'Record Direct Payment',
           [`/distributorProfileDetails/${objectId}`] :'Distributor Information',
-  
+          [`/orderConfirmation/${objectId}`] : `View, update, or confirm dealer's ordered products - ${objectId}`,
       }
       const navpageMapped= navPageNameMapping[path]||'Unknown';
       return navpageMapped;

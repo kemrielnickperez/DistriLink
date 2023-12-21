@@ -22,7 +22,14 @@ export default function ContentDealer() {
       const navPageNameMapping: Record<string,string>={
           '/dealerOrderForm':'Product Distribution Form',
           [`/dealerProfileDetails/${objectId}`] : 'Dealer Information',
-         
+          [`/employeeProfileDetails/${objectId}`] : 'Employee Information',
+          [`/orderDetails/${objectId}`] : 'Order Transaction Details',
+          [`/orderTransactionDetails/${objectId}`] : 'Order Transaction Details',
+          [`/paymentReceiptDetails/${objectId}`] : 'Payment Receipt Details',
+          [`/schedules/${objectId}`] : 'Schedule',
+          '/recordDirectPayment':'Record Direct Payment',
+          [`/distributorProfileDetails/${objectId}`] :'Distributor Information',
+          [`/orderConfirmation/${objectId}`] : `Order Confirmation Details`,
       }
       const navpageMapped= navPageNameMapping[path]||'Unknown';
       return navpageMapped;
@@ -34,7 +41,15 @@ export default function ContentDealer() {
     const navPageContentMapping: Record<string,string>={
         '/dealerOrderForm':'Allocate a product to generate a your order.',
         [`/dealerProfileDetails/${objectId}`]  : `View dealer profile details - ${objectId}`,
-         }
+        [`/employeeProfileDetails/${objectId}`] : `View employee profile details - ${objectId}`,
+        [`/orderDetails/${objectId}`] : `View dealer's order transaction details - Order Transaction ID: ${objectId}`,
+        [`/orderTransactionDetails/${objectId}`] : `View dealer's order transaction details - Order Transaction ID:  ${objectId}`  ,
+        [`/paymentReceiptDetails/${objectId}`] : `View payment receipt details - Receipt ID : ${objectId}`,
+        [`/schedules/${objectId}`] : `Set schedule of due date/s on dealer's order transaction`,
+        '/recordDirectPayment':'View, Update and Record Direct Payment from your dealer/s',
+        [`/distributorProfileDetails/${objectId}`] : `View distributor profile details - ${objectId}`,
+        [`/orderConfirmation/${objectId}`] : `View, update, or confirm dealer's ordered products - ${objectId}`,
+    }
     const navpageMapped= navPageContentMapping[path]||'Unknown';
     return navpageMapped;
   }

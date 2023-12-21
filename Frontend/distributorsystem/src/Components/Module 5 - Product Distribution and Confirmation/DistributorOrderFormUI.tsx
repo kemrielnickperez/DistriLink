@@ -464,7 +464,8 @@ export default function ProductDistributionList() {
     }
 
     if (!selectedDate || !penaltyRateRef.current?.value || !paymentTerm) {
-      toast.warning('Please fill all required fields.');
+     
+      saveHandleAlert('Fill all the required fields','Please fill all required fields.', 'warning')
       return;
     }
 
@@ -493,7 +494,7 @@ export default function ProductDistributionList() {
           isclosed: false
         });
         //if possible kay ara na siya mo clear after sa snackbar
-        saveHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
+        saveHandleAlert('Success Saving Order', "The Dealer's ordered products have been successfully saved!", 'success')
         clearInputValues();
 
       }
