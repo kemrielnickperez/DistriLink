@@ -145,6 +145,8 @@ export default function DealerProfileListUI() {
     const [alertSeverity, setAlertSeverity] = useState('success');
     const [value, setValue] = useState(0);
 
+
+
     {/*Tabs*/ }
 
     const [selectedDealerId, setSelectedDealerId] = useState<string>("");
@@ -207,26 +209,13 @@ export default function DealerProfileListUI() {
 
     const handleConfirmOpen = () => setCreditLimitModalOpen(true);
     const handleConfirmClose = () => setCreditLimitModalOpen(false);
+    const [tabValue, setTabValue] = React.useState('unconfirmed');
 
 
 
-
-    {/**Handler for Alert - Function to define the type of alert*/ }
-
-    /*  function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
-         setTitle(title);
-         setAlertMessage(message);
-         setAlertSeverity(severity);
-         setOpenAlert(true);
-     }
- 
-     {/**Handler to Close Alert Snackbar
-     const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
-         if (reason === 'clickaway') {
-             return;
-         }
-         setOpenAlert(false);
-     }; */
+    const toggleTables1 = (tabValue: string) => {
+        setTabValue(tabValue);
+    };
 
 
 
@@ -506,104 +495,119 @@ export default function DealerProfileListUI() {
         getAllDealers();
         getAllArchivedDealers();
 
-    }, []);
+    }, [dealers]);
+
+
+
+
+
+
+
+
 
     return (
         <div>
             <StyledCard>
                 {/* <ContentNameTypography>Dealer Profile List</ContentNameTypography> */}
-                <Box sx={{ width: '100%', marginTop: 4, marginLeft: 0.5 }}>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" style={{ marginLeft: 40 }}>
-                            <TabStyle label="Unconfirmed Dealers" {...a11yProps(0)} />
-                            <TabStyle label="Confirmed Dealers" {...a11yProps(1)} />
-                            <TabStyle label="Declined Dealers (Archived)" {...a11yProps(2)} />
-                        </Tabs>
-                    </Box>
-                    <CustomTabPanel value={value} index={0}>
 
-                        {dealers === null ? (
-                            // Display whatever you want when dealers is empty
-                            // For example, you can show a message or another component
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '200px' }}>
-                                <CircularProgress />
-                            </div>
+                <Box>
+                    <Tabs value={tabValue} onChange={(event, newValue) => toggleTables1(newValue)}>
+                        <Tab label="Unconfirmed Dealers" value="unconfirmed" />
+                        <Tab label="Confirmed Dealers" value="confirmed" />
+                        <Tab label="Declined Dealers" value="declined" />
+                    </Tabs>
+                    {tabValue === 'unconfirmed' && (
+                        <>
+                            {dealers === null ? (
+                                // Display whatever you want when dealers is empty
+                                // For example, you can show a message or another component
+                                <div style={{
+                                    display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+                                    marginTop: '200px'
+                                }}>
+                                    <CircularProgress />
+                                </div>
 
-                        ) : (
-                            // Display the DataGrid when dealers is not empty
-                            <DataGridStyle
-                                rows={rows}
-                                columns={columns.map((column) => ({
+                            ) : (
+                                // Display the DataGrid when dealers is not empty
+                                <DataGridStyle rows={rows} columns={columns.map((column) => ({
                                     ...column,
                                 }))}
-                                initialState={{
-                                    pagination: {
-                                        paginationModel: {
-                                            pageSize: 10,
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: 10,
+                                            },
                                         },
-                                    },
-                                }}
-                                pageSizeOptions={[10]}
-                            />
-                        )}
-                    </CustomTabPanel>
-                    <CustomTabPanel value={value} index={1}>
-                        {dealers === null ? (
-                            // Display whatever you want when dealers is empty
-                            // For example, you can show a message or another component
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '200px' }}>
-                                <CircularProgress />
-                            </div>
+                                    }}
+                                    pageSizeOptions={[10]}
+                                />
+                            )}
+                        </>
 
-                        ) : (
-                            <DataGridStyle
-                                rows={rowsConfirmed}
+                    )}
+                    {tabValue === 'confirmed' && (
+                        <>
+                            {dealers === null ? (
+                                // Display whatever you want when dealers is empty
+                                // For example, you can show a message or another component
+                                <div style={{
+                                    display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+                                    marginTop: '200px'
+                                }}>
+                                    <CircularProgress />
+                                </div>
 
-                                columns={columnsConfirmed.map((column) => ({
+                            ) : (
+                                <DataGridStyle rows={rowsConfirmed} columns={columnsConfirmed.map((column) => ({
                                     ...column,
 
                                 }))}
-                                initialState={{
-                                    pagination: {
-                                        paginationModel: {
-                                            pageSize: 10,
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: 10,
+                                            },
                                         },
-                                    },
-                                }}
-                                pageSizeOptions={[10]}
-                            />
-                        )}
-                    </CustomTabPanel>
-                    <CustomTabPanel value={value} index={2}>
-                        {archivedDealer === null ? (
-                            // Display whatever you want when dealers is empty
-                            // For example, you can show a message or another component
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '200px' }}>
-                                <CircularProgress />
-                            </div>
+                                    }}
+                                    pageSizeOptions={[10]}
+                                />
+                            )}
+                        </>
+                    )}
+                    {tabValue === 'declined' && (
+                        <>
+                            {archivedDealer === null ? (
+                                // Display whatever you want when dealers is empty
+                                // For example, you can show a message or another component
+                                <div style={{
+                                    display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+                                    marginTop: '200px'
+                                }}>
+                                    <CircularProgress />
+                                </div>
 
-                        ) : (
-
-
-                            <DataGridStyle
-                                rows={rowsDeclined}
-
-                                columns={columnsDeclined.map((column) => ({
+                            ) : (
+                                <DataGridStyle rows={rowsDeclined} columns={columnsDeclined.map((column) => ({
                                     ...column,
                                 }))}
-                                initialState={{
-                                    pagination: {
-                                        paginationModel: {
-                                            pageSize: 10,
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: 10,
+                                            },
                                         },
-                                    },
-                                }}
-                                pageSizeOptions={[10]}
+                                    }}
+                                    pageSizeOptions={[10]}
 
-                            />
-                        )}
-                    </CustomTabPanel>
+                                />
+                            )}
+                        </>
+                    )}
                 </Box>
+
+
+
             </StyledCard>
 
             {/* Alerts */}
