@@ -290,7 +290,7 @@ export default function RecordDirectPayment() {
 
     const [openAlert, setOpenAlert] = useState(false);
 
-
+    
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -390,7 +390,7 @@ export default function RecordDirectPayment() {
 
         }
     }
-
+  
     function saveHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
         setTitle(title);
         setAlertMessage(message);
@@ -469,6 +469,8 @@ export default function RecordDirectPayment() {
 
 
 
+    const [value, setValue] = useState(0);
+
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -529,7 +531,7 @@ export default function RecordDirectPayment() {
         }
     });
 
-
+   
 
     const columns: GridColDef[] = [
         { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
@@ -575,8 +577,8 @@ export default function RecordDirectPayment() {
                                     >
                                         Show Direct Payments
                                     </StyledButton>
-                                    <StyledButton sx={{ width: 'max-content', margin: '20px' }}
-                                        onClick={() => toggleTables('collection')} >
+                                    <StyledButton sx={{ width: 'max-content', margin: '20px'  }} 
+                                    onClick={() => toggleTables('collection')} >
                                         Show Collection Payments
                                     </StyledButton>
                                     {showDirectPaymentReceiptsTable ?
@@ -617,6 +619,7 @@ export default function RecordDirectPayment() {
                                     }
 
                                 </Box>
+
 
 
                                 <Typography sx={{ marginTop: "100px", marginLeft: "50px" }}>
@@ -671,6 +674,8 @@ export default function RecordDirectPayment() {
 
         }
     });
+
+
 
 
     useEffect(() => {
