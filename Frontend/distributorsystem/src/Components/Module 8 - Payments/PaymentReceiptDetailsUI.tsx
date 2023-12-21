@@ -9,7 +9,7 @@ import axios from "axios";
 import { PaymentReceiptDetailsPrint } from "./PaymentReceiptDetailsPrint";
 import { useRestPaymentTransaction } from "../../RestCalls/PaymentTransactionUseRest";
 import logo5 from '../../Global Components/Images/logo5.png';
-
+import CloseIcon from '@mui/icons-material/Close';
 
 const ContentNameTypography = styled(Typography)({
     marginTop: 40,
@@ -45,6 +45,18 @@ const StyledDealerHeader = styled(Typography)({
     color: '#203949'
 })
 
+const ModalCard = styled(Card)({
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: 750,
+    height: '90%',
+    backgroundColor: 'background.paper',
+    border: '2px',
+    p: 4,
+})
+
 const StackStyle = styled(Stack)({
     position: 'absolute',
     top: '150px',
@@ -61,6 +73,16 @@ const StyleLabel = styled(Typography)({
     fontSize: '15px',
     width: 'max-content',
     fontFamily: 'Inter',
+})
+const ButtonClose = styled(Button)({
+    backgroundColor: '#E77D7D',
+    width: 40,
+    height: 40,
+    ':hover': {
+        backgroundColor: 'red',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s'
 })
 const StyleLabel1 = styled(Typography)({
     // position: 'absolute',
@@ -83,10 +105,10 @@ const StyleData = styled(Typography)({
 })
 
 const ButtonDealerProof = styled(Button)({
-    background: "#F5F7F9",
-    color: "#203949",
+    backgroundColor: 'rgb(45, 133, 231,0.8)',
+    color: '#FFFFFF',
     fontSize: 15,
-    marginLeft: 600,
+    // marginLeft: 600,
     marginTop: 25,
     marginBottom: 5,
     fontWeight: 'bold',
@@ -94,17 +116,17 @@ const ButtonDealerProof = styled(Button)({
     width: '220px',
     height: '60px',
     ':hover': {
-        backgroundColor: '#F5F7F9',
+        backgroundColor: '#2D85E7',
         transform: 'scale(1.1)'
     },
     transition: 'all 0.4s'
 });
 
 const ButtonColectorProof = styled(Button)({
-    background: "#F5F7F9",
-    color: "#203949",
+    backgroundColor: 'rgb(45, 133, 231,0.8)',
+    color: '#FFFFFF',
     fontSize: 15,
-    marginLeft: -720,
+    // marginLeft: -720,
     marginTop: 25,
     marginBottom: 5,
     fontWeight: 'bold',
@@ -112,7 +134,7 @@ const ButtonColectorProof = styled(Button)({
     width: '220px',
     height: '60px',
     ':hover': {
-        backgroundColor: '#F5F7F9',
+        backgroundColor: '#2D85E7',
         transform: 'scale(1.1)'
     },
     transition: 'all 0.4s'
@@ -504,81 +526,46 @@ export function PaymentReceiptDetails() {
                                         <StyledCollectorHeader>Proof of Payment</StyledCollectorHeader>
                                     </Grid>
                                     <Grid container style={{ marginTop: 40, marginLeft: -150, display: 'flex', justifyContent: "center", alignItems: "center" }}>
-                                        <Grid item>
-                                            <Card style={{ width: 120, borderRadius: 20, height: 40, padding: 20 }}>
-                                                <StyleLabel1>Dealer's Proof</StyleLabel1>
-                                            </Card>
-                                            <Card style={{ width: 350, borderRadius: 20, height: 80, padding: 10, marginTop: -30 }}>
-               
-                                                    {/* not sure if dri ba sya ibutang sud sa card huhu */}
-                                                    {dealerPaymentProofs!.map((document) => (
-                                                        <div key={document.dealerpaymentproofid}>
-                                                            {displayDealerPaymentProofs(document.content, document.type, document.name, document.dealerpaymentproofid, document.collectionPaymentReceipt!)}
-
-                                                        </div>
-                                                    ))}
-
-
-                                            </Card>
-                                            <Modal
-                                                open={openDealerProof}
-                                                onClose={handleCloseDealerProof} >
-                                                <div>
-                                                    <button onClick={handleCloseDealerProof}>Close</button>
-                                                    {selectedDealerProof && (
-                                                        <div>
-                                                            {selectedDealerProof.type === 'application/pdf' ? (
-                                                                <iframe
-                                                                    title="PDF Document"
-                                                                    src={`data:application/pdf;base64,${selectedDealerProof.content}`}
-                                                                    width="100%"
-                                                                    height="1000px"
-                                                                />
-                                                            ) : selectedDealerProof.type.startsWith("image") ? (
-                                                                <img
-                                                                    src={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`}
-                                                                    alt="Document"
-                                                                    style={{ maxWidth: '100%', maxHeight: '10000px' }}
-                                                                />
-                                                            ) : (
-                                                                <a href={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`} download={`document.${selectedDealerProof.type}`}>
-                                                                    Download Document
-                                                                </a>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </Modal>
-                                        </Grid>
-                                        <Grid item>
-                                            <Card style={{ marginTop: 0, marginLeft: 100, width: 120, borderRadius: 20, height: 40, padding: 20 }}>
+                                        <Grid item style={{ marginLeft: 200, marginRight: 300 }}>
+                                            <Card style={{ marginTop: 0, width: 150, borderRadius: 20, height: 40, padding: 20 }}>
                                                 <StyleLabel1>Collector's Proof</StyleLabel1>
                                             </Card>
-                                            <Card style={{ width: 350, marginLeft: 100, borderRadius: 20, height: 80, padding: 10, marginTop: -30 }}>
+                                            {/* <Card style={{ width: 350, marginLeft: 100, borderRadius: 20, height: 80, padding: 10, marginTop: -30 }}> */}
+                                            <Card style={{ marginTop: -30, paddingBottom: 20, paddingRight: 20, paddingLeft: 20, borderRadius: 20 }}>
                                                 {collectorRemittanceProofs!.map((document) => (
                                                     <div key={document.collectorremittanceproofid}>
                                                         {displayCollectorRemittanceProofs(document.content, document.type, document.name, document.collectorremittanceproofid, document.collectionPaymentReceipt!)}
                                                     </div>
                                                 ))}
-                                                <Modal
-                                                    open={openCollectorProof}
-                                                    onClose={handleCloseCollectorProof} >
-                                                    <div>
-                                                        <button onClick={handleCloseCollectorProof}>Close</button>
-                                                        {selectedCollectorProof && (
+                                            </Card>
+                                            <Modal
+                                                open={openCollectorProof}
+                                                onClose={handleCloseCollectorProof} >
+                                                <div>
+                                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: 300, marginTop: 40 }}>
+                                                    <ButtonClose onClick={handleCloseCollectorProof}><CloseIcon style={{color:'#ffffff'}} /></ButtonClose>
+                                                </div>
+                                                    {selectedCollectorProof && (
+                                                        <ModalCard>
                                                             <div>
                                                                 {selectedCollectorProof.type === 'application/pdf' ? (
                                                                     <iframe
                                                                         title="PDF Document"
                                                                         src={`data:application/pdf;base64,${selectedCollectorProof.content}`}
                                                                         width="100%"
-                                                                        height="1000px"
+                                                                        height="100%"
                                                                     />
                                                                 ) : selectedCollectorProof.type.startsWith("image") ? (
                                                                     <img
                                                                         src={`data:${selectedCollectorProof.type};base64,${selectedCollectorProof.content}`}
                                                                         alt="Document"
-                                                                        style={{ maxWidth: '100%', maxHeight: '10000px' }}
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            inset: 0,
+                                                                            margin: 'auto',
+                                                                            width: 'auto',
+                                                                            height: "100%"
+                                                                        }}
                                                                     />
                                                                 ) : (
                                                                     <a href={`data:${selectedCollectorProof.type};base64,${selectedCollectorProof.content}`} download={`document.${selectedCollectorProof.type}`}>
@@ -586,10 +573,71 @@ export function PaymentReceiptDetails() {
                                                                     </a>
                                                                 )}
                                                             </div>
-                                                        )}
-                                                    </div>
-                                                </Modal>
+                                                        </ModalCard>
+                                                    )}
+
+                                                </div>
+                                            </Modal>
+                                            {/* </Card> */}
+                                        </Grid>
+
+                                        <Grid item style={{}}>
+                                            <Card style={{ width: 150, borderRadius: 20, height: 40, padding: 20 }}>
+                                                <StyleLabel1>Dealer's Proof</StyleLabel1>
                                             </Card>
+                                            {/* <Card style={{ width: 350, borderRadius: 20, height: 80, padding: 10, marginTop: -30 }}> */}
+
+                                            {/* not sure if dri ba sya ibutang sud sa card huhu */}
+                                            <Card style={{ marginTop: -30, paddingBottom: 20, paddingRight: 20, paddingLeft: 20, borderRadius: 20 }}>
+                                                {dealerPaymentProofs!.map((document) => (
+                                                    <div key={document.dealerpaymentproofid}>
+                                                        {displayDealerPaymentProofs(document.content, document.type, document.name, document.dealerpaymentproofid, document.collectionPaymentReceipt!)}
+
+                                                    </div>
+                                                ))}
+                                            </Card>
+
+
+                                            {/* </Card> */}
+                                            <Modal
+                                                open={openDealerProof}
+                                                onClose={handleCloseDealerProof} >
+                                                <div>
+                                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: 300, marginTop: 40 }}>
+                                                    <ButtonClose onClick={handleCloseDealerProof}><CloseIcon style={{color:'#ffffff'}} /></ButtonClose>
+                                                </div>
+                                                    {selectedDealerProof && (
+                                                        <ModalCard>
+                                                            <div>
+                                                                {selectedDealerProof.type === 'application/pdf' ? (
+                                                                    <iframe
+                                                                        title="PDF Document"
+                                                                        src={`data:application/pdf;base64,${selectedDealerProof.content}`}
+                                                                        width="100%"
+                                                                        height="100%"
+                                                                    />
+                                                                ) : selectedDealerProof.type.startsWith("image") ? (
+                                                                    <img
+                                                                        src={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`}
+                                                                        alt="Document"
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            inset: 0,
+                                                                            margin: 'auto',
+                                                                            width: 'auto',
+                                                                            height: "100%"
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    <a href={`data:${selectedDealerProof.type};base64,${selectedDealerProof.content}`} download={`document.${selectedDealerProof.type}`}>
+                                                                        Download Document
+                                                                    </a>
+                                                                )}
+                                                            </div>
+                                                        </ModalCard>
+                                                    )}
+                                                </div>
+                                            </Modal>
                                         </Grid>
 
                                     </Grid>

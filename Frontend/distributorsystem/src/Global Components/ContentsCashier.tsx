@@ -38,7 +38,7 @@ export default function ContentCashier() {
           [`/schedules/${objectId}`] : 'Schedule',
           '/recordDirectPayment':'Record Direct Payment',
           [`/distributorProfileDetails/${objectId}`] :'Distributor Information',
-  
+          [`/orderConfirmation/${objectId}`] : `Order Confirmation Details`,
       }
       const navpageMapped= navPageNameMapping[path]||'Unknown';
       return navpageMapped;
@@ -64,7 +64,9 @@ export default function ContentCashier() {
         [`/schedules/${objectId}`] : `Set schedule of due date/s on dealer's order transaction`,
         '/recordDirectPayment':'View, Update and Record Direct Payment from your dealer/s',
         [`/distributorProfileDetails/${objectId}`] : `View distributor profile details - ${objectId}`,
-      }
+        [`/orderConfirmation/${objectId}`] : `View, update, or confirm dealer's ordered products - ${objectId}`,
+    }
+
     const navpageMapped= navPageContentMapping[path]||'Unknown';
     return navpageMapped;
   }
