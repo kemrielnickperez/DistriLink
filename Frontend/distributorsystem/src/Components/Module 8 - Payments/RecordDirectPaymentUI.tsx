@@ -293,6 +293,9 @@ export default function RecordDirectPayment() {
     
     const [open, setOpen] = React.useState(false);
 
+
+
+
     const handleOpen = () => {
 
         //setPaymentReceipts(response.data.paymentreceipts);
@@ -309,6 +312,17 @@ export default function RecordDirectPayment() {
 
     const userFromStorage = JSON.parse(localStorage.getItem("user")!);
 
+    const userSignedIn =
+    userFromStorage.tableName === 'Cashier'
+        ? userFromStorage.cashier
+
+        : userFromStorage.tableName === 'Sales Associate'
+        ? userFromStorage.salesAssociate
+
+        : userFromStorage.tableName === 'Sales Associate and Cashier'
+            ? userFromStorage.salesAssociateAndCashier
+            : userFromStorage.distributor;
+
 
     const handleFindPaymentTransactions = () => {
         if (userFromStorage && userFromStorage.tableName === 'Cashier') {
@@ -324,51 +338,7 @@ export default function RecordDirectPayment() {
         }
     };
 
-    const cashierObject: IEmployee = {
-        employeeid: "2386f1b2",
-        firstname: "Victoria",
-        middlename: "I",
-        lastname: "Ramirez",
-        emailaddress: "charmaineramirez05@gmail.com",
-        password: "test",
-        birthdate: "2005-11-05",
-        gender: "female",
-        currentaddress: "2079 Humay-Humay Street",
-        permanentaddress: "Pajo",
-        contactnumber: "+639158523587",
-        tinnumber: '',
-        iscashier: true,
-        issalesassociate: true,
-        iscollector: true,
-        submissiondate: "2023-11-07",
-        distributor: {
-            distributorid: "distributor9",
-            firstname: "Min Gyu",
-            middlename: "",
-            lastname: "Kim",
-            emailaddress: "capstone.distrilink@gmail.com",
-            password: "doggo",
-            birthdate: "1997-04-06",
-            gender: "Male",
-            currentaddress: "Mabolo, Cebu",
-            permanentaddress: "Cebu City",
-            contactnumber: "09741258963",
-            dealerids: [],
-            employeeids: [
-                "2386f1b2"
-            ],
-            orderids: [],
-            archiveddealerids: [],
-            paymentreceiptids: [],
-            documentids: []
-        },
-        orderids: [],
-        paymentreceiptids: [],
-        collectionpaymentids: [],
-        documentids: [
-            "54219fa2"
-        ]
-    }
+    
 
     const toggleTables = (table: string) => {
         if (table === 'direct') {
@@ -408,6 +378,21 @@ export default function RecordDirectPayment() {
 
 
     const handleSaveDirectPayment = () => {
+
+        
+        const userSignedInID =
+                userFromStorage.tableName === 'Cashier'
+            ? userFromStorage.cashier.employeeid
+
+            : userFromStorage.tableName === 'Sales Associate'
+                ? userFromStorage.salesAssociate.employeeid
+
+            : userFromStorage.tableName === 'Sales Associate and Cashier'
+                ? userFromStorage.salesAssociateAndCashier.employeeid
+
+            : userFromStorage.distributor.distributorid;
+
+
         if (!selectedPaymentTransaction || !selectedPaymentTransaction.paymenttransactionid || !selectedDate || !amountPaidRef.current?.value || isNaN(Number(amountPaidRef.current?.value)) || !remarksRef.current?.value) {
             toast.warning('Please fill all the necessary fields.');
             return;
@@ -431,7 +416,7 @@ export default function RecordDirectPayment() {
             paymenttransactionid: selectedPaymentTransaction?.paymenttransactionid!,
             receiverID: "",
             receivername: ""
-        }, cashierObject.employeeid)
+        }, userSignedInID)
 
 
         const allPaid = order?.paymenttransactions.every((transaction) => transaction.paid);
