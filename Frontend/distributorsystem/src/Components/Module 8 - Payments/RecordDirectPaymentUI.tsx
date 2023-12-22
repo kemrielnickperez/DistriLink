@@ -755,7 +755,7 @@ export default function RecordDirectPayment() {
 
                     ) : (
                         <div>
-                            <h2 style={{ color: '#707070', marginTop: '50px' }}> no schedules yet</h2>
+                    
 
                         </div>
 

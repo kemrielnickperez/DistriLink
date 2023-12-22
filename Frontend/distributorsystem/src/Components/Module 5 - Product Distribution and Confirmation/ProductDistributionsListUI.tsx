@@ -356,7 +356,7 @@ export default function ProductDistributionList() {
                         ) : (
                             <DataGridStyle
                                 rows={rowsConfirmed}
-                                sx={{ textAlign: 'center', color: '#203949', height: '370px', margin: '20px 10px 0px 14px' }}
+                                
                                 columns={columnsConfirmed.map((column) => ({
                                     ...column,
                                 }))}
@@ -367,7 +367,7 @@ export default function ProductDistributionList() {
                                         },
                                     },
                                 }}
-                                pageSizeOptions={[5]}
+                                pageSizeOptions={[10]}
 
                             />
                         )}
