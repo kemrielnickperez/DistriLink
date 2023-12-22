@@ -70,7 +70,7 @@ const StyleData = styled(Typography)({
     top: 20,
 })
 const LabelTypography = styled(Typography)({
-    marginLeft: '30%',
+    marginLeft: '-10%',
     top: '200px',
     fontFamily: 'Inter, sans-serif',
     fontWeight: '550',
@@ -139,6 +139,7 @@ const SearchButton = styled(IconButton)({
         backgroundColor: "#2d85e7"
     }
 })
+
 const StyledButton = styled(Button)({
     marginTop: 40,
     marginBottom: 40,
@@ -147,11 +148,29 @@ const StyledButton = styled(Button)({
     color: '#ffffff',
     fontFamily: 'Inter',
     fontSize: '15px',
-    width: '240px',
+    width: '260px',
     height: 50,
     ':hover': {
-        backgroundColor: '#87BAF3',
-    }
+        backgroundColor: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s',
+})
+const StyledButton1 = styled(Button)({
+    marginTop: 40,
+    marginBottom: 40,
+    marginLeft: 20,
+    backgroundColor: 'rgb(45, 133, 231,0.8)',
+    color: '#ffffff',
+    fontFamily: 'Inter',
+    fontSize: '15px',
+    width: '260px',
+
+    ':hover': {
+        backgroundColor: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s'
 })
 const StyledPaymentTransactionCard = styled(Card)({
     borderRadius: "22px",
@@ -277,7 +296,28 @@ export default function RecordDirectPayment() {
     const [collectionPaymentReceipts, setCollectionPaymentReceipts] = useState<ICollectionPaymentReceipt[]>([]);
 
 
+    const [showDirectPaymentReceiptsTable, setShowDirectPaymentReceiptsTable,] = useState(true);
+    const [showCollectionPaymentReceiptsTable, setShowCollectionPaymentReceiptsTable] = useState(false);
+
+
+    const [alerttitle, setTitle] = useState('');
+
+    const [alertMessage, setAlertMessage] = useState('');
+
+    const [alertSeverity, setAlertSeverity] = useState('success');
+
+    const [openAlert, setOpenAlert] = useState(false);
+
+
     const [open, setOpen] = React.useState(false);
+
+    const [tabValue, setTabValue] = React.useState('direct');
+
+    const toggleTables = (tabValue: string) => {
+        setTabValue(tabValue);
+    };
+
+
 
     const handleOpen = () => {
 
@@ -295,58 +335,43 @@ export default function RecordDirectPayment() {
 
     const userFromStorage = JSON.parse(localStorage.getItem("user")!);
 
+    const userSignedIn =
+        userFromStorage.tableName === 'Cashier'
+            ? userFromStorage.cashier
+
+            : userFromStorage.tableName === 'Sales Associate'
+                ? userFromStorage.salesAssociate
+
+                : userFromStorage.tableName === 'Sales Associate and Cashier'
+                    ? userFromStorage.salesAssociateAndCashier
+                    : userFromStorage.distributor;
+
 
     const handleFindPaymentTransactions = () => {
-        getOrderByID(orderIDRef.current?.value + "", userFromStorage.distributor.distributorid);
+        if (userFromStorage && userFromStorage.tableName === 'Cashier') {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.cashier.distributor.distributorid);
 
+        }
+        else if (userFromStorage && userFromStorage.tableName === 'Sales Associate and Cashier') {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.salesAssociateAndCashier.distributor.distributorid);
+
+        }
+        else {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.distributor.distributorid);
+        }
     };
 
-    const cashierObject: IEmployee = {
-        employeeid: "2386f1b2",
-        firstname: "Victoria",
-        middlename: "I",
-        lastname: "Ramirez",
-        emailaddress: "charmaineramirez05@gmail.com",
-        password: "test",
-        birthdate: "2005-11-05",
-        gender: "female",
-        currentaddress: "2079 Humay-Humay Street",
-        permanentaddress: "Pajo",
-        contactnumber: "+639158523587",
-        tinnumber: '',
-        iscashier: true,
-        issalesassociate: true,
-        iscollector: true,
-        submissiondate: "2023-11-07",
-        distributor: {
-            distributorid: "distributor9",
-            firstname: "Min Gyu",
-            middlename: "",
-            lastname: "Kim",
-            emailaddress: "capstone.distrilink@gmail.com",
-            password: "doggo",
-            birthdate: "1997-04-06",
-            gender: "Male",
-            currentaddress: "Mabolo, Cebu",
-            permanentaddress: "Cebu City",
-            contactnumber: "09741258963",
-            dealerids: [],
-            employeeids: [
-                "2386f1b2"
-            ],
-            orderids: [],
-            archiveddealerids: [],
-            paymentreceiptids: [],
-            documentids: []
-        },
-        orderids: [],
-        paymentreceiptids: [],
-        collectionpaymentids: [],
-        documentids: [
-            "54219fa2"
-        ]
-    }
 
+
+    // const toggleTables = (table: string) => {
+    //     if (table === 'direct') {
+    //         setShowDirectPaymentReceiptsTable(true);
+    //         setShowCollectionPaymentReceiptsTable(false);
+    //     } else if (table === 'collection') {
+    //         setShowDirectPaymentReceiptsTable(false);
+    //         setShowCollectionPaymentReceiptsTable(true);
+    //     }
+    // };
 
     const clearInputValues = () => {
         setSelectedDate(null);
@@ -358,13 +383,6 @@ export default function RecordDirectPayment() {
 
         }
     }
-    const [alerttitle, setTitle] = useState('');
-
-    const [alertMessage, setAlertMessage] = useState('');
-
-    const [alertSeverity, setAlertSeverity] = useState('success');
-
-    const [openAlert, setOpenAlert] = useState(false);
 
     function saveHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
         setTitle(title);
@@ -375,23 +393,38 @@ export default function RecordDirectPayment() {
 
     const handleAlertClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
-          return;
+            return;
         }
         setOpenAlert(false);
-      };
-    
+    };
+
 
 
     const handleSaveDirectPayment = () => {
+
+
+        const userSignedInID =
+            userFromStorage.tableName === 'Cashier'
+                ? userFromStorage.cashier.employeeid
+
+                : userFromStorage.tableName === 'Sales Associate'
+                    ? userFromStorage.salesAssociate.employeeid
+
+                    : userFromStorage.tableName === 'Sales Associate and Cashier'
+                        ? userFromStorage.salesAssociateAndCashier.employeeid
+
+                        : userFromStorage.distributor.distributorid;
+
+
         if (!selectedPaymentTransaction || !selectedPaymentTransaction.paymenttransactionid || !selectedDate || !amountPaidRef.current?.value || isNaN(Number(amountPaidRef.current?.value)) || !remarksRef.current?.value) {
             toast.warning('Please fill all the necessary fields.');
             return;
-          }
+        }
         const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
 
         if (Number(amountPaidRef.current?.value) > Number(remainingPaymentAmount!.toFixed(2))) {
-            saveHandleAlert('Amount Paid Exceeded Amount Due', "File size exceeds the limit (5 MB). Please choose a smaller file.", 'warning')
-          
+            saveHandleAlert('Amount Paid Exceeded Amount Due', "Please make sure that the amount paid is less than or equal to the remaining amount to be paid.", 'warning')
+
             return;
         }
 
@@ -406,7 +439,7 @@ export default function RecordDirectPayment() {
             paymenttransactionid: selectedPaymentTransaction?.paymenttransactionid!,
             receiverID: "",
             receivername: ""
-        }, cashierObject.employeeid)
+        }, userSignedInID)
 
 
         const allPaid = order?.paymenttransactions.every((transaction) => transaction.paid);
@@ -443,32 +476,6 @@ export default function RecordDirectPayment() {
     }
 
 
-
-    function CustomTabPanel(props: TabPanelProps) {
-        const { children, value, index, ...other } = props;
-        return (
-            <div
-                role="tabpanel"
-                hidden={value !== index}
-                id={`simple-tabpanel-${index}`}
-                aria-labelledby={`simple-tab-${index}`}
-                {...other}
-            >
-                {value === index && (
-                    <Box sx={{ p: 2 }}>
-                        <Typography>{children}</Typography>
-                    </Box>
-                )}
-            </div>
-        );
-    }
-
-    function a11yProps(index: number) {
-        return {
-            id: `simple-tab-${index}`,
-            'aria-controls': `simple-tabpanel-${index}`,
-        };
-    }
 
     const [value, setValue] = useState(0);
 
@@ -553,14 +560,12 @@ export default function RecordDirectPayment() {
             field: 'actionView', headerName: '', width: 397, renderCell: (params: { row: any; }) => {
                 return (
                     <div>
-                        <Button
-                            variant="contained"
-                            color="primary"
+                        <StyledButton1
                             onClick={() => {
                                 handleViewPaymentReceiptsButtonClick(params);
                             }}>
                             View Payment Receipts
-                        </Button>
+                        </StyledButton1>
                         <Modal
                             open={open}
                             onClose={handleClose}
@@ -572,35 +577,42 @@ export default function RecordDirectPayment() {
 
                                 <ContentNameTypography2 sx={{ paddingTop: 5 }}>Payment Receipts</ContentNameTypography2>
 
-
-                                <Box sx={{ width: '100%', height: '200px', marginTop: 3, marginLeft: 0.5 }}>
-
+                                <Box sx={{ width: showDirectPaymentReceiptsTable ? 'max-content' : '100' }}>
+                                    {/* <StyledButton
+                                        sx={{ width: 'max-content', margin: '20px' }}
+                                        onClick={() => toggleTables('direct')}
+                                    >
+                                        Show Direct Payments
+                                    </StyledButton>
+                                    <StyledButton sx={{ width: 'max-content', margin: '20px' }}
+                                        onClick={() => toggleTables('collection')} >
+                                        Show Collection Payments
+                                    </StyledButton> */}
                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" style={{ marginLeft: 40 }}>
-                                            <TabStyle label="Direct Payment Receipts" {...a11yProps(0)} />
-                                            <TabStyle label="Collection Payment Receipts" {...a11yProps(1)} />
+                                        <Tabs value={tabValue} onChange={(event, newValue) => toggleTables(newValue)} style={{ marginLeft: 40 }}>
+                                            <TabStyle label="Direct Payments" value="direct"></TabStyle>
+                                            <TabStyle label="Collection Payments" value="collection"></TabStyle>
                                         </Tabs>
                                     </Box>
+                                    {tabValue === 'direct' && (
+                                        <>
+                                            <DataGridStyle
+                                                rows={DirectPaymentReceiptrows}
+                                                sx={{ textAlign: 'center', color: '#203949', height: '230px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
+                                                columns={DirectPaymentReceiptcolumns}
 
-
-                                    <CustomTabPanel value={value} index={0}>
-                                        <DataGridStyle
-                                            rows={DirectPaymentReceiptrows}
-                                            sx={{ textAlign: 'center', color: '#203949', height: '230px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
-                                            columns={DirectPaymentReceiptcolumns}
-
-                                            initialState={{
-                                                pagination: {
-                                                    paginationModel: {
-                                                        pageSize: 2,
+                                                initialState={{
+                                                    pagination: {
+                                                        paginationModel: {
+                                                            pageSize: 2,
+                                                        },
                                                     },
-                                                },
-                                            }}
-                                            pageSizeOptions={[2]}
-                                        />
-                                    </CustomTabPanel>
-                                    <CustomTabPanel value={value} index={1}>
-
+                                                }}
+                                                pageSizeOptions={[2]}
+                                            />
+                                        </>
+                                    )}
+                                    {tabValue === 'collection' && (
                                         <DataGridStyle
                                             rows={CollectionPaymentReceiptrows}
                                             sx={{ textAlign: 'center', color: '#203949', height: '230px', width: '1245px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
@@ -615,14 +627,15 @@ export default function RecordDirectPayment() {
                                             }}
                                             pageSizeOptions={[2]}
                                         />
-
-                                    </CustomTabPanel>
+                                    )}
                                 </Box>
 
-                                <Typography sx={{ marginTop: "100px", marginLeft: "50px" }}>
+
+
+                                <Typography sx={{ marginTop: "20px", marginLeft: "50px" }}>
                                     Total Amount Paid: {totalPaidAmount!.toFixed(2)}
                                 </Typography>
-                                <Typography sx={{ marginBottom: "20px", marginLeft: "50px" }}>
+                                <Typography sx={{ marginBottom: "50px", marginLeft: "50px" }}>
                                     Remaining Payment Amount: {remainingPaymentAmount!.toFixed(2)}
                                 </Typography>
                                 <Button
@@ -673,21 +686,20 @@ export default function RecordDirectPayment() {
     });
 
 
-    /*  
-    
-    e1d92cab
-    393349ba
-    1adfd341
-   972c30e3
-   b5029695
-    e70e7bb6
-    e440db26
- */
+
 
     useEffect(() => {
+        if (userFromStorage && userFromStorage.tableName === 'Cashier') {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.cashier.distributor.distributorid);
 
-        getOrderByID(orderIDRef.current?.value + "", userFromStorage.distributor.distributorid);
+        }
+        else if (userFromStorage && userFromStorage.tableName === 'Sales Associate and Cashier') {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.salesAssociateAndCashier.distributor.distributorid);
 
+        }
+        else {
+            getOrderByID(orderIDRef.current?.value + "", userFromStorage.distributor.distributorid);
+        }
         if (order && order.paymenttransactions.length !== 0) {
             const allPaid = order.paymenttransactions?.every((transaction) => transaction.paid);
 
@@ -707,12 +719,13 @@ export default function RecordDirectPayment() {
 
         <div style={{ paddingTop: 70 }}>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <LabelTypography>Enter Order Transaction ID</LabelTypography>
-                <StyleTextField inputRef={orderIDRef} />
-                <SearchButton type="button" aria-label="search" onClick={handleFindPaymentTransactions}>
-                    <SearchIcon sx={{ color: "white" }} />
-                </SearchButton>
-
+                <Grid container style={{ display: "flex", justifyContent: "center", }}>
+                    <LabelTypography>Enter Order Transaction ID</LabelTypography>
+                    <StyleTextField inputRef={orderIDRef} />
+                    <SearchButton type="button" aria-label="search" onClick={handleFindPaymentTransactions}>
+                        <SearchIcon sx={{ color: "white" }} />
+                    </SearchButton>
+                </Grid>
             </div>
 
             {order ? (
@@ -754,7 +767,7 @@ export default function RecordDirectPayment() {
                         </div>
                     ) : order.paymenttransactions.length !== 0 ? (
                         <div>
-                            <Grid container>
+                            <Grid container style={{ display: "flex", justifyContent: "center", marginLeft: '-10%' }}>
                                 <Grid item>
                                     <StyleLabel>Payment Transaction ID</StyleLabel>
                                     <Autocomplete
@@ -821,7 +834,12 @@ export default function RecordDirectPayment() {
                                     <StyleTextField2 style={{ marginLeft: 63 }} inputRef={remarksRef} />
                                 </Grid>
                             </Grid>
-                            <StyledButton onClick={handleSaveDirectPayment}>Save Payment Record</StyledButton>
+                            <StyledButton
+                                variant="contained"
+                                color="primary"
+                                onClick={handleSaveDirectPayment}>
+                                Save Payment Record
+                            </StyledButton>
                         </div>
                     ) : (
                         <div>

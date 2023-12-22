@@ -11,6 +11,7 @@ import { useRestDistributor } from "../../RestCalls/DistributorUseRest"
 import logo4 from '../../Global Components/Images/logo4.png'
 import distributor1 from '../../Global Components/Images/distributor1-1.png'
 import { IDistributorDocument } from "../../RestCalls/Interfaces"
+import { useNavigate } from "react-router-dom"
 
 const SignInTypo = styled(Typography)({
     display: 'flex',
@@ -31,7 +32,7 @@ const SignInTypo = styled(Typography)({
 
 })
 const ScrollStyle = styled('div')({
-    maxHeight: '460px',
+    maxHeight: '480px',
     width: '750px',
     overflowY: 'auto',
     scrollSnapType: 'y mandatory',
@@ -71,6 +72,7 @@ const StyledCard = styled(Card)({
     border: '0px solid rgba(255, 255, 255, 0.3)'
 
 })
+
 
 const GridBody = styled(Grid)({
     display: 'flex',
@@ -230,6 +232,10 @@ export default function DistributorRegistration() {
     const [alerttitle, setTitle] = useState('')
     const [alertMessage, setAlertMessage] = useState('');
     const [alertSeverity, setAlertSeverity] = useState('success');
+    const navigate = useNavigate();
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
+
+
     const [fieldWarning, setFieldWarning] = useState({
         firstname: '',
         lastname: '',
@@ -316,6 +322,17 @@ export default function DistributorRegistration() {
         setAlertSeverity(severity);
         setOpen(true);
     }
+
+    const handleAlertAndNavigate = async (type: string, message: string, variant: "success" | "warning" | "error") => {
+        handleAlert(type, message, variant);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        setIsAlertVisible(true);
+    };
+
+    const handleAlertAcknowledged = () => {
+        setIsAlertVisible(false);
+        navigate(`/SignIn`);
+    };
 
     {/**Handler to Close Alert Snackbar*/ }
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -441,9 +458,11 @@ export default function DistributorRegistration() {
                 archiveddealerids: [],
                 documentids: []
             }, newDistributorDocuments);
-            handleAlert('Success', 'You are Successfully Registered!', 'success');
+            await handleAlertAndNavigate('Success', 'You are Successfully Registered!', 'success');
+            handleAlertAcknowledged();
+
         } catch (error) {
-            handleAlert('Error', 'An Error Occured, Please Check your Connection', 'error')
+            await handleAlertAndNavigate('Error', 'An Error Occured, Please Check your Connection', 'error')
         }
 
 
@@ -508,7 +527,7 @@ export default function DistributorRegistration() {
                     <div style={{ padding: '1px 1px 1px 30px', display: 'flex', flexDirection: 'column' }}>
                         <ContentNameTypography>Sign Up as Distributor</ContentNameTypography>
                         <ScrollStyle id="scrollContainer">
-                        <div style={{ paddingTop: 10, paddingBottom: 10 }}>
+                            <div style={{ paddingTop: 10, paddingBottom: 10 }}>
                                 {/**Textfield For First Name*/}
                                 <GridField container spacing={3}>
                                     <Grid item>
@@ -718,13 +737,15 @@ export default function DistributorRegistration() {
                                             </Button>
 
                                         </label>
-                                        <FormHelperText style={{ marginLeft:5, color: '#BD9F00' }}>
+                                        <FormHelperText style={{ marginLeft: 5, color: '#BD9F00' }}>
                                             {fieldWarning.selectedprofile}
                                         </FormHelperText>
                                     </Grid>
-
-
-
+                                    <Grid item>
+                                        <Button variant="contained" style={{ height: 50, width: 350, marginTop: 10,  marginLeft: 180,fontSize: 16, borderRadius: 50 }} onClick={handleSignUp}>
+                                            Sign Up
+                                        </Button>
+                                    </Grid>
                                 </GridField>
 
 
@@ -732,16 +753,12 @@ export default function DistributorRegistration() {
 
 
                             </div>
-                            
+
                             {/* Contact Info
                             <div style={{ paddingTop: 5, paddingBottom: 110 }}>
                                                            </div> */}
                         </ScrollStyle>
-                        <div>
-                            <Button variant="contained" style={{ height: 50, width: 170, borderRadius: 50 }} onClick={handleSignUp}>
-                                Sign Up
-                            </Button>
-                        </div>
+
                     </div>
                 </StyledCard>
                 <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{

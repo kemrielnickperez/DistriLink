@@ -46,7 +46,7 @@ const ProfileCard = styled(Card)({
   borderRadius: 22,
   width: 300,
   height: 240,
-  marginTop: 150,
+  marginTop: 60,
   marginLeft: 160
 })
 const StyleMainInfo = styled(Typography)({
@@ -240,8 +240,7 @@ export function DistributorProfileDetails() {
   return (
     <div>
        {distributor?(
-      <Grid container spacing={3}>
-        <ContentNameTypography>Distributor Information</ContentNameTypography>
+      <Grid style={{ position:'relative', justifyContent: "center"}}  container spacing={3}>
         <Grid item style={{ marginRight: -70 }}>
           <Grid>
             <ProfileCard onClick={handleOpenProfile} style={{cursor:'pointer'}}>
@@ -263,7 +262,7 @@ export function DistributorProfileDetails() {
           </div>
         </Modal>
         <Grid item>
-          <Grid container style={{ marginTop: 15 }}>
+          <Grid container style={{ marginTop: -80 }}>
             <Grid item>
               <StyleMainLabel>Distributor's Name</StyleMainLabel>
               <StyleMainInfo style={{ marginTop: 15 }}>{distributor?.firstname} {distributor?.middlename} {distributor?.lastname}</StyleMainInfo>

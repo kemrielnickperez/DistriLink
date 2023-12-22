@@ -13,6 +13,9 @@ import axios from "axios";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import logo4 from '../../Global Components/Images/logo4.png'
 import employee1 from '../../Global Components/Images/employee1-1.png'
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import { useNavigate } from "react-router-dom";
 const StyleGrid = styled(Grid)({
     position: "relative",
     display: "flex",
@@ -54,7 +57,7 @@ const StyledCard = styled(Card)({
 
 })
 const ScrollStyle = styled('div')({
-    maxHeight: '460px',
+    maxHeight: '500px',
     width: '750px',
     overflowY: 'auto',
     scrollSnapType: 'y mandatory',
@@ -242,6 +245,9 @@ export default function EmployeeRegistration() {
     const [currentAddress, setCurrentAddress] = useState('');
     const [isshowPassword, setisShowPassword] = useState(false);
     const [isshowConfirmPassword, setisShowConfirmPassword] = useState(false);
+    const navigate = useNavigate();
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
+
     const [fieldWarning, setFieldWarning] = useState({
         firstname: '',
         lastname: '',
@@ -346,6 +352,18 @@ export default function EmployeeRegistration() {
         setAlertSeverity(severity);
         setOpen(true);
     }
+
+    const handleAlertAndNavigate = async (type: string, message: string, variant: "success" | "warning" | "error") => {
+        handleAlert(type, message, variant);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        setIsAlertVisible(true);
+    };
+
+    const handleAlertAcknowledged = () => {
+        setIsAlertVisible(false);
+        navigate(`/SignIn`);
+    };
+
 
     {/**Handler to Close Alert Snackbar*/ }
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -468,7 +486,27 @@ export default function EmployeeRegistration() {
 
         return newEmployeeDocuments;
     };
+    const contactInfo = useRef<HTMLDivElement>(null)
+    const accountInfo = useRef<HTMLDivElement>(null)
+    const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+        const scrollContainer = document.getElementById('scrollContainer');
+        if (ref.current && scrollContainer) {
+            scrollContainer.scrollTo({
+                top: ref.current.offsetTop,
+                behavior: 'smooth',
+            });
+        }
 
+    };
+    const scrollToTop = () => {
+        const scrollContainer = document.getElementById('scrollContainer');
+        if (scrollContainer) {
+          scrollContainer.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+        }
+      };
     {/**HelperWarning for defining Helper Text*/ }
     const helperWarning = {
         firstname: !firstnameRef.current?.value ? 'First Name is required' : '',
@@ -513,12 +551,12 @@ export default function EmployeeRegistration() {
                 !selectedPosition
             ) {
 
-                handleAlert('Warning', 'Please fill in all required fields', 'warning');
+                handleAlertAndNavigate('Warning', 'Please fill in all required fields', 'warning');
                 setFieldWarning(helperWarning);
                 return;
             }
             if (passwordError) {
-                handleAlert('Error', 'Passwords do not match', 'error');
+                handleAlertAndNavigate('Error', 'Passwords do not match', 'error');
                 return;
             }
             newEmployee({
@@ -544,10 +582,11 @@ export default function EmployeeRegistration() {
                 collectionpaymentids: [],
                 documentids: [],
             }, newEmployeeDocuments!);
+            await handleAlertAndNavigate('Success', 'You are Successfully Registered!', 'success');
 
-            handleAlert('Success', 'You are Successfully Registered!', 'success');
+            handleAlertAcknowledged();
         } catch (error) {
-            handleAlert('Error', "Registration failed. Check your internet connection.", 'error');
+            await handleAlertAndNavigate('Error', "Registration failed. Check your internet connection.", 'error');
             return;
         }
     }
@@ -598,7 +637,7 @@ export default function EmployeeRegistration() {
                         <ContentNameTypography>Sign Up as Employee</ContentNameTypography>
                         <ScrollStyle id="scrollContainer">
 
-                            <div style={{ paddingTop: 60, paddingBottom: 80 }}>
+                            <div style={{ paddingTop: 30, paddingBottom: 30 }}>
                                 {/**Textfield For First Name*/}
                                 <GridField container spacing={3}>
                                     <Grid item>
@@ -676,10 +715,13 @@ export default function EmployeeRegistration() {
                                             </FormHelperText>
                                         </Grid>
                                     </GridField>
+                                    <GridField container spacing={3}>
+                                        <IconButton style={{ marginTop: 40, marginLeft: 350, }} onClick={() => scrollToSection(contactInfo)}><KeyboardDoubleArrowDownIcon style={{ height: 30, width: 'auto' }} /></IconButton>
+                                    </GridField>
                                 </div>
                             </div>
                             {/* Contact Info */}
-                            <div style={{ paddingTop: 60, paddingBottom: 110 }}>
+                            <div ref={contactInfo} style={{ paddingTop: 60, paddingBottom: 100 }}>
                                 <GridField container spacing={3}>
                                     {/**Textfield For Contact Number*/}
                                     <Grid item>
@@ -740,9 +782,15 @@ export default function EmployeeRegistration() {
                                         </FormHelperText>
                                     </Grid>
                                 </GridField>
+                                <GridField container spacing={3}>
+                                    <IconButton style={{ marginTop: 50, marginLeft: 350, }} onClick={() => scrollToSection(accountInfo)}><KeyboardDoubleArrowDownIcon style={{ height: 30, width: 'auto' }} /></IconButton>
+                                </GridField>
                             </div>
                             {/* Account Creation */}
-                            <div style={{ paddingTop: 30, paddingBottom: 40 }}>
+                            <div ref={accountInfo} style={{ paddingTop: 30, paddingBottom: 20 }}>
+                                <GridField container spacing={3}>
+                                    <IconButton style={{ marginLeft: 350, }} onClick={scrollToTop}><KeyboardDoubleArrowUpIcon style={{ height: 30, width: 'auto' }} /></IconButton>
+                                </GridField>
                                 <GridField container spacing={3}>
                                     {/**Textfield For Email Address*/}
                                     <Grid item>
@@ -872,16 +920,17 @@ export default function EmployeeRegistration() {
                                             {fieldWarning.selectedprofile}
                                         </FormHelperText>
                                     </Grid>
+                                    <Grid item>
+                                        <Button variant="contained" style={{ height: 50, width: 350, marginTop: 20, fontSize: 16, borderRadius: 50 }} onClick={handleNewEmployee}>
+                                            Sign Up
+                                        </Button>
+                                    </Grid>
                                 </GridField>
                             </div>
 
 
                         </ScrollStyle>
-                        <div>
-                            <Button variant="contained" style={{ height: 50, width: 170, borderRadius: 50 }} onClick={handleNewEmployee}>
-                                Sign Up
-                            </Button>
-                        </div>
+
                     </div>
                 </StyledCard>
                 <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{

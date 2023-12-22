@@ -296,10 +296,9 @@ export default function DealerProfileDetails() {
 
     const navigate = useNavigate();
 
+    const { objectId } = useParams();
 
-
-
-
+    const signedInDealer = JSON.parse(localStorage.getItem("user")!);
 
 
 
@@ -349,57 +348,6 @@ export default function DealerProfileDetails() {
         setValue(newValue);
     };
 
-
-    const { objectId } = useParams();
-    const BasicInfo = () => (
-        <>
-            <StackStyle sx={{ left: '40%', top: '380px' }}>
-                <StyleLabel>Gender</StyleLabel>
-                <StyleData>{dealer?.gender}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '60%', top: '380px' }}>
-                <StyleLabel>Birthdate</StyleLabel>
-                <StyleData>{dealer?.birthdate}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '80%', top: '380px' }}>
-                <StyleLabel>Contact Number</StyleLabel>
-                <StyleData>{dealer?.contactnumber}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '40%', top: '470px' }}>
-                <StyleLabel>Current Address</StyleLabel>
-                <StyleData>{dealer?.currentaddress}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '60%', top: '470px' }}>
-                <StyleLabel>Permanent Address</StyleLabel>
-                <StyleData>{dealer?.permanentaddress}</StyleData>
-            </StackStyle>
-        </>
-    )
-
-    const BusinessInfo = () => (
-        <>
-            <StackStyle sx={{ left: '40%', top: '380px' }}>
-                <StyleLabel>Business Name</StyleLabel>
-                <StyleData>{dealer?.businessname}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '70%', top: '380px' }}>
-                <StyleLabel>Business Phone No.</StyleLabel>
-                <StyleData>{dealer?.businessphone}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '40%', top: '470px' }}>
-                <StyleLabel>Business Address</StyleLabel>
-                <StyleData>{dealer?.businessaddress}</StyleData>
-            </StackStyle>
-            <StackStyle sx={{ left: '70%', top: '470px' }}>
-                <StyleLabel>Tin No.</StyleLabel>
-                <StyleData>{dealer?.businesstin}</StyleData>
-            </StackStyle>
-        </>
-    )
-
-
-
-
     const handleOpenDocument = (document: IDealerDocument) => {
         if (document) {
             setSelectedDocument(document);
@@ -417,7 +365,7 @@ export default function DealerProfileDetails() {
     const getOrderByDealerId = (dealerID: string) => {
         axios.get(`http://localhost:8080/order/getOrderByDealerId/${dealerID}`)
             .then((response) => {
-               
+
                 setOrders(response.data);
             })
             .catch((error) => {
@@ -436,17 +384,12 @@ export default function DealerProfileDetails() {
     };
 
     const handleFindDealer = () => {
-
         getDealerByIDForProfile(objectId!);
         getAllDealerDocuments();
         getOrderByDealerId(objectId!);
 
-        /*  } catch (error) {
-             headerHandleAlert('Error', "Failed to retrieve dealer information. Please try again.", 'error');
-         } */
+
     };
-
-
 
 
     const business = dealer?.hasbusiness ? (
@@ -481,7 +424,7 @@ export default function DealerProfileDetails() {
         if (objectId !== null)
             handleFindDealer();
 
-    }, []);
+    }, [dealer]);
 
 
 
@@ -549,7 +492,7 @@ export default function DealerProfileDetails() {
             updateDealerCreditLimit(objectId, newCreditLimit);
             setIsEditing(false); // Assuming you want to exit editing mode after updating
             setIsEditIcon(!isEditIcon);
-           
+
         } else {
             // Handle the case where the input is not a valid number
             // You may want to display an error message or take other appropriate action
@@ -572,7 +515,7 @@ export default function DealerProfileDetails() {
     };
 
     const handleViewButtonFalse = (objectId: string) => {
- 
+
         navigate(`/orderConfirmation/${objectId}`);
     }
 
@@ -598,7 +541,7 @@ export default function DealerProfileDetails() {
                 const isClosed = params.row.orderStatus;
                 return (
                     <div>
-                        {isClosed ? <span style={{color:'#E77D7D'}}>Closed</span> : <span style={{color:'#2A9221'}}>Open</span>}
+                        {isClosed ? <span style={{ color: '#E77D7D' }}>Closed</span> : <span style={{ color: '#2A9221' }}>Open</span>}
                     </div>
                 );
             }
@@ -611,7 +554,7 @@ export default function DealerProfileDetails() {
                     <StyledButton
                         onClick={() => {
                             // Handle button click for this row here
-                           
+
                             if (order.confirmed === false) {
                                 handleViewButtonFalse(order.id);
                             } else {
@@ -641,226 +584,247 @@ export default function DealerProfileDetails() {
 
     return (
         <div>
-             {dealer?( 
-          
-            <Grid style={{ position:'relative', justifyContent: "center"}} container spacing={3}>
-                <Grid item style={{ marginRight: -70 }}>
-                    <Grid>
-                        <ProfileCard onClick={handleOpenProfile} style={{ cursor: 'pointer' }}>
-                            <img src={imageSource} style={{ inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%' }}></img>
-                        </ProfileCard>
-                    </Grid>
-                    <Grid>
-                        <StyleLabel2>
-                            <svg width="24" height="24" style={{ marginBottom: -5, marginRight: 16 }} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M18.375 12.7393L10.682 20.4323C9.83811 21.2762 8.69351 21.7503 7.50003 21.7503C6.30655 21.7503 5.16195 21.2762 4.31803 20.4323C3.47411 19.5883 3 18.4437 3 17.2503C3 16.0568 3.47411 14.9122 4.31803 14.0683L15.258 3.12825C15.5367 2.84972 15.8675 2.6288 16.2315 2.47811C16.5956 2.32742 16.9857 2.24991 17.3797 2.25C17.7737 2.25009 18.1639 2.32779 18.5278 2.47865C18.8918 2.62951 19.2225 2.85059 19.501 3.12925C19.7796 3.40792 20.0005 3.73872 20.1512 4.10276C20.3019 4.4668 20.3794 4.85696 20.3793 5.25096C20.3792 5.64496 20.3015 6.03508 20.1506 6.39906C19.9998 6.76303 19.7787 7.09372 19.5 7.37225L8.55203 18.3203C8.26801 18.5925 7.88839 18.7413 7.49497 18.7363C7.10156 18.7313 6.72585 18.572 6.44883 18.2926C6.1718 18.0132 6.01564 17.6362 6.01399 17.2427C6.01234 16.8493 6.16535 16.4709 6.44003 16.1893L14.25 8.37925M8.56103 18.3103L8.55103 18.3203" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            Attachments
-                        </StyleLabel2>
-                    </Grid>
-                    <Grid>
-                        {dealerDocuments.map((document) => (
-                            <div key={document.documentid} style={{ marginRight: '10px', marginBottom: '10px' }}>
-                                {displayFile(document.content, document.type, document.name, document.documentid, document.dealer!)}
-                            </div>
-                        ))}
-                    </Grid>
-                    {/* Profile Picture Modal */}
-                    <Modal
-                        open={openProfile}
-                        onClose={handleCloseDocument}
-                    >
-                        <div>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: 300, marginTop: 40 }}>
-                                <ButtonClose variant='contained' onClick={handleCloseDocument}><CloseIcon /></ButtonClose>
-                            </div>
-                            <ModalCard>
-                                <img src={imageSource} style={{ position: 'absolute', inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%' }}></img>
-                            </ModalCard>
-                        </div>
-                    </Modal>
+            {dealer ? (
 
-                    {/* Attachments Modal */}
-                    <Modal
-                        open={open}
-                        onClose={handleCloseDocument}
-                    >
-                        <div>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: 300, marginTop: 40 }}>
-                                <ButtonClose variant='contained' onClick={handleCloseDocument}><CloseIcon /></ButtonClose>
-                            </div>
-                            {selectedDocument && (
-                                <ModalCard>
-                                    {selectedDocument.type === 'application/pdf' ? (
-                                        <iframe
-                                            title="PDF Document"
-                                            src={`data:application/pdf;base64,${selectedDocument.content}`}
-                                            width="100%"
-                                            height="100%"
-                                        />
-                                    ) : selectedDocument.type.startsWith("image") ? (
-
-                                        <img
-                                            src={`data:${selectedDocument.type};base64,${selectedDocument.content}`}
-                                            alt="Document"
-                                            style={{
-                                                position: 'absolute',
-                                                inset: 0,
-                                                margin: 'auto',
-                                                width: 'auto',
-                                                height: "100%"
-                                            }}
-                                        />
-                                    ) : (
-                                        <a href={`data:${selectedDocument.type};base64,${selectedDocument.content}`} download={`document.${selectedDocument.type}`}>
-                                            Download Document
-                                        </a>
-                                    )}
-                                </ModalCard>
-                            )}
-                        </div>
-                    </Modal>
-                </Grid>
-
-                <Grid item style={{ marginLeft: 15 }}>
-                    <Grid container style={{ marginTop:-80 }}>
-                        <Grid item>
-                            <StyleMainLabel>Dealer's Name</StyleMainLabel>
-                            <StyleMainInfo style={{ marginTop: 15 }}>{dealer?.firstname} {dealer?.middlename} {dealer?.lastname}</StyleMainInfo>
+                <Grid style={{ position: 'relative', justifyContent: "center" }} container spacing={3}>
+                    <Grid item style={{ marginRight: -70 }}>
+                        <Grid>
+                            <ProfileCard onClick={handleOpenProfile} style={{ cursor: 'pointer' }}>
+                                <img src={imageSource} style={{ inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%' }}></img>
+                            </ProfileCard>
                         </Grid>
-                        <Grid item >
-                            <StyleMainLabel style={{ marginLeft: 91 }}>Dealer ID</StyleMainLabel>
-                            <StyleMainInfo style={{ marginTop: 15, marginLeft: 111 }}>{dealer?.dealerid}</StyleMainInfo>
+                        <Grid>
+                            <StyleLabel2>
+                                <svg width="24" height="24" style={{ marginBottom: -5, marginRight: 16 }} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18.375 12.7393L10.682 20.4323C9.83811 21.2762 8.69351 21.7503 7.50003 21.7503C6.30655 21.7503 5.16195 21.2762 4.31803 20.4323C3.47411 19.5883 3 18.4437 3 17.2503C3 16.0568 3.47411 14.9122 4.31803 14.0683L15.258 3.12825C15.5367 2.84972 15.8675 2.6288 16.2315 2.47811C16.5956 2.32742 16.9857 2.24991 17.3797 2.25C17.7737 2.25009 18.1639 2.32779 18.5278 2.47865C18.8918 2.62951 19.2225 2.85059 19.501 3.12925C19.7796 3.40792 20.0005 3.73872 20.1512 4.10276C20.3019 4.4668 20.3794 4.85696 20.3793 5.25096C20.3792 5.64496 20.3015 6.03508 20.1506 6.39906C19.9998 6.76303 19.7787 7.09372 19.5 7.37225L8.55203 18.3203C8.26801 18.5925 7.88839 18.7413 7.49497 18.7363C7.10156 18.7313 6.72585 18.572 6.44883 18.2926C6.1718 18.0132 6.01564 17.6362 6.01399 17.2427C6.01234 16.8493 6.16535 16.4709 6.44003 16.1893L14.25 8.37925M8.56103 18.3103L8.55103 18.3203" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                Attachments
+                            </StyleLabel2>
                         </Grid>
-                        <Grid item>
-                            <StyleMainLabel>
-                                Credit Limit
-                                {isEditIcon ? (
-                                    <svg width="25" height="25" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg" style={{
-                                        marginLeft: 6, marginBottom: -5,
-                                    }} onClick={handleEditCreditLimit}>
-                                        <path d="M23.1852 6.16996L25.5049 3.84896C25.9884 3.36541 26.6443 3.09375 27.3281 3.09375C28.012 3.09375 28.6678 3.36541 29.1514 3.84896C29.6349 4.33252 29.9066 4.98836 29.9066 5.67221C29.9066 6.35607 29.6349 7.01191 29.1514 7.49547L14.5502 22.0966C13.8233 22.8231 12.9269 23.3571 11.9419 23.6503L8.25 24.7503L9.35 21.0585C9.64326 20.0735 10.1772 19.177 10.9037 18.4501L23.1852 6.16996ZM23.1852 6.16996L26.8125 9.79721M24.75 19.2503V25.7816C24.75 26.6021 24.4241 27.389 23.8439 27.9692C23.2637 28.5494 22.4768 28.8753 21.6562 28.8753H7.21875C6.39824 28.8753 5.61133 28.5494 5.03114 27.9692C4.45095 27.389 4.125 26.6021 4.125 25.7816V11.3441C4.125 10.5236 4.45095 9.73667 5.03114 9.15648C5.61133 8.57629 6.39824 8.25034 7.21875 8.25034H13.75" stroke="#2D85E7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                ) : (
-                                    <IconStyle2 onClick={handleCancelEdit} >
-                                        <CloseIcon style={{ marginTop: 5 }} />
-                                    </IconStyle2>
-                                )}
-                            </StyleMainLabel>
-
-                            {isEditing ? (
-                                <div>
-                                    <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gridGap: "10px", alignItems: "left" }}>
-                                        <input
-                                            type="number"
-                                            ref={creditLimitRef}
-                                            style={{ height: 20, width: 120, marginTop: 15, marginLeft: 115 }}
-                                        />
-                                        <div>
-                                            <ButtonCredit variant="contained" style={{ marginTop: 10 }} onClick={() => handleUpdateCreditLimit(dealer!.dealerid)}>
-                                                <CheckIcon style={{ color: '#2A9221' }} />
-                                            </ButtonCredit>
-                                        </div>
-                                    </div>
+                        <Grid>
+                            {dealerDocuments.map((document) => (
+                                <div key={document.documentid} style={{ marginRight: '10px', marginBottom: '10px' }}>
+                                    {displayFile(document.content, document.type, document.name, document.documentid, document.dealer!)}
                                 </div>
-                            ) : (
-                                <StyleMainInfo style={{ marginTop: 15 }}>
-                                    Php {dealer?.creditlimit}
-                                </StyleMainInfo>
-                            )}
+                            ))}
                         </Grid>
-                    </Grid>
-                    <Grid container>
-                        <Grid item>
-                            <Box sx={{ width: 920, marginLeft: 10, marginTop: 5 }}>
-                                <Box sx={{ borderBottom: 0.5, borderColor: 'divider' }}>
-                                    <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
-                                        <TabStyle icon={<PermIdentityIcon />} iconPosition="start" label="Basic Information" {...a11yProps(0)} />
-                                        <TabStyle icon={<WorkOutlineIcon />} iconPosition="start" label="Business Information" {...a11yProps(1)} />
-                                        <TabStyle icon={<ReceiptLongOutlinedIcon />} iconPosition="start" label="Orders" {...a11yProps(2)} />
-                                    </Tabs>
-                                </Box>
-                                <CustomTabPanel value={value} index={0}>
-                                    {/* Basic Information */}
-                                    <Grid container>
-                                        <Grid item>
-                                            <StyleLabel>Gender</StyleLabel>
-                                            <StyleData>{dealer?.gender}</StyleData>
-                                        </Grid>
-                                        <Grid item>
-                                            <StyleLabel style={{ marginLeft: -100 }}>Birthdate</StyleLabel>
-                                            <StyleData style={{ marginLeft: -90 }}>{dealer?.birthdate}</StyleData>
-                                        </Grid>
-                                        <Grid item>
-                                            <StyleLabel style={{ marginLeft: -80 }}>Contact Information</StyleLabel>
-                                            <StyleData style={{ marginLeft: -70 }}>{dealer?.contactnumber}</StyleData>
-                                        </Grid>
-                                        <Grid item>
-                                            <StyleLabel style={{ marginLeft: -20 }}>Email Address</StyleLabel>
-                                            <StyleData style={{ marginLeft: -10 }}>{dealer?.emailaddress}</StyleData>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid container style={{ marginTop: 25 }}>
-                                        <Grid item>
-                                            <StyleLabel>Current Address</StyleLabel>
-                                            <StyleData>{dealer?.currentaddress}</StyleData>
-                                        </Grid>
-                                        <Grid item>
-                                            <StyleLabel>Permanent Address</StyleLabel>
-                                            <StyleData>{dealer?.permanentaddress}</StyleData>
-                                        </Grid>
-                                        <Grid item>
-                                            <StyleLabel style={{ marginLeft: 50 }}>Starting Date</StyleLabel>
-                                            <StyleData style={{ marginLeft: 60 }}>{dealer?.submissiondate}</StyleData>
-                                        </Grid>
-                                    </Grid>
-                                </CustomTabPanel>
-                                {/* Business Information */}
-                                <CustomTabPanel value={value} index={1}>
-                                    {business}
-                                </CustomTabPanel>
+                        {/* Profile Picture Modal */}
+                        <Modal
+                            open={openProfile}
+                            onClose={handleCloseDocument}
+                        >
+                            <div>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: 300, marginTop: 40 }}>
+                                    <ButtonClose variant='contained' onClick={handleCloseDocument}><CloseIcon /></ButtonClose>
+                                </div>
+                                <ModalCard>
+                                    <img src={imageSource} style={{ position: 'absolute', inset: 0, margin: 'auto', maxHeight: '100%', maxWidth: '100%' }}></img>
+                                </ModalCard>
+                            </div>
+                        </Modal>
 
-                                {/* Orders */}
-                                <CustomTabPanel value={value} index={2}>
-                                    <div>
-                                        {/* Your other components for displaying order-related information */}
-                                        <DataGrid
-                                            sx={{height:370, overflowX:'hidden'}}
-                                            rows={rowsOrder} columns={columnsOrder}
-                                            initialState={{
-                                                pagination: {
-                                                    paginationModel: {
-                                                        pageSize: 5,
+                        {/* Attachments Modal */}
+                        <Modal
+                            open={open}
+                            onClose={handleCloseDocument}
+                        >
+                            <div>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: 300, marginTop: 40 }}>
+                                    <ButtonClose variant='contained' onClick={handleCloseDocument}><CloseIcon /></ButtonClose>
+                                </div>
+                                {selectedDocument && (
+                                    <ModalCard>
+                                        {selectedDocument.type === 'application/pdf' ? (
+                                            <iframe
+                                                title="PDF Document"
+                                                src={`data:application/pdf;base64,${selectedDocument.content}`}
+                                                width="100%"
+                                                height="100%"
+                                            />
+                                        ) : selectedDocument.type.startsWith("image") ? (
+
+                                            <img
+                                                src={`data:${selectedDocument.type};base64,${selectedDocument.content}`}
+                                                alt="Document"
+                                                style={{
+                                                    position: 'absolute',
+                                                    inset: 0,
+                                                    margin: 'auto',
+                                                    width: 'auto',
+                                                    height: "100%"
+                                                }}
+                                            />
+                                        ) : (
+                                            <a href={`data:${selectedDocument.type};base64,${selectedDocument.content}`} download={`document.${selectedDocument.type}`}>
+                                                Download Document
+                                            </a>
+                                        )}
+                                    </ModalCard>
+                                )}
+                            </div>
+                        </Modal>
+                    </Grid>
+
+                    <Grid item style={{ marginLeft: 15 }}>
+                        <Grid container style={{ marginTop: -80 }}>
+                            <Grid item>
+                                <StyleMainLabel>Dealer's Name</StyleMainLabel>
+                                <StyleMainInfo style={{ marginTop: 15 }}>{dealer?.firstname} {dealer?.middlename} {dealer?.lastname}</StyleMainInfo>
+                            </Grid>
+                            <Grid item >
+                                <StyleMainLabel style={{ marginLeft: 91 }}>Dealer ID</StyleMainLabel>
+                                <StyleMainInfo style={{ marginTop: 15, marginLeft: 111 }}>{dealer?.dealerid}</StyleMainInfo>
+                            </Grid>
+                            <Grid item>
+                                <StyleMainLabel>
+                                    Credit Limit
+                                    {signedInDealer.tableName === 'Dealer' ? (
+                                        <>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {isEditIcon ? (
+                                                <svg width="25" height="25" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg" style={{
+                                                    marginLeft: 6, marginBottom: -5,
+                                                }} onClick={handleEditCreditLimit}>
+                                                    <path d="M23.1852 6.16996L25.5049 3.84896C25.9884 3.36541 26.6443 3.09375 27.3281 3.09375C28.012 3.09375 28.6678 3.36541 29.1514 3.84896C29.6349 4.33252 29.9066 4.98836 29.9066 5.67221C29.9066 6.35607 29.6349 7.01191 29.1514 7.49547L14.5502 22.0966C13.8233 22.8231 12.9269 23.3571 11.9419 23.6503L8.25 24.7503L9.35 21.0585C9.64326 20.0735 10.1772 19.177 10.9037 18.4501L23.1852 6.16996ZM23.1852 6.16996L26.8125 9.79721M24.75 19.2503V25.7816C24.75 26.6021 24.4241 27.389 23.8439 27.9692C23.2637 28.5494 22.4768 28.8753 21.6562 28.8753H7.21875C6.39824 28.8753 5.61133 28.5494 5.03114 27.9692C4.45095 27.389 4.125 26.6021 4.125 25.7816V11.3441C4.125 10.5236 4.45095 9.73667 5.03114 9.15648C5.61133 8.57629 6.39824 8.25034 7.21875 8.25034H13.75" stroke="#2D85E7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            ) : (
+                                                <IconStyle2 onClick={handleCancelEdit} >
+                                                    <CloseIcon style={{ marginTop: 5 }} />
+                                                </IconStyle2>
+                                            )}
+                                        </>
+                                    )}
+                                </StyleMainLabel>
+
+                                {signedInDealer.tableName === 'Dealer' ? (
+                                    // Display this when signedInDealer.tableName !== 'Dealer'
+                                    <StyleMainInfo style={{ marginTop: 15 }}>
+                                        Php {dealer?.creditlimit}
+                                    </StyleMainInfo>
+                                ) : (
+                                    // Display the existing content when signedInDealer.tableName === 'Dealer'
+                                    <>
+                                        {isEditing ? (
+                                            <div>
+                                                <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gridGap: "10px", alignItems: "left" }}>
+                                                    <input
+                                                        type="number"
+                                                        ref={creditLimitRef}
+                                                        style={{ height: 20, width: 120, marginTop: 15, marginLeft: 115 }}
+                                                    />
+                                                    <div>
+                                                        <ButtonCredit variant="contained" style={{ marginTop: 10 }} onClick={() => handleUpdateCreditLimit(dealer!.dealerid)}>
+                                                            <CheckIcon style={{ color: '#2A9221' }} />
+                                                        </ButtonCredit>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <StyleMainInfo style={{ marginTop: 15 }}>
+                                                Php {dealer?.creditlimit}
+                                            </StyleMainInfo>
+                                        )}
+                                    </>
+                                )}
+                            </Grid>
+
+
+
+                        </Grid>
+                        <Grid container>
+                            <Grid item>
+                                <Box sx={{ width: 920, marginLeft: 10, marginTop: 5 }}>
+                                    <Box sx={{ borderBottom: 0.5, borderColor: 'divider' }}>
+                                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
+                                            <TabStyle icon={<PermIdentityIcon />} iconPosition="start" label="Basic Information" {...a11yProps(0)} />
+                                            <TabStyle icon={<WorkOutlineIcon />} iconPosition="start" label="Business Information" {...a11yProps(1)} />
+                                            <TabStyle icon={<ReceiptLongOutlinedIcon />} iconPosition="start" label="Orders" {...a11yProps(2)} />
+                                        </Tabs>
+                                    </Box>
+                                    <CustomTabPanel value={value} index={0}>
+                                        {/* Basic Information */}
+                                        <Grid container>
+                                            <Grid item>
+                                                <StyleLabel>Gender</StyleLabel>
+                                                <StyleData>{dealer?.gender}</StyleData>
+                                            </Grid>
+                                            <Grid item>
+                                                <StyleLabel style={{ marginLeft: -100 }}>Birthdate</StyleLabel>
+                                                <StyleData style={{ marginLeft: -90 }}>{dealer?.birthdate}</StyleData>
+                                            </Grid>
+                                            <Grid item>
+                                                <StyleLabel style={{ marginLeft: -80 }}>Contact Information</StyleLabel>
+                                                <StyleData style={{ marginLeft: -70 }}>{dealer?.contactnumber}</StyleData>
+                                            </Grid>
+                                            <Grid item>
+                                                <StyleLabel style={{ marginLeft: -20 }}>Email Address</StyleLabel>
+                                                <StyleData style={{ marginLeft: -10 }}>{dealer?.emailaddress}</StyleData>
+                                            </Grid>
+                                        </Grid>
+                                        <Grid container style={{ marginTop: 25 }}>
+                                            <Grid item>
+                                                <StyleLabel>Current Address</StyleLabel>
+                                                <StyleData>{dealer?.currentaddress}</StyleData>
+                                            </Grid>
+                                            <Grid item>
+                                                <StyleLabel>Permanent Address</StyleLabel>
+                                                <StyleData>{dealer?.permanentaddress}</StyleData>
+                                            </Grid>
+                                            <Grid item>
+                                                <StyleLabel style={{ marginLeft: 50 }}>Starting Date</StyleLabel>
+                                                <StyleData style={{ marginLeft: 60 }}>{dealer?.submissiondate}</StyleData>
+                                            </Grid>
+                                        </Grid>
+                                    </CustomTabPanel>
+                                    {/* Business Information */}
+                                    <CustomTabPanel value={value} index={1}>
+                                        {business}
+                                    </CustomTabPanel>
+
+                                    {/* Orders */}
+                                    <CustomTabPanel value={value} index={2}>
+                                        <div>
+                                            {/* Your other components for displaying order-related information */}
+                                            <DataGrid
+                                                sx={{ height: 370, overflowX: 'hidden' }}
+                                                rows={rowsOrder} columns={columnsOrder}
+                                                initialState={{
+                                                    pagination: {
+                                                        paginationModel: {
+                                                            pageSize: 5,
+                                                        },
                                                     },
-                                                },
-                                            }}
-                                            pageSizeOptions={[5]} />
-                                    </div>
-                                </CustomTabPanel>
-                            </Box>
+                                                }}
+                                                pageSizeOptions={[5]} />
+                                        </div>
+                                    </CustomTabPanel>
+                                </Box>
+                            </Grid>
                         </Grid>
+
                     </Grid>
 
+                    {/* Alerts */}
+                    <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center'
+                    }} TransitionComponent={SlideTransitionDown}>
+                        <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
+                            <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
+                            {alertMessage}
+                        </Alert>
+                    </Snackbar>
                 </Grid>
 
-                {/* Alerts */}
-                <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center'
-                }} TransitionComponent={SlideTransitionDown}>
-                    <Alert onClose={handleCloseAlert} severity={alertSeverity as 'success' | 'warning' | 'error'} sx={{ width: 500 }} >
-                        <AlertTitle style={{ textAlign: 'left', fontWeight: 'bold' }}>{alerttitle}</AlertTitle>
-                        {alertMessage}
-                    </Alert>
-                </Snackbar>
-            </Grid>
-        
-         ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
-                <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
-                <LinearProgress sx={{ width: '20%' }} />
-            </Box>
-        )} 
-       </div>
+            ) : (
+                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '70vh', marginTop: '-20px' }}>
+                    <img src={logo5} alt="Logo" style={{ width: '375px', marginBottom: '-40px' }} />
+                    <LinearProgress sx={{ width: '20%' }} />
+                </Box>
+            )
+            }
+        </div >
     );
 }

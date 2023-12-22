@@ -18,16 +18,11 @@ import axios from "axios";
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import { error } from "console";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 {/**Grids Body*/ }
 
 
-interface ContentsInfo {
-    accountInformation: string,
-    generalInformation: string,
-    contactInformation: string,
-
-}
 
 const StyledCard = styled(Card)({
     padding: '10px 10px 10px 10px',
@@ -68,7 +63,7 @@ const ContentNameTypography = styled(Typography)({
 
 })
 const ScrollStyle = styled('div')({
-    maxHeight: '460px',
+    maxHeight: '480px',
     width: '750px',
     overflowY: 'auto',
     scrollSnapType: 'y mandatory',
@@ -84,7 +79,9 @@ const ScrollStyle = styled('div')({
         flex: '0 0 auto',
         scrollSnapAlign: 'start', // Snap to the start of each child element
         minWidth: '100%', // Ensure each child takes up the full width
+
     },
+
 
 })
 
@@ -260,6 +257,8 @@ export default function DealerRegistration() {
 
 
     const navigate = useNavigate();
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
+
 
     {/**UseStates*/ }
     const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, isDealerFound, isDealerConfirmed, dealer] = useRestDealer();
@@ -312,6 +311,10 @@ export default function DealerRegistration() {
         bussinessdoc: '',
     })
 
+    const generalInfo = useRef<HTMLDivElement>(null)
+    const contactInfo = useRef<HTMLDivElement>(null)
+    const accountInfo = useRef<HTMLDivElement>(null)
+    const bussinessinformation = useRef<HTMLDivElement>(null)
 
     {/**UseRefs*/ }
     const firstnameRef = useRef<TextFieldProps>(null)
@@ -352,14 +355,44 @@ export default function DealerRegistration() {
 
 
     {/**Handlers*/ }
+    const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+        const scrollContainer = document.getElementById('scrollContainer');
+        if (ref.current && scrollContainer) {
+            scrollContainer.scrollTo({
+                top: ref.current.offsetTop,
+                behavior: 'smooth',
+            });
+        }
 
+    };
+    const scrollToTop = () => {
+        const scrollContainer = document.getElementById('scrollContainer');
+        if (scrollContainer) {
+          scrollContainer.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+        }
+      };
     {/**Handler for Alert - Function to define the type of alert*/ }
+
+
     function handleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
         setTitle(title);
         setAlertMessage(message);
         setAlertSeverity(severity);
         setOpen(true);
     }
+    const handleAlertAndNavigate = async (type: string, message: string, variant: "success" | "warning" | "error") => {
+        handleAlert(type, message, variant);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        setIsAlertVisible(true);
+    };
+
+    const handleAlertAcknowledged = () => {
+        setIsAlertVisible(false);
+        navigate(`/SignIn`);
+    };
 
     const navigateThank = useNavigate();
 
@@ -688,11 +721,12 @@ export default function DealerRegistration() {
             }, newDealerDocuments!);
 
 
-            handleAlert('Success', 'You are Successfully Registered!', 'success');
+            await handleAlertAndNavigate('Success', 'You are Successfully Registered!', 'success');
             navigateThank(`/ThankYou`)
 
+
         } catch (error) {
-            handleAlert('Error', 'An Error Occured, Please Check your Connection', 'error')
+            await handleAlertAndNavigate('Error', 'An Error Occured, Please Check your Connection', 'error')
         }
     };
 
@@ -701,7 +735,7 @@ export default function DealerRegistration() {
     const handleSignUp = () => {
         //handleFiles
         handleNewDealer();
-        // navigate(`/dashboard`);
+
     };
 
 
@@ -883,11 +917,14 @@ export default function DealerRegistration() {
                                             </FormHelperText>
                                         </Grid>
                                     </GridField>
+                                    <GridField container spacing={3}>
+                                        <IconButton style={{ marginTop: 40, marginLeft: 350, }} onClick={() => scrollToSection(contactInfo)}><KeyboardDoubleArrowDownIcon style={{ height: 30, width: 'auto' }} /></IconButton>
+                                    </GridField>
                                 </div>
                             </div>
 
                             {/* Contact Info */}
-                            <div style={{ paddingTop: 50, paddingBottom: 150 }}>
+                            <div ref={contactInfo} style={{ paddingTop: 70, paddingBottom: 90 }}>
                                 <GridField container spacing={3}>
                                     {/**Textfield For Contact Number*/}
                                     <Grid item>
@@ -928,10 +965,13 @@ export default function DealerRegistration() {
                                         </FormHelperText>
                                     </Grid>
                                 </GridField>
+                                <GridField container spacing={3}>
+                                    <IconButton style={{ marginTop: 130, marginLeft: 350, }} onClick={() => scrollToSection(accountInfo)}><KeyboardDoubleArrowDownIcon style={{ height: 30, width: 'auto' }} /></IconButton>
+                                </GridField>
                             </div>
                             {/* Account Creation */}
 
-                            <div style={{ paddingTop: 30, paddingBottom: 80 }}>
+                            <div ref={accountInfo} style={{ paddingTop: 30, paddingBottom: 50 }}>
                                 <GridField container spacing={3}>
                                     {/**Textfield For Email Address*/}
                                     <Grid item>
@@ -1064,14 +1104,20 @@ export default function DealerRegistration() {
                                         </FormHelperText>
                                     </Grid>
                                 </GridField>
+                                <GridField container spacing={3}>
+                                    <IconButton style={{ marginTop: 40, marginLeft: 350, }} onClick={() => scrollToSection(bussinessinformation)}><KeyboardDoubleArrowDownIcon style={{ height: 30, width: 'auto' }} /></IconButton>
+                                </GridField>
                             </div>
 
                             {/* Business Information*/}
 
-                            <div style={{ paddingTop: 40, paddingBottom: 100 }}>
+                            <div ref={bussinessinformation} style={{ paddingTop: 30, paddingBottom: 50 }}>
+                                <GridField container spacing={3}>
+                                    <IconButton style={{ marginLeft: 350, }} onClick={scrollToTop}><KeyboardDoubleArrowUpIcon style={{ height: 30, width: 'auto' }} /></IconButton>
+                                </GridField>
                                 <GridField container spacing={3}>
                                     <Grid item>
-                                        <TypographyLabelB>Do you own a Business? 
+                                        <TypographyLabelB>Do you own a Business?
                                             <div style={{ marginTop: '-5px', marginLeft: '10px' }}>
                                                 <Switch
                                                     value={selectedBusinessOpt}
@@ -1185,17 +1231,18 @@ export default function DealerRegistration() {
                                         <FormHelperText style={{ marginLeft: 85, color: '#BD9F00' }}>
                                             {fieldBussinessWarning.bussinessdoc}
                                         </FormHelperText>
-                                    </Grid>
 
+                                    </Grid>
+                                    <Grid item>
+                                        <Button variant="contained" style={{ height: 50, width: 350, borderRadius: 50, marginLeft: 180, marginTop: 70, fontSize: 16 }} onClick={handleSignUp}>
+                                            Sign Up
+                                        </Button>
+                                    </Grid>
                                 </GridField>
                             </div>
 
                         </ScrollStyle>
-                        <div>
-                            <Button variant="contained" style={{ height: 50, width: 170, borderRadius: 50 }} onClick={handleSignUp}>
-                                Sign Up
-                            </Button>
-                        </div>
+
                     </div>
                 </StyledCard>
                 <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{

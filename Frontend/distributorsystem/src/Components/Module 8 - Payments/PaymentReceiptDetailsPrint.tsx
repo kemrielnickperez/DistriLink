@@ -144,8 +144,8 @@ export function PaymentReceiptDetailsPrint({paymentReceipt, directPaymentReceipt
                     </StackStyle>
                     <StackStyle sx={{ top: '30%', left: '44%' }}>
                         <StyleLabel>Receiver Name</StyleLabel>
-                        <StyleData>{collectionPaymentReceipt?.isconfirmed ? paymentReceipt?.receivername
-                            : 'NA'} </StyleData>
+                        <StyleData>{paymentReceipt?.receivername
+                        } </StyleData>
                     </StackStyle>
                     <StackStyle sx={{ top: '30%', left: '60%' }}>
                         <StyleLabel>Remarks</StyleLabel>

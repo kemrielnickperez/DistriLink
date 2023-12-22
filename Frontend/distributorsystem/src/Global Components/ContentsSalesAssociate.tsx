@@ -12,7 +12,7 @@ export default function ContentSalesAssociate() {
     const getNavNamePage = () => {
         const path = location.pathname;
         const navPageNameMapping: Record<string, string> = {
-            '/dashboard': 'Dashboard',
+            '/salesAssociateDashboard': 'Dashboard',
             '/collectorAssignment': 'Collector Assignment',
             '/dealerProfileList': 'Dealer Profiles List',
             '/employeeProfileList': 'Employee Profiles List',
@@ -28,7 +28,7 @@ export default function ContentSalesAssociate() {
             [`/schedules/${objectId}`]: 'Schedule',
             '/recordDirectPayment': 'Record Direct Payment',
             [`/distributorProfileDetails/${objectId}`]: 'Distributor Information',
-
+            [`/orderConfirmation/${objectId}`] : `Order Confirmation Details`,
         }
         const navpageMapped = navPageNameMapping[path] || 'Unknown';
         return navpageMapped;
@@ -38,7 +38,7 @@ export default function ContentSalesAssociate() {
         const path = location.pathname;
 
         const navPageContentMapping: Record<string, string> = {
-            '/dashboard': 'Your pendings overview',
+            '/salesAssociateDashboard': 'Your pendings overview',
             '/collectorAssignment': 'Assign, reassign, or unassign collector to your order',
             '/dealerProfileList': 'View unconfirmed & confirmed Dealers, awaiting for your confirmation.',
             '/employeeProfileList': 'List of your emplooyes',
@@ -54,6 +54,8 @@ export default function ContentSalesAssociate() {
             [`/schedules/${objectId}`]: `Set schedule of due date/s on dealer's order transaction`,
             '/recordDirectPayment': 'View, Update and Record Direct Payment from your dealer/s',
             [`/distributorProfileDetails/${objectId}`]: `View distributor profile details - ${objectId}`,
+            [`/orderConfirmation/${objectId}`] : `View, update, or confirm dealer's ordered products - ${objectId}`,
+        
         }
         const navpageMapped = navPageContentMapping[path] || 'Unknown';
         return navpageMapped;
@@ -78,7 +80,9 @@ export default function ContentSalesAssociate() {
         <div>
             <NewAppBar moduleName={getNavNamePage()} moduleContent={getNavContentPage()} />
             <NewNavBarSalesAssociate moduleName={getNavPage()} />
+            <div style={{paddingTop:60}}>
             <Outlet />
+            </div>
         </div>
     );
 }

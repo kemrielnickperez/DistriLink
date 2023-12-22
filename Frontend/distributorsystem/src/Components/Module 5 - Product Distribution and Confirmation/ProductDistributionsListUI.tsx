@@ -144,6 +144,29 @@ export default function ProductDistributionList() {
     const userFromStorage = JSON.parse(localStorage.getItem("user")!);
 
     function getAllOrders() {
+      if(userFromStorage && userFromStorage.tableName==='Sales Associate'){
+        axios
+        .get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${userFromStorage.salesAssociate.distributor.distributorid}`)
+        .then((response) => {
+            setOrder(response.data);
+        })
+        .catch((error) => {
+            headerHandleAlert('Error', "Failed to fetch orders. Please check your internet connection.", 'error');
+        });
+
+      }
+      else if(userFromStorage && userFromStorage.tableName==='Sales Associate and Cashier'){
+        axios
+        .get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${userFromStorage.salesAssociateAndCashier.distributor.distributorid}`)
+        .then((response) => {
+            setOrder(response.data);
+        })
+        .catch((error) => {
+            headerHandleAlert('Error', "Failed to fetch orders. Please check your internet connection.", 'error');
+        });
+
+      }
+      else{
         axios
             .get<IOrder[]>(`http://localhost:8080/order/getAllOrdersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
@@ -152,7 +175,7 @@ export default function ProductDistributionList() {
             .catch((error) => {
                 headerHandleAlert('Error', "Failed to fetch orders. Please check your internet connection.", 'error');
             });
-
+        }
     }
 
     useEffect(() => {

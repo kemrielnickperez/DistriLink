@@ -122,8 +122,13 @@ const DataGridStyle = styled(DataGrid)({
         backgroundColor: 'rgb(45, 133, 231, 0.1)',
     },
 })
+
+
 export default function DealerProfileListUI() {
     const navigate = useNavigate();
+
+    const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile] = useRestDealer();
+
     const [dealers, setDealers] = useState<IDealer[] | null>(null);
     const [archivedDealer, setArchivedDealer] = useState<IArchivedDealer[] | null>(null);
     const [openPending, setOpenPending] = useState(false);
@@ -134,22 +139,17 @@ export default function DealerProfileListUI() {
     const handleDeclinedClose = () => setOpenDeclinedModal(false);
     const [creditLimitModalOpen, setCreditLimitModalOpen] = useState(false);
 
-    const [remarks, setRemarks] = useState(""); // State to capture remarks
-    const [creditlimit, setCreditlimit] = useState(0);
-    const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile] = useRestDealer();
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
     const [openAlert, setOpenAlert] = useState(false);
     const [alerttitle, setTitle] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [alertSeverity, setAlertSeverity] = useState('success');
     const [value, setValue] = useState(0);
-    const [filteredDealers, setFilteredDealers] = useState<IDealer[] | null>(null);
-    const [filteredDealersConfirmed, setFilterDealersConfirmed] = useState<IDealer[] | null>(null);
+
+
+
     {/*Tabs*/ }
 
-
+    const [selectedDealerId, setSelectedDealerId] = useState<string>("");
 
     const creditLimitRef = useRef<TextFieldProps>(null);
     const pendingReasonRef = useRef<TextFieldProps>(null);
@@ -159,30 +159,6 @@ export default function DealerProfileListUI() {
     //userFromStorage.distributor.
 
 
-    function CustomTabPanel(props: TabPanelProps) {
-        const { children, value, index, ...other } = props;
-        return (
-            <div
-                role="tabpanel"
-                hidden={value !== index}
-                id={`simple-tabpanel-${index}`}
-                aria-labelledby={`simple-tab-${index}`}
-                {...other}
-            >
-                {value === index && (
-                    <Box sx={{ p: 2 }}>
-                        <Typography>{children}</Typography>
-                    </Box>
-                )}
-            </div>
-        );
-    }
-    function a11yProps(index: number) {
-        return {
-            id: `simple-tab-${index}`,
-            'aria-controls': `simple-tabpanel-${index}`,
-        };
-    }
 
     function getAllDealers() {
         axios.get<IDealer[]>(`http://localhost:8080/dealer/getAllDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
@@ -199,44 +175,25 @@ export default function DealerProfileListUI() {
         axios.get<IArchivedDealer[]>(`http://localhost:8080/archived/getAllArchivedDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
             .then((response) => {
                 setArchivedDealer(response.data);
-               
+
 
             })
             .catch((error) => {
-
 
             });
     }
 
     const handleConfirmOpen = () => setCreditLimitModalOpen(true);
     const handleConfirmClose = () => setCreditLimitModalOpen(false);
-
-    useEffect(() => {
-
-        getAllDealers();
-       
-        getAllArchivedDealers();
-      
+    const [tabValue, setTabValue] = React.useState('unconfirmed');
 
 
-    }, []);
 
-    {/**Handler for Alert - Function to define the type of alert*/ }
-
-    function headerHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
-        setTitle(title);
-        setAlertMessage(message);
-        setAlertSeverity(severity);
-        setOpenAlert(true);
-    }
-
-    {/**Handler to Close Alert Snackbar*/ }
-    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpenAlert(false);
+    const toggleTables = (tabValue: string) => {
+        setTabValue(tabValue);
     };
+
+
 
 
     {/** Columns for DataGrid */ }
@@ -253,6 +210,7 @@ export default function DealerProfileListUI() {
                 return (
                     <StyledButton
                         onClick={() => {
+
                             handleViewButtonClick(dealer.id);
                         }}
                     >
@@ -263,11 +221,14 @@ export default function DealerProfileListUI() {
         {
             field: 'pending', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
-                const dealer = params.row
+
                 return (
                     <>
                         <StyledButton variant='contained'
-                            onClick={handlePendingOpen} >
+                            onClick={() => {
+                                setSelectedDealerId(params.row.id);
+                                handlePendingOpen();
+                            }} >
                             Pending
                         </StyledButton>
                         <Grid item>
@@ -288,7 +249,7 @@ export default function DealerProfileListUI() {
                                         style={{ width: '400px' }}
                                         inputRef={pendingReasonRef}
                                     />
-                                    <StyledButton onClick={() => handlePendingClick(dealer.id)} sx={{ marginTop: '20px', marginLeft: '150px' }}>
+                                    <StyledButton onClick={() => handlePendingClick(selectedDealerId)} sx={{ marginTop: '20px', marginLeft: '150px' }}>
                                         Submit
                                     </StyledButton>
                                 </Box>
@@ -302,13 +263,17 @@ export default function DealerProfileListUI() {
         {
             field: 'confirm', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
-                const dealer = params.row;
+
+
                 return (
                     <><StyledButton
                         style={{
                             width: 120
                         }}
-                        onClick={handleConfirmOpen}
+                        onClick={() => {
+                            setSelectedDealerId(params.row.id);
+                            handleConfirmOpen();
+                        }}
                     >
                         <CheckIcon style={{ marginTop: -5, marginLeft: -3, height: 20, width: 'auto', color: 'rgb(116, 254, 189)', fontWeight: 'bolder' }} />
                         Confirm
@@ -336,7 +301,9 @@ export default function DealerProfileListUI() {
 
                                     />
                                     <StyledButton
-                                        onClick={() => handleConfirmButton(dealer.id)}
+                                        onClick={() =>
+                                            handleConfirmButton(selectedDealerId)
+                                        }
                                         sx={{ marginTop: '20px', marginLeft: '150px' }}
                                     >
                                         Set
@@ -351,11 +318,15 @@ export default function DealerProfileListUI() {
         {
             field: 'decline', headerName: '', width: 150,
             renderCell: (params: { row: any; }) => {
-                const dealer = params.row;
                 return (
                     <>
                         <StyledButton
-                            onClick={handleDeclinedOpen} >
+                            style={{ width: 120 }}
+                            onClick={() => {
+                                setSelectedDealerId(params.row.id);
+                                handleDeclinedOpen();
+                            }} >
+                            <CloseIcon style={{ marginTop: -3, paddingLeft: -8, height: 20, width: 'auto', color: 'rgb(227, 80, 155)', fontWeight: 'bolder' }} />
                             Decline
                         </StyledButton>
                         <Grid item>
@@ -375,7 +346,8 @@ export default function DealerProfileListUI() {
                                         style={{ width: '400px' }}
                                         inputRef={declineReasonRef}
                                     />
-                                    <StyledButton onClick={() => handleDeclineClick(dealer.id)} sx={{ marginTop: '20px', marginLeft: '150px' }}>
+                                    <StyledButton onClick={() => handleDeclineClick(selectedDealerId)}
+                                        sx={{ marginTop: '20px', marginLeft: '150px' }}>
                                         Submit
                                     </StyledButton>
                                 </Box>
@@ -428,7 +400,6 @@ export default function DealerProfileListUI() {
     }));
 
     {/** Columns for Declined */ }
-
     const columnsDeclined: GridColDef[] = [
         { field: 'id', headerName: 'Dealer ID', width: 210 },
         { field: 'dealerName', headerName: 'Dealer Name', width: 300 },
@@ -446,13 +417,13 @@ export default function DealerProfileListUI() {
     }));
 
 
-
-
     // const filterRows= showConfirmDealers ? rows.filter((dealer1)?.map(dealerList)=>())
     const handleViewButtonClick = (objectId: string) => {
         // Use the `navigate` function to navigate to the details page with the objectId as a parameter
         navigate(`/dealerProfileDetails/${objectId}`);
     };
+
+
 
     const handleConfirmButton = (objectId: string) => {
 
@@ -461,7 +432,11 @@ export default function DealerProfileListUI() {
 
         // Close the modal after submitting
         handleConfirmClose();
-        getAllDealers();
+
+
+
+
+        //window.location.reload();
 
     };
 
@@ -494,102 +469,126 @@ export default function DealerProfileListUI() {
         setValue(newValue);
     };
 
+    useEffect(() => {
+        getAllDealers();
+        getAllArchivedDealers();
+
+    }, [dealers]);
+
+
     return (
         <div>
             <StyledCard>
                 {/* <ContentNameTypography>Dealer Profile List</ContentNameTypography> */}
+
                 <Box sx={{ width: '100%', marginTop: 4, marginLeft: 0.5 }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" style={{ marginLeft: 40 }}>
-                            <TabStyle label="Unconfirmed Dealers" {...a11yProps(0)} />
-                            <TabStyle label="Confirmed Dealers" {...a11yProps(1)} />
-                            <TabStyle label="Declined Dealers (Archived)" {...a11yProps(2)} />
+                        <Tabs value={tabValue} onChange={(event, newValue) => toggleTables(newValue)} style={{ marginLeft: 40 }}>
+                            <TabStyle label="Unconfirmed Dealers" value="unconfirmed" />
+                            <TabStyle label="Confirmed Dealers" value="confirmed" />
+                            <TabStyle label="Declined Dealers" value="declined" />
                         </Tabs>
                     </Box>
-                    <CustomTabPanel value={value} index={0}>
+                    <Box sx={{ p: 2 }}>
+                        {tabValue === 'unconfirmed' && (
+                            <>
+                                {dealers === null ? (
+                                    // Display whatever you want when dealers is empty
+                                    // For example, you can show a message or another component
+                                    <div style={{
+                                        display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+                                        marginTop: '200px'
+                                    }}>
+                                        <CircularProgress />
+                                    </div>
 
-                        {dealers === null ? (
-                            // Display whatever you want when dealers is empty
-                            // For example, you can show a message or another component
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '200px' }}>
-                            <CircularProgress />
-                          </div>
-                        
-                          ) : (
-                            // Display the DataGrid when dealers is not empty
-                            <DataGridStyle
-                                rows={rows}
-                                columns={columns.map((column) => ({
-                                    ...column,
-                                }))}
-                                initialState={{
-                                    pagination: {
-                                        paginationModel: {
-                                            pageSize: 10,
-                                        },
-                                    },
-                                }}
-                                pageSizeOptions={[10]}
-                            />
+                                ) : (
+                                    // Display the DataGrid when dealers is not empty
+                                    <DataGridStyle
+                                        rows={rows}
+
+                                        columns={columns.map((column) => ({
+                                            ...column,
+                                        }))}
+                                        initialState={{
+                                            pagination: {
+                                                paginationModel: {
+                                                    pageSize: 10,
+                                                },
+                                            },
+                                        }}
+                                        pageSizeOptions={[10]}
+                                    />
+                                )}
+                            </>
+
+
                         )}
-                    </CustomTabPanel>
-                    <CustomTabPanel value={value} index={1}>
-                    {dealers === null ? (
-                            // Display whatever you want when dealers is empty
-                            // For example, you can show a message or another component
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '200px' }}>
-                            <CircularProgress />
-                          </div>
-                       
-                          ) : (
-                        <DataGridStyle
-                            rows={rowsConfirmed}
 
-                            columns={columnsConfirmed.map((column) => ({
-                                ...column,
+                        {tabValue === 'confirmed' && (
+                            <>
+                                {dealers === null ? (
+                                    // Display whatever you want when dealers is empty
+                                    // For example, you can show a message or another component
+                                    <div style={{
+                                        display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+                                        marginTop: '200px'
+                                    }}>
+                                        <CircularProgress />
+                                    </div>
 
-                            }))}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: 10,
-                                    },
-                                },
-                            }}
-                            pageSizeOptions={[10]}
-                        />
+                                ) : (
+                                    <DataGridStyle rows={rowsConfirmed} columns={columnsConfirmed.map((column) => ({
+                                        ...column,
+
+                                    }))}
+                                        initialState={{
+                                            pagination: {
+                                                paginationModel: {
+                                                    pageSize: 10,
+                                                },
+                                            },
+                                        }}
+                                        pageSizeOptions={[10]}
+                                    />
+                                )}
+                            </>
                         )}
-                    </CustomTabPanel>
-                    <CustomTabPanel value={value} index={2}>
-                    {archivedDealer === null ? (
-                            // Display whatever you want when dealers is empty
-                            // For example, you can show a message or another component
-                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', marginTop: '200px' }}>
-                            <CircularProgress />
-                          </div>
-                       
-                          ) : (
-                        
 
-                        <DataGridStyle
-                            rows={rowsDeclined}
+                        {tabValue === 'declined' && (
+                            <>
+                                {archivedDealer === null ? (
+                                    // Display whatever you want when dealers is empty
+                                    // For example, you can show a message or another component
+                                    <div style={{
+                                        display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+                                        marginTop: '200px'
+                                    }}>
+                                        <CircularProgress />
+                                    </div>
 
-                            columns={columnsDeclined.map((column) => ({
-                                ...column,
-                            }))}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: {
-                                        pageSize: 10,
-                                    },
-                                },
-                            }}
-                            pageSizeOptions={[10]}
+                                ) : (
+                                    <DataGridStyle rows={rowsDeclined} columns={columnsDeclined.map((column) => ({
+                                        ...column,
+                                    }))}
+                                        initialState={{
+                                            pagination: {
+                                                paginationModel: {
+                                                    pageSize: 10,
+                                                },
+                                            },
+                                        }}
+                                        pageSizeOptions={[10]}
 
-                        />
-                          )}
-                    </CustomTabPanel>
+                                    />
+                                )}
+                            </>
+                        )}
+                    </Box>
                 </Box>
+
+
+
             </StyledCard>
 
             {/* Alerts */}

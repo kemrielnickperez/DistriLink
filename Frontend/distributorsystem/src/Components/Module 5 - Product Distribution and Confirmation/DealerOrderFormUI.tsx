@@ -201,6 +201,8 @@ export default function DealerOrderForm() {
   const penaltyRateRef = useRef<TextFieldProps>(null);
 
 
+  const userFromStorage = JSON.parse(localStorage.getItem("user")!);
+
 
   const paymentchoices = [
     {
@@ -252,6 +254,8 @@ export default function DealerOrderForm() {
 
     // Update the total amount state
     setTotalAmount(newTotalAmount);
+
+    console.log(isDealerFound)
 
 
   }, [orderedProducts, products]); // Include only the dependencies that are used inside the useEffect
@@ -382,12 +386,7 @@ export default function DealerOrderForm() {
 
   const findDealer = () => {
 
-    getDealerByID("343317e8")
-
-    //Problematic pa siya ngari na part kay on loop sya
-    // isDealerFound ? headerHandleAlert('Dealer located in the System.', "The dealer ID has been found and is ready for product distribution.", 'success')
-    //   : headerHandleAlert('Dealer Not Found in the System.', "The dealer ID you're looking for does not exist in the records.", 'error')
-
+    getDealerByID(userFromStorage.dealer.dealerid)
   }
 
   const handleSaveOrder = () => {

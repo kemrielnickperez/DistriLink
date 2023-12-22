@@ -122,13 +122,13 @@ const TitleBox = styled(Box)({
   left: -350,
 })
 
-const StyledNumber=styled(TextField)({
+const StyledNumber = styled(TextField)({
   '& fieldset': {
     borderColor: 'rgb(0,0,0,0)', // Change 'your-color' to the desired color
   },
 })
 
-const SaveButton= styled(Button)({
+const SaveButton = styled(Button)({
   // position: 'relative',
   // width: '200px',
   // height: 50,
@@ -146,8 +146,8 @@ const SaveButton= styled(Button)({
   width: '200px',
   height: 50,
   ':hover': {
-      backgroundColor: '#2D85E7',
-      transform: 'scale(1.1)'
+    backgroundColor: '#2D85E7',
+    transform: 'scale(1.1)'
   },
   transition: 'all 0.4s'
 })
@@ -182,7 +182,7 @@ const StyleLabel = styled(Typography)({
   fontFamily: 'Inter',
 })
 
-const PaperStyle = styled(Paper)({  
+const PaperStyle = styled(Paper)({
   background: 'linear-gradient(50deg, rgba(255,255,255,0.4) 12%,rgba(255,255,255,0.1) 77% )',
   backgroundBlendMode: '',
   // backgroundColor:'rgb(245, 247, 249,0.4)',
@@ -199,12 +199,12 @@ const PaperStyle = styled(Paper)({
   marginTop: 30
 })
 
-const RemoveButton =styled(Button)({
-  ":hover":{
+const RemoveButton = styled(Button)({
+  ":hover": {
 
     transform: 'scale(1.4)'
-},
-transition: 'all 0.4s'
+  },
+  transition: 'all 0.4s'
 })
 
 export default function ProductDistributionList() {
@@ -212,7 +212,7 @@ export default function ProductDistributionList() {
   const navigate = useNavigate();
 
   const [newOrder, getOrderByID, getOrderByPaymentTransactionID, assignCollector, removeCollector, order, orderFromPaymentTransaction, isOrderFound, assignedStatus, removeStatus, updateOrder, closedOrder, applyPenalty] = useRestOrder();
-  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile]  = useRestDealer();
+  const [getDealerByID, getDealerByDistributor, newDealer, confirmDealer, markDealerAsPending, declineDealer, resetDealer, updateDealerCreditLimit, isDealerFound, isDealerConfirmed, dealer, dealerRemainingCredit, getDealerByIDForProfile] = useRestDealer();
 
 
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -239,7 +239,7 @@ export default function ProductDistributionList() {
 
   const [open, setOpen] = useState(false);
 
-  
+
   const penaltyRateRef = useRef<TextFieldProps>(null);
   const dealerIDRef = useRef<TextFieldProps>(null);
 
@@ -350,7 +350,7 @@ export default function ProductDistributionList() {
       );
 
       if (existingProductIndex !== -1) {
-        
+
         toast.info("If you'd like to increase the quantity of products, adjust product quantity as needed.", {
           position: "bottom-right",
           autoClose: 5000,
@@ -464,7 +464,8 @@ export default function ProductDistributionList() {
     }
 
     if (!selectedDate || !penaltyRateRef.current?.value || !paymentTerm) {
-      toast.warning('Please fill all required fields.');
+     
+      saveHandleAlert('Fill all the required fields','Please fill all required fields.', 'warning')
       return;
     }
 
@@ -493,7 +494,7 @@ export default function ProductDistributionList() {
           isclosed: false
         });
         //if possible kay ara na siya mo clear after sa snackbar
-        saveHandleAlert('Success Saving Order', "Your ordered products have been successfully saved!", 'success')
+        saveHandleAlert('Success Saving Order', "The Dealer's ordered products have been successfully saved!", 'success')
         clearInputValues();
 
       }
@@ -510,9 +511,16 @@ export default function ProductDistributionList() {
 
 
 
-  const handleFindDealer = ()  => {
-    getDealerByDistributor(dealerIDRef.current?.value + "", userFromStorage.distributor.distributorid!)
-    
+  const handleFindDealer = () => {
+    if (userFromStorage && userFromStorage.tableName === 'Sales Associate') {
+      getDealerByDistributor(dealerIDRef.current?.value + "", userFromStorage.salesAssociate.distributor.distributorid!)
+    }
+    else if (userFromStorage && userFromStorage.tableName === 'Sales Associate and Cashier') {
+      getDealerByDistributor(dealerIDRef.current?.value + "", userFromStorage.salesAssociateAndCashier.distributor.distributorid!)
+    }
+    else {
+      getDealerByDistributor(dealerIDRef.current?.value + "", userFromStorage.distributor.distributorid!)
+    }
   };
 
 
@@ -641,10 +649,10 @@ export default function ProductDistributionList() {
                           /> */}
                           <StyledNumber
                             variant="outlined"
-                            
+
                             type='number'
                             value={product.quantity}
-                            style={{width:90}}
+                            style={{ width: 90 }}
                             onChange={(e) => {
                               const newValue = Number(e.target.value);
                               if (newValue < 0) {
@@ -660,7 +668,7 @@ export default function ProductDistributionList() {
                         <TableCell align='center' sx={{ color: "#203949" }}>{product.product.price}</TableCell>
                         <TableCell align='center' sx={{ color: "#203949" }}>{product.product.commissionrate}</TableCell>
                         <TableCell align='center' sx={{ color: "#203949" }}>{product.product.price * product.quantity}</TableCell>
-                        <TableCell align='center' sx={{ color: "#203949" }}><RemoveButton onClick={() => handleRemoveFromCart(product)}><RemoveCircleIcon/></RemoveButton></TableCell>
+                        <TableCell align='center' sx={{ color: "#203949" }}><RemoveButton onClick={() => handleRemoveFromCart(product)}><RemoveCircleIcon /></RemoveButton></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
