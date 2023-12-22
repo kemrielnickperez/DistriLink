@@ -504,7 +504,7 @@ export default function ProductDistributionList() {
     }
 
     else {
-      saveHandleAlert('Error Saving Order', "Your order hasn't been saved due to an unexpected error.", 'error')
+      saveHandleAlert('Cart is Empty.', "Order hasn't been saved because cart is empty. Add a product before saving order", 'error')
     }
 
   };

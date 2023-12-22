@@ -456,8 +456,8 @@ export default function OrderConfirmation() {
       saveHandleAlert('Input all the required fields', 'Please fill in all required fields.', 'warning')
       return;
     }
-    else {
-
+    else if (orderedProducts.length > 0 ) {
+    
       const existingOrderId = order?.orderid
       const existingOrderedProducts = order?.orderedproducts
       // Calculate the total order amount based on orderedProducts
@@ -487,6 +487,9 @@ export default function OrderConfirmation() {
       //if possible kay ara na siya mo clear after sa snackbar
       clearInputValues();
 
+    }
+    else {
+      saveHandleAlert('Cart is Empty.', "Order hasn't been confirmed because cart is empty. Add a product before confirming order", 'error')
     }
 
   }

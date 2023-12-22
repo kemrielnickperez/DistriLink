@@ -422,12 +422,12 @@ export default function DealerOrderForm() {
         clearInputValues();
       }
       else {
-        headerHandleAlert('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust ToT.", 'warning')
+        headerHandleAlert('Order Amount Exceeded Remaining Credit', "Total order amount exceeded the remaining credit ( ₱" + dealerRemainingCredit + "). Please adjust order amount accordingly.", 'warning')
       }
     }
 
     else {
-      headerHandleAlert('Error Saving Order', "Your order hasn't been saved due to an unexpected error.", 'error')
+      headerHandleAlert('Cart is Empty.', "Order hasn't been confirmed because cart is empty. Add a product before confirming order", 'error')
     }
 
 
