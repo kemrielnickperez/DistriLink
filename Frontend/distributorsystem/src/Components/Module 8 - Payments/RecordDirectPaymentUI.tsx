@@ -423,7 +423,7 @@ export default function RecordDirectPayment() {
         const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
 
         if (Number(amountPaidRef.current?.value) > Number(remainingPaymentAmount!.toFixed(2))) {
-            saveHandleAlert('Amount Paid Exceeded Amount Due', "Please make sure that the amount paid is less than or equal to the amount due.", 'warning')
+            saveHandleAlert('Amount Paid Exceeded Amount Due', "Please make sure that the amount paid is less than or equal to the remaining amount to be paid.", 'warning')
 
             return;
         }
