@@ -114,8 +114,6 @@ export default function PaymentList() {
     const userFromStorage = JSON.parse(localStorage.getItem("user")!);
 
 
-    const cashierFromStorage = JSON.parse(localStorage.getItem("cashier")!);
-
 
     {/** useStates */ }
     const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -494,24 +492,7 @@ export default function PaymentList() {
         <div>
             <StyledCard>
 
-                {/*  <DataGrid
-                    rows={rows}
-                    sx={{ textAlign: 'center', color: '#203949', height: '350px', margin: '35px 20px 0 20px', fontWeight: 330 }}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: 5,
-                            },
-                        },
-                    }}
-                    pageSizeOptions={[5]}
-                    checkboxSelection
-                    onRowSelectionModelChange={(handleRowSelection)}
-                    rowSelectionModel={selectedRows}
-                /> */}
-
-
+             
                 <Box sx={{ width: '100%', marginTop: 2, marginLeft: 0.5 }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={tabValue} onChange={(event, newValue) => toggleTables(newValue)} style={{ marginLeft: 40 }}>
@@ -581,14 +562,7 @@ export default function PaymentList() {
                     </Box>
 
                 </Box>
-
-
             </StyledCard>
-
-
-
-
-            {/**DataGrid */}
 
 
             <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert} anchorOrigin={{

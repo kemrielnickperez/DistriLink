@@ -159,30 +159,6 @@ export default function DealerProfileListUI() {
     //userFromStorage.distributor.
 
 
-    function CustomTabPanel(props: TabPanelProps) {
-        const { children, value, index, ...other } = props;
-        return (
-            <div
-                role="tabpanel"
-                hidden={value !== index}
-                id={`simple-tabpanel-${index}`}
-                aria-labelledby={`simple-tab-${index}`}
-                {...other}
-            >
-                {value === index && (
-                    <Box sx={{ p: 2 }}>
-                        <Typography>{children}</Typography>
-                    </Box>
-                )}
-            </div>
-        );
-    }
-    function a11yProps(index: number) {
-        return {
-            id: `simple-tab-${index}`,
-            'aria-controls': `simple-tabpanel-${index}`,
-        };
-    }
 
     function getAllDealers() {
         axios.get<IDealer[]>(`http://localhost:8080/dealer/getAllDealersByDistributorID/${userFromStorage.distributor.distributorid}`)
@@ -213,7 +189,7 @@ export default function DealerProfileListUI() {
 
 
 
-    const toggleTables1 = (tabValue: string) => {
+    const toggleTables = (tabValue: string) => {
         setTabValue(tabValue);
     };
 
@@ -500,13 +476,6 @@ export default function DealerProfileListUI() {
     }, [dealers]);
 
 
-
-
-
-
-
-
-
     return (
         <div>
             <StyledCard>
@@ -514,7 +483,7 @@ export default function DealerProfileListUI() {
 
                 <Box sx={{ width: '100%', marginTop: 4, marginLeft: 0.5 }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs value={tabValue} onChange={(event, newValue) => toggleTables1(newValue)} style={{ marginLeft: 40 }}>
+                        <Tabs value={tabValue} onChange={(event, newValue) => toggleTables(newValue)} style={{ marginLeft: 40 }}>
                             <TabStyle label="Unconfirmed Dealers" value="unconfirmed" />
                             <TabStyle label="Confirmed Dealers" value="confirmed" />
                             <TabStyle label="Declined Dealers" value="declined" />
