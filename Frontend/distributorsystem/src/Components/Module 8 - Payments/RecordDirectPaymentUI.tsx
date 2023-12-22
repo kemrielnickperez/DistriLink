@@ -141,13 +141,31 @@ const SearchButton = styled(IconButton)({
 })
 
 const StyledButton = styled(Button)({
-    backgroundColor: 'rgb(45, 133, 231,0.8)',
-    borderRadius: 20,
-    color: '#FFFFFF',
-    fontFamily: 'Inter, sans-serif',
+    marginTop: 40,
+    marginBottom: 40,
+    marginLeft: 20,
+    backgroundColor: '#2C85E7',
+    color: '#ffffff',
+    fontFamily: 'Inter',
     fontSize: '15px',
-    width: '100px',
-    height: 35,
+    width: '260px',
+    height: 50,
+    ':hover': {
+        backgroundColor: '#2D85E7',
+        transform: 'scale(1.1)'
+    },
+    transition: 'all 0.4s',
+})
+const StyledButton1 = styled(Button)({
+    marginTop: 40,
+    marginBottom: 40,
+    marginLeft: 20,
+    backgroundColor: 'rgb(45, 133, 231,0.8)',
+    color: '#ffffff',
+    fontFamily: 'Inter',
+    fontSize: '15px',
+    width: '260px',
+
     ':hover': {
         backgroundColor: '#2D85E7',
         transform: 'scale(1.1)'
@@ -290,9 +308,14 @@ export default function RecordDirectPayment() {
 
     const [openAlert, setOpenAlert] = useState(false);
 
-    
+
     const [open, setOpen] = React.useState(false);
 
+    const [tabValue, setTabValue] = React.useState('direct');
+
+    const toggleTables = (tabValue: string) => {
+        setTabValue(tabValue);
+    };
 
 
 
@@ -313,15 +336,15 @@ export default function RecordDirectPayment() {
     const userFromStorage = JSON.parse(localStorage.getItem("user")!);
 
     const userSignedIn =
-    userFromStorage.tableName === 'Cashier'
-        ? userFromStorage.cashier
+        userFromStorage.tableName === 'Cashier'
+            ? userFromStorage.cashier
 
-        : userFromStorage.tableName === 'Sales Associate'
-        ? userFromStorage.salesAssociate
+            : userFromStorage.tableName === 'Sales Associate'
+                ? userFromStorage.salesAssociate
 
-        : userFromStorage.tableName === 'Sales Associate and Cashier'
-            ? userFromStorage.salesAssociateAndCashier
-            : userFromStorage.distributor;
+                : userFromStorage.tableName === 'Sales Associate and Cashier'
+                    ? userFromStorage.salesAssociateAndCashier
+                    : userFromStorage.distributor;
 
 
     const handleFindPaymentTransactions = () => {
@@ -338,17 +361,17 @@ export default function RecordDirectPayment() {
         }
     };
 
-    
 
-    const toggleTables = (table: string) => {
-        if (table === 'direct') {
-            setShowDirectPaymentReceiptsTable(true);
-            setShowCollectionPaymentReceiptsTable(false);
-        } else if (table === 'collection') {
-            setShowDirectPaymentReceiptsTable(false);
-            setShowCollectionPaymentReceiptsTable(true);
-        }
-    };
+
+    // const toggleTables = (table: string) => {
+    //     if (table === 'direct') {
+    //         setShowDirectPaymentReceiptsTable(true);
+    //         setShowCollectionPaymentReceiptsTable(false);
+    //     } else if (table === 'collection') {
+    //         setShowDirectPaymentReceiptsTable(false);
+    //         setShowCollectionPaymentReceiptsTable(true);
+    //     }
+    // };
 
     const clearInputValues = () => {
         setSelectedDate(null);
@@ -360,7 +383,7 @@ export default function RecordDirectPayment() {
 
         }
     }
-  
+
     function saveHandleAlert(title: string, message: string, severity: 'success' | 'warning' | 'error') {
         setTitle(title);
         setAlertMessage(message);
@@ -379,18 +402,18 @@ export default function RecordDirectPayment() {
 
     const handleSaveDirectPayment = () => {
 
-        
+
         const userSignedInID =
-                userFromStorage.tableName === 'Cashier'
-            ? userFromStorage.cashier.employeeid
+            userFromStorage.tableName === 'Cashier'
+                ? userFromStorage.cashier.employeeid
 
-            : userFromStorage.tableName === 'Sales Associate'
-                ? userFromStorage.salesAssociate.employeeid
+                : userFromStorage.tableName === 'Sales Associate'
+                    ? userFromStorage.salesAssociate.employeeid
 
-            : userFromStorage.tableName === 'Sales Associate and Cashier'
-                ? userFromStorage.salesAssociateAndCashier.employeeid
+                    : userFromStorage.tableName === 'Sales Associate and Cashier'
+                        ? userFromStorage.salesAssociateAndCashier.employeeid
 
-            : userFromStorage.distributor.distributorid;
+                        : userFromStorage.distributor.distributorid;
 
 
         if (!selectedPaymentTransaction || !selectedPaymentTransaction.paymenttransactionid || !selectedDate || !amountPaidRef.current?.value || isNaN(Number(amountPaidRef.current?.value)) || !remarksRef.current?.value) {
@@ -516,7 +539,7 @@ export default function RecordDirectPayment() {
         }
     });
 
-   
+
 
     const columns: GridColDef[] = [
         { field: 'paymentTransactionID', headerName: 'Payment Transaction ID', width: 200 },
@@ -537,13 +560,12 @@ export default function RecordDirectPayment() {
             field: 'actionView', headerName: '', width: 397, renderCell: (params: { row: any; }) => {
                 return (
                     <div>
-                        <StyledButton
-                            sx={{ width: 'max-content' }}
+                        <StyledButton1
                             onClick={() => {
                                 handleViewPaymentReceiptsButtonClick(params);
                             }}>
                             View Payment Receipts
-                        </StyledButton>
+                        </StyledButton1>
                         <Modal
                             open={open}
                             onClose={handleClose}
@@ -556,36 +578,41 @@ export default function RecordDirectPayment() {
                                 <ContentNameTypography2 sx={{ paddingTop: 5 }}>Payment Receipts</ContentNameTypography2>
 
                                 <Box sx={{ width: showDirectPaymentReceiptsTable ? 'max-content' : '100' }}>
-                                    <StyledButton
+                                    {/* <StyledButton
                                         sx={{ width: 'max-content', margin: '20px' }}
                                         onClick={() => toggleTables('direct')}
                                     >
                                         Show Direct Payments
                                     </StyledButton>
-                                    <StyledButton sx={{ width: 'max-content', margin: '20px'  }} 
-                                    onClick={() => toggleTables('collection')} >
+                                    <StyledButton sx={{ width: 'max-content', margin: '20px' }}
+                                        onClick={() => toggleTables('collection')} >
                                         Show Collection Payments
-                                    </StyledButton>
-                                    {showDirectPaymentReceiptsTable ?
+                                    </StyledButton> */}
+                                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                        <Tabs value={tabValue} onChange={(event, newValue) => toggleTables(newValue)} style={{ marginLeft: 40 }}>
+                                            <TabStyle label="Direct Payments" value="direct"></TabStyle>
+                                            <TabStyle label="Collection Payments" value="collection"></TabStyle>
+                                        </Tabs>
+                                    </Box>
+                                    {tabValue === 'direct' && (
+                                        <>
+                                            <DataGridStyle
+                                                rows={DirectPaymentReceiptrows}
+                                                sx={{ textAlign: 'center', color: '#203949', height: '230px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
+                                                columns={DirectPaymentReceiptcolumns}
 
-
-                                        <DataGridStyle
-                                            rows={DirectPaymentReceiptrows}
-                                            sx={{ textAlign: 'center', color: '#203949', height: '230px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
-                                            columns={DirectPaymentReceiptcolumns}
-
-                                            initialState={{
-                                                pagination: {
-                                                    paginationModel: {
-                                                        pageSize: 2,
+                                                initialState={{
+                                                    pagination: {
+                                                        paginationModel: {
+                                                            pageSize: 2,
+                                                        },
                                                     },
-                                                },
-                                            }}
-                                            pageSizeOptions={[2]}
-                                        />
-
-                                        :
-
+                                                }}
+                                                pageSizeOptions={[2]}
+                                            />
+                                        </>
+                                    )}
+                                    {tabValue === 'collection' && (
                                         <DataGridStyle
                                             rows={CollectionPaymentReceiptrows}
                                             sx={{ textAlign: 'center', color: '#203949', height: '230px', width: '1245px', fontWeight: 330, margin: '10px', border: 'none', fontSize: '10' }}
@@ -600,17 +627,15 @@ export default function RecordDirectPayment() {
                                             }}
                                             pageSizeOptions={[2]}
                                         />
-
-                                    }
-
+                                    )}
                                 </Box>
 
 
 
-                                <Typography sx={{ marginTop: "100px", marginLeft: "50px" }}>
+                                <Typography sx={{ marginTop: "20px", marginLeft: "50px" }}>
                                     Total Amount Paid: {totalPaidAmount!.toFixed(2)}
                                 </Typography>
-                                <Typography sx={{ marginBottom: "20px", marginLeft: "50px" }}>
+                                <Typography sx={{ marginBottom: "50px", marginLeft: "50px" }}>
                                     Remaining Payment Amount: {remainingPaymentAmount!.toFixed(2)}
                                 </Typography>
                                 <Button
@@ -810,7 +835,8 @@ export default function RecordDirectPayment() {
                                 </Grid>
                             </Grid>
                             <StyledButton
-                                sx={{ width: 'max-content' }}
+                                variant="contained"
+                                color="primary"
                                 onClick={handleSaveDirectPayment}>
                                 Save Payment Record
                             </StyledButton>

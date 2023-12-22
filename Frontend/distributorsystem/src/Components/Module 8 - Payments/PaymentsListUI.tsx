@@ -13,11 +13,21 @@ function SlideTransitionDown(props: SlideProps) {
     return <Slide {...props} direction="down" />;
 }
 
+const TabStyle = styled(Tab)({
+    width: 320,
+    fontWeight: '550',
+    label: {
+        color: '#707070',
+        fontWeight: 'bold',
+        fontFamily: 'Inter',
+    }
+})
+
 const StyledCard = styled(Card)({
     padding: '10px 10px 10px 2px',
     margin: "50px 28% 0px 7.2%",
     width: '90%',
-    height: '530px',
+    height: '570px',
     background: 'linear-gradient(50deg, rgba(255,255,255,0.4) 12%,rgba(255,255,255,0.1) 77% )',
     backgroundBlendMode: '',
     // backgroundColor:'rgb(245, 247, 249,0.4)',
@@ -132,26 +142,26 @@ export default function PaymentList() {
             ? userFromStorage.cashier
 
             : userFromStorage.tableName === 'Sales Associate'
-            ? userFromStorage.salesAssociate
+                ? userFromStorage.salesAssociate
 
-            : userFromStorage.tableName === 'Sales Associate and Cashier'
-                ? userFromStorage.salesAssociateAndCashier
-                : userFromStorage.distributor;
+                : userFromStorage.tableName === 'Sales Associate and Cashier'
+                    ? userFromStorage.salesAssociateAndCashier
+                    : userFromStorage.distributor;
 
 
     function getAllPaymentReceipts() {
 
-         if (userSignedIn) {
+        if (userSignedIn) {
             const distributorId =
                 userFromStorage.tableName === 'Cashier'
-            ? userFromStorage.cashier.distributor.distributorid
+                    ? userFromStorage.cashier.distributor.distributorid
 
-            : userFromStorage.tableName === 'Sales Associate'
-            ? userFromStorage.salesAssociate.distributor.distributorid
+                    : userFromStorage.tableName === 'Sales Associate'
+                        ? userFromStorage.salesAssociate.distributor.distributorid
 
-            : userFromStorage.tableName === 'Sales Associate and Cashier'
-                ? userFromStorage.salesAssociateAndCashier.distributor.distributorid
-                : userFromStorage.distributor.distributorid;
+                        : userFromStorage.tableName === 'Sales Associate and Cashier'
+                            ? userFromStorage.salesAssociateAndCashier.distributor.distributorid
+                            : userFromStorage.distributor.distributorid;
 
             axios
                 .get<IPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${distributorId}`)
@@ -172,80 +182,80 @@ export default function PaymentList() {
                 .catch((error) => {
                     // Handle errors here
                 });
-        } 
-
-      /*   if (userFromStorage && userFromStorage.tableName === 'Cashier') {
-            axios.get<IPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${userFromStorage.cashier.distributor.distributorid}`)
-                .then((response) => {
-                    setPaymentReceipts(response.data);
-
-                    const directPaymentReceipts: IDirectPaymentReceipt[] = response.data.filter(
-                        (receipt) => receipt.paymenttype === 'direct'
-                    ) as IDirectPaymentReceipt[];
-
-                    // Filter CollectionPaymentReceipts
-                    const collectionPaymentReceipts: ICollectionPaymentReceipt[] = response.data.filter(
-                        (receipt) => receipt.paymenttype === 'collection'
-                    ) as ICollectionPaymentReceipt[];
-
-
-                    // You may want to set these filtered arrays in your state or use them as needed
-                    setDirectPaymentReceipts(directPaymentReceipts);
-                    setCollectionPaymentReceipts(collectionPaymentReceipts);
-
-                })
-                .catch((error) => {
-
-                });
         }
-        else if (userFromStorage && userFromStorage.tableName === 'Sales Associate and Cashier') {
-            axios.get<IPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${userFromStorage.salesAssociateAndCashier.distributor.distributorid}`)
-                .then((response) => {
-                    setPaymentReceipts(response.data);
 
-                    const directPaymentReceipts: IDirectPaymentReceipt[] = response.data.filter(
-                        (receipt) => receipt.paymenttype === 'direct'
-                    ) as IDirectPaymentReceipt[];
-
-                    // Filter CollectionPaymentReceipts
-                    const collectionPaymentReceipts: ICollectionPaymentReceipt[] = response.data.filter(
-                        (receipt) => receipt.paymenttype === 'collection'
-                    ) as ICollectionPaymentReceipt[];
-
-
-                    // You may want to set these filtered arrays in your state or use them as needed
-                    setDirectPaymentReceipts(directPaymentReceipts);
-                    setCollectionPaymentReceipts(collectionPaymentReceipts);
-
-                })
-                .catch((error) => {
-
-                });
-        }
-        else {
-            axios.get<IPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${userFromStorage.distributor.distributorid}`)
-                .then((response) => {
-                    setPaymentReceipts(response.data);
-
-                    const directPaymentReceipts: IDirectPaymentReceipt[] = response.data.filter(
-                        (receipt) => receipt.paymenttype === 'direct'
-                    ) as IDirectPaymentReceipt[];
-
-                    // Filter CollectionPaymentReceipts
-                    const collectionPaymentReceipts: ICollectionPaymentReceipt[] = response.data.filter(
-                        (receipt) => receipt.paymenttype === 'collection'
-                    ) as ICollectionPaymentReceipt[];
-
-
-                    // You may want to set these filtered arrays in your state or use them as needed
-                    setDirectPaymentReceipts(directPaymentReceipts);
-                    setCollectionPaymentReceipts(collectionPaymentReceipts);
-
-                })
-                .catch((error) => {
-
-                });
-        } */
+        /*   if (userFromStorage && userFromStorage.tableName === 'Cashier') {
+              axios.get<IPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${userFromStorage.cashier.distributor.distributorid}`)
+                  .then((response) => {
+                      setPaymentReceipts(response.data);
+  
+                      const directPaymentReceipts: IDirectPaymentReceipt[] = response.data.filter(
+                          (receipt) => receipt.paymenttype === 'direct'
+                      ) as IDirectPaymentReceipt[];
+  
+                      // Filter CollectionPaymentReceipts
+                      const collectionPaymentReceipts: ICollectionPaymentReceipt[] = response.data.filter(
+                          (receipt) => receipt.paymenttype === 'collection'
+                      ) as ICollectionPaymentReceipt[];
+  
+  
+                      // You may want to set these filtered arrays in your state or use them as needed
+                      setDirectPaymentReceipts(directPaymentReceipts);
+                      setCollectionPaymentReceipts(collectionPaymentReceipts);
+  
+                  })
+                  .catch((error) => {
+  
+                  });
+          }
+          else if (userFromStorage && userFromStorage.tableName === 'Sales Associate and Cashier') {
+              axios.get<IPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${userFromStorage.salesAssociateAndCashier.distributor.distributorid}`)
+                  .then((response) => {
+                      setPaymentReceipts(response.data);
+  
+                      const directPaymentReceipts: IDirectPaymentReceipt[] = response.data.filter(
+                          (receipt) => receipt.paymenttype === 'direct'
+                      ) as IDirectPaymentReceipt[];
+  
+                      // Filter CollectionPaymentReceipts
+                      const collectionPaymentReceipts: ICollectionPaymentReceipt[] = response.data.filter(
+                          (receipt) => receipt.paymenttype === 'collection'
+                      ) as ICollectionPaymentReceipt[];
+  
+  
+                      // You may want to set these filtered arrays in your state or use them as needed
+                      setDirectPaymentReceipts(directPaymentReceipts);
+                      setCollectionPaymentReceipts(collectionPaymentReceipts);
+  
+                  })
+                  .catch((error) => {
+  
+                  });
+          }
+          else {
+              axios.get<IPaymentReceipt[]>(`http://localhost:8080/paymentreceipt/getAllPaymentReceiptsByDistributorID/${userFromStorage.distributor.distributorid}`)
+                  .then((response) => {
+                      setPaymentReceipts(response.data);
+  
+                      const directPaymentReceipts: IDirectPaymentReceipt[] = response.data.filter(
+                          (receipt) => receipt.paymenttype === 'direct'
+                      ) as IDirectPaymentReceipt[];
+  
+                      // Filter CollectionPaymentReceipts
+                      const collectionPaymentReceipts: ICollectionPaymentReceipt[] = response.data.filter(
+                          (receipt) => receipt.paymenttype === 'collection'
+                      ) as ICollectionPaymentReceipt[];
+  
+  
+                      // You may want to set these filtered arrays in your state or use them as needed
+                      setDirectPaymentReceipts(directPaymentReceipts);
+                      setCollectionPaymentReceipts(collectionPaymentReceipts);
+  
+                  })
+                  .catch((error) => {
+  
+                  });
+          } */
     }
 
     useEffect(() => {
@@ -271,9 +281,9 @@ export default function PaymentList() {
 
     {/** Columns for DataGrid */ }
     const columns: GridColDef[] = [
-        { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 200 },
-        { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 200 },
-        { field: 'paymentType', headerName: 'Payment Type', width: 200 },
+        { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 300 },
+        { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 300 },
+        { field: 'paymentType', headerName: 'Payment Type', width: 300 },
         {
             field: 'paymentStatus',
             headerName: 'Payment Status',
@@ -309,13 +319,13 @@ export default function PaymentList() {
 
 
     const directColumns: GridColDef[] = [
-        { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 200 },
-        { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 200 },
-        { field: 'receiverName', headerName: 'Receiver Name', width: 200 },
+        { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 300 },
+        { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 300 },
+        { field: 'receiverName', headerName: 'Receiver Name', width: 360 },
         {
             field: 'action',
             headerName: '',
-            width: 260,
+            width: 350,
             renderCell: (params: { row: any; }) => {
                 return (
                     <StyledButton1
@@ -333,8 +343,8 @@ export default function PaymentList() {
     ]
 
     const collectioncolumns: GridColDef[] = [
-        { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 200 },
-        { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 200 },
+        { field: 'paymentReceiptid', headerName: 'Payment Receipt ID', width: 260 },
+        { field: 'paymentTransactionid', headerName: 'Payment Transaction ID', width: 260 },
 
         {
             field: 'paymentStatus',
@@ -348,11 +358,11 @@ export default function PaymentList() {
                 </div>
             ),
         },
-        { field: 'receiverName', headerName: 'Receiver Name', width: 200 },
+        { field: 'receiverName', headerName: 'Receiver Name', width: 260 },
         {
             field: 'action',
             headerName: '',
-            width: 260,
+            width: 270,
             renderCell: (params: { row: any; }) => {
                 return (
                     <StyledButton1
@@ -425,16 +435,16 @@ export default function PaymentList() {
     const handleConfirmPaymentsButton = () => {
 
         const userSignedInID =
-                userFromStorage.tableName === 'Cashier'
-            ? userFromStorage.cashier.employeeid
+            userFromStorage.tableName === 'Cashier'
+                ? userFromStorage.cashier.employeeid
 
-            : userFromStorage.tableName === 'Sales Associate'
-                ? userFromStorage.salesAssociate.employeeid
+                : userFromStorage.tableName === 'Sales Associate'
+                    ? userFromStorage.salesAssociate.employeeid
 
-            : userFromStorage.tableName === 'Sales Associate and Cashier'
-                ? userFromStorage.salesAssociateAndCashier.employeeid
+                    : userFromStorage.tableName === 'Sales Associate and Cashier'
+                        ? userFromStorage.salesAssociateAndCashier.employeeid
 
-            : userFromStorage.distributor.distributorid;
+                        : userFromStorage.distributor.distributorid;
 
 
         try {
@@ -502,47 +512,24 @@ export default function PaymentList() {
                 /> */}
 
 
-                <Box>
-                    <Tabs value={tabValue} onChange={(event, newValue) => toggleTables(newValue)}>
-                        <Tab label="Direct Payment Receipts" value="direct" />
-                        <Tab label="CoLlection Payment Receipts" value="collection" />
-                    </Tabs>
-                    {tabValue === 'direct' && (
-                        <>
-                            {directPaymentReceipts.length === 0 ? (
-                                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', marginTop: '0', marginLeft: '5vh' }}>
-                                    <Typography>No payment receipts.</Typography>
-                                    <LinearProgress sx={{ width: '20%', marginTop: '20px' }} />
-                                </Box>
-                            ) : (
-                                // Display the DataGrid when dealers is not empty
-                                <DataGridStyle rows={directrows} columns={directColumns}
-                                    initialState={{
-                                        pagination: {
-                                            paginationModel: {
-                                                pageSize: 10,
-                                            },
-                                        },
-                                    }}
-                                    pageSizeOptions={[10]}
-                                />
-                            )}
-                        </>
-
-                    )}
-                    {tabValue === 'collection' && (
-                        <>
-                            {collectionPaymentReceipts.length === 0 ? (
-                                // Display whatever you want when dealers is empty
-                                // For example, you can show a message or another component
-                                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', marginTop: '0', marginLeft: '5vh' }}>
-                                    <Typography>No payment receipts.</Typography>
-                                    <LinearProgress sx={{ width: '20%', marginTop: '20px' }} />
-                                </Box>
-
-                            ) : (
-                                <>
-                                    <DataGridStyle rows={collectionrows} columns={collectioncolumns}
+                <Box sx={{ width: '100%', marginTop: 2, marginLeft: 0.5 }}>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                        <Tabs value={tabValue} onChange={(event, newValue) => toggleTables(newValue)} style={{ marginLeft: 40 }}>
+                            <TabStyle label="Direct Payment Receipts" value="direct" />
+                            <TabStyle label="CoLlection Payment Receipts" value="collection" />
+                        </Tabs>
+                    </Box>
+                    <Box sx={{ p: 2 }}>
+                        {tabValue === 'direct' && (
+                            <>
+                                {directPaymentReceipts.length === 0 ? (
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', marginTop: '0', marginLeft: '5vh' }}>
+                                        <Typography>No payment receipts.</Typography>
+                                        <LinearProgress sx={{ width: '20%', marginTop: '20px' }} />
+                                    </Box>
+                                ) : (
+                                    // Display the DataGrid when dealers is not empty
+                                    <DataGridStyle rows={directrows} columns={directColumns}
                                         initialState={{
                                             pagination: {
                                                 paginationModel: {
@@ -551,21 +538,47 @@ export default function PaymentList() {
                                             },
                                         }}
                                         pageSizeOptions={[10]}
-                                        checkboxSelection
-                                        onRowSelectionModelChange={(handleRowSelection)}
-                                        rowSelectionModel={selectedRows}
-
                                     />
+                                )}
+                            </>
 
-                                    <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{ color: '#FFFFFF', marginTop: '20px', justifyContent: "center" }}>
-                                        Confirm
-                                    </StyledButton>
-                                </>
+                        )}
+                        {tabValue === 'collection' && (
+                            <>
+                                {collectionPaymentReceipts.length === 0 ? (
+                                    // Display whatever you want when dealers is empty
+                                    // For example, you can show a message or another component
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', marginTop: '0', marginLeft: '5vh' }}>
+                                        <Typography>No payment receipts.</Typography>
+                                        <LinearProgress sx={{ width: '20%', marginTop: '20px' }} />
+                                    </Box>
 
-                            )}
-                        </>
-                    )}
+                                ) : (
+                                    <>
+                                        <DataGridStyle rows={collectionrows} columns={collectioncolumns}
+                                            initialState={{
+                                                pagination: {
+                                                    paginationModel: {
+                                                        pageSize: 10,
+                                                    },
+                                                },
+                                            }}
+                                            pageSizeOptions={[10]}
+                                            checkboxSelection
+                                            onRowSelectionModelChange={(handleRowSelection)}
+                                            rowSelectionModel={selectedRows}
 
+                                        />
+
+                                        <StyledButton onClick={() => handleConfirmPaymentsButton()} sx={{ color: '#FFFFFF', justifyContent: "center" }}>
+                                            Confirm
+                                        </StyledButton>
+                                    </>
+
+                                )}
+                            </>
+                        )}
+                    </Box>
 
                 </Box>
 

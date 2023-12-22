@@ -345,10 +345,12 @@ export default function DealerProfileListUI() {
                 return (
                     <>
                         <StyledButton
+                            style={{ width: 120 }}
                             onClick={() => {
                                 setSelectedDealerId(params.row.id);
                                 handleDeclinedOpen();
                             }} >
+                            <CloseIcon style={{ marginTop: -3, paddingLeft: -8, height: 20, width: 'auto', color: 'rgb(227, 80, 155)', fontWeight: 'bolder' }} />
                             Decline
                         </StyledButton>
                         <Grid item>
@@ -510,100 +512,110 @@ export default function DealerProfileListUI() {
             <StyledCard>
                 {/* <ContentNameTypography>Dealer Profile List</ContentNameTypography> */}
 
-                <Box>
-                    <Tabs value={tabValue} onChange={(event, newValue) => toggleTables1(newValue)}>
-                        <Tab label="Unconfirmed Dealers" value="unconfirmed" />
-                        <Tab label="Confirmed Dealers" value="confirmed" />
-                        <Tab label="Declined Dealers" value="declined" />
-                    </Tabs>
-                    {tabValue === 'unconfirmed' && (
-                        <>
-                            {dealers === null ? (
-                                // Display whatever you want when dealers is empty
-                                // For example, you can show a message or another component
-                                <div style={{
-                                    display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
-                                    marginTop: '200px'
-                                }}>
-                                    <CircularProgress />
-                                </div>
+                <Box sx={{ width: '100%', marginTop: 4, marginLeft: 0.5 }}>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                        <Tabs value={tabValue} onChange={(event, newValue) => toggleTables1(newValue)} style={{ marginLeft: 40 }}>
+                            <TabStyle label="Unconfirmed Dealers" value="unconfirmed" />
+                            <TabStyle label="Confirmed Dealers" value="confirmed" />
+                            <TabStyle label="Declined Dealers" value="declined" />
+                        </Tabs>
+                    </Box>
+                    <Box sx={{ p: 2 }}>
+                        {tabValue === 'unconfirmed' && (
+                            <>
+                                {dealers === null ? (
+                                    // Display whatever you want when dealers is empty
+                                    // For example, you can show a message or another component
+                                    <div style={{
+                                        display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+                                        marginTop: '200px'
+                                    }}>
+                                        <CircularProgress />
+                                    </div>
 
-                            ) : (
-                                // Display the DataGrid when dealers is not empty
-                                <DataGridStyle rows={rows} columns={columns.map((column) => ({
-                                    ...column,
-                                }))}
-                                    initialState={{
-                                        pagination: {
-                                            paginationModel: {
-                                                pageSize: 10,
+                                ) : (
+                                    // Display the DataGrid when dealers is not empty
+                                    <DataGridStyle
+                                        rows={rows}
+
+                                        columns={columns.map((column) => ({
+                                            ...column,
+                                        }))}
+                                        initialState={{
+                                            pagination: {
+                                                paginationModel: {
+                                                    pageSize: 10,
+                                                },
                                             },
-                                        },
-                                    }}
-                                    pageSizeOptions={[10]}
-                                />
-                            )}
-                        </>
+                                        }}
+                                        pageSizeOptions={[10]}
+                                    />
+                                )}
+                            </>
 
-                    )}
-                    {tabValue === 'confirmed' && (
-                        <>
-                            {dealers === null ? (
-                                // Display whatever you want when dealers is empty
-                                // For example, you can show a message or another component
-                                <div style={{
-                                    display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
-                                    marginTop: '200px'
-                                }}>
-                                    <CircularProgress />
-                                </div>
 
-                            ) : (
-                                <DataGridStyle rows={rowsConfirmed} columns={columnsConfirmed.map((column) => ({
-                                    ...column,
+                        )}
 
-                                }))}
-                                    initialState={{
-                                        pagination: {
-                                            paginationModel: {
-                                                pageSize: 10,
+                        {tabValue === 'confirmed' && (
+                            <>
+                                {dealers === null ? (
+                                    // Display whatever you want when dealers is empty
+                                    // For example, you can show a message or another component
+                                    <div style={{
+                                        display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+                                        marginTop: '200px'
+                                    }}>
+                                        <CircularProgress />
+                                    </div>
+
+                                ) : (
+                                    <DataGridStyle rows={rowsConfirmed} columns={columnsConfirmed.map((column) => ({
+                                        ...column,
+
+                                    }))}
+                                        initialState={{
+                                            pagination: {
+                                                paginationModel: {
+                                                    pageSize: 10,
+                                                },
                                             },
-                                        },
-                                    }}
-                                    pageSizeOptions={[10]}
-                                />
-                            )}
-                        </>
-                    )}
-                    {tabValue === 'declined' && (
-                        <>
-                            {archivedDealer === null ? (
-                                // Display whatever you want when dealers is empty
-                                // For example, you can show a message or another component
-                                <div style={{
-                                    display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
-                                    marginTop: '200px'
-                                }}>
-                                    <CircularProgress />
-                                </div>
+                                        }}
+                                        pageSizeOptions={[10]}
+                                    />
+                                )}
+                            </>
+                        )}
 
-                            ) : (
-                                <DataGridStyle rows={rowsDeclined} columns={columnsDeclined.map((column) => ({
-                                    ...column,
-                                }))}
-                                    initialState={{
-                                        pagination: {
-                                            paginationModel: {
-                                                pageSize: 10,
+                        {tabValue === 'declined' && (
+                            <>
+                                {archivedDealer === null ? (
+                                    // Display whatever you want when dealers is empty
+                                    // For example, you can show a message or another component
+                                    <div style={{
+                                        display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+                                        marginTop: '200px'
+                                    }}>
+                                        <CircularProgress />
+                                    </div>
+
+                                ) : (
+                                    <DataGridStyle rows={rowsDeclined} columns={columnsDeclined.map((column) => ({
+                                        ...column,
+                                    }))}
+                                        initialState={{
+                                            pagination: {
+                                                paginationModel: {
+                                                    pageSize: 10,
+                                                },
                                             },
-                                        },
-                                    }}
-                                    pageSizeOptions={[10]}
+                                        }}
+                                        pageSizeOptions={[10]}
 
-                                />
-                            )}
-                        </>
-                    )}
+                                    />
+                                )}
+                            </>
+                        )}
+                    </Box>
                 </Box>
 
 
