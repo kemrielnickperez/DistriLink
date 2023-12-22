@@ -422,13 +422,13 @@ export default function EmployeeRegistration() {
         const file = event.target.files?.[0];
 
         if (file) {
-            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            const maxSize = 1024 * 1024 * 10; // 5 MB 
 
             if (file.size <= maxSize) {
                 setSelectedProfilePicture(file);
             } else {
 
-                handleAlert('File Size Exceeded', "Amount paid is greater than amount due. Please change it to be equal or less than the amount due.", 'warning')
+                handleAlert('File Size Exceeded', "File size exceeds the limit (10 MB). Please choose a smaller file.", 'warning')
             }
         }
 

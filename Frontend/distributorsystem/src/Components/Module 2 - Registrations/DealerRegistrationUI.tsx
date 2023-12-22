@@ -479,12 +479,12 @@ export default function DealerRegistration() {
         const file = event.target.files?.[0];
 
         if (file) {
-            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            const maxSize = 1024 * 1024 * 10; // 10 MB 
             if (file.size <= maxSize) {
                 setSelectedProfilePicture(file);
             } else {
 
-                handleAlert('File Size Exceeded', "Amount paid is greater than amount due. Please change it to be equal or less than the amount due.", 'warning')
+                handleAlert('File Size Exceeded', "File size exceeds the limit (10 MB). Please choose a smaller file.", 'warning')
             }
         }
 
@@ -498,12 +498,12 @@ export default function DealerRegistration() {
         const file = event.target.files?.[0];
 
         if (file) {
-            const maxSize = 1024 * 1024 * 5; // 5 MB (adjust as needed)
+            const maxSize = 1024 * 1024 * 10; // 10 MB (adjust as needed)
 
             if (file.size <= maxSize) {
                 setSelectedValidID(file);
             } else {
-                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+                handleAlert('File Size Exceeded', "File size exceeds the limit (10 MB). Please choose a smaller file.", 'warning')
             }
         }
         handleInputChange('selectedvalidid')
@@ -531,13 +531,13 @@ export default function DealerRegistration() {
         const file = event.target.files?.[0];
 
         if (file) {
-            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            const maxSize = 1024 * 1024 * 10; // 10 MB 
 
             if (file.size <= maxSize) {
                 setSelectedContract(file);
             } else {
 
-                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+                handleAlert('File Size Exceeded', "File size exceeds the limit (10 MB). Please choose a smaller file.", 'warning')
             }
         }
 
@@ -550,13 +550,13 @@ export default function DealerRegistration() {
         const file = event.target.files?.[0];
 
         if (file) {
-            const maxSize = 1024 * 1024 * 5; // 5 MB 
+            const maxSize = 1024 * 1024 * 10; // 10 MB 
 
             if (file.size <= maxSize) {
                 setSelectedBusinessDocs(file);
             } else {
 
-                alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+                handleAlert('File Size Exceeded', "File size exceeds the limit (10 MB). Please choose a smaller file.", 'warning')
             }
         }
 
